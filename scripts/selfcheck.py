@@ -105,6 +105,7 @@ def check_doctor(tmp: Path):
         result = doctor.check(tmp)
         assert result["ok"] is True
         assert [item["state"] for item in result["requirements"]] == ["found", "missing", "found"]
+        assert [item["class"] for item in result["requirements"]] == ["required", "optional", "required"]
         assert (tmp / "work" / "doctor.json").is_file()
         assert doctor.check(tmp)["next"] is None and len(calls) == 1
     finally:

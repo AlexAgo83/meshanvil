@@ -8,7 +8,7 @@ from .i18n import t
 
 CACHE = "work/.doctor-cache.json"
 REPORT = "work/doctor.json"
-CACHE_VERSION = 1
+CACHE_VERSION = 2
 
 
 def _reason(name: str) -> str:
@@ -17,7 +17,8 @@ def _reason(name: str) -> str:
 
 
 def _engine(name: str, required: bool) -> dict:
-    item = {"name": name, "required": required, "override": engines.OVERRIDE[name],
+    item = {"name": name, "class": "required" if required else "optional", "required": required,
+            "override": engines.OVERRIDE[name],
             "minimum_version": ".".join(map(str, engines.MIN_VERSION[name]))}
     try:
         path = engines.find(name)
@@ -42,7 +43,7 @@ def work(root: Path) -> dict:
         state = "found"
     except OSError:
         state = "missing"
-    return {"name": "work", "required": True, "state": state, "path": str(path),
+    return {"name": "work", "class": "required", "required": True, "state": state, "path": str(path),
             "free_bytes": shutil.disk_usage(path).free if path.exists() else 0,
             "reason": t("doctor.work.reason"),
             "fix": "mkdir work" if os.name == "nt" else "mkdir -p work"}
