@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 98%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:23:29
+> Indicators reviewed: 2026-08-22 00:24:25
 
 # AI Context
 - Summary: Route CLI and viewer copy through the English and French catalogues, validate their parity, and preserve machine-readable report identifiers.
