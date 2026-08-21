@@ -24,6 +24,17 @@ the packaging around it is new.
   the 5th-95th percentile bounding box) and for coincident duplicate objects (confirmed by
   a hash of world-space coordinates). `-- --fix` removes the duplicates.
 
+### Product direction
+- `req_000` opens the reviewable operation loop: one report per operation, one
+  agent-agnostic command, one local viewer for the chain -- with `prod_001` as its brief
+  and four slices under `task_001`.
+- `adr_001_operation_report_format` settles the report shape from a study of what the
+  twelve existing scripts already measure and from cm-sim's `transformation-report.json`:
+  one envelope with two payloads (transform and inspection), a shared measurement block,
+  the bounding-box delta computed by the writer rather than by the operation, warnings as
+  codes, lineage as a parent id plus wiki-style references, and an artefact state declared
+  from the first report so no pruning policy needs a migration.
+
 ### Repository
 - MIT licence, security policy, contributing guide.
 - `make check`: compiles every script and runs the publication-hygiene gate, which fails

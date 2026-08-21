@@ -2,8 +2,8 @@
 > From version: 1.0.0
 > Schema version: 1.0
 > Status: Draft
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
@@ -18,6 +18,8 @@
 - Reviewing what an operation did must not require opening Blender and navigating to the affected geometry by hand.
 - Every operation must leave behind the measurements that verify it, not only its output file.
 - The chain of operations that produced a result must be readable in order, with what changed at each step.
+- Failed attempts must survive: three failed approaches are recorded in run_007 and they carry most of that runbook's value.
+- The generated artefacts must be prunable without erasing the record of what was done, because a blend weighs 200 MB and a report a few kilobytes.
 - The bounding-box comparison against the source must be computed and shown for every operation, because that single check caught every failure in the delivered chain while the manifold checks passed throughout.
 - An operation must be runnable by any agent from a single command, without a Blender-specific or vendor-specific integration.
 - Verification renders must sit next to the numbers they illustrate, so a render is read as confirmation and never as evidence on its own.
@@ -40,6 +42,8 @@
 - AC6: The viewer reads only the report files. Opening it requires no Blender process, no build step and no network access.
 - AC7: An operation that fails writes a report recording the failure and the measurements taken up to that point, rather than leaving no trace.
 - AC8: Reports and renders stay under work/, and the publication-hygiene gate still passes with reports present.
+- AC9: The history is a tree: a report names the report it follows, sibling attempts are visible as siblings, and a failed attempt is kept rather than discarded.
+- AC10: Heavy artefacts can be pruned without losing the record. A report survives the deletion of the file it describes and states that the artefact was pruned, with the date.
 
 # Definition of Ready (DoR)
 - [x] Problem statement is explicit and user impact is clear.
@@ -66,3 +70,4 @@
 - `item_001_define_the_operation_report_and_write_one_from_every_operation`
 - `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`
 - `item_003_read_the_chain_of_operations_in_a_local_viewer`
+- `item_004_prune_heavy_artefacts_without_losing_the_record`

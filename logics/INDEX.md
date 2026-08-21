@@ -2,7 +2,9 @@
 
 ## Architecture decisions
 
-_None_
+| Doc | Title | Status | Owner | Progress | Path |
+|---|---|---|---|---|---|
+| [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Proposed |  |  | architecture/adr_001_operation_report_format.md |
 
 ## Product briefs
 
@@ -27,12 +29,13 @@ _None_
 | [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | Ready |  | 0% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
 | [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 0% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
 | [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 0% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
+| [item_004_prune_heavy_artefacts_without_losing_the_record](backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | Ready |  | 0% | backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md |
 
 ## Tasks
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 0% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 10% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
 
 ## Runbooks
 

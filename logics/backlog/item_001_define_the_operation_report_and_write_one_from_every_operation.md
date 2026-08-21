@@ -2,12 +2,13 @@
 > From version: 1.0.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Progress: 0%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-21 21:16:00
 
 # AI Context
 - Summary: One JSON report per operation under work/ops/, written by a single helper, carrying counts, bounding boxes before and after, the per-axis delta, render paths, and a failure path that still reports.
@@ -17,38 +18,50 @@
 
 # Problem
 - Each script prints its measurements to stdout and they are lost when the terminal scrolls.
+- Twelve scripts exist, and they are not of one kind: seven transform a file, five only measure and produce no output at all. A format built around an input and an output cannot describe the second kind.
 - Nothing links an output file to the operation, the input and the settings that produced it.
 - The bounding-box comparison is described in the runbooks as the check that caught every failure, but it is computed by hand, differently, in each script.
 
 # Scope
 - In:
-  - A report writer helper in tools/, taking the scene before and after and producing work/ops/NNN_<name>.json.
-  - Report fields: identifier, script, timestamp, input path, output path, object and vertex counts before and after, bounding box before and after in millimetres, per-axis delta, shell count, non-manifold edge count, volume when meaningful, render paths, and a free-form measurements object for what is specific to one operation.
+  - A report writer helper in tools/, producing work/ops/NNN_<name>.json, with the envelope and the two payloads settled in `adr_001_operation_report_format`.
+  - The shared envelope: schema_version, id, created_at, kind (transform or inspection), operation, script, status, input with its SHA-256, warnings, renders, links.
+  - The shared measurement block: objects, vertices, faces, bbox_mm, shells, non_manifold_edges, volume_cm3 -- null when the operation did not measure it, never zero and never absent.
+  - The per-axis bounding-box delta computed by the helper from before and after, naming the axes that moved, so no operation can skip it.
+  - Warnings as short codes rather than sentences, so what was not checked is stated and an agent can act on it.
+  - links.parent carrying the report this one follows, and wiki-style references to the documents involved, so the history is a tree readable from the files alone.
+  - output.state as present, pinned or pruned, with the date it changed -- declared now so no report needs migrating when a pruning policy arrives.
   - A failure path that writes the report with the error and whatever was measured before it.
-  - The seven pipeline steps and tools/scan_defects.py calling the helper.
+  - The seven pipeline steps, tools/scan_defects.py, and the five inspection scripts calling the helper.
 - Out:
   - The runner command and the viewer, which are separate slices.
-  - Any schema versioning beyond a schema_version field.
+  - The pruning policy itself: this slice declares output.state, item_004 decides what sets it.
+  - Any schema migration tooling. schema_version is written from the first report; nothing reads an older one yet.
 
 # Acceptance criteria
-- AC1: Running any of the eight operations leaves exactly one report file under work/ops/, named with its execution order and operation name.
+- AC1: Running any converted operation leaves exactly one report file under work/ops/, named with its execution order and operation name.
 - AC2: The report states the bounding box before and after in millimetres and names the axes that moved, matching what the script prints.
 - AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.
 - AC4: The report writer is the only place a report is written; no script serialises one of its own.
+- AC5: An inspection script, which has no output file, produces a valid report of kind inspection carrying its findings.
+- AC6: A measurement an operation did not take is null in the report, distinguishable from a measured zero.
+- AC7: Every report carries the SHA-256 of its input, and links.parent when it follows another operation.
+- AC8: What an operation did not verify appears in warnings as a code, not as prose.
 
 # AC Traceability
+> Shared proof: AC3, AC7
 - request-AC1 -> This backlog slice. Proof: AC1: Running any of the eight operations leaves exactly one report file under work/ops/, named with its execution order and operation name.
 - request-AC2 -> This backlog slice. Proof: AC2: The report states the bounding box before and after in millimetres and names the axes that moved, matching what the script prints.
 - request-AC3 -> This backlog slice. Proof: AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.
-- request-AC7 -> This backlog slice. Proof: AC4: The report writer is the only place a report is written; no script serialises one of its own.
+- request-AC7 -> This backlog slice. Proof: AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: `adr_001_operation_report_format`
 
 # Links
 - Product brief(s): `prod_001_reviewable_agent_driven_3d_operations`
-- Architecture decision(s): (none yet)
+- Architecture decision(s): `adr_001_operation_report_format`
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Primary task(s): `task_001_deliver_the_reviewable_operation_loop`
 

@@ -2,9 +2,9 @@
 > From version: 1.0.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
-> Progress: 0%
+> Understanding: 95%
+> Confidence: 90%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -19,10 +19,11 @@
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
 
 # Plan
-- [ ] 1. Settle the report shape against what the eight existing operations already measure, so the format records what is there rather than asking scripts to compute something new.
+- [x] 1. Settle the report shape against what the existing operations already measure, so the format records what is there rather than asking scripts to compute something new. Settled in `adr_001_operation_report_format`: twelve scripts, seven transforms and five inspections, one envelope with two payloads.
 - [ ] 2. Implement the report writer and convert the operations to it one by one, checking each converted operation against the numbers it printed before.
 - [ ] 3. Build the runner command on top of the converted operations, including the refusal to write to work/in/.
-- [ ] 4. Build the viewer last, against real reports produced by the converted chain rather than fixtures.
+- [ ] 4. Build the viewer last, against real reports produced by the converted chain rather than fixtures, rendering the chain as a deterministic top-down DAG.
+- [ ] 4b. Add the pruning policy (item_004) once several chains exist and the disk footprint is real, not before.
 - [ ] 5. Record what the loop changes about the way an operation is reviewed as a runbook, and note in run_006 and run_009 where the reports now carry what those procedures ask to be checked by hand.
 - [ ] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
 - [ ] Keep commit creation under operator control; do not force one commit per micro-step.
