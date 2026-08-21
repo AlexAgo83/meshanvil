@@ -1,0 +1,6 @@
+work/
+AGENTS.md
+LOGICS.md
+.DS_Store
+logics/.cache/viewer-preferences.json
+__pycache__/
