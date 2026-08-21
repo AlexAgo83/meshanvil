@@ -12,6 +12,7 @@ from . import SCHEMA_VERSION, VERSION, doctor, engines, logics_bridge, manifests
 from .i18n import t
 
 OPS = "work/ops"
+LOCKS = "work/ops/.lock"
 RUNS = "work/ops/.run"
 JOBS = "work/ops/.job"
 
@@ -93,6 +94,17 @@ def resolve_parent(root: Path, digest: str) -> str | None:
     return latest
 
 
+def claim_target(root: Path, digest: str) -> Path:
+    """One source fingerprint has one writer; an interrupted run leaves a visible lock."""
+    path = root / LOCKS / digest
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        os.close(os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+    except FileExistsError:
+        raise Refused(t("run.target_busy"))
+    return path
+
+
 STALE_AFTER = 60.0
 
 
@@ -137,70 +149,74 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
 
     digest = fingerprint(source)
     parent = parent or resolve_parent(root, digest)
-    identity, report_path = allocate(root, operation, parent)
-    (root / RUNS).mkdir(parents=True, exist_ok=True)
-    (root / JOBS).mkdir(parents=True, exist_ok=True)
-
-    job = {
-        "schema_version": SCHEMA_VERSION,
-        "id": identity,
-        "root": str(root),
-        "operation": operation,
-        "kind": manifest["kind"],
-        "engine": manifest["engine"],
-        "script": manifest["script"],
-        "target": str(source),
-        "params": values,
-        "input_sha256": digest,
-        "parent": parent,
-        "parent_source": declared_parent and "declared" or (parent and "fingerprint" or None),
-        "report": str(report_path),
-        "progress": str(root / RUNS / f"{identity}.progress"),
-        "tool": {"meshanvil": VERSION, "engine_version": number, "engine_build": build,
-                 "platform": f"{sys.platform}", "host_python": sys.version.split()[0]},
-    }
-    job_path = root / JOBS / f"{identity}.json"
-    job_path.write_text(json.dumps(job, indent=1) + "\n", encoding="utf-8")
-
-    if manifest["engine"] == "freecad":
-        command = [str(binary), "-c", engines.for_engine(root / manifest["script"], binary),
-                   "--", "--job", engines.for_engine(job_path, binary)]
-    else:
-        command = [str(binary), "-b", engines.for_engine(source, binary),
-                   "-P", engines.for_engine(root / manifest["script"], binary),
-                   "--", "--job", engines.for_engine(job_path, binary)]
-    started = time.time()
+    lock = claim_target(root, digest)
     try:
-        watch(subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),
-              root / RUNS / f"{identity}.progress")
-    except BaseException:
-        report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
-        raise
+        identity, report_path = allocate(root, operation, parent)
+        (root / RUNS).mkdir(parents=True, exist_ok=True)
+        (root / JOBS).mkdir(parents=True, exist_ok=True)
 
-    if report_path.stat().st_size == 0:
-        print(t("run.no_report", seconds=f"{time.time() - started:.0f}",
-                job=job_path.relative_to(root)), file=sys.stderr)
-        return EXIT_NO_REPORT
-    report = json.loads(report_path.read_text(encoding="utf-8"))
-    output = report.get("output") or {}
-    if output.get("path") and not output.get("sha256"):
-        # The host completes the record before the report is final: it already hashes, and the
-        # engine has no reason to re-read a file it just wrote. Nothing else is ever edited.
-        output["sha256"] = fingerprint(Path(output["path"]))
-        report_path.write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
-    job_path.unlink(missing_ok=True)
-    (root / RUNS / f"{identity}.progress").unlink(missing_ok=True)
-    print(report_path.relative_to(root))
-    if report.get("status") != "ok":
+        job = {
+            "schema_version": SCHEMA_VERSION,
+            "id": identity,
+            "root": str(root),
+            "operation": operation,
+            "kind": manifest["kind"],
+            "engine": manifest["engine"],
+            "script": manifest["script"],
+            "target": str(source),
+            "params": values,
+            "input_sha256": digest,
+            "parent": parent,
+            "parent_source": declared_parent and "declared" or (parent and "fingerprint" or None),
+            "report": str(report_path),
+            "progress": str(root / RUNS / f"{identity}.progress"),
+            "tool": {"meshanvil": VERSION, "engine_version": number, "engine_build": build,
+                     "platform": f"{sys.platform}", "host_python": sys.version.split()[0]},
+        }
+        job_path = root / JOBS / f"{identity}.json"
+        job_path.write_text(json.dumps(job, indent=1) + "\n", encoding="utf-8")
+
+        if manifest["engine"] == "freecad":
+            command = [str(binary), "-c", engines.for_engine(root / manifest["script"], binary),
+                       "--", "--job", engines.for_engine(job_path, binary)]
+        else:
+            command = [str(binary), "-b", engines.for_engine(source, binary),
+                       "-P", engines.for_engine(root / manifest["script"], binary),
+                       "--", "--job", engines.for_engine(job_path, binary)]
+        started = time.time()
+        try:
+            watch(subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),
+                  root / RUNS / f"{identity}.progress")
+        except BaseException:
+            report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
+            raise
+
+        if report_path.stat().st_size == 0:
+            print(t("run.no_report", seconds=f"{time.time() - started:.0f}",
+                    job=job_path.relative_to(root)), file=sys.stderr)
+            return EXIT_NO_REPORT
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        output = report.get("output") or {}
+        if output.get("path") and not output.get("sha256"):
+            # The host completes the record before the report is final: it already hashes, and
+            # the engine has no reason to re-read a file it just wrote. Nothing else is edited.
+            output["sha256"] = fingerprint(Path(output["path"]))
+            report_path.write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
+        job_path.unlink(missing_ok=True)
+        (root / RUNS / f"{identity}.progress").unlink(missing_ok=True)
+        print(report_path.relative_to(root))
+        if report.get("status") != "ok":
+            if evidence:
+                print(t("bridge.evidence_failed"), file=sys.stderr)
+            return EXIT_FAILED
         if evidence:
-            print(t("bridge.evidence_failed"), file=sys.stderr)
-        return EXIT_FAILED
-    if evidence:
-        command = "meshanvil run " + operation + " " + target + " ".join(
-            f" --set {key}={value}" for key, value in params.items())
-        error = logics_bridge.evidence(evidence, report_path, report, command)
-        if error:
-            message = (t("bridge.evidence_unavailable") if error == "unavailable"
-                       else t("bridge.evidence_error", reason=error))
-            print(message, file=sys.stderr)
-    return EXIT_OK
+            command = "meshanvil run " + operation + " " + target + " ".join(
+                f" --set {key}={value}" for key, value in params.items())
+            error = logics_bridge.evidence(evidence, report_path, report, command)
+            if error:
+                message = (t("bridge.evidence_unavailable") if error == "unavailable"
+                           else t("bridge.evidence_error", reason=error))
+                print(message, file=sys.stderr)
+        return EXIT_OK
+    finally:
+        lock.unlink(missing_ok=True)

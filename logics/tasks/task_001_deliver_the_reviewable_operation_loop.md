@@ -1,14 +1,15 @@
 ## task_001_deliver_the_reviewable_operation_loop - Deliver the reviewable operation loop
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 35%
+> Progress: 50%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:14:56
+> Indicators reviewed: 2026-08-22 01:13:25
+> Owner: codex
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -47,8 +48,8 @@
 - [x] 2. Settle what the viewer may do. Settled in `adr_003_the_viewer_reads_the_command_acts`: it reads, and every action is shown as the command that performs it.
 - [x] 3. Settle the fixture. `item_007` exists and its three scripts are in the repository: the demo scene generator, the chain replay, and the fixed-camera renders.
 - [~] 4. `item_001` -- the report writer exists (`meshanvil_engine/report.py`) and one operation is converted (`tools/scan_defects.py`), producing a report that matches the canonical inspection shape. Eleven operations remain, each to be checked against the numbers it printed before.
-- [~] 5. `item_002` -- the runner exists: `meshanvil list`, `meshanvil run <op> <file> --set k=v --from ID`, identity by exclusive creation, parent by fingerprint, sibling letters, the refusal on work/in/, exit codes 0/1/2/3. Remaining: the progress heartbeat surfaced to the caller, one-writer-per-target locking, and engine discovery on Windows and WSL.
-- [ ] 5a. `item_002` -- the rest of the runner command: the refusal to write to work/in/, operation discovery and its manifest, and the execution contract of `adr_005` (identity, parent by fingerprint, one writer per target, exit codes, heartbeat).
+- [x] 5. `item_002` -- the runner now has command discovery, identity allocation, parent fingerprinting, sibling letters, source protection, exit codes, heartbeat, platform discovery and an exclusive source-fingerprint lock.
+- [x] 5a. `item_002` -- the execution contract of `adr_005` is implemented and covered by the host self-check, including the no-second-writer rule.
 - [ ] 5b. `item_010` -- the two catalogues and the parity check, before the interface strings multiply. Retrofitting i18n costs more than starting with it.
 - [ ] 6. `item_007` -- assert the fixture: the generated defects must be found by the sweep unaided, which is the ground truth the tools never had.
 - [ ] 7. `item_003` -- the viewer: chain as a top-down DAG, report panel, image editor, menus that show commands.
@@ -105,10 +106,10 @@
 - request-AC23 -> This task. Proof deferred to linked slice closeout.
 
 # Validation
-- (no validation recorded yet)
+- `make check` passed after adding the target-writer lock.
 
 # Report
-- Not started.
+- Runner contract completed with an exclusive source-fingerprint lock. Legacy operation conversion remains tracked in plan item 4.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

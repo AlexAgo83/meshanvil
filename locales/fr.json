@@ -47,6 +47,7 @@
     "unknown_parameters": "paramètre(s) inconnu(s) : {names}",
     "invalid_parameter": "valeur invalide pour {name} : {value}",
     "work_unavailable": "{path} n'est pas inscriptible ; corrigez-le avant de lancer une opération",
+    "target_busy": "une autre opération travaille déjà sur cette source ; attendez sa fin",
     "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
     "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours"
   },

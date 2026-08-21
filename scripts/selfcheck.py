@@ -181,6 +181,20 @@ def check_prune(tmp: Path):
     assert not (outputs / "0.blend").exists() and changed["output"]["state"] == "pruned"
 
 
+def check_target_lock(tmp: Path):
+    root = tmp / "lock"
+    lock = runner.claim_target(root, "same-source")
+    try:
+        try:
+            runner.claim_target(root, "same-source")
+            raise AssertionError("a second writer must be refused")
+        except runner.Refused:
+            pass
+    finally:
+        lock.unlink()
+    assert runner.claim_target(root, "same-source").is_file()
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -197,6 +211,7 @@ def main() -> int:
         check_viewer_start(tmp)
         check_logics_bridge()
         check_prune(tmp)
+        check_target_lock(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")

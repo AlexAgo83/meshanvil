@@ -1,14 +1,14 @@
 ## item_003_read_the_chain_of_operations_in_a_local_viewer - Read the chain of operations in a local viewer
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 70%
+> Progress: 50%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:29:36
+> Indicators reviewed: 2026-08-22 01:13:25
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.

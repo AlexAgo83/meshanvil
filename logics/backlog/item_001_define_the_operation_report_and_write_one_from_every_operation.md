@@ -1,14 +1,14 @@
 ## item_001_define_the_operation_report_and_write_one_from_every_operation - Define the operation report and write one from every operation
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 70%
+> Progress: 50%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:51:20
+> Indicators reviewed: 2026-08-22 01:13:25
 
 # AI Context
 - Summary: One JSON report per operation under work/ops/, written by a single helper, carrying counts, bounding boxes before and after, the per-axis delta, render paths, and a failure path that still reports.

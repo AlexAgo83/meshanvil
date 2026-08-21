@@ -47,6 +47,7 @@
     "unknown_parameters": "unknown parameter(s): {names}",
     "invalid_parameter": "invalid value for {name}: {value}",
     "work_unavailable": "{path} is not writable; fix it before running an operation",
+    "target_busy": "another operation is already running on this source; wait for it to finish",
     "no_report": "the engine wrote no report after {seconds}s; job kept at {job}",
     "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running"
   },
