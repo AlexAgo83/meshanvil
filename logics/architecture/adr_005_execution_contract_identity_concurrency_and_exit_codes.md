@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: an agent that must decide from an exit code, a tree that must not collide under concurrent runs, a fifteen-minute operation that must not look dead
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:29:18
+> Indicators reviewed: 2026-08-21 23:05:32
 
 # Overview
 - What identifies an operation, what happens when two run at once, what the command returns, and how a long operation proves it is alive -- the four things an agent needs and the corpus did not state.
@@ -40,7 +40,7 @@ flowchart TD
 # Decision
 - **Identity is allocated by creation, not by counting.** The runner allocates `NNN` by creating `work/ops/NNN_name.json` with `O_EXCL`, retrying on the next integer when the file exists. Two concurrent runners cannot obtain the same number: the filesystem arbitrates, no lock file is needed for identity.
 - **A chain is identified by its root report.** `chain` in every report carries the id of the first operation of that lineage. Several chains coexist in `work/ops/` and the viewer groups by that field.
-- **Siblings share an ordinal and take a letter.** When an operation's parent already has a child, the new report keeps the parent's next ordinal and takes the next free suffix: `006a`, `006b`. A single child has no suffix. The suffix records that two attempts answered the same question, which is what makes a failed attempt readable months later.
+- **Siblings share an ordinal; the letter starts at the second one.** The first child of a parent takes a bare ordinal, `006`. A second child of the same parent takes `006a`, a third `006b`. The first is not renamed when a sibling appears: a written report is immutable, and renaming it would break every reference already pointing at it. The suffix records that two attempts answered the same question, which is what makes a failed attempt readable months later.
 - **The parent is resolved by fingerprint.** `links.parent` is the report whose `output.sha256` equals this operation's `input.sha256`, the most recent one when several match, and absent when none does -- which makes the operation a chain root. `--from <id>` overrides it explicitly, and the report records that the parent was declared rather than derived.
 - **One writer per target file.** The runner takes an exclusive lock on the output path for the duration of the operation. A second operation on the same target waits or fails with a clear message, never interleaves. Reading the same file concurrently is unrestricted.
 - **Exit codes are the agent's contract.** `0` the operation ran and reported `ok`. `1` the operation ran and reported `failed`; a report exists. `2` the command refused to run -- unknown operation, bad parameter, target under `work/in/`, engine not found; no report, nothing touched. `3` the engine died without writing a report; the job file is left behind for diagnosis. The last line of stdout is always the report path, or empty on `2`.

@@ -1,19 +1,22 @@
 # meshanvil -- validation targets.
 #
-# There is no test suite here and adding one would be dishonest: every check that
-# matters needs a real 3D source, and sources are never in the repository. What CI
-# can verify is that the scripts parse and that nothing private came back in.
+# The checks that matter on geometry need a real 3D source, and sources are never in the
+# repository. What CI can verify is that everything parses, that the host logic holds
+# (scripts/selfcheck.py, no Blender needed), and that nothing private came back in.
 
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile hygiene logics
+.PHONY: check compile selfcheck hygiene logics
 
-check: compile hygiene
+check: compile selfcheck hygiene
 
 compile:
-	$(PYTHON) -m compileall -q pipeline tools
-	@find pipeline tools -name '__pycache__' -type d -exec rm -rf {} +
+	$(PYTHON) -m compileall -q meshanvil meshanvil_engine pipeline tools scripts
+	@find meshanvil meshanvil_engine pipeline tools scripts -name '__pycache__' -type d -exec rm -rf {} +
+
+selfcheck:
+	@$(PYTHON) scripts/selfcheck.py
 
 hygiene:
 	@bash scripts/check_hygiene.sh

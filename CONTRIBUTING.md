@@ -16,7 +16,14 @@
 - The corpus checks need Node: `npm ci` installs the pinned `logics-manager`. Running the 3D
   operations themselves needs only Blender.
 
-Run any script on a copy:
+Run an operation through the command, which writes a report:
+
+```bash
+./bin/meshanvil list
+./bin/meshanvil run scan_defects work/out/demo_source.blend
+```
+
+Or run any script directly, as they all still work standalone:
 
 ```bash
 /Applications/Blender.app/Contents/MacOS/Blender -b work/out/<file>.blend -P tools/list_shells.py

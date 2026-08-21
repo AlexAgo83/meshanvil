@@ -4,11 +4,11 @@
 > Status: Ready
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 15%
+> Progress: 25%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:53:43
+> Indicators reviewed: 2026-08-21 23:05:53
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -46,8 +46,9 @@
 - [x] 1. Settle the report shape against what the existing operations already measure. Settled in `adr_001_operation_report_format`: twelve scripts, seven transforms and five inspections, one envelope with two payloads, renders and comparable pairs declared rather than inferred.
 - [x] 2. Settle what the viewer may do. Settled in `adr_003_the_viewer_reads_the_command_acts`: it reads, and every action is shown as the command that performs it.
 - [x] 3. Settle the fixture. `item_007` exists and its three scripts are in the repository: the demo scene generator, the chain replay, and the fixed-camera renders.
-- [ ] 4. `item_001` -- the report writer, then the twelve operations converted to it one at a time, each checked against the numbers it printed before. Nothing else starts until this is done: every other slice reads what it writes.
-- [ ] 5. `item_002` -- the runner command: the refusal to write to work/in/, operation discovery and its manifest, and the execution contract of `adr_005` (identity, parent by fingerprint, one writer per target, exit codes, heartbeat).
+- [~] 4. `item_001` -- the report writer exists (`meshanvil_engine/report.py`) and one operation is converted (`tools/scan_defects.py`), producing a report that matches the canonical inspection shape. Eleven operations remain, each to be checked against the numbers it printed before.
+- [~] 5. `item_002` -- the runner exists: `meshanvil list`, `meshanvil run <op> <file> --set k=v --from ID`, identity by exclusive creation, parent by fingerprint, sibling letters, the refusal on work/in/, exit codes 0/1/2/3. Remaining: the progress heartbeat surfaced to the caller, one-writer-per-target locking, and engine discovery on Windows and WSL.
+- [ ] 5a. `item_002` -- the rest of the runner command: the refusal to write to work/in/, operation discovery and its manifest, and the execution contract of `adr_005` (identity, parent by fingerprint, one writer per target, exit codes, heartbeat).
 - [ ] 5b. `item_010` -- the two catalogues and the parity check, before the interface strings multiply. Retrofitting i18n costs more than starting with it.
 - [ ] 6. `item_007` -- assert the fixture: the generated defects must be found by the sweep unaided, which is the ground truth the tools never had.
 - [ ] 7. `item_003` -- the viewer: chain as a top-down DAG, report panel, image editor, menus that show commands.
