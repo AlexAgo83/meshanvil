@@ -4,7 +4,7 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 80%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -44,3 +44,7 @@
 - Request: `req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `make check; meshanvil view --no-open; Google Chrome --headless` | result: passed | Native tab buttons retain the selected report while switching Chain, Compare and Runbooks; Compare expands the existing image editor.
+- AC2 | date: 2026-08-22 | command: `make check` | result: passed | Native details menus expose selectable CLI commands only; the runnable self-check rejects any fetch call in viewer.js.
