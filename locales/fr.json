@@ -4,6 +4,9 @@
     "list": {
       "help": "les opérations trouvées, et ce que chacune attend"
     },
+    "doctor": {
+      "help": "vérifier la configuration et écrire work/doctor.json"
+    },
     "run": {
       "help": "lancer une opération et écrire son rapport",
       "set": "un paramètre de l'opération ; répétable",
@@ -39,6 +42,11 @@
     "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
     "override_missing": "{variable} pointe sur {path}, qui n'existe pas",
     "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis"
+  },
+  "doctor": {
+    "blender": {"reason": "Requis pour lancer les opérations de maillage."},
+    "freecad": {"reason": "Optionnel ; nécessaire uniquement pour importer une source STEP."},
+    "work": {"reason": "Requis pour les rapports, sorties et rendus."}
   },
   "view": {
     "built": "{path}  ({count} rapports)",

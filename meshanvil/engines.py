@@ -1,6 +1,6 @@
 """Find an engine, and translate paths when the host and the engine disagree on what a path is."""
 from __future__ import annotations
-import os, platform, shutil, subprocess
+import os, platform, plistlib, re, shutil, subprocess
 from pathlib import Path
 
 from .i18n import t
@@ -62,13 +62,24 @@ def for_engine(path: os.PathLike | str, binary: Path) -> str:
 
 
 def version(binary: Path) -> tuple[str, str]:
-    """Return (version, build hash). Blender prints both on its first two lines."""
-    out = subprocess.run([str(binary), "--version"], capture_output=True, text=True,
-                         check=False).stdout
+    """Return (version, build hash) for Blender or FreeCAD."""
+    info = binary.parents[1] / "Info.plist"
+    if binary.name == "FreeCAD" and info.is_file():
+        try:
+            bundle = plistlib.load(info.open("rb"))
+            return (bundle.get("CFBundleShortVersionString") or bundle.get("CFBundleVersion", "")).split("-")[0], ""
+        except (OSError, plistlib.InvalidFileException):
+            pass
+    try:
+        out = subprocess.run([str(binary), "--version"], capture_output=True, text=True,
+                             check=False, timeout=5).stdout
+    except subprocess.TimeoutExpired:
+        return "", ""
     number, build = "", ""
     for line in out.splitlines():
-        if line.startswith("Blender ") and not number:
-            number = line.split()[1]
+        match = re.search(r"(?:Blender|FreeCAD)\s+(\d+(?:\.\d+)+)", line)
+        if match and not number:
+            number = match.group(1)
             if "hash" in line:
                 build = line.split("hash")[1].strip(" )").split()[0]
         if line.strip().startswith("build hash:") and not build:
@@ -76,11 +87,19 @@ def version(binary: Path) -> tuple[str, str]:
     return number, build
 
 
-def check_floor(engine: str, number: str) -> None:
+def meets_floor(engine: str, number: str) -> bool:
     try:
-        found = tuple(int(part) for part in number.split(".")[:2])
+        return tuple(int(part) for part in number.split(".")[:2]) >= MIN_VERSION[engine]
     except ValueError:
-        return  # an unreadable version is not a reason to refuse; the operation will say more
-    if found < MIN_VERSION[engine]:
+        return True
+
+
+def fix_command(engine: str) -> str:
+    variable, candidate = OVERRIDE[engine], CANDIDATES[engine][0]
+    return f'set {variable}={candidate}' if platform.system() == "Windows" else f'export {variable}="{candidate}"'
+
+
+def check_floor(engine: str, number: str) -> None:
+    if not meets_floor(engine, number):
         need = ".".join(str(part) for part in MIN_VERSION[engine])
         raise EngineMissing(t("engine.too_old", engine=engine, found=number, needed=need))

@@ -1,8 +1,8 @@
 """meshanvil <command>. One way in, whoever is typing -- a person, Claude or Codex."""
 from __future__ import annotations
-import argparse, sys
+import argparse, json, sys
 
-from . import VERSION, engines, manifests, runner, viewer
+from . import VERSION, doctor, engines, manifests, runner, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -20,6 +20,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"meshanvil {VERSION}")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help=t("cli.list.help"))
+    sub.add_parser("doctor", help=t("cli.doctor.help"))
     run = sub.add_parser("run", help=t("cli.run.help"))
     run.add_argument("operation")
     run.add_argument("target")
@@ -51,6 +52,9 @@ def main(argv: list[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     if arguments.command == "list":
         return show_list()
+    if arguments.command == "doctor":
+        print(json.dumps(doctor.check(manifests.root()), indent=1))
+        return runner.EXIT_OK
     if arguments.command == "view":
         return viewer.view(serve_it=arguments.serve, open_it=not arguments.no_open)
     given = {}

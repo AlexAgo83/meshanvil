@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import i18n, manifests, runner      # noqa: E402
+from meshanvil import doctor, engines, i18n, manifests, runner  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -94,6 +94,21 @@ def check_i18n():
             os.environ["MESHANVIL_LANG"] = previous
 
 
+def check_doctor(tmp: Path):
+    binary = tmp / "blender"
+    binary.write_text("", encoding="utf-8")
+    original_find, original_version = engines.find, engines.version
+    try:
+        engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing())
+        engines.version = lambda path: ("5.2.0", "")
+        result = doctor.check(tmp)
+        assert result["ok"] is True
+        assert [item["state"] for item in result["requirements"]] == ["found", "missing", "found"]
+        assert (tmp / "work" / "doctor.json").is_file()
+    finally:
+        engines.find, engines.version = original_find, original_version
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -103,6 +118,7 @@ def main() -> int:
         check_bbox_delta()
         check_refusals()
         check_i18n()
+        check_doctor(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")

@@ -4,6 +4,9 @@
     "list": {
       "help": "the operations found, and what each one takes"
     },
+    "doctor": {
+      "help": "check setup and write work/doctor.json"
+    },
     "run": {
       "help": "run one operation and write its report",
       "set": "a parameter of the operation; repeatable",
@@ -39,6 +42,11 @@
     "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
     "override_missing": "{variable} points at {path}, which does not exist",
     "too_old": "{engine} {found} is too old: {needed} or later is required"
+  },
+  "doctor": {
+    "blender": {"reason": "Required to run mesh operations."},
+    "freecad": {"reason": "Optional; only needed to ingest a STEP source."},
+    "work": {"reason": "Required for reports, outputs, and renders."}
   },
   "view": {
     "built": "{path}  ({count} reports)",

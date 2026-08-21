@@ -1,13 +1,14 @@
 ## item_012_take_the_operator_through_setup_step_by_step - Take the operator through setup, step by step
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 45%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 00:25:32
 
 # AI Context
 - Summary: One check that names every requirement, says which are required, optional or contributor-only, and gives the exact fix for the platform in front of it -- printing commands, never installing.
@@ -74,3 +75,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_003_take_the_operator_through_setup_step_by_step`
