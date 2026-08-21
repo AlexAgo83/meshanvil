@@ -122,6 +122,16 @@ def check_engine_floor():
     assert "MESHANVIL_BLENDER" in engines.fix_command("blender")
 
 
+def check_wsl_boundary(tmp: Path):
+    original_wsl, original_run = engines.in_wsl, engines.subprocess.run
+    try:
+        engines.in_wsl = lambda: True
+        engines.subprocess.run = lambda *args, **kwargs: SimpleNamespace(stdout="C:\\wsl.localhost\\Ubuntu\\tmp\\job.json\n")
+        assert engines.for_engine(tmp / "job.json", Path("Blender.exe")).startswith("C:\\wsl.localhost")
+    finally:
+        engines.in_wsl, engines.subprocess.run = original_wsl, original_run
+
+
 def check_doctor_exit_code():
     from meshanvil import cli
     original = doctor.check
@@ -182,6 +192,7 @@ def main() -> int:
         check_i18n()
         check_doctor(tmp)
         check_engine_floor()
+        check_wsl_boundary(tmp)
         check_doctor_exit_code()
         check_viewer_start(tmp)
         check_logics_bridge()
