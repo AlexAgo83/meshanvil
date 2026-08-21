@@ -4,7 +4,7 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 70%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -45,3 +45,7 @@
 - Request: `req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `make check` | result: passed | The outliner filter matches report IDs, operation names and runbook titles without mutating report data.
+- AC2 | date: 2026-08-22 | command: `make check; make fixture` | result: passed | The native range comparison keeps keyboard adjustment and now labels before and after states visibly.
