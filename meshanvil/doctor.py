@@ -44,7 +44,8 @@ def work(root: Path) -> dict:
         state = "missing"
     return {"name": "work", "required": True, "state": state, "path": str(path),
             "free_bytes": shutil.disk_usage(path).free if path.exists() else 0,
-            "reason": t("doctor.work.reason"), "fix": "mkdir -p work"}
+            "reason": t("doctor.work.reason"),
+            "fix": "mkdir work" if os.name == "nt" else "mkdir -p work"}
 
 
 def _engine_signature() -> list[dict]:

@@ -13,6 +13,7 @@ CANDIDATES = {
     ],
     "freecad": [
         "/Applications/FreeCAD.app/Contents/MacOS/FreeCAD",
+        "/mnt/c/Program Files/FreeCAD 1.0/bin/FreeCAD.exe",
         r"C:\Program Files\FreeCAD 1.0\bin\FreeCAD.exe",
     ],
 }
@@ -95,8 +96,11 @@ def meets_floor(engine: str, number: str) -> bool:
 
 
 def fix_command(engine: str) -> str:
-    variable, candidate = OVERRIDE[engine], CANDIDATES[engine][0]
-    return f'set {variable}={candidate}' if platform.system() == "Windows" else f'export {variable}="{candidate}"'
+    variable = OVERRIDE[engine]
+    if platform.system() == "Windows":
+        return f"set {variable}={CANDIDATES[engine][-1]}"
+    candidate = next((path for path in CANDIDATES[engine] if path.startswith("/mnt/c/")), CANDIDATES[engine][0])
+    return f'export {variable}="{candidate}"'
 
 
 def check_floor(engine: str, number: str) -> None:

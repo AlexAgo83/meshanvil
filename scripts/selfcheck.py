@@ -117,6 +117,7 @@ def check_engine_floor():
         raise AssertionError("an old Blender must be refused")
     except engines.EngineMissing as error:
         assert "bpy.ops.wm.stl_export" in str(error)
+    assert "MESHANVIL_BLENDER" in engines.fix_command("blender")
 
 
 def main() -> int:
