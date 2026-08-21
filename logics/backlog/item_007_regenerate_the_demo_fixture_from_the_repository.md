@@ -1,13 +1,14 @@
 ## item_007_regenerate_the_demo_fixture_from_the_repository - Regenerate the demo fixture from the repository
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 80%
+> Progress: 95%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 00:59:36
 
 # AI Context
 - Summary: A synthetic scene built by script, carrying real export defects, that the existing sweep finds unaided -- the public fixture and the ground truth the tools lacked.
@@ -66,3 +67,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_011_regenerate_the_demo_fixture_from_the_repository`
