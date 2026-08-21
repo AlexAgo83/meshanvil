@@ -21,6 +21,13 @@
     "runbook": {
       "help": "créer un brouillon de runbook Logics depuis une chaîne de rapports"
     },
+    "prune": {
+      "help": "purger les anciens artefacts détenus par les rapports",
+      "would": "supprimerait",
+      "deleted": "supprimé",
+      "item": "{verb} {path} ({bytes} octets)",
+      "total": "{count} artefact(s), {bytes} octets"
+    },
     "usage": "utilisation : ",
     "positional_arguments": "arguments positionnels",
     "options": "options",

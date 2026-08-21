@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import doctor, engines, i18n, logics_bridge, manifests, runner, viewer  # noqa: E402
+from meshanvil import doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -157,6 +157,20 @@ def check_logics_bridge():
         logics_bridge.shutil.which, logics_bridge.subprocess.run = original_which, original_run
 
 
+def check_prune(tmp: Path):
+    root = tmp / "prune"; (root / "work" / "ops").mkdir(parents=True)
+    outputs = root / "work" / "out"; outputs.mkdir()
+    for index in range(2):
+        artefact = outputs / f"{index}.blend"; artefact.write_bytes(b"x" * (index + 1))
+        report = {"id": f"00{index}", "chain": "001", "output": {"path": str(artefact), "state": "present"}, "links": {"docs": []}}
+        (root / "work" / "ops" / f"00{index}_op.json").write_text(json.dumps(report), encoding="utf-8")
+    planned, freed = prune.run(root, 1, True)
+    assert len(planned) == 1 and freed == 1 and (outputs / "0.blend").is_file()
+    prune.run(root, 1, False)
+    changed = json.loads((root / "work" / "ops" / "000_op.json").read_text(encoding="utf-8"))
+    assert not (outputs / "0.blend").exists() and changed["output"]["state"] == "pruned"
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -171,6 +185,7 @@ def main() -> int:
         check_doctor_exit_code()
         check_viewer_start(tmp)
         check_logics_bridge()
+        check_prune(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")

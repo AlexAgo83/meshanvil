@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 95%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:54:40
+> Indicators reviewed: 2026-08-22 00:56:05
 
 # AI Context
 - Summary: Select only report-owned outputs; a dry run is read-only, while apply removes the file and changes only its lifecycle fields.
@@ -38,10 +38,14 @@
 - [ ] Run `python3 -m logics_manager flow finish task task_008_prune_heavy_artefacts_without_losing_the_record.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check` (dry-run/apply lifecycle self-check)
+- `./bin/meshanvil prune --keep 1 --dry-run`
+- `node --check viewer/viewer.js`
+- `git diff --check`
 
 # Report
-- Not started.
+- Added explicit prune selection over report-owned outputs, respecting retention, pins and document citations.
+- Applying a prune changes only `output.state` and `state_changed_at`; the viewer keeps and marks the node.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

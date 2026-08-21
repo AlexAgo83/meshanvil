@@ -77,13 +77,14 @@ function outliner() {
     html += `<div class="outgroup">${esc(t("ui.chain", { id: chain }))}</div>`;
     for (const report of reports) {
       const kind = report.status === "failed" ? "failed" : report.kind;
+      const state = report.output && report.output.state === "pruned" ? "pruned" : report.status;
       const glyph = report.kind === "inspection" ? "i" : "T";
       html += `<button type="button" class="row" data-id="${esc(report.id)}"
         aria-current="${report.id === current}">
         <span class="tri">▾</span>
         <span class="kindicon ${esc(kind)}">${report.status === "failed" ? "×" : glyph}</span>
         <span class="label"><span class="idx">${esc(report.id)}</span> ${esc(report.operation)}</span>
-        <span class="dot ${esc(report.status)}"></span></button>`;
+        <span class="dot ${esc(state)}"></span></button>`;
     }
   }
   if (DATA.runbooks && DATA.runbooks.length) {
@@ -112,13 +113,14 @@ function nodes() {
   let html = "";
   for (const report of DATA.reports) {
     const kind = report.status === "failed" ? "failed" : report.kind;
+    const state = report.output && report.output.state === "pruned" ? "pruned" : report.status;
     const lines = headline(report).map(([key, value]) =>
       `<div class="nline"><span>${esc(key)}</span><b>${esc(value)}</b></div>`).join("");
     html += `<button type="button" class="node ${esc(kind)}" data-id="${esc(report.id)}"
         aria-current="${report.id === current}" style="left:${report._x}px;top:${report._y}px">
       <div class="nhead"><span class="nidx">${esc(report.id)}</span>${esc(report.operation)}</div>
       <div class="nbody">${lines}</div>
-      <div class="nfoot"><span class="dot ${esc(report.status)}"></span>
+      <div class="nfoot"><span class="dot ${esc(state)}"></span>
         ${report.status === "failed" ? esc(t("ui.failed_kept_node")) : esc(report.kind)}</div>
     </button>`;
   }

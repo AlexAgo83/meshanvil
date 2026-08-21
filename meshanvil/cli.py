@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, json, sys
 
-from . import VERSION, doctor, engines, logics_bridge, manifests, runner, viewer
+from . import VERSION, doctor, engines, logics_bridge, manifests, prune, runner, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -35,6 +35,9 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--no-open", action="store_true", help=t("cli.view.no_open"))
     runbook = sub.add_parser("runbook", help=t("cli.runbook.help"))
     runbook.add_argument("chain")
+    pruning = sub.add_parser("prune", help=t("cli.prune.help"))
+    pruning.add_argument("--keep", type=int, default=3)
+    pruning.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -69,6 +72,13 @@ def main(argv: list[str] | None = None) -> int:
             print(message, file=sys.stderr)
             return runner.EXIT_REFUSED
         print(path)
+        return runner.EXIT_OK
+    if arguments.command == "prune":
+        paths, freed = prune.run(manifests.root(), max(0, arguments.keep), arguments.dry_run)
+        for path, size in paths:
+            verb = t("cli.prune.would") if arguments.dry_run else t("cli.prune.deleted")
+            print(t("cli.prune.item", path=path.relative_to(manifests.root()), bytes=size, verb=verb))
+        print(t("cli.prune.total", count=len(paths), bytes=freed))
         return runner.EXIT_OK
     given = {}
     for pair in arguments.set:

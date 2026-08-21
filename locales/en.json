@@ -21,6 +21,13 @@
     "runbook": {
       "help": "scaffold a Logics runbook from one report chain"
     },
+    "prune": {
+      "help": "prune old report-owned artefacts",
+      "would": "would delete",
+      "deleted": "deleted",
+      "item": "{verb} {path} ({bytes} bytes)",
+      "total": "{count} artefact(s), {bytes} bytes"
+    },
     "usage": "usage: ",
     "positional_arguments": "positional arguments",
     "options": "options",
