@@ -1,0 +1,136 @@
+{
+  "title": "Bring the local viewer up to the reviewed mockup interaction surface",
+  "references": [
+    "logics/external/viewer-mockup.html",
+    "viewer/index.html",
+    "viewer/viewer.js",
+    "viewer/viewer.css",
+    "scripts/selfcheck.py"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Viewer parity",
+    "needs": [
+      "The local viewer must retain the interaction surfaces agreed in the reviewed mockup, not merely its visual theme.",
+      "An operator must be able to find a report, compare its states, read linked runbooks and discover commands without the viewer ever executing one.",
+      "Viewer regressions need a real-browser check over generated fixture reports; static source assertions alone cannot prove interaction or layout."
+    ],
+    "context": [
+      "The current viewer already renders the report DAG, detail panel, runbook links, first-run guidance and an in-place image wipe.",
+      "The mockup additionally specifies command menus, Chain/Compare/Runbooks workspaces, an outliner filter, a report-section rail, a labelled comparison handle and a richer first-run splash.",
+      "The viewer remains a plain local page: it reads report files, has no framework or build requirement, and must never start an operation."
+    ],
+    "acceptance_criteria": [
+      "AC1: The viewer exposes Chain, Compare and Runbooks workspaces; each is keyboard-accessible and preserves the selected report where applicable.",
+      "AC2: Menus and visible actions show copyable CLI commands but never execute an operation, open an engine or mutate work/.",
+      "AC3: The outliner filters operation and runbook rows by visible text without changing the underlying report chain.",
+      "AC4: The comparison view labels both states, exposes a visible divider, and supports pointer drag plus keyboard range adjustment through a native control.",
+      "AC5: First run presents the available starter commands, recent-chain absence, doctor results and platform-specific fixes without any blank panel.",
+      "AC6: A repeatable Chrome smoke test opens the generated fixture, exercises workspace, filter and wipe interactions, and captures screenshots outside the repository."
+    ]
+  },
+  "product": {
+    "title": "Reviewable local viewer interaction parity",
+    "overview": "Completes the reviewed local viewer interface around the existing report-driven core. It adds discoverable navigation and command guidance while preserving the hard boundary that the page reads and the CLI acts.",
+    "goals": [
+      "Make the mockup's high-value review paths real and keyboard-accessible.",
+      "Keep every action informational or copyable rather than executable from the browser.",
+      "Verify the real page in Chrome against generated reports before accepting layout or interaction changes."
+    ],
+    "non_goals": [
+      "A browser-to-engine execution bridge, local privileged server or job queue.",
+      "A framework, bundler, dependency or hosted UI service.",
+      "Pixel-identical rendering across operating systems and fonts.",
+      "A 3D viewport or editing geometry from the viewer."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Add safe workspace navigation and command discovery to the viewer",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Viewer parity",
+      "request_acs": ["AC1", "AC2"],
+      "problem": [
+        "The current page implements the Chain surface only, although the reviewed mockup makes comparison and runbooks first-class workspaces.",
+        "The current page has no menus that teach the CLI commands available to the operator."
+      ],
+      "scope_in": [
+        "Chain, Compare and Runbooks tabs using the current static page and report payload.",
+        "Accessible menus that reveal commands as text and use no execution endpoint or browser-side mutation.",
+        "Selection and focus behavior shared by the three workspaces."
+      ],
+      "scope_out": [
+        "Running commands, clipboard permissions, opening Blender, or adding a server API.",
+        "Replacing the report-driven graph or details panel."
+      ],
+      "acceptance_criteria": [
+        "AC1: Each workspace can be selected by mouse and keyboard and reports remain readable after changing workspace.",
+        "AC2: Every menu action displays its CLI command and no action invokes fetch, a process, or a write operation."
+      ]
+    },
+    {
+      "title": "Complete the mockup review controls without weakening the local page boundary",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Viewer parity",
+      "request_acs": ["AC3", "AC4", "AC5"],
+      "problem": [
+        "Finding a report in a longer chain and moving among report sections still requires manual scrolling.",
+        "The in-place wipe lacks the mockup's explicit state labels and visible affordance.",
+        "The first-run page is informative but omits the reviewed starter and recent-chain structure."
+      ],
+      "scope_in": [
+        "A local outliner filter, report-section rail, labelled native comparison control and first-run panels driven by existing doctor and report data.",
+        "No-report and no-comparison states with explicit guidance."
+      ],
+      "scope_out": [
+        "Persisting UI preferences or introducing a database.",
+        "Inventing a command when a manifest does not expose one."
+      ],
+      "acceptance_criteria": [
+        "AC1: Filtering is reversible and hides only nonmatching visible rows.",
+        "AC2: The comparison divider remains draggable and keyboard-adjustable while before/after labels identify the two states.",
+        "AC3: First run describes a valid next command and every displayed environment state has an explanation."
+      ]
+    },
+    {
+      "title": "Exercise the viewer in a real browser against the generated fixture",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Viewer parity",
+      "request_acs": ["AC6"],
+      "problem": [
+        "Host self-checks inspect payloads and source invariants but do not prove browser layout, tab changes, filtering or drag behavior.",
+        "The reviewed mockup and current viewer had never been captured at the same viewport for an explicit parity audit."
+      ],
+      "scope_in": [
+        "A small repeatable Chrome smoke script that builds the fixture page, opens it at a fixed viewport, interacts with the defined controls and writes screenshots to a temporary directory.",
+        "Assertions on observable DOM state and native range values; screenshots are review artefacts, not committed golden images."
+      ],
+      "scope_out": [
+        "A cross-platform pixel-diff suite or committed screenshots.",
+        "A new browser-test framework when Chrome and platform tooling already provide the needed smoke path."
+      ],
+      "acceptance_criteria": [
+        "AC1: One command produces a fixture-page screenshot and fails when Chrome cannot load the page.",
+        "AC2: The smoke test verifies a tab change, a filtered row set and a changed native wipe value.",
+        "AC3: The test leaves no generated browser artefact tracked by Git."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver reviewed viewer interaction parity",
+    "plan": [
+      "Define the browser smoke contract against the current generated fixture before changing the viewer.",
+      "Add safe workspace navigation and command-only menus without creating an execution path.",
+      "Add filter, report navigation, labelled comparison and first-run refinements with the existing plain JavaScript and CSS.",
+      "Run fixture, browser smoke, type checks and workflow validation; record screenshots outside the repository."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/viewer-mockup-parity.json",
+    "mode": "full",
+    "profile": "deep"
+  }
+}

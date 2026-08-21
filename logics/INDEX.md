@@ -16,6 +16,7 @@
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
 | [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Settled |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
+| [prod_002_reviewable_local_viewer_interaction_parity](product/prod_002_reviewable_local_viewer_interaction_parity.md) | Reviewable local viewer interaction parity | Proposed |  |  | product/prod_002_reviewable_local_viewer_interaction_parity.md |
 
 ## Roadmaps
 
@@ -26,30 +27,45 @@ _None_
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
 | [req_000_make_every_3d_operation_reviewable_without_reopening_blender](request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md) | Make every 3D operation reviewable without reopening Blender | Ready |  |  | request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md |
+| [req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface](request/req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface.md) | Bring the local viewer up to the reviewed mockup interaction surface | Draft |  |  | request/req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface.md |
 
 ## Backlog
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | Ready |  | 45% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
-| [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 75% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
-| [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 45% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
-| [item_004_prune_heavy_artefacts_without_losing_the_record](backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | Ready |  | 0% | backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md |
-| [item_005_compare_two_states_of_the_same_geometry](backlog/item_005_compare_two_states_of_the_same_geometry.md) | Compare two states of the same geometry | Ready |  | 0% | backlog/item_005_compare_two_states_of_the_same_geometry.md |
-| [item_006_open_on_nothing_first_run_and_environment_checks](backlog/item_006_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | Ready |  | 0% | backlog/item_006_open_on_nothing_first_run_and_environment_checks.md |
-| [item_007_regenerate_the_demo_fixture_from_the_repository](backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md) | Regenerate the demo fixture from the repository | Ready |  | 0% | backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md |
-| [item_008_read_the_method_from_the_reports_runbook_reverse_index](backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | Ready |  | 0% | backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md |
-| [item_009_ingest_a_step_source_through_a_second_engine](backlog/item_009_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | Ready |  | 0% | backlog/item_009_ingest_a_step_source_through_a_second_engine.md |
-| [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | Ready |  | 0% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
-| [item_011_run_on_macos_windows_and_wsl](backlog/item_011_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | Ready |  | 0% | backlog/item_011_run_on_macos_windows_and_wsl.md |
-| [item_012_take_the_operator_through_setup_step_by_step](backlog/item_012_take_the_operator_through_setup_step_by_step.md) | Take the operator through setup, step by step | Ready |  | 0% | backlog/item_012_take_the_operator_through_setup_step_by_step.md |
-| [item_013_bridge_reports_into_the_logics_corpus](backlog/item_013_bridge_reports_into_the_logics_corpus.md) | Bridge reports into the Logics corpus | Ready |  | 0% | backlog/item_013_bridge_reports_into_the_logics_corpus.md |
+| [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | In progress |  | 95% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
+| [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | In progress |  | 95% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
+| [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | In progress |  | 95% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
+| [item_004_prune_heavy_artefacts_without_losing_the_record](backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | In progress |  | 99% | backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md |
+| [item_005_compare_two_states_of_the_same_geometry](backlog/item_005_compare_two_states_of_the_same_geometry.md) | Compare two states of the same geometry | In progress |  | 98% | backlog/item_005_compare_two_states_of_the_same_geometry.md |
+| [item_006_open_on_nothing_first_run_and_environment_checks](backlog/item_006_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | In progress |  | 99% | backlog/item_006_open_on_nothing_first_run_and_environment_checks.md |
+| [item_007_regenerate_the_demo_fixture_from_the_repository](backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md) | Regenerate the demo fixture from the repository | In progress |  | 99% | backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md |
+| [item_008_read_the_method_from_the_reports_runbook_reverse_index](backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | In progress |  | 99% | backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md |
+| [item_009_ingest_a_step_source_through_a_second_engine](backlog/item_009_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | In progress |  | 99% | backlog/item_009_ingest_a_step_source_through_a_second_engine.md |
+| [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | In progress |  | 99% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
+| [item_011_run_on_macos_windows_and_wsl](backlog/item_011_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | In progress |  | 99% | backlog/item_011_run_on_macos_windows_and_wsl.md |
+| [item_012_take_the_operator_through_setup_step_by_step](backlog/item_012_take_the_operator_through_setup_step_by_step.md) | Take the operator through setup, step by step | In progress |  | 99% | backlog/item_012_take_the_operator_through_setup_step_by_step.md |
+| [item_013_bridge_reports_into_the_logics_corpus](backlog/item_013_bridge_reports_into_the_logics_corpus.md) | Bridge reports into the Logics corpus | In progress |  | 99% | backlog/item_013_bridge_reports_into_the_logics_corpus.md |
+| [item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer](backlog/item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md) | Add safe workspace navigation and command discovery to the viewer | Ready |  | 0% | backlog/item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md |
+| [item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary](backlog/item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md) | Complete the mockup review controls without weakening the local page boundary | Ready |  | 0% | backlog/item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md |
+| [item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture](backlog/item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md) | Exercise the viewer in a real browser against the generated fixture | Ready |  | 0% | backlog/item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md |
 
 ## Tasks
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 35% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | In progress | codex | 95% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+| [task_002_speak_english_by_default_and_french_on_demand](tasks/task_002_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | In progress | codex | 99% | tasks/task_002_speak_english_by_default_and_french_on_demand.md |
+| [task_003_take_the_operator_through_setup_step_by_step](tasks/task_003_take_the_operator_through_setup_step_by_step.md) | Take the operator through setup, step by step | In progress | codex | 99% | tasks/task_003_take_the_operator_through_setup_step_by_step.md |
+| [task_004_open_on_nothing_first_run_and_environment_checks](tasks/task_004_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | In progress | codex | 99% | tasks/task_004_open_on_nothing_first_run_and_environment_checks.md |
+| [task_005_bridge_reports_into_the_logics_corpus](tasks/task_005_bridge_reports_into_the_logics_corpus.md) | Bridge reports into the Logics corpus | In progress | codex | 99% | tasks/task_005_bridge_reports_into_the_logics_corpus.md |
+| [task_006_read_the_method_from_the_reports_runbook_reverse_index](tasks/task_006_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | In progress | codex | 99% | tasks/task_006_read_the_method_from_the_reports_runbook_reverse_index.md |
+| [task_007_compare_two_states_of_the_same_geometry](tasks/task_007_compare_two_states_of_the_same_geometry.md) | Compare two states of the same geometry | In progress | codex | 98% | tasks/task_007_compare_two_states_of_the_same_geometry.md |
+| [task_008_prune_heavy_artefacts_without_losing_the_record](tasks/task_008_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | In progress | codex | 99% | tasks/task_008_prune_heavy_artefacts_without_losing_the_record.md |
+| [task_009_run_on_macos_windows_and_wsl](tasks/task_009_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | In progress | codex | 99% | tasks/task_009_run_on_macos_windows_and_wsl.md |
+| [task_010_ingest_a_step_source_through_a_second_engine](tasks/task_010_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | In progress | codex | 99% | tasks/task_010_ingest_a_step_source_through_a_second_engine.md |
+| [task_011_regenerate_the_demo_fixture_from_the_repository](tasks/task_011_regenerate_the_demo_fixture_from_the_repository.md) | Regenerate the demo fixture from the repository | In progress | codex | 99% | tasks/task_011_regenerate_the_demo_fixture_from_the_repository.md |
+| [task_012_deliver_reviewed_viewer_interaction_parity](tasks/task_012_deliver_reviewed_viewer_interaction_parity.md) | Deliver reviewed viewer interaction parity | Ready |  | 0% | tasks/task_012_deliver_reviewed_viewer_interaction_parity.md |
 
 ## Runbooks
 
@@ -65,3 +81,4 @@ _None_
 | [run_008_weld_and_clean_disconnected_shells_in_a_printable_model](runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md) | Weld and clean disconnected shells in a printable model | Active | other | 2026-08-21 (two loose appendages welded to a body, 3 shells reduced to 1, 0 non-manifold edges) | runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md |
 | [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |
 | [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output) | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
+| [run_011_chain_002](runbook/run_011_chain_002.md) | Chain 002 | Draft | other | Report facts captured; human procedure not yet verified | runbook/run_011_chain_002.md |
