@@ -65,7 +65,14 @@
       <div class="ehead"><span class="icon">▣</span><span class="name" data-i18n="ui.properties">Properties</span>
         <span style="color:var(--dimmer)" data-i18n="ui.report">report</span><span class="push"></span>
         <span class="filter" id="schema"></span></div>
-      <div class="props"><div class="propscroll" id="props"></div></div>
+      <div class="props">
+        <nav class="rail" aria-label="Report sections" data-i18n-aria-label="ui.report_sections">
+          <button type="button" data-section-goto="input" aria-selected="true" title="Input" data-i18n-title="ui.input">I</button>
+          <button type="button" data-section-goto="measurements" aria-selected="false" title="Measurements" data-i18n-title="ui.measurements">M</button>
+          <button type="button" data-section-goto="links" aria-selected="false" title="Links" data-i18n-title="ui.links">L</button>
+        </nav>
+        <div class="propscroll" id="props"></div>
+      </div>
     </section>
   </div>
 

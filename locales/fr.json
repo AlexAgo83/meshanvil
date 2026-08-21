@@ -163,6 +163,7 @@
     ,"workspace_compare": "Comparer"
     ,"workspace_runbooks": "Runbooks"
     ,"filter": "filtrer…"
+    ,"report_sections": "Sections du rapport"
   },
   "operation": {
     "clean_shells": {

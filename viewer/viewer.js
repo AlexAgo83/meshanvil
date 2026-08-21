@@ -69,7 +69,7 @@ function outliner() {
     return;
   }
   if (workspace === "runbooks") {
-    const runbooks = DATA.runbooks || [];
+    const runbooks = (DATA.runbooks || []).filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText));
     document.getElementById("outliner").innerHTML = `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`
       + (runbooks.map((doc) => `<button type="button" class="row" data-doc="${esc(doc.ref)}"
         aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
@@ -194,7 +194,7 @@ function driftNotice(report) {
 }
 
 /* ---------- properties ---------- */
-const block = (title, inner) => `<div class="pblock">
+const block = (title, inner, section = "") => `<div class="pblock"${section ? ` data-section="${esc(section)}"` : ""}>
   <button type="button" class="phead"><span class="tri">▾</span>${esc(title)}</button>
   <div class="pbody">${inner}</div></div>`;
 
@@ -209,11 +209,11 @@ function measurements(report) {
         const delta = (before === null || after === null) ? "—" : num(after - before);
         return `<tr><td>${esc(label)}</td><td>${num(before)}</td><td>${num(after)}</td>
           <td class="delta${delta !== "0" && delta !== "—" ? " moved" : ""}">${esc(delta)}</td></tr>`;
-      }).join("")}</tbody></table>`);
+      }).join("")}</tbody></table>`, "measurements");
   }
   const measured = report.measured || {};
   return block(t("ui.measurements"), `<dl class="kv">${rows.map(([label, key]) =>
-    `<dt>${esc(label)}</dt><dd>${num(measured[key])}</dd>`).join("")}</dl>`);
+    `<dt>${esc(label)}</dt><dd>${num(measured[key])}</dd>`).join("")}</dl>`, "measurements");
 }
 
 function boundingBox(report) {
@@ -233,7 +233,7 @@ function boundingBox(report) {
     ? `<div class="note">${esc(t("ui.axes_moved", { axes: moved.join(", ") || "none" }))}</div>`
     : "";
   return block(t("ui.bounding_box"),
-    `<table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`);
+    `<table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`, "bbox");
 }
 
 function props() {
@@ -242,7 +242,7 @@ function props() {
     const doc = (DATA.runbooks || []).find((item) => item.ref === currentDoc) || (DATA.docs || {})[currentDoc];
     const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(currentDoc));
     target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
-      ${block(t("ui.applied_by"), applied.length ? applied.map((report) => `<button type="button" class="docref docref--op" data-id="${esc(report.id)}"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></button>`).join("") : `<div class="note">${esc(t("ui.not_applied"))}</div>`)}`;
+      ${block(t("ui.applied_by"), applied.length ? applied.map((report) => `<button type="button" class="docref docref--op" data-id="${esc(report.id)}"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></button>`).join("") : `<div class="note">${esc(t("ui.not_applied"))}</div>`, "links")}`;
     return;
   }
   if (start) {
@@ -254,9 +254,9 @@ function props() {
          <div class="note">${esc(blender.reason || "")}</div>${blender.fix ? `<code class="command">${esc(blender.fix)}</code>` : ""}`
       : `<div class="note">${esc(t("ui.start_doctor_missing"))}</div><code class="command">meshanvil doctor</code>`;
     target.innerHTML = `<div class="title-row"><h2>${esc(t("ui.start_environment"))}</h2>
-      <p class="note">${esc(t("ui.start_environment_note"))}</p></div>${block(t("ui.start_doctor"), setup)}
-      ${block(t("ui.start_reports"), `<div class="note">${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</div>`)}
-      ${block(t("ui.start_contributors"), `<div class="note">${esc(t("ui.start_contributors_note"))}</div>`)}`;
+      <p class="note">${esc(t("ui.start_environment_note"))}</p></div>${block(t("ui.start_doctor"), setup, "input")}
+      ${block(t("ui.start_reports"), `<div class="note">${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</div>`, "measurements")}
+      ${block(t("ui.start_contributors"), `<div class="note">${esc(t("ui.start_contributors_note"))}</div>`, "links")}`;
     return;
   }
   if (!current) {
@@ -281,15 +281,15 @@ function props() {
   html += block(t("ui.input"), `<dl class="kv">
       <dt>path</dt><dd>${esc(short(report.input.path))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
-      <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`);
+      <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`, "input");
   if (report.output) {
     html += block(t("ui.output"), `<dl class="kv">
       <dt>path</dt><dd>${esc(short(report.output.path))}</dd>
       <dt>sha-256</dt><dd>${esc((report.output.sha256 || "").slice(0, 16))}…</dd>
-      <dt>state</dt><dd>${esc(report.output.state)}</dd></dl>`);
+      <dt>state</dt><dd>${esc(report.output.state)}</dd></dl>`, "output");
   }
   html += block(t("ui.parameters"), `<dl class="kv">${Object.entries(report.params || {}).map(
-    ([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`);
+    ([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`, "parameters");
   html += measurements(report);
   html += boundingBox(report);
   if (report.findings && report.findings.length) {
@@ -297,13 +297,13 @@ function props() {
       font-size:11.5px;display:flex;flex-direction:column;gap:4px">${report.findings.map((f) =>
       `<li><b style="color:var(--txt);font-weight:500">${esc(f.code)}</b> — ${
         esc(Object.entries(f).filter(([k]) => k !== "code")
-          .map(([k, v]) => `${k}: ${v}`).join(", "))}</li>`).join("")}</ul>`);
+          .map(([k, v]) => `${k}: ${v}`).join(", "))}</li>`).join("")}</ul>`, "findings");
   }
   html += block(t("ui.not_checked"), `<div class="codes">${(report.warnings || []).map((w) =>
       `<span class="code">${esc(w)}</span>`).join("") || `<span class="note">${esc(t("ui.nothing_declared"))}</span>`}</div>
-    <div class="note">${esc(t("ui.warning_codes_note"))}</div>`);
+    <div class="note">${esc(t("ui.warning_codes_note"))}</div>`, "warnings");
   html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
-      `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`);
+      `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`, "tool");
   html += block(t("ui.links"), `<div class="wikilinks">
       ${report.links.parent
         ? `<a class="docref docref--op" href="#" data-goto="${esc(report.links.parent)}">
@@ -313,7 +313,7 @@ function props() {
            <span class="note">${esc(t("ui.parent_resolved", { source: report.links.parent_source }))}</span>`
         : `<span class="note">${esc(t("ui.no_parent"))}</span>`}
       ${(report.links.docs || []).map(docChip).join("")}
-    </div>`);
+    </div>`, "links");
   target.innerHTML = html;
 }
 
@@ -390,8 +390,18 @@ function selectWorkspace(next) {
   outliner(); nodes(); props(); preview();
 }
 
+function jumpReportSection(section) {
+  const block = document.querySelector(`#props [data-section="${CSS.escape(section)}"]`);
+  if (block) block.scrollIntoView({ block: "start" });
+  for (const button of document.querySelectorAll("[data-section-goto]")) {
+    button.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (button).dataset.sectionGoto === section));
+  }
+}
+
 document.addEventListener("click", (event) => {
   const target = /** @type {Element} */ (event.target);
+  const section = target.closest("[data-section-goto]");
+  if (section) { jumpReportSection(/** @type {HTMLElement} */ (section).dataset.sectionGoto || "input"); return; }
   const workspaceTab = target.closest("[data-workspace]");
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const goto = target.closest("[data-goto]");
@@ -437,6 +447,9 @@ for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
 }
 for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
   node.setAttribute("placeholder", t(/** @type {HTMLElement} */ (node).dataset.i18nPlaceholder));
+}
+for (const node of document.querySelectorAll("[data-i18n-title]")) {
+  node.setAttribute("title", t(/** @type {HTMLElement} */ (node).dataset.i18nTitle));
 }
 if (current) select(current);
 else { outliner(); nodes(); props(); preview(); }

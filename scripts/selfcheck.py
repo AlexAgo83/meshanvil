@@ -164,6 +164,8 @@ def check_viewer_comparison_layout():
     assert 'compare.style.setProperty("--wipe", `${wipe}%`)' in script
     assert 'data-workspace="compare"' in page and "function selectWorkspace" in script
     assert 'workspace === "runbooks"' in script and "fetch(" not in script
+    assert 'data-section-goto="input"' in page and 'function jumpReportSection' in script
+    assert 'DATA.runbooks || []).filter' in script
 
 
 def check_logics_bridge():
