@@ -47,30 +47,39 @@ def _work(root: Path) -> dict:
             "reason": t("doctor.work.reason"), "fix": "mkdir -p work"}
 
 
-def _signature(items: list[dict]) -> list[dict]:
-    return [{key: item.get(key) for key in ("name", "path", "mtime_ns")} for item in items]
+def _engine_signature() -> list[dict]:
+    items = []
+    for name in ("blender", "freecad"):
+        try:
+            path = engines.find(name)
+        except engines.EngineMissing:
+            items.append({"name": name, "path": None, "mtime_ns": None})
+        else:
+            items.append({"name": name, "path": str(path), "mtime_ns": path.stat().st_mtime_ns})
+    return items
 
 
 def check(root: Path) -> dict:
     """Write one machine-readable setup result; engine probes are cached while binaries stay put."""
-    current = [_engine("blender", True), _engine("freecad", False)]
+    signature = _engine_signature()
     cache_path = root / CACHE
     try:
         cached = json.loads(cache_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         cached = {}
-    if cached.get("schema_version") == CACHE_VERSION and cached.get("signature") == _signature(current):
+    if cached.get("schema_version") == CACHE_VERSION and cached.get("signature") == signature:
         current = cached["engines"]
     else:
+        current = [_engine("blender", True), _engine("freecad", False)]
         cache_path.parent.mkdir(parents=True, exist_ok=True)
-        cache_path.write_text(json.dumps({"schema_version": CACHE_VERSION, "signature": _signature(current),
+        cache_path.write_text(json.dumps({"schema_version": CACHE_VERSION, "signature": signature,
                                           "engines": current}, indent=1) + "\n",
                               encoding="utf-8")
     for item in current:
         item["reason"] = _reason(item["name"])
     requirements = [*current, _work(root)]
-    result = {"ok": all(not item["required"] or item["state"] == "found" for item in requirements),
-              "requirements": requirements}
+    blocker = next((item["name"] for item in requirements if item["required"] and item["state"] != "found"), None)
+    result = {"ok": blocker is None, "next": blocker, "requirements": requirements}
     report_path = root / REPORT
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")

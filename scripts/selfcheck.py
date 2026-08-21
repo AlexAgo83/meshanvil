@@ -98,13 +98,15 @@ def check_doctor(tmp: Path):
     binary = tmp / "blender"
     binary.write_text("", encoding="utf-8")
     original_find, original_version = engines.find, engines.version
+    calls = []
     try:
         engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing())
-        engines.version = lambda path: ("5.2.0", "")
+        engines.version = lambda path: (calls.append(path) or ("5.2.0", ""))
         result = doctor.check(tmp)
         assert result["ok"] is True
         assert [item["state"] for item in result["requirements"]] == ["found", "missing", "found"]
         assert (tmp / "work" / "doctor.json").is_file()
+        assert doctor.check(tmp)["next"] is None and len(calls) == 1
     finally:
         engines.find, engines.version = original_find, original_version
 
