@@ -155,6 +155,14 @@ def check_viewer_start(tmp: Path):
     assert payload["reports"] == [] and payload["doctor"]["ok"] is False and not payload["ops_exists"]
 
 
+def check_viewer_comparison_layout():
+    css = (ROOT / "viewer" / "viewer.css").read_text(encoding="utf-8")
+    script = (ROOT / "viewer" / "viewer.js").read_text(encoding="utf-8")
+    assert ".colstack > .editor:first-child{flex:1}" in css
+    assert ".compare-after{clip-path:" in css
+    assert 'compare.style.setProperty("--wipe", `${wipe}%`)' in script
+
+
 def check_logics_bridge():
     original_which, original_run = logics_bridge.shutil.which, logics_bridge.subprocess.run
     try:
@@ -209,6 +217,7 @@ def main() -> int:
         check_wsl_boundary(tmp)
         check_doctor_exit_code()
         check_viewer_start(tmp)
+        check_viewer_comparison_layout()
         check_logics_bridge()
         check_prune(tmp)
         check_target_lock(tmp)
