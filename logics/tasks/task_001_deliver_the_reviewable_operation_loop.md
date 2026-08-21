@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:34:56
+> Indicators reviewed: 2026-08-21 22:38:39
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -28,6 +28,7 @@
 - [ ] 5b. `item_010` -- the two catalogues and the parity check, before the interface strings multiply. Retrofitting i18n costs more than starting with it.
 - [ ] 6. `item_007` -- assert the fixture: the generated defects must be found by the sweep unaided, which is the ground truth the tools never had.
 - [ ] 7. `item_003` -- the viewer: chain as a top-down DAG, report panel, image editor, menus that show commands.
+- [ ] 7b. `item_012` -- the setup check: requirements, version floors, and the fix shown per platform. It comes before the first-run screen, which only renders what it produces.
 - [ ] 8. `item_006` -- the first run: what to do on an empty work/ops, and the environment checks.
 - [ ] 9. `item_008` -- the runbook reverse index, derived from the links the reports already carry.
 - [ ] 10. `item_005` -- the comparison: fixed-camera renders of both states, the wipe, the numeric difference beside it.

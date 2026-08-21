@@ -41,6 +41,7 @@ _None_
 | [item_009_ingest_a_step_source_through_a_second_engine](backlog/item_009_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | Ready |  | 0% | backlog/item_009_ingest_a_step_source_through_a_second_engine.md |
 | [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | Ready |  | 0% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
 | [item_011_run_on_macos_windows_and_wsl](backlog/item_011_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | Ready |  | 0% | backlog/item_011_run_on_macos_windows_and_wsl.md |
+| [item_012_take_the_operator_through_setup_step_by_step](backlog/item_012_take_the_operator_through_setup_step_by_step.md) | Take the operator through setup, step by step | Ready |  | 0% | backlog/item_012_take_the_operator_through_setup_step_by_step.md |
 
 ## Tasks
 

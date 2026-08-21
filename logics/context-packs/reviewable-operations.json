@@ -335,7 +335,8 @@
           "item_008_read_the_method_from_the_reports_runbook_reverse_index",
           "item_009_ingest_a_step_source_through_a_second_engine",
           "item_010_speak_english_by_default_and_french_on_demand",
-          "item_011_run_on_macos_windows_and_wsl"
+          "item_011_run_on_macos_windows_and_wsl",
+          "item_012_take_the_operator_through_setup_step_by_step"
         ],
         "prod": [
           "prod_001_reviewable_agent_driven_3d_operations"
@@ -603,11 +604,11 @@
     }
   ],
   "estimates": {
-    "char_count": 26588,
+    "char_count": 26645,
     "companion_doc_count": 6,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:34:56Z",
+  "generated_at": "2026-08-21T20:38:55Z",
   "handoff": {
     "companion_doc_count": 6,
     "enabled": true,

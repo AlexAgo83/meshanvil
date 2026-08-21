@@ -19,6 +19,17 @@ what failed, and how each claim was checked.
 The working assumption throughout: an agent driving a 3D application is only as good as the
 measurements it takes. Renders are how you get fooled.
 
+## What it needs
+
+Blender 4.2 or later. That is the only requirement to run an operation -- the floor comes from
+the operators the pipeline calls, `bpy.ops.wm.stl_export` among them. FreeCAD 1.0 is optional
+and needed only to read a STEP source. Node is for contributors, to check the corpus, and never
+to run an operation.
+
+Verified on macOS (Blender 5.2), Windows (Blender 5.2, not on `PATH`) and WSL Ubuntu (no Linux
+Blender; the Windows binary is called through `/mnt/c` with paths translated). Linux is
+untested. `MESHANVIL_BLENDER` and `MESHANVIL_FREECAD` override the discovered paths.
+
 ## Reopening this
 
 Blender is at `/Applications/Blender.app/Contents/MacOS/Blender` (not on PATH). Everything

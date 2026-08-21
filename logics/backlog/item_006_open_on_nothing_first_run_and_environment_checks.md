@@ -8,6 +8,7 @@
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-21 22:38:39
 
 # AI Context
 - Summary: The first launch, when work/ops is empty: what the tool can do, what it found in its environment, and the command that writes the first report.
@@ -23,6 +24,7 @@
 # Scope
 - In:
   - A start screen listing what a first chain can be: inspect a source, sweep for export defects, prepare a printable body -- each showing the command it runs.
+  - Rendering the result of `meshanvil doctor` (item_012) rather than checking anything itself: one list, two surfaces.
   - Environment checks stated plainly: the Blender binary and its version, the pinned logics-manager, whether work/ops exists yet, and Mermaid available offline.
   - The override named where it is needed: the environment variable that points at another Blender.
   - A pointer to the generated demo scene for someone with no source of their own.
@@ -30,6 +32,7 @@
 - Out:
   - Installing anything, including Blender.
   - A configuration screen. The one override is an environment variable, stated where it matters.
+  - Deciding what the requirements are or how they are checked: that is item_012, and this slice only displays what it produces.
   - Telemetry, first-run tracking, or any network call.
 
 # Acceptance criteria
