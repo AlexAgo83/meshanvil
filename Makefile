@@ -7,13 +7,17 @@
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile selfcheck hygiene fixture logics
+.PHONY: check compile types selfcheck hygiene fixture logics
 
-check: compile selfcheck hygiene
+check: compile types selfcheck hygiene
 
 compile:
 	$(PYTHON) -m compileall -q meshanvil meshanvil_engine pipeline tools scripts
 	@find meshanvil meshanvil_engine pipeline tools scripts -name '__pycache__' -type d -exec rm -rf {} +
+
+# JSDoc types over the viewer: checked, never emitted, so the page keeps loading as plain JS.
+types:
+	@npx --no-install tsc --noEmit && echo "types: ok"
 
 selfcheck:
 	@$(PYTHON) scripts/selfcheck.py

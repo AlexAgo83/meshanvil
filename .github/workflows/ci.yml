@@ -20,5 +20,5 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: make check
+      - run: make check        # compile, types, selfcheck, hygiene
       - run: make logics       # the corpus is part of the deliverable, so it is gated

@@ -4,16 +4,21 @@
 // @ts-check
 "use strict";
 
-/** @typedef {{id:string, chain:string, kind:string, status:string, operation:string,
+/** The report contract, as adr_001 defines it. Named OperationReport rather than Report:
+ * the DOM already has a Report interface, and the collision silently made every property
+ * resolve against it.
+ * @typedef {{id:string, chain:string, kind:string, status:string, operation:string,
+ *   schema_version:number, error?:string,
  *   params:Object, tool:Object, input:Object, output?:Object, before?:Object, after?:Object,
  *   measured?:Object, bbox_delta_mm?:Object, warnings:string[], findings?:Object[],
  *   renders?:Object[], links:{parent:string|null, parent_source:string|null, docs:string[]},
- *   duration_s:number, created_at:string}} Report */
+ *   duration_s:number, created_at:string,
+ *   _x?:number, _y?:number}} OperationReport */
 
-const DATA = /** @type {{reports: Report[], generated_at: string, root: string}} */ (
-  window.MESHANVIL || { reports: [], generated_at: "", root: "" });
+const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string}} */ (
+  /** @type {any} */ (window).MESHANVIL || { reports: [], generated_at: "", root: "" });
 
-/** @type {Map<string, Report>} */
+/** @type {Map<string, OperationReport>} */
 const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
 let current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
 let view = 0;
@@ -115,6 +120,31 @@ function noodles() {
   document.getElementById("noodles").innerHTML = path;
 }
 
+/* ---------- version drift ----------
+   A remesh does not produce the same mesh across two Blender versions. Two reports made by
+   different engines are not comparable, and saying nothing would let them be compared. */
+function engineVersions() {
+  const seen = new Map();
+  for (const report of DATA.reports) {
+    const key = `${(report.tool || {}).engine_version || "?"}`;
+    if (!seen.has(key)) seen.set(key, []);
+    seen.get(key).push(report.id);
+  }
+  return seen;
+}
+
+function driftNotice(report) {
+  const versions = engineVersions();
+  if (versions.size < 2) return "";
+  const mine = `${(report.tool || {}).engine_version || "?"}`;
+  const others = [...versions.keys()].filter((v) => v !== mine);
+  return `<div class="pblock"><div class="pbody">
+    <div class="codes"><span class="code">engine_version_differs_in_chain</span></div>
+    <div class="note">This report was produced by engine ${esc(mine)}; others in this chain used
+    ${esc(others.join(", "))}. Numbers from different engine versions are not comparable.</div>
+  </div></div>`;
+}
+
 /* ---------- properties ---------- */
 const block = (title, inner) => `<div class="pblock">
   <button type="button" class="phead"><span class="tri">▾</span>${esc(title)}</button>
@@ -178,6 +208,7 @@ function props() {
       ${report.error ? `<p class="note">${esc(report.error)}</p>` : ""}
     </div>`;
 
+  html += driftNotice(report);
   html += block("Input", `<dl class="kv">
       <dt>path</dt><dd>${esc(short(report.input.path))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
@@ -262,12 +293,13 @@ function select(id) {
 }
 
 document.addEventListener("click", (event) => {
-  const goto = event.target.closest("[data-goto]");
-  if (goto) { event.preventDefault(); select(goto.dataset.goto); return; }
-  const viewTab = event.target.closest("[data-view]");
-  if (viewTab) { view = Number(viewTab.dataset.view); preview(); return; }
-  const node = event.target.closest("[data-id]");
-  if (node) select(node.dataset.id);
+  const target = /** @type {Element} */ (event.target);
+  const goto = target.closest("[data-goto]");
+  if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
+  const viewTab = target.closest("[data-view]");
+  if (viewTab) { view = Number(/** @type {HTMLElement} */ (viewTab).dataset.view); preview(); return; }
+  const node = target.closest("[data-id]");
+  if (node) select(/** @type {HTMLElement} */ (node).dataset.id);
 });
 
 place();

@@ -10,6 +10,7 @@
     "logics:view": "logics-manager view --open --port 0"
   },
   "devDependencies": {
-    "@grifhinz/logics-manager": "^2.22.2"
+    "@grifhinz/logics-manager": "^2.22.2",
+    "typescript": "^7.0.2"
   }
 }

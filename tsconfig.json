@@ -1,0 +1,16 @@
+{
+  "//": "Types where they pay -- the report contract -- with nothing emitted and no bundle.",
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true
+  },
+  "include": ["viewer/*.js"]
+}
