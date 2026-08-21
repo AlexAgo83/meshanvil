@@ -4,7 +4,7 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 45%
+> Progress: 55%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -53,3 +53,6 @@
 
 # Tasks
 - `task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer`
+
+# Notes
+- Task `task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer` was finished via `logics-manager flow finish task` on 2026-08-22.
