@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:15:54
+> Indicators reviewed: 2026-08-22 01:18:07
 > Owner: codex
 
 # AI Context
@@ -64,7 +64,7 @@
 - [x] 13. Reports, runbooks and the reverse index cross-link the review method.
 - [x] ADR 009 checkpoint: affected Logics documents were updated during delivery waves and the repository was left commit-ready.
 - [x] Keep commit creation under operator control; commits were made at meaningful delivery waves.
-- [ ] GATE: do not close until lint, audit, and scaffold validation pass.
+- [x] GATE: lint, audit, scaffold validation and fixture validation pass. Task closure still awaits request-level proof reconciliation.
 
 # Backlog
 - `item_001_define_the_operation_report_and_write_one_from_every_operation`
@@ -108,6 +108,7 @@
 # Validation
 - `make check` passed: compile, JSDoc type check, host self-check, i18n and hygiene.
 - `make fixture` passed: four reports and defects found unaided.
+- `logics-manager flow validate` passed with 0 findings; `lint --require-status` passed and `audit --group-by-doc` has no blocking issue.
 
 # Report
 - The review loop is delivered for the seven explicit CLI operations. The source pipeline is intentionally retained as the historical hardcoded chain, per `item_001`, not an unfinished conversion backlog. Task closeout remains separate because global request-AC traceability must be reconciled without inventing proof.
