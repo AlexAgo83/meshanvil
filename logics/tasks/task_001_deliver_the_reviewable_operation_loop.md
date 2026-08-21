@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:28:59
+> Indicators reviewed: 2026-08-21 22:34:56
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -31,6 +31,7 @@
 - [ ] 8. `item_006` -- the first run: what to do on an empty work/ops, and the environment checks.
 - [ ] 9. `item_008` -- the runbook reverse index, derived from the links the reports already carry.
 - [ ] 10. `item_005` -- the comparison: fixed-camera renders of both states, the wipe, the numeric difference beside it.
+- [ ] 10b. `item_011` -- the platform matrix: engine discovery, the WSL path translation, and the opener. Right after the loop works on one platform, before more surface is built on top of it.
 - [ ] 11. `item_009` -- STEP ingestion through FreeCAD, once the loop is proven on Blender. It is the operation that most needs the heartbeat, so it comes after it exists.
 - [ ] 12. `item_004` -- pruning, only once the disk footprint is real. Not before.
 - [ ] 13. Record what the loop changes about reviewing an operation as a runbook, and note in run_006 and run_009 where the reports now carry what those procedures ask to be checked by hand.

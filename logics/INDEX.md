@@ -40,6 +40,7 @@ _None_
 | [item_008_read_the_method_from_the_reports_runbook_reverse_index](backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | Ready |  | 0% | backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md |
 | [item_009_ingest_a_step_source_through_a_second_engine](backlog/item_009_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | Ready |  | 0% | backlog/item_009_ingest_a_step_source_through_a_second_engine.md |
 | [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | Ready |  | 0% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
+| [item_011_run_on_macos_windows_and_wsl](backlog/item_011_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | Ready |  | 0% | backlog/item_011_run_on_macos_windows_and_wsl.md |
 
 ## Tasks
 

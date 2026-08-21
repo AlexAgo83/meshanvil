@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:27:37
+> Indicators reviewed: 2026-08-21 22:34:43
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -48,9 +48,14 @@ flowchart TD
 - **A server is opt-in.** `meshanvil view --serve` starts `http.server` bound to `127.0.0.1` on port 0 for auto-refresh while a chain is running. It serves `work/` read-only. That is the only mode that keeps a process alive.
 - **The graph is drawn with our own SVG.** Bezier links between absolutely positioned nodes, as the mockup already demonstrates. Mermaid stays for `Export chain as Mermaid`, which produces diagram text for a Logics document and renders nothing here.
 - **No publication yet.** No PyPI package, no npm package, no installer. The repository is cloned and run. The npm devDependency remains for the corpus tooling only, as `adr_002` decided.
-- **Cross-platform by environment variable.** `MESHANVIL_BLENDER` overrides the Blender path; the documented default is the macOS location. Nothing else is platform-specific.
+- **Cross-platform, on a measured matrix.** macOS: Blender 5.2 with Python 3.13.13, host Python 3.11.15, FreeCAD 1.0 on 3.11.13. Windows: Blender 5.2 installed but not on PATH, host Python 3.10.4. WSL Ubuntu: host Python 3.14.4, no Linux Blender, the Windows binary reachable through /mnt/c. Linux: unverified, no machine with Blender available to check it.
+- **The Python floor is 3.10, not 3.11.** It was declared before the platforms were measured; Windows carries 3.10.4 and nothing the host needs -- `json`, `subprocess`, `hashlib`, `argparse`, `http.server` -- requires more. The floor follows the machines rather than the machines following the floor.
+- **Engines are located, then overridden.** The macOS bundle, the Windows install directory, a binary on PATH, each superseded by `MESHANVIL_BLENDER` or `MESHANVIL_FREECAD`. A missing engine is exit code 2 with a message naming the override.
+- **Paths are translated at the engine boundary, not before.** When the host runs in WSL and the engine is a Windows binary, every path in the job is converted with `wslpath` on the way in and back on the way out. Verified: the Windows Blender runs from WSL both on a script under `C:` and on a script inside the WSL filesystem reached through a `\\wsl.localhost` UNC path, reporting the same Python 3.13.13 in both.
+- **The viewer is opened by the platform's own opener, and WSL is the exception.** `wslview` is absent there and `xdg-open` has no browser behind it; `explorer.exe` is what works.
 
 # Consequences
+- The file boundary earns its keep a second time on WSL: nothing is parsed from a stream that crosses two operating systems, only a file that both sides can read once its path is translated.
 - Someone with Blender installed can clone and run an operation with no other setup. That is the acceptance bar for the install cost, and it is checkable.
 - Three interpreters now: the host on 3.11+, Blender on 3.13, FreeCAD on 3.11. None of them import each other. The rule generalises rather than complicates: engine code imports its engine, host code imports neither.
 - Two codebases in one repository with a hard rule between them: `tools/` and `pipeline/` import `bpy`, `bin/` and the host module never do. A host module importing `bpy` is a defect, and it is cheap to check.

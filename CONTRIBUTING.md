@@ -5,8 +5,13 @@
 - Install Blender 4.2 or later. The scripts are run with `-b` (headless) and never need
   the interface.
 - The examples assume macOS, where Blender is not on `PATH`:
-  `/Applications/Blender.app/Contents/MacOS/Blender`. On Linux or Windows, use your own
-  path; nothing else changes.
+  `/Applications/Blender.app/Contents/MacOS/Blender`. `MESHANVIL_BLENDER` overrides it.
+- Verified platforms: macOS (Blender 5.2, host Python 3.11), Windows (Blender 5.2 installed but
+  not on `PATH`, host Python 3.10) and WSL Ubuntu (host Python 3.14, no Linux Blender -- the
+  Windows binary is called through `/mnt/c` and paths are translated with `wslpath`). Blender
+  reports the same embedded Python 3.13 on all three.
+- **Linux is unverified.** No machine with Blender was available to check it. Treat it as
+  untested rather than supported until someone runs the fixture there.
 - Put your own 3D sources under `work/in/`. Nothing in `work/` is versioned.
 - The corpus checks need Node: `npm ci` installs the pinned `logics-manager`. Running the 3D
   operations themselves needs only Blender.

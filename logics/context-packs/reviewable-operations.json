@@ -334,7 +334,8 @@
           "item_007_regenerate_the_demo_fixture_from_the_repository",
           "item_008_read_the_method_from_the_reports_runbook_reverse_index",
           "item_009_ingest_a_step_source_through_a_second_engine",
-          "item_010_speak_english_by_default_and_french_on_demand"
+          "item_010_speak_english_by_default_and_french_on_demand",
+          "item_011_run_on_macos_windows_and_wsl"
         ],
         "prod": [
           "prod_001_reviewable_agent_driven_3d_operations"
@@ -602,11 +603,11 @@
     }
   ],
   "estimates": {
-    "char_count": 26547,
+    "char_count": 26588,
     "companion_doc_count": 6,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:29:52Z",
+  "generated_at": "2026-08-21T20:34:56Z",
   "handoff": {
     "companion_doc_count": 6,
     "enabled": true,

@@ -7,7 +7,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:07:23
+> Indicators reviewed: 2026-08-21 22:34:44
 
 # AI Context
 - Summary: Each headless operation writes a report carrying its measurements and its bounding-box comparison, one command runs it whatever agent is driving, and a local viewer makes the chain readable without opening Blender.
@@ -27,6 +27,7 @@
 - The viewer must never be able to damage anything: it reads, and the command acts.
 - The true source is a STEP file that Blender cannot read at all, and re-importing it is what removes the defects the tessellated export introduced. Reading it must be an operation like any other.
 - The tool must speak English by default and French on demand, since the repository is public and its author's other work is French.
+- The tool must open on Windows and on WSL, not only on macOS, since that is where the operator's other machines are.
 - An agent must be able to drive the tool without parsing prose: an exit code, a report path, and a report that records what was actually run.
 - The bounding-box comparison against the source must be computed and shown for every operation, because that single check caught every failure in the delivered chain while the manifold checks passed throughout.
 - An operation must be runnable by any agent from a single command, without a Blender-specific or vendor-specific integration.
@@ -64,6 +65,7 @@
 - AC20: Concurrent runs never collide: identities are allocated so two agents cannot obtain the same one, and two operations never write the same target at once.
 - AC21: An operation that runs for minutes proves it is alive, so a caller can tell slow from hung.
 - AC22: The viewer treats every value read from a report as text, never as markup.
+- AC23: The tool runs on macOS, on Windows and in WSL, including the case where the host is Linux and the engine is a Windows binary; what was not verified is stated as unverified.
 
 # Definition of Ready (DoR)
 - [x] Problem statement is explicit and user impact is clear.
@@ -97,3 +99,4 @@
 - `item_008_read_the_method_from_the_reports_runbook_reverse_index`
 - `item_009_ingest_a_step_source_through_a_second_engine`
 - `item_010_speak_english_by_default_and_french_on_demand`
+- `item_011_run_on_macos_windows_and_wsl`
