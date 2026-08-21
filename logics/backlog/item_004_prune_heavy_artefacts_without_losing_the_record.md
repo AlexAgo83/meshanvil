@@ -1,13 +1,14 @@
 ## item_004_prune_heavy_artefacts_without_losing_the_record - Prune heavy artefacts without losing the record
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 00:54:29
 
 # AI Context
 - Summary: A pruning policy that deletes heavy artefacts by rule -- keep the last N, keep anything pinned or cited by a runbook -- and records the deletion in the report it describes, so the timeline keeps no holes.
@@ -65,3 +66,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_008_prune_heavy_artefacts_without_losing_the_record`
