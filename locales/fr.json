@@ -167,6 +167,9 @@
     },
     "voxel_remesh": {
       "summary": "Joint tous les maillages et les remaille à une taille de voxel pour produire un solide fermé."
+    },
+    "import_step": {
+      "summary": "Lit une source STEP dans FreeCAD et la tesselle en maillage STL."
     }
   }
 }

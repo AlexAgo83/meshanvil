@@ -162,9 +162,13 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     job_path = root / JOBS / f"{identity}.json"
     job_path.write_text(json.dumps(job, indent=1) + "\n", encoding="utf-8")
 
-    command = [str(binary), "-b", engines.for_engine(source, binary),
-               "-P", engines.for_engine(root / manifest["script"], binary),
-               "--", "--job", engines.for_engine(job_path, binary)]
+    if manifest["engine"] == "freecad":
+        command = [str(binary), "-c", engines.for_engine(root / manifest["script"], binary),
+                   "--", "--job", engines.for_engine(job_path, binary)]
+    else:
+        command = [str(binary), "-b", engines.for_engine(source, binary),
+                   "-P", engines.for_engine(root / manifest["script"], binary),
+                   "--", "--job", engines.for_engine(job_path, binary)]
     started = time.time()
     try:
         watch(subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),

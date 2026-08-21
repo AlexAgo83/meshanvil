@@ -1,0 +1,11 @@
+{
+  "operation": "import_step",
+  "engine": "freecad",
+  "kind": "transform",
+  "script": "tools/import_step.py",
+  "summary_key": "operation.import_step.summary",
+  "params": [
+    {"name": "linear_deflection_mm", "type": "float", "default": 0.1, "unit": "mm"},
+    {"name": "angular_deflection_deg", "type": "float", "default": 15.0, "unit": "deg"}
+  ]
+}

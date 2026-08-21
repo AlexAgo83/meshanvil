@@ -167,6 +167,9 @@
     },
     "voxel_remesh": {
       "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid."
+    },
+    "import_step": {
+      "summary": "Read a STEP source in FreeCAD and tessellate it into an STL mesh."
     }
   }
 }

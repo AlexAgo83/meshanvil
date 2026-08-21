@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 88%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:57:22
+> Indicators reviewed: 2026-08-22 00:58:43
 
 # AI Context
 - Summary: FreeCAD receives the normal job file, writes an STL and report directly, and owns its import heartbeat without a Blender-side import.
@@ -38,10 +38,13 @@
 - [ ] Run `python3 -m logics_manager flow finish task task_010_ingest_a_step_source_through_a_second_engine.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check`
+- `./bin/meshanvil list` exposes `import_step` with `engine: freecad`
+- Missing source refusal exits 2 before any engine is launched
+- Real STEP import remains pending a local non-versioned STEP source
 
 # Report
-- Not started.
+- Added the FreeCAD job command, `import_step` manifest and headless script with progress, source solid count, bounds and recorded tessellation parameters.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
