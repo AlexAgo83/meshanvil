@@ -4,11 +4,11 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 98%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:54:23
+> Indicators reviewed: 2026-08-22 01:01:54
 
 # AI Context
 - Summary: Two states of one subject rendered on an identical camera, wiped against each other in each canonical view, with the numeric difference beside them.

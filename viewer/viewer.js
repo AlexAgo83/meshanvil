@@ -383,7 +383,10 @@ document.addEventListener("click", (event) => {
 document.addEventListener("input", (event) => {
   const input = /** @type {HTMLInputElement} */ (event.target);
   if (!input.matches("[data-wipe]")) return;
-  wipe = Number(input.value); preview();
+  wipe = Number(input.value);
+  const after = document.querySelector(".compare-after");
+  if (after) after.style.width = `${wipe}%`;
+  input.setAttribute("aria-valuetext", `${wipe}%`);
 });
 
 document.getElementById("start-screen").addEventListener("click", () => {
