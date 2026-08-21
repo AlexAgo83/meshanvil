@@ -7,7 +7,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:38:39
+> Indicators reviewed: 2026-08-21 22:42:52
 
 # AI Context
 - Summary: Each headless operation writes a report carrying its measurements and its bounding-box comparison, one command runs it whatever agent is driving, and a local viewer makes the chain readable without opening Blender.
@@ -27,6 +27,7 @@
 - The viewer must never be able to damage anything: it reads, and the command acts.
 - The true source is a STEP file that Blender cannot read at all, and re-importing it is what removes the defects the tessellated export introduced. Reading it must be an operation like any other.
 - The tool must speak English by default and French on demand, since the repository is public and its author's other work is French.
+- The measurements must be able to leave the tool: a report is what a task closeout asks for, and retyping numbers from a terminal that has scrolled away is how proof gets lost.
 - Someone arriving with a clone must be taken to a first report: the external tools it needs, which are optional, and what to run when one is missing -- stated before an operation fails deep inside an engine.
 - The tool must open on Windows and on WSL, not only on macOS, since that is where the operator's other machines are.
 - An agent must be able to drive the tool without parsing prose: an exit code, a report path, and a report that records what was actually run.
@@ -66,6 +67,7 @@
 - AC20: Concurrent runs never collide: identities are allocated so two agents cannot obtain the same one, and two operations never write the same target at once.
 - AC21: An operation that runs for minutes proves it is alive, so a caller can tell slow from hung.
 - AC22: The viewer treats every value read from a report as text, never as markup.
+- AC25: A measurement can become proof: a successful operation can record its command, its summary and its report against an acceptance criterion of a task, on demand and never silently, and every document reference the tool shows is read from the corpus rather than from a copy.
 - AC24: Getting from a clone to a first report is guided: every requirement is named with its state and its reason, a missing one is refused before an operation starts rather than from inside it, and each fix is shown as a command for the platform in front of the operator.
 - AC23: The tool runs on macOS, on Windows and in WSL, including the case where the host is Linux and the engine is a Windows binary; what was not verified is stated as unverified.
 
@@ -103,3 +105,4 @@
 - `item_010_speak_english_by_default_and_french_on_demand`
 - `item_011_run_on_macos_windows_and_wsl`
 - `item_012_take_the_operator_through_setup_step_by_step`
+- `item_013_bridge_reports_into_the_logics_corpus`

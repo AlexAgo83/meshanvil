@@ -236,7 +236,8 @@
         "adr": [
           "adr_001_operation_report_format",
           "adr_002_depend_on_logics_manager_and_reuse_its_structure",
-          "adr_004_target_technology_and_process_model"
+          "adr_004_target_technology_and_process_model",
+          "adr_006_bridges_between_meshanvil_and_logics"
         ],
         "item": [
           "item_003_read_the_chain_of_operations_in_a_local_viewer"
@@ -336,7 +337,8 @@
           "item_009_ingest_a_step_source_through_a_second_engine",
           "item_010_speak_english_by_default_and_french_on_demand",
           "item_011_run_on_macos_windows_and_wsl",
-          "item_012_take_the_operator_through_setup_step_by_step"
+          "item_012_take_the_operator_through_setup_step_by_step",
+          "item_013_bridge_reports_into_the_logics_corpus"
         ],
         "prod": [
           "prod_001_reviewable_agent_driven_3d_operations"
@@ -604,11 +606,11 @@
     }
   ],
   "estimates": {
-    "char_count": 26645,
+    "char_count": 26743,
     "companion_doc_count": 6,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:38:55Z",
+  "generated_at": "2026-08-21T20:43:08Z",
   "handoff": {
     "companion_doc_count": 6,
     "enabled": true,

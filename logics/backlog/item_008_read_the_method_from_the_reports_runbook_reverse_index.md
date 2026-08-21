@@ -8,6 +8,7 @@
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-21 22:42:52
 
 # AI Context
 - Summary: The wiki links a report already carries, read in both directions: a report leads to its runbook, and a runbook lists the operations that applied it.
@@ -25,6 +26,7 @@
   - A reverse index built from the links already present in the reports: for each runbook, the operations that cite it.
   - Document chips following the Logics viewer convention exactly -- R request, I backlog, T task, P product, A architecture, S spec, M roadmap, N runbook -- with the same hues.
   - Chips that navigate: from a runbook to an operation, and from an operation back to its runbook.
+  - Titles and statuses read from the corpus through the bridge of `item_013_bridge_reports_into_the_logics_corpus`, never from a table kept here.
   - Runbooks with no operation shown as such, rather than omitted.
 - Out:
   - Rendering the runbook documents themselves. That is the Logics viewer's job, and adr_002 keeps that boundary.

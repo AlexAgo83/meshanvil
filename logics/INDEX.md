@@ -9,6 +9,7 @@
 | [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
 | [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Proposed |  |  | architecture/adr_004_target_technology_and_process_model.md |
 | [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Proposed |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
+| [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Proposed |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
 
 ## Product briefs
 
@@ -42,6 +43,7 @@ _None_
 | [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | Ready |  | 0% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
 | [item_011_run_on_macos_windows_and_wsl](backlog/item_011_run_on_macos_windows_and_wsl.md) | Run on macOS, Windows and WSL | Ready |  | 0% | backlog/item_011_run_on_macos_windows_and_wsl.md |
 | [item_012_take_the_operator_through_setup_step_by_step](backlog/item_012_take_the_operator_through_setup_step_by_step.md) | Take the operator through setup, step by step | Ready |  | 0% | backlog/item_012_take_the_operator_through_setup_step_by_step.md |
+| [item_013_bridge_reports_into_the_logics_corpus](backlog/item_013_bridge_reports_into_the_logics_corpus.md) | Bridge reports into the Logics corpus | Ready |  | 0% | backlog/item_013_bridge_reports_into_the_logics_corpus.md |
 
 ## Tasks
 

@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: a corpus that is part of the deliverable, an offline viewer, proven local-server conventions, no second implementation of what already exists
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:14:39
+> Indicators reviewed: 2026-08-21 22:42:52
 
 # Overview
 - The @grifhinz/logics-manager package becomes a declared devDependency rather than an assumed global tool, and meshanvil reuses three things it already ships -- the pinned CLI, the vendored Mermaid bundle, and the local-viewer conventions -- while implementing its own viewer surface.
@@ -41,7 +41,8 @@ flowchart LR
 - The Logics CLI version is visible in a lockfile and moves in a commit, so a corpus that lints today lints tomorrow.
 - The viewer's dependency footprint is now zero at render time: adr_004 draws the graph with plain SVG. The vendored Mermaid remains available, offline, for exporting a diagram into a Logics document.
 - If the operation timeline ever justifies living inside the Logics viewer, it becomes a request in that repository, with this decision as the record of why it did not start there.
-- Two repositories now move together on the workflow tooling. That coupling is deliberate and bounded to the corpus; nothing in `pipeline/` or `tools/` imports it.
+- Two repositories now move together on the workflow tooling. That coupling is deliberate and stays a CLI boundary; nothing in `pipeline/` or `tools/` imports it.
+- Amended by `adr_006_bridges_between_meshanvil_and_logics`: the coupling is no longer bounded to the corpus checks. Reports cross into the corpus as evidence and document references are resolved from it, still over the CLI, still one-way, and still optional at runtime.
 
 # References
 - Reused: the Logics CLI, its vendored Mermaid bundle, its local-viewer conventions
