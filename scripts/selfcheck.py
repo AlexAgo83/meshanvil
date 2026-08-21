@@ -4,12 +4,12 @@
 Covers what is easy to get quietly wrong: identity allocation under collision, parameter
 resolution, the bounding-box delta, and the refusals that must leave work/ops untouched.
 """
-import json, shutil, sys, tempfile
+import json, os, shutil, sys, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import manifests, runner            # noqa: E402
+from meshanvil import i18n, manifests, runner      # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -68,6 +68,27 @@ def check_refusals():
         assert cli.main(arguments) == runner.EXIT_REFUSED, arguments
 
 
+def check_i18n():
+    previous = os.environ.get("MESHANVIL_LANG")
+    original_locale, original_catalogue = i18n.locale.getlocale, i18n.catalogue
+    try:
+        os.environ["MESHANVIL_LANG"] = "fr_FR"
+        assert i18n.language() == "fr"
+        os.environ.pop("MESHANVIL_LANG")
+        i18n.locale.getlocale = lambda: ("fr_FR", "UTF-8")
+        assert i18n.language() == "fr"
+        os.environ["MESHANVIL_LANG"] = "fr"
+        i18n.catalogue = lambda lang: {"fallback": "English"} if lang == "en" else {}
+        key = "fallback"
+        assert i18n.t(key) == "English"
+    finally:
+        i18n.locale.getlocale, i18n.catalogue = original_locale, original_catalogue
+        if previous is None:
+            os.environ.pop("MESHANVIL_LANG", None)
+        else:
+            os.environ["MESHANVIL_LANG"] = previous
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -76,6 +97,7 @@ def main() -> int:
         check_parent(tmp)
         check_bbox_delta()
         check_refusals()
+        check_i18n()
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")
