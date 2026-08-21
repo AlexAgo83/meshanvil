@@ -18,8 +18,7 @@ compile:
 hygiene:
 	@bash scripts/check_hygiene.sh
 
-# Requires logics-manager; skipped when it is not installed.
+# logics-manager is a devDependency: npm ci, then this runs the pinned version.
 logics:
-	@command -v logics-manager >/dev/null 2>&1 \
-	  && logics-manager lint --require-status && logics-manager audit --group-by-doc \
-	  || echo "logics-manager not installed, skipped"
+	npx --no-install logics-manager lint --require-status
+	npx --no-install logics-manager audit --group-by-doc

@@ -8,6 +8,8 @@
   `/Applications/Blender.app/Contents/MacOS/Blender`. On Linux or Windows, use your own
   path; nothing else changes.
 - Put your own 3D sources under `work/in/`. Nothing in `work/` is versioned.
+- The corpus checks need Node: `npm ci` installs the pinned `logics-manager`. Running the 3D
+  operations themselves needs only Blender.
 
 Run any script on a copy:
 
@@ -39,7 +41,8 @@ Run any script on a copy:
 ## Validation
 
 ```bash
-make check
+make check      # compiles the scripts, runs the publication-hygiene gate
+make logics     # lints and audits the corpus with the pinned logics-manager
 ```
 
 `make check` compiles every script and runs the publication-hygiene gate. It deliberately

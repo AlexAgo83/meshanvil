@@ -2,3 +2,6 @@ work/
 .DS_Store
 logics/.cache/viewer-preferences.json
 __pycache__/
+logics/external/*
+!logics/external/.gitkeep
+node_modules/

@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 21:13:16
+> Indicators reviewed: 2026-08-21 21:28:40
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.
@@ -29,12 +29,14 @@
   - The wiki-style references a report carries followed as links, so a report leads to the runbook it applied and back.
   - A detail view for one operation: its measurements, its bounding-box comparison against the input, and its renders next to the numbers they illustrate.
   - Reading report files directly from work/ops/ with no build step and no server requirement.
+  - Rendering the DAG with the Mermaid bundle vendored by the logics-manager dependency, so the page stays offline without a CDN and without a copy of our own (see `adr_002_depend_on_logics_manager_and_reuse_its_structure`).
+  - The local-server conventions the Logics viewer already proved: bound to 127.0.0.1, --port 0, read-only, refreshed on an interval.
   - An empty state that explains how to produce the first report.
 - Out:
   - Editing, re-running or triggering operations from the viewer.
   - A force-directed graph view. On this node count a physics layout says less than a tree and discards the ordering; it stays an open question in prod_001 until a tree measurably fails.
   - A 3D viewport. The renders an operation produced are what is shown.
-  - Integration into the Logics viewer.
+  - Integration into the Logics viewer, and reuse of its browser-host and stylesheet: they render workflow documents, and an operation timeline is not one.
 
 # Acceptance criteria
 - AC1: Opening the viewer with reports present renders them as a top-down DAG in execution order, with each node's status.
@@ -50,11 +52,11 @@
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: `adr_002_depend_on_logics_manager_and_reuse_its_structure`
 
 # Links
 - Product brief(s): `prod_001_reviewable_agent_driven_3d_operations`
-- Architecture decision(s): (none yet)
+- Architecture decision(s): `adr_002_depend_on_logics_manager_and_reuse_its_structure`
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Primary task(s): `task_001_deliver_the_reviewable_operation_loop`
 

@@ -1,0 +1,15 @@
+{
+  "name": "meshanvil",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Driving a 3D application with an agent, and checking what it did.",
+  "license": "MIT",
+  "scripts": {
+    "check": "make check",
+    "logics": "logics-manager lint --require-status && logics-manager audit --group-by-doc",
+    "logics:view": "logics-manager view --open --port 0"
+  },
+  "devDependencies": {
+    "@grifhinz/logics-manager": "^2.22.2"
+  }
+}
