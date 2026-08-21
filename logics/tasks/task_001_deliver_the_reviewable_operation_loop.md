@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 23:05:53
+> Indicators reviewed: 2026-08-22 00:14:56
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -86,6 +86,23 @@
 - request-AC5 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
 - request-AC6 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
 - request-AC8 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
+- request-AC9 -> This task. Proof deferred to linked slice closeout.
+- request-AC10 -> This task. Proof deferred to linked slice closeout.
+- request-AC11 -> This task. Proof deferred to linked slice closeout.
+- request-AC12 -> This task. Proof deferred to linked slice closeout.
+- request-AC13 -> This task. Proof deferred to linked slice closeout.
+- request-AC14 -> This task. Proof deferred to linked slice closeout.
+- request-AC15 -> This task. Proof deferred to linked slice closeout.
+- request-AC16 -> This task. Proof deferred to linked slice closeout.
+- request-AC17 -> This task. Proof deferred to linked slice closeout.
+- request-AC18 -> This task. Proof deferred to linked slice closeout.
+- request-AC19 -> This task. Proof deferred to linked slice closeout.
+- request-AC20 -> This task. Proof deferred to linked slice closeout.
+- request-AC21 -> This task. Proof deferred to linked slice closeout.
+- request-AC22 -> This task. Proof deferred to linked slice closeout.
+- request-AC25 -> This task. Proof deferred to linked slice closeout.
+- request-AC24 -> This task. Proof deferred to linked slice closeout.
+- request-AC23 -> This task. Proof deferred to linked slice closeout.
 
 # Validation
 - (no validation recorded yet)

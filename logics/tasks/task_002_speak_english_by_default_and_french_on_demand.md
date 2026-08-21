@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:09:39
+> Indicators reviewed: 2026-08-22 00:14:26
 
 # AI Context
 - Summary: Route CLI and viewer copy through the English and French catalogues, validate their parity, and preserve machine-readable report identifiers.
@@ -32,6 +32,9 @@
 - AC3: The parity check fails on a key present in one catalogue only, on a placeholder mismatch, and on a key nothing reads.
 - AC4: MESHANVIL_LANG selects the language, the system locale is used when it is unset, and English is used when neither resolves.
 - AC5: Warning codes, report field names and operation names are identical in both languages.
+
+# AC Traceability
+- request-AC17 -> This task. Proof: f84e209; `make check` and `logics-manager i18n validate` passed.
 
 # Plan
 - [ ] Use `python3 -m logics_manager flow progress task task_002_speak_english_by_default_and_french_on_demand.md --progress <n>%` during multi-wave work.
