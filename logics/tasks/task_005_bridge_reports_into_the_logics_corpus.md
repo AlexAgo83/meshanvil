@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 98%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:09:04
+> Indicators reviewed: 2026-08-22 01:09:29
 
 # AI Context
 - Summary: Keep Logics optional through its JSON CLI: evidence after success, live document metadata for chips, and a runbook scaffold from report facts.
@@ -60,3 +60,4 @@
 
 # Evidence
 - AC1 | date: 2026-08-22 | command: `meshanvil run scan_defects work/out/fixture_check_voxel30.blend` | result: /users/alexandreagostini/documents/meshanvil/work/ops/005_scan_defects.json | scan_defects succeeded (objects=2, vertices=11936, faces=12038)
+- AC2 | date: 2026-08-22 | command: `meshanvil run voxel_remesh … --evidence task_005:AC1` | result: passed | A failed voxel remesh emitted the refusal notice and left the Evidence count unchanged.
