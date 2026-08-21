@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:08:44
+> Indicators reviewed: 2026-08-21 22:14:39
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.
@@ -62,7 +62,7 @@
 
 # Links
 - Product brief(s): `prod_001_reviewable_agent_driven_3d_operations`
-- Architecture decision(s): `adr_002_depend_on_logics_manager_and_reuse_its_structure`, `adr_003_the_viewer_reads_the_command_acts`
+- Architecture decision(s): `adr_002_depend_on_logics_manager_and_reuse_its_structure`, `adr_003_the_viewer_reads_the_command_acts`, `adr_004_target_technology_and_process_model`
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Primary task(s): `task_001_deliver_the_reviewable_operation_loop`
 

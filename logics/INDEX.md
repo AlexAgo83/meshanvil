@@ -7,6 +7,7 @@
 | [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Accepted |  |  | architecture/adr_001_operation_report_format.md |
 | [adr_002_depend_on_logics_manager_and_reuse_its_structure](architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md) | Depend on logics-manager and reuse its structure | Accepted |  |  | architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md |
 | [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
+| [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Proposed |  |  | architecture/adr_004_target_technology_and_process_model.md |
 
 ## Product briefs
 

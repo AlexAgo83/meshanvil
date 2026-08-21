@@ -6,6 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: a corpus that is part of the deliverable, an offline viewer, proven local-server conventions, no second implementation of what already exists
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
+> Indicators reviewed: 2026-08-21 22:14:39
 
 # Overview
 - The @grifhinz/logics-manager package becomes a declared devDependency rather than an assumed global tool, and meshanvil reuses three things it already ships -- the pinned CLI, the vendored Mermaid bundle, and the local-viewer conventions -- while implementing its own viewer surface.
@@ -13,7 +14,7 @@
 ```mermaid
 flowchart LR
   dep["@grifhinz/logics-manager<br/>devDependency, pinned"] --> cli[CLI: lint, audit, validate<br/>make logics, gated in CI]
-  dep --> mmd[dist/vendor/mermaid.min.js<br/>renders the DAG offline]
+  dep --> mmd[vendored mermaid<br/>export format only, see adr_004]
   dep --> conv[Viewer conventions<br/>127.0.0.1, --port 0, read-only, refresh]
   dep -.->|not reused| host[browser-host.js + viewer.css<br/>renders Logics docs, not reports]
   cli --> corpus[logics/ corpus stays valid]
@@ -31,14 +32,14 @@ flowchart LR
 # Decision
 - **Declare the dependency.** the package is a devDependency in `package.json`, with `package-lock.json` committed. `make logics` runs `npx --no-install`, so the pinned version runs or the command fails loudly; it never silently falls back to whatever is on `PATH`.
 - **Gate the corpus in CI.** The workflow runs `npm ci`, then `make check`, then `make logics`. A corpus that stops linting is a failed build, on the same footing as a script that stops compiling.
-- **Take the Mermaid bundle from the dependency.** The viewer loads it from the installed package, keeping the no-network requirement of `item_003` AC3 without vendoring a copy of our own.
+- **Take the Mermaid bundle from the dependency** when a diagram is needed at all. Superseded in part by `adr_004_target_technology_and_process_model`: the chain is drawn with our own SVG, so Mermaid is now only the `Export chain as Mermaid` format, not a rendering dependency.
 - **Copy the viewer conventions, not the viewer.** Bind to `127.0.0.1`, take `--port 0`, stay read-only over `work/ops/`, refresh on an interval. Same behaviour, own surface.
 - **Do not reuse the Logics viewer for reports.** It renders workflow documents; an operation timeline is not one. Reusing it would mean an extension point in another repository for a display this repository can serve from a static page.
 
 # Consequences
 - Contributing now needs Node for the corpus checks. Python and Blender remain the only requirements for running the operations themselves, which is the part that matters to a 3D user.
 - The Logics CLI version is visible in a lockfile and moves in a commit, so a corpus that lints today lints tomorrow.
-- The viewer's dependency footprint is one vendored file taken from a package that is already installed, and it stays offline.
+- The viewer's dependency footprint is now zero at render time: adr_004 draws the graph with plain SVG. The vendored Mermaid remains available, offline, for exporting a diagram into a Logics document.
 - If the operation timeline ever justifies living inside the Logics viewer, it becomes a request in that repository, with this decision as the record of why it did not start there.
 - Two repositories now move together on the workflow tooling. That coupling is deliberate and bounded to the corpus; nothing in `pipeline/` or `tools/` imports it.
 
