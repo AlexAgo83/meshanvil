@@ -49,3 +49,6 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture`

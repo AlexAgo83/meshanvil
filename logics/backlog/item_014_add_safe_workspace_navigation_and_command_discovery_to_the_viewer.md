@@ -50,3 +50,6 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer`
