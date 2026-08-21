@@ -6,6 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: one way in for every agent, a viewer that cannot damage anything, menus that teach the command rather than hide it
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
+> Indicators reviewed: 2026-08-22 01:17:52
 
 # Overview
 - The viewer never runs an operation. Every action it offers -- run, re-run, branch, prune, re-render, open in Blender -- is presented as the exact command that does it, ready to copy, and the operator or the agent runs it themselves.
@@ -23,7 +24,7 @@ flowchart LR
 # Context
 - The mockup's menus name real actions: Run operation, Re-run selected, Branch from selected, Prune artefacts, Re-render this view, Open in Blender. Drawing them raised the question they imply: does the page execute, or does it teach?
 - A viewer that executes needs a privileged local server, a job queue, cancellation, concurrency against a Blender process that may already hold the file, and a security boundary on a page any browser tab can reach. None of that serves the stated goal, which is reviewing.
-- `item_002` already delivers one command that any runtime can call. A second execution path through the viewer would mean two ways to run the same operation, and the reports would no longer record a single provenance.
+- `item_002_run_one_named_operation_from_a_single_agent_agnostic_command` already delivers one command that any runtime can call. A second execution path through the viewer would mean two ways to run the same operation, and the reports would no longer record a single provenance.
 - The operator works next to an agent. A command shown on screen is a command the agent can be handed; a button is not.
 
 # Decision

@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: a corpus that is part of the deliverable, an offline viewer, proven local-server conventions, no second implementation of what already exists
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:42:52
+> Indicators reviewed: 2026-08-22 01:17:52
 
 # Overview
 - The @grifhinz/logics-manager package becomes a declared devDependency rather than an assumed global tool, and meshanvil reuses three things it already ships -- the pinned CLI, the vendored Mermaid bundle, and the local-viewer conventions -- while implementing its own viewer surface.
@@ -24,7 +24,7 @@ flowchart LR
 
 # Context
 - The corpus in `logics/` is part of what this repository delivers, not scaffolding around it. A contributor who cannot run `lint` and `audit` cannot check their own change, and a globally installed tool is a different version for every machine.
-- `item_003` requires a viewer that opens with no network access. Mermaid is the natural way to draw the operation DAG, and the package already vendors a Mermaid bundle, so the dependency removes a CDN rather than adding one.
+- `item_003_read_the_chain_of_operations_in_a_local_viewer` requires a viewer that opens with no network access. Mermaid is the natural way to draw the operation DAG, and the package already vendors a Mermaid bundle, so the dependency removes a CDN rather than adding one.
 - The package also ships a working local viewer: bound to `127.0.0.1`, `--port 0` for an automatic port, read-only mode, a refresh cadence, and a preferences file beside the repository. Those conventions were paid for once already.
 - What it ships for rendering -- its browser-host bundle and stylesheet, some twenty thousand lines -- renders Logics documents. It is a full design system for a different subject, and the viewer surface here follows Blender's interface language instead.
 - The other repositories in the same house already carry a `package.json` for exactly this kind of tooling dependency, so this is the existing convention rather than a new one.
