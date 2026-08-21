@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 95%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:51:31
+> Indicators reviewed: 2026-08-22 00:54:23
 
 # AI Context
 - Summary: The report must declare a same-subject render pair; the viewer presents it with one persistent, accessible wipe position and numeric deltas.
@@ -39,10 +39,15 @@
 - [ ] Run `python3 -m logics_manager flow finish task task_007_compare_two_states_of_the_same_geometry.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check`
+- `make fixture` (declared comparison pairs and both render files)
+- `./bin/meshanvil view --no-open`
+- `node --check viewer/viewer.js`
+- `git diff --check`
 
 # Report
-- Not started.
+- `voxel_remesh` records four explicit before/after pairs rendered from the same per-view camera.
+- The viewer reads those pairs as an accessible native-range wipe and shows the report's axes delta.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

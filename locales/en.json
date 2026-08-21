@@ -118,6 +118,9 @@
     "runbooks": "Runbooks",
     "applied_by": "Applied by reports",
     "not_applied": "Not yet applied by an operation."
+    ,"compare_before": "before operation"
+    ,"compare_after": "after operation"
+    ,"compare_wipe": "Comparison wipe position"
     ,"start": "Start"
     ,"start_title": "Start a review chain"
     ,"start_outliner": "Run one command below; its report will become the first chain entry."

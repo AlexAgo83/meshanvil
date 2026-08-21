@@ -11,7 +11,7 @@
  *   schema_version:number, error?:string,
  *   params:Object, tool:Object, input:Object, output?:Object, before?:Object, after?:Object,
  *   measured?:Object, bbox_delta_mm?:Object, warnings:string[], findings?:Object[],
- *   renders?:Object[], links:{parent:string|null, parent_source:string|null, docs:string[]},
+ *   renders?:Object[], comparisons?:{view:string,before_url:string,after_url:string,camera:string}[], links:{parent:string|null, parent_source:string|null, docs:string[]},
  *   duration_s:number, created_at:string,
  *   _x?:number, _y?:number}} OperationReport */
 
@@ -34,6 +34,7 @@ const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
 let current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
 let currentDoc = null;
 let view = 0;
+let wipe = 50;
 let start = !DATA.reports.length;
 
 /** Report text is data from CAD files, never markup. */
@@ -323,12 +324,21 @@ function preview() {
   const views = document.getElementById("pvviews"), title = document.getElementById("pvtitle");
   const report = current ? BY_ID.get(current) : null;
   const renders = (report && report.renders) || [];
+  const pairs = (report && report.comparisons) || [];
   if (start) {
     title.textContent = t("ui.start_title"); views.innerHTML = ""; meta.innerHTML = "";
     stage.innerHTML = `<p class="pvempty">${esc(t("ui.start_preview"))}<br><code>tools/make_demo_scene.py</code></p>`;
     return;
   }
   title.textContent = report ? `${report.id}_${report.operation}` : "";
+  if (pairs.length) {
+    if (view >= pairs.length) view = 0;
+    const pair = pairs[view], delta = report.bbox_delta_mm || {};
+    views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
+    stage.innerHTML = `<div class="compare"><img src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><div class="compare-after" style="width:${wipe}%"><img src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"></div><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
+    meta.innerHTML = `<div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
+    return;
+  }
   if (!renders.length) {
     views.innerHTML = "";
     meta.innerHTML = "";
@@ -367,6 +377,11 @@ document.addEventListener("click", (event) => {
   if (node) { select(/** @type {HTMLElement} */ (node).dataset.id); return; }
   const doc = target.closest("[data-doc]");
   if (doc) { currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; outliner(); nodes(); props(); preview(); }
+});
+document.addEventListener("input", (event) => {
+  const input = /** @type {HTMLInputElement} */ (event.target);
+  if (!input.matches("[data-wipe]")) return;
+  wipe = Number(input.value); preview();
 });
 
 document.getElementById("start-screen").addEventListener("click", () => {

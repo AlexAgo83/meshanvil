@@ -37,6 +37,12 @@ def with_render_urls(root: Path, report: dict) -> dict:
             render["url"] = os.path.relpath(render["path"], root / OUT)
         except ValueError:
             render["url"] = render["path"]
+    for pair in report.get("comparisons", []):
+        for state in ("before", "after"):
+            try:
+                pair[f"{state}_url"] = os.path.relpath(pair[state], root / OUT)
+            except ValueError:
+                pair[f"{state}_url"] = pair[state]
     return report
 
 

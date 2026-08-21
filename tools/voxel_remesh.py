@@ -52,6 +52,13 @@ bpy.context.view_layer.objects.active = meshes[0]
 bpy.ops.object.join()
 envelope = bpy.context.object
 envelope.name = "ENVELOPPE"
+before_data = envelope.data.copy() if REPORT and bool(PARAMS.get("render", True)) else None
+before_object = None
+if before_data:
+    before_object = bpy.data.objects.new("ENVELOPPE_BEFORE", before_data)
+    bpy.context.scene.collection.objects.link(before_object)
+    before_object.matrix_world = envelope.matrix_world.copy()
+    before_object.hide_render = True
 
 if REPORT:
     from meshanvil_engine import report as reporting
@@ -111,6 +118,8 @@ if RENDER:
     if REPORT:
         REPORT.progress("rendering", 0.9)
     points = [envelope.matrix_world @ v.co for v in envelope.data.vertices]
+    if before_object:
+        points += [before_object.matrix_world @ v.co for v in before_object.data.vertices]
     low = Vector([min(p[i] for p in points) for i in range(3)])
     high = Vector([max(p[i] for p in points) for i in range(3)])
     centre, radius = (low + high) / 2, (high - low).length / 2
@@ -134,10 +143,16 @@ if RENDER:
         camera.rotation_euler = (-unit).to_track_quat('-Z', 'Y').to_euler()
         identity = (JOB or {}).get("id", "standalone")
         path = renders / f"{identity}_{Path(OUT).stem}_{name}.png"
-        scene.render.filepath = str(path)
-        bpy.ops.render.render(write_still=True)
+        scene.render.filepath = str(path); bpy.ops.render.render(write_still=True)
         if REPORT:
             REPORT.render(name, str(path), "ortho-%s-object" % name, tile=(name == "3q"))
+        if before_object:
+            envelope.hide_render, before_object.hide_render = True, False
+            before_path = renders / f"{identity}_{Path(OUT).stem}_before_{name}.png"
+            scene.render.filepath = str(before_path); bpy.ops.render.render(write_still=True)
+            envelope.hide_render, before_object.hide_render = False, True
+            if REPORT:
+                REPORT.comparison(name, str(before_path), str(path), "ortho-%s-subject" % name)
     log("rendered 4 views")
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)

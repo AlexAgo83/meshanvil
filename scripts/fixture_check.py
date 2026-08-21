@@ -61,14 +61,17 @@ def main() -> int:
 
     # A coarse voxel destroys the detail while every topology check stays green: what says so
     # is the bounding box, and the operation turns that into an exit code.
-    assert run("run", "voxel_remesh", str(target), "--set", "voxel_mm=30",
-               "--set", "render=false") == 1
+    assert run("run", "voxel_remesh", str(target), "--set", "voxel_mm=30") == 1
     coarse = report("003")
     drift = max(abs(v) for v in coarse["bbox_delta_mm"]["min"] + coarse["bbox_delta_mm"]["max"])
     assert drift > 50, f"a 30 mm voxel should move the box far more than this: {drift} mm"
     assert coarse["after"]["vertices"] < coarse["before"]["vertices"] / 10, coarse["after"]
     assert coarse["links"]["parent"] == "002", coarse["links"]
     assert coarse["links"]["parent_source"] == "fingerprint", coarse["links"]
+    assert len(coarse["comparisons"]) == 4, coarse.get("comparisons")
+    assert all(pair["camera"].endswith("-subject") for pair in coarse["comparisons"])
+    assert all(Path(pair["before"]).is_file() and Path(pair["after"]).is_file()
+               for pair in coarse["comparisons"])
 
     assert run("run", "ray_visibility", str(target), "--set", "grid=40") == 0
     rays = report("003a")                         # a sibling of the same parent takes a letter

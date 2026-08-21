@@ -110,6 +110,7 @@ class Reporter:
                       "sha256": (job or {}).get("input_sha256"), "mode": "read_only"},
             "warnings": [],
             "renders": [],
+            "comparisons": [],
             "findings": [],
             "links": {"parent": (job or {}).get("parent"),
                       "parent_source": (job or {}).get("parent_source"), "docs": []},
@@ -136,6 +137,10 @@ class Reporter:
     def render(self, view: str, path: str, camera: str, tile: bool = False) -> None:
         self.report["renders"].append({"view": view, "path": path, "camera": camera, "tile": tile})
 
+    def comparison(self, view: str, before: str, after: str, camera: str) -> None:
+        self.report["comparisons"].append({"view": view, "before": before, "after": after,
+                                            "camera": camera})
+
     def cites(self, *docs: str) -> None:
         self.report["links"]["docs"].extend(docs)
 
@@ -159,7 +164,7 @@ class Reporter:
     # --- closing -------------------------------------------------------------------------
     def write(self) -> None:
         self.report["duration_s"] = round(time.time() - self.started, 2)
-        for key in ("findings", "renders"):
+        for key in ("findings", "renders", "comparisons"):
             if not self.report[key]:
                 self.report.pop(key)
         if not self.job:

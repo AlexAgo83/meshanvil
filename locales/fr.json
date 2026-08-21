@@ -118,6 +118,9 @@
     "runbooks": "Runbooks",
     "applied_by": "Appliqué par les rapports",
     "not_applied": "Pas encore appliqué par une opération."
+    ,"compare_before": "avant l'opération"
+    ,"compare_after": "après l'opération"
+    ,"compare_wipe": "Position du balayage de comparaison"
     ,"start": "Démarrer"
     ,"start_title": "Démarrer une chaîne de revue"
     ,"start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne."
