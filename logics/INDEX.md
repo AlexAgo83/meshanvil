@@ -1,0 +1,49 @@
+# Logics Index
+
+## Architecture decisions
+
+_None_
+
+## Product briefs
+
+| Doc | Title | Status | Owner | Progress | Path |
+|---|---|---|---|---|---|
+| [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Proposed |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
+
+## Roadmaps
+
+_None_
+
+## Requests
+
+| Doc | Title | Status | Owner | Progress | Path |
+|---|---|---|---|---|---|
+| [req_000_make_every_3d_operation_reviewable_without_reopening_blender](request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md) | Make every 3D operation reviewable without reopening Blender | Draft |  |  | request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md |
+
+## Backlog
+
+| Doc | Title | Status | Owner | Progress | Path |
+|---|---|---|---|---|---|
+| [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | Ready |  | 0% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
+| [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 0% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
+| [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 0% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
+
+## Tasks
+
+| Doc | Title | Status | Owner | Progress | Path |
+|---|---|---|---|---|---|
+| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 0% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+
+## Runbooks
+
+| Doc | Title | Status | Category | Verified | Path |
+|---|---|---|---|---|---|
+| [run_001_drive_a_live_blender_session_from_the_agent](runbook/run_001_drive_a_live_blender_session_from_the_agent.md) | Drive a live Blender session from the agent | Active | other | 2026-08-21 (real session, Blender 5.2 LTS on macOS, ~700-object CAD assembly) | runbook/run_001_drive_a_live_blender_session_from_the_agent.md |
+| [run_002_audit_symmetry_of_an_imported_cad_assembly](runbook/run_002_audit_symmetry_of_an_imported_cad_assembly.md) | Audit symmetry of an imported CAD assembly | Active | other | 2026-08-21 (found a genuinely missing part in a ~700-object assembly) | runbook/run_002_audit_symmetry_of_an_imported_cad_assembly.md |
+| [run_003_cap_circular_apertures_in_a_closed_cad_shell](runbook/run_003_cap_circular_apertures_in_a_closed_cad_shell.md) | Cap circular apertures in a closed CAD shell | Active | other | 2026-08-21 (8 apertures capped on an imported assembly: 4 barrels at 93.0 mm at one end, 4 at 50.0 and 56.7 mm at the other) | runbook/run_003_cap_circular_apertures_in_a_closed_cad_shell.md |
+| [run_004_transfer_parts_between_two_cad_derived_blend_files](runbook/run_004_transfer_parts_between_two_cad_derived_blend_files.md) | Transfer parts between two CAD-derived blend files | Active | other | 2026-08-21 (30 parts of one thin appendage moved between two exports of the same assembly, final placement error 0.4 mm) | runbook/run_004_transfer_parts_between_two_cad_derived_blend_files.md |
+| [run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility](runbook/run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility.md) | Select the outer envelope of an assembly by ray visibility | Active | other | 2026-08-21 (571 meshes sorted into 73 envelope parts with 508,200 rays, ~2 min headless) | runbook/run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility.md |
+| [run_006_turn_a_cad_assembly_into_a_printable_solid](runbook/run_006_turn_a_cad_assembly_into_a_printable_solid.md) | Turn a CAD assembly into a printable solid | Active | other | 2026-08-21 (571-mesh assembly to a watertight 1/10 solid, 0 non-manifold edges) | runbook/run_006_turn_a_cad_assembly_into_a_printable_solid.md |
+| [run_007_hollow_a_printable_body_for_electronics](runbook/run_007_hollow_a_printable_body_for_electronics.md) | Hollow a printable body for electronics | Active | other | 2026-08-21 (open-bottom shell cut from a 1/10 body; three earlier approaches failed first) | runbook/run_007_hollow_a_printable_body_for_electronics.md |
+| [run_008_weld_and_clean_disconnected_shells_in_a_printable_model](runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md) | Weld and clean disconnected shells in a printable model | Active | other | 2026-08-21 (two loose appendages welded to a body, 3 shells reduced to 1, 0 non-manifold edges) | runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md |
+| [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |

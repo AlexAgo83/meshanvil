@@ -1,0 +1,166 @@
+{
+  "title": "Make every 3D operation reviewable without reopening Blender",
+  "references": [
+    "pipeline/01_visibility_sort.py",
+    "pipeline/02_printable_envelope.py",
+    "pipeline/06_clean_shells.py",
+    "tools/scan_defects.py",
+    "tools/render_views.py",
+    "tools/list_shells.py",
+    "run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility",
+    "run_006_turn_a_cad_assembly_into_a_printable_solid",
+    "run_009_repair_export_defects_in_a_cad_derived_mesh"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Operation review loop",
+    "needs": [
+      "Reviewing what an operation did must not require opening Blender and navigating to the affected geometry by hand.",
+      "Every operation must leave behind the measurements that verify it, not only its output file.",
+      "The chain of operations that produced a result must be readable in order, with what changed at each step.",
+      "The bounding-box comparison against the source must be computed and shown for every operation, because that single check caught every failure in the delivered chain while the manifold checks passed throughout.",
+      "An operation must be runnable by any agent from a single command, without a Blender-specific or vendor-specific integration.",
+      "Verification renders must sit next to the numbers they illustrate, so a render is read as confirmation and never as evidence on its own."
+    ],
+    "context": [
+      "Today every script prints its measurements to stdout and writes its output under work/. The numbers exist but are lost as soon as the terminal scrolls, and nothing links a result to the operation that produced it.",
+      "The operator's stated pain: having to reopen Blender on every change to see what happened.",
+      "The delivered chain is seven pipeline steps plus ad-hoc tools. Each already computes what a report needs -- shell counts, vertex and face counts, bounding boxes, volumes, non-manifold edge counts -- and throws it away.",
+      "tools/render_views.py already produces orthographic verification renders from four fixed directions and writes them under work/renders/, with no link to the operation that motivated them.",
+      "The repository is public and the sources are not. Reports and the viewer must work from work/, which is git-ignored, and must never require a source file to be committed.",
+      "The intent is to drive these operations from more than one agent runtime (Claude Code and Codex at least), so the contract must be a plain command and a plain JSON file rather than an integration.",
+      "The Logics viewer shipped by logics-manager renders Logics documents; it has no extension point for an operation timeline, so this viewer is local to meshanvil rather than a change to that repository."
+    ],
+    "acceptance_criteria": [
+      "AC1: Every operation writes one report file under work/ops/ carrying its identifier, the script that ran, the input file, the output file, the measurements before and after, and the paths of any renders it produced.",
+      "AC2: Each report states the output bounding box against the input bounding box, per axis, in millimetres, together with the axes that moved.",
+      "AC3: The seven pipeline steps and tools/scan_defects.py write a report through the same helper, so no operation reports in a format of its own.",
+      "AC4: A single command runs one named operation and writes its report, with no argument that depends on the agent runtime driving it.",
+      "AC5: A local viewer lists the operations in execution order and, for a selected one, shows its measurements, its bounding-box comparison and its renders.",
+      "AC6: The viewer reads only the report files. Opening it requires no Blender process, no build step and no network access.",
+      "AC7: An operation that fails writes a report recording the failure and the measurements taken up to that point, rather than leaving no trace.",
+      "AC8: Reports and renders stay under work/, and the publication-hygiene gate still passes with reports present."
+    ]
+  },
+  "product": {
+    "title": "Reviewable agent-driven 3D operations",
+    "overview": "Turns each headless 3D operation into a self-describing unit of work: one command runs it, one report records what it did and how that was verified, and one local viewer makes the chain readable without opening the 3D application. The measurement discipline the runbooks describe becomes something the tooling produces by default rather than something the operator has to remember.",
+    "goals": [
+      "Make the result of an operation reviewable from its report alone.",
+      "Make the verification -- the bounding-box comparison above all -- automatic rather than a step an agent may skip.",
+      "Give the operator a way to navigate the chain of operations and see what each one changed.",
+      "Keep the contract agent-agnostic: one command, one JSON report, no runtime-specific integration.",
+      "Keep every generated artefact under work/, so a public repository never carries private geometry."
+    ],
+    "non_goals": [
+      "Replacing Blender's interface, or editing geometry from the viewer.",
+      "A hosted or networked service. The viewer is local and reads files from disk.",
+      "A general-purpose 3D asset pipeline. The operations are the ones the runbooks describe.",
+      "An extension point inside the Logics viewer. If that need is confirmed later it belongs to logics-manager, not here.",
+      "Committing reports, renders or sources to the repository."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Define the operation report and write one from every operation",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operation review loop",
+      "request_acs": ["AC1", "AC2", "AC3", "AC7"],
+      "problem": [
+        "Each script prints its measurements to stdout and they are lost when the terminal scrolls.",
+        "Nothing links an output file to the operation, the input and the settings that produced it.",
+        "The bounding-box comparison is described in the runbooks as the check that caught every failure, but it is computed by hand, differently, in each script."
+      ],
+      "scope_in": [
+        "A report writer helper in tools/, taking the scene before and after and producing work/ops/NNN_<name>.json.",
+        "Report fields: identifier, script, timestamp, input path, output path, object and vertex counts before and after, bounding box before and after in millimetres, per-axis delta, shell count, non-manifold edge count, volume when meaningful, render paths, and a free-form measurements object for what is specific to one operation.",
+        "A failure path that writes the report with the error and whatever was measured before it.",
+        "The seven pipeline steps and tools/scan_defects.py calling the helper."
+      ],
+      "scope_out": [
+        "The runner command and the viewer, which are separate slices.",
+        "Any schema versioning beyond a schema_version field."
+      ],
+      "acceptance_criteria": [
+        "AC1: Running any of the eight operations leaves exactly one report file under work/ops/, named with its execution order and operation name.",
+        "AC2: The report states the bounding box before and after in millimetres and names the axes that moved, matching what the script prints.",
+        "AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.",
+        "AC4: The report writer is the only place a report is written; no script serialises one of its own."
+      ]
+    },
+    {
+      "title": "Run one named operation from a single agent-agnostic command",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operation review loop",
+      "request_acs": ["AC4", "AC8"],
+      "problem": [
+        "Running an operation today means knowing the Blender binary path, the -b and -P flags, which file to open and which script to pass.",
+        "That invocation is what every agent has to reconstruct, and it is where a wrong file or a missing copy silently ruins the work.",
+        "Nothing enforces that an operation runs on a copy rather than on a source under work/in/."
+      ],
+      "scope_in": [
+        "A meshanvil command taking an operation name and a target file, resolving the Blender binary, running it headless and returning the report path.",
+        "Operation discovery from pipeline/ and tools/, so adding a script adds an operation without registering it anywhere.",
+        "A refusal to write to work/in/, with a clear message naming the copy to work on instead.",
+        "A list mode printing the available operations and what each one needs."
+      ],
+      "scope_out": [
+        "Chaining several operations in one invocation.",
+        "Any MCP server or agent plugin packaging, which is its own decision later.",
+        "Installing or locating Blender for the user beyond an environment variable and the documented default."
+      ],
+      "acceptance_criteria": [
+        "AC1: One command runs a named operation on a given file and prints the path of the report it wrote.",
+        "AC2: The same command works unchanged whether it is typed by hand or run by an agent; nothing in its interface depends on the runtime.",
+        "AC3: Pointing the command at a file under work/in/ is refused with a message naming what to do instead.",
+        "AC4: The Blender binary comes from an environment variable when set, and from the documented default otherwise."
+      ]
+    },
+    {
+      "title": "Read the chain of operations in a local viewer",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Operation review loop",
+      "request_acs": ["AC5", "AC6", "AC8"],
+      "problem": [
+        "Reviewing an operation means reopening Blender and navigating to the affected geometry, which is slow enough that the review is skipped.",
+        "The measurements and the renders exist separately, so the render is read on its own -- exactly the mistake the runbooks warn against.",
+        "There is no view of the chain: which operation ran before this one, and what it changed."
+      ],
+      "scope_in": [
+        "A static local page listing the reports in execution order, with status and the axes that moved shown per operation.",
+        "A detail view for one operation: its measurements, its bounding-box comparison against the input, and its renders next to the numbers they illustrate.",
+        "Reading report files directly from work/ops/ with no build step and no server requirement.",
+        "An empty state that explains how to produce the first report."
+      ],
+      "scope_out": [
+        "Editing, re-running or triggering operations from the viewer.",
+        "A 3D viewport. The renders an operation produced are what is shown.",
+        "Integration into the Logics viewer."
+      ],
+      "acceptance_criteria": [
+        "AC1: Opening the viewer with reports present lists them in execution order with each one's status.",
+        "AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.",
+        "AC3: The viewer opens with no Blender process running, no build step and no network access.",
+        "AC4: With no reports present the viewer states how to produce one instead of failing."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver the reviewable operation loop",
+    "plan": [
+      "Settle the report shape against what the eight existing operations already measure, so the format records what is there rather than asking scripts to compute something new.",
+      "Implement the report writer and convert the operations to it one by one, checking each converted operation against the numbers it printed before.",
+      "Build the runner command on top of the converted operations, including the refusal to write to work/in/.",
+      "Build the viewer last, against real reports produced by the converted chain rather than fixtures.",
+      "Record what the loop changes about the way an operation is reviewed as a runbook, and note in run_006 and run_009 where the reports now carry what those procedures ask to be checked by hand."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/reviewable-operations.json",
+    "mode": "full",
+    "profile": "normal"
+  }
+}
