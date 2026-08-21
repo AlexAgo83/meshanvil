@@ -6,10 +6,11 @@ resolution, the bounding-box delta, and the refusals that must leave work/ops un
 """
 import json, os, shutil, sys, tempfile
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import doctor, engines, i18n, manifests, runner, viewer  # noqa: E402
+from meshanvil import doctor, engines, i18n, logics_bridge, manifests, runner, viewer  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -144,6 +145,18 @@ def check_viewer_start(tmp: Path):
     assert payload["reports"] == [] and payload["doctor"]["ok"] is False and not payload["ops_exists"]
 
 
+def check_logics_bridge():
+    original_which, original_run = logics_bridge.shutil.which, logics_bridge.subprocess.run
+    try:
+        logics_bridge.shutil.which = lambda name: None
+        assert logics_bridge.call("sync", "read-doc", "missing") == (None, "unavailable")
+        logics_bridge.shutil.which = lambda name: "/usr/bin/logics-manager"
+        logics_bridge.subprocess.run = lambda *args, **kwargs: SimpleNamespace(returncode=0, stdout='{"ref":"task_1"}')
+        assert logics_bridge.call("sync", "read-doc", "task_1")[0]["ref"] == "task_1"
+    finally:
+        logics_bridge.shutil.which, logics_bridge.subprocess.run = original_which, original_run
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -157,6 +170,7 @@ def main() -> int:
         check_engine_floor()
         check_doctor_exit_code()
         check_viewer_start(tmp)
+        check_logics_bridge()
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")

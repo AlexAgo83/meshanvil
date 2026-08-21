@@ -11,6 +11,7 @@
       "help": "run one operation and write its report",
       "set": "a parameter of the operation; repeatable",
       "from": "declare the parent report instead of deriving it from the fingerprint"
+      ,"evidence": "append this successful report as Logics task evidence (TASK:AC)"
     },
     "view": {
       "help": "build the viewer over the reports and open it",
@@ -53,6 +54,11 @@
     "built": "{path}  ({count} reports)",
     "serving": "http://127.0.0.1:{port}/  (ctrl-c to stop)",
     "open_address": "open the address below in a browser"
+  },
+  "bridge": {
+    "evidence_failed": "no Logics evidence was written because the operation failed",
+    "evidence_unavailable": "Logics evidence was not written: logics-manager is unavailable",
+    "evidence_error": "Logics evidence was not written: {reason}"
   },
   "ui": {
     "outliner": "Outliner",

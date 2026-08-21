@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 
-from . import SCHEMA_VERSION, VERSION, doctor, engines, manifests
+from . import SCHEMA_VERSION, VERSION, doctor, engines, logics_bridge, manifests
 from .i18n import t
 
 OPS = "work/ops"
@@ -115,7 +115,8 @@ def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
             said = False
 
 
-def run(operation: str, target: str, params: dict[str, str], parent: str | None = None) -> int:
+def run(operation: str, target: str, params: dict[str, str], parent: str | None = None,
+        evidence: str | None = None) -> int:
     declared_parent = parent
     root = manifests.root()
     known = manifests.discover()
@@ -186,4 +187,16 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     job_path.unlink(missing_ok=True)
     (root / RUNS / f"{identity}.progress").unlink(missing_ok=True)
     print(report_path.relative_to(root))
-    return EXIT_OK if report.get("status") == "ok" else EXIT_FAILED
+    if report.get("status") != "ok":
+        if evidence:
+            print(t("bridge.evidence_failed"), file=sys.stderr)
+        return EXIT_FAILED
+    if evidence:
+        command = "meshanvil run " + operation + " " + target + " ".join(
+            f" --set {key}={value}" for key, value in params.items())
+        error = logics_bridge.evidence(evidence, report_path, report, command)
+        if error:
+            message = (t("bridge.evidence_unavailable") if error == "unavailable"
+                       else t("bridge.evidence_error", reason=error))
+            print(message, file=sys.stderr)
+    return EXIT_OK

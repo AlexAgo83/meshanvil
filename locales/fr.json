@@ -11,6 +11,7 @@
       "help": "lancer une opération et écrire son rapport",
       "set": "un paramètre de l'opération ; répétable",
       "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte"
+      ,"evidence": "ajouter ce rapport réussi comme preuve d'une tâche Logics (TÂCHE:AC)"
     },
     "view": {
       "help": "construire le visualiseur sur les rapports et l'ouvrir",
@@ -53,6 +54,11 @@
     "built": "{path}  ({count} rapports)",
     "serving": "http://127.0.0.1:{port}/  (ctrl-c pour arrêter)",
     "open_address": "ouvrez l'adresse ci-dessous dans un navigateur"
+  },
+  "bridge": {
+    "evidence_failed": "aucune preuve Logics n'a été écrite car l'opération a échoué",
+    "evidence_unavailable": "la preuve Logics n'a pas été écrite : logics-manager est indisponible",
+    "evidence_error": "la preuve Logics n'a pas été écrite : {reason}"
   },
   "ui": {
     "outliner": "Arborescence",

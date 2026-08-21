@@ -28,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
                      help=t("cli.run.set"))
     run.add_argument("--from", dest="parent", default=None, metavar="ID",
                      help=t("cli.run.from"))
+    run.add_argument("--evidence", metavar="TASK:AC", help=t("cli.run.evidence"))
     show = sub.add_parser("view", help=t("cli.view.help"))
     show.add_argument("--serve", action="store_true",
                       help=t("cli.view.serve"))
@@ -66,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
         name, value = pair.split("=", 1)
         given[name] = value
     try:
-        return runner.run(arguments.operation, arguments.target, given, arguments.parent)
+        return runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)
     except (runner.Refused, engines.EngineMissing, KeyError) as refusal:
         print(str(refusal).strip("'"), file=sys.stderr)
         return runner.EXIT_REFUSED
