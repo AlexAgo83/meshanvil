@@ -40,6 +40,15 @@ def with_render_urls(root: Path, report: dict) -> dict:
     return report
 
 
+def collect_doctor(root: Path) -> dict | None:
+    """The viewer only reads the last setup check; it never reruns one."""
+    try:
+        value = json.loads((root / "work" / "doctor.json").read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def build(root: Path) -> Path:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)
@@ -48,7 +57,8 @@ def build(root: Path) -> Path:
     strings = {**catalogue(SOURCE), **catalogue(language())}   # English is the fallback
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings,
-               "reports": collect(root)}
+               "reports": collect(root), "doctor": collect_doctor(root),
+               "ops_exists": (root / OPS).is_dir()}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")
     return target / "index.html"

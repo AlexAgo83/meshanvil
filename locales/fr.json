@@ -103,6 +103,26 @@
     "operation_report": "Rapport d'opération",
     "view": "Vue",
     "render_alt": "vue {view} de {operation}"
+    ,"start": "Démarrer"
+    ,"start_title": "Démarrer une chaîne de revue"
+    ,"start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne."
+    ,"start_intro": "Meshanvil consigne les opérations au lieu de modifier la source. Commencez avec la démo, puis inspectez-la ou préparez un corps imprimable."
+    ,"start_demo": "Créer la scène de démo :"
+    ,"start_inspect": "L'inspecter pour trouver des défauts :"
+    ,"start_prepare": "Préparer un corps imprimable :"
+    ,"start_environment": "Environnement"
+    ,"start_environment_note": "Cette page lit seulement le dernier rapport de configuration ; elle ne lance aucun contrôle et n'installe rien."
+    ,"start_doctor": "Contrôle de configuration"
+    ,"start_doctor_missing": "Pas encore de rapport de configuration. Lancez cette commande pour voir le binaire Blender et la version que Meshanvil utilisera."
+    ,"start_blender": "Binaire Blender"
+    ,"start_version": "version"
+    ,"start_missing": "introuvable"
+    ,"start_reports": "Rapports"
+    ,"start_ops_ready": "work/ops existe et recevra les rapports d'opération."
+    ,"start_ops_missing": "work/ops n'a pas encore été créé ; il apparaîtra avec le premier rapport."
+    ,"start_contributors": "Outils contributeur"
+    ,"start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération."
+    ,"start_preview": "La scène de démo donnera à cette zone son premier aperçu géométrique."
   },
   "operation": {
     "clean_shells": {

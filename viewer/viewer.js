@@ -16,7 +16,7 @@
  *   _x?:number, _y?:number}} OperationReport */
 
 const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
- *   lang: string, strings: Object<string,string>}} */ (
+ *   lang: string, strings: Object<string,string>, doctor?: Object, ops_exists?: boolean}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
 
@@ -33,6 +33,7 @@ function t(key, values) {
 const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
 let current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
 let view = 0;
+let start = !DATA.reports.length;
 
 /** Report text is data from CAD files, never markup. */
 function esc(value) {
@@ -58,6 +59,11 @@ function place() {
 
 /* ---------- outliner ---------- */
 function outliner() {
+  if (start) {
+    document.getElementById("outliner").innerHTML = `<div class="blank"><span class="big">${esc(t("ui.start_title"))}</span>
+      <span>${esc(t("ui.start_outliner"))}</span></div>`;
+    return;
+  }
   const chains = new Map();
   for (const report of DATA.reports) {
     const key = report.chain || report.id;
@@ -85,6 +91,16 @@ function outliner() {
 
 /* ---------- node editor ---------- */
 function nodes() {
+  if (start) {
+    document.getElementById("nodes").innerHTML = `<div class="start-card"><h2>${esc(t("ui.start_title"))}</h2>
+      <p>${esc(t("ui.start_intro"))}</p><ol class="start-steps">
+      <li>${esc(t("ui.start_demo"))} <code>blender -b -P tools/make_demo_scene.py</code></li>
+      <li>${esc(t("ui.start_inspect"))} <code>meshanvil run scan_defects work/out/demo_source.blend</code></li>
+      <li>${esc(t("ui.start_prepare"))} <code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></li></ol></div>`;
+    const canvas = document.getElementById("canvas"); canvas.style.width = "860px"; canvas.style.height = "420px";
+    document.getElementById("noodles").innerHTML = "";
+    return;
+  }
   let html = "";
   for (const report of DATA.reports) {
     const kind = report.status === "failed" ? "failed" : report.kind;
@@ -200,6 +216,20 @@ function boundingBox(report) {
 
 function props() {
   const target = document.getElementById("props");
+  if (start) {
+    const doctor = /** @type {any} */ (DATA.doctor);
+    const blender = doctor && (doctor.requirements || []).find((item) => item.name === "blender");
+    const setup = blender
+      ? `<dl class="kv"><dt>${esc(t("ui.start_blender"))}</dt><dd>${esc(blender.path || t("ui.start_missing"))}</dd>
+           <dt>${esc(t("ui.start_version"))}</dt><dd>${esc(blender.version || "—")}</dd></dl>
+         <div class="note">${esc(blender.reason || "")}</div>${blender.fix ? `<code class="command">${esc(blender.fix)}</code>` : ""}`
+      : `<div class="note">${esc(t("ui.start_doctor_missing"))}</div><code class="command">meshanvil doctor</code>`;
+    target.innerHTML = `<div class="title-row"><h2>${esc(t("ui.start_environment"))}</h2>
+      <p class="note">${esc(t("ui.start_environment_note"))}</p></div>${block(t("ui.start_doctor"), setup)}
+      ${block(t("ui.start_reports"), `<div class="note">${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</div>`)}
+      ${block(t("ui.start_contributors"), `<div class="note">${esc(t("ui.start_contributors_note"))}</div>`)}`;
+    return;
+  }
   if (!current) {
     target.innerHTML = `<div class="blank"><span class="big">${esc(t("ui.nothing_selected"))}</span>
       <span>${esc(t("ui.report_shows"))}</span></div>`;
@@ -273,6 +303,11 @@ function preview() {
   const views = document.getElementById("pvviews"), title = document.getElementById("pvtitle");
   const report = current ? BY_ID.get(current) : null;
   const renders = (report && report.renders) || [];
+  if (start) {
+    title.textContent = t("ui.start_title"); views.innerHTML = ""; meta.innerHTML = "";
+    stage.innerHTML = `<p class="pvempty">${esc(t("ui.start_preview"))}<br><code>tools/make_demo_scene.py</code></p>`;
+    return;
+  }
   title.textContent = report ? `${report.id}_${report.operation}` : "";
   if (!renders.length) {
     views.innerHTML = "";
@@ -295,6 +330,7 @@ function preview() {
 
 /* ---------- shell ---------- */
 function select(id) {
+  start = false;
   if (id !== current) view = 0;
   current = id;
   outliner(); nodes(); props(); preview();
@@ -308,6 +344,10 @@ document.addEventListener("click", (event) => {
   if (viewTab) { view = Number(/** @type {HTMLElement} */ (viewTab).dataset.view); preview(); return; }
   const node = target.closest("[data-id]");
   if (node) select(/** @type {HTMLElement} */ (node).dataset.id);
+});
+
+document.getElementById("start-screen").addEventListener("click", () => {
+  start = true; current = null; outliner(); nodes(); props(); preview();
 });
 
 place();
@@ -328,4 +368,5 @@ for (const node of document.querySelectorAll("[data-i18n]")) {
 for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
   node.setAttribute("aria-label", t(/** @type {HTMLElement} */ (node).dataset.i18nAriaLabel));
 }
-select(current);
+if (current) select(current);
+else { outliner(); nodes(); props(); preview(); }

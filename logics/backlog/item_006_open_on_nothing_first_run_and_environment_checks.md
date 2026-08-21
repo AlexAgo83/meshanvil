@@ -1,14 +1,14 @@
 ## item_006_open_on_nothing_first_run_and_environment_checks - Open on nothing: first run and environment checks
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 65%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:38:39
+> Indicators reviewed: 2026-08-22 00:42:27
 
 # AI Context
 - Summary: The first launch, when work/ops is empty: what the tool can do, what it found in its environment, and the command that writes the first report.
@@ -68,3 +68,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_004_open_on_nothing_first_run_and_environment_checks`

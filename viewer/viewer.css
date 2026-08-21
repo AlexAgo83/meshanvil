@@ -29,6 +29,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .tabs button[aria-selected="true"]{background:var(--panel);color:var(--txt)}
 .tabs button:hover{color:var(--txt)}
 .topbar .spacer{flex:1}
+.start-link{padding:3px 8px;border-radius:var(--r);color:var(--dim);font-size:11.5px}
+.start-link:hover{background:var(--widget);color:var(--txt)}
 
 
 .scene{display:flex;align-items:center;gap:6px;background:var(--region);border-radius:var(--r);padding:3px 9px;color:var(--dim);font-family:var(--f-mono);font-size:11.5px}
@@ -65,6 +67,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nodewrap{position:relative;flex:1;min-height:0;overflow:auto;background:
   radial-gradient(circle at 1px 1px, #232323 1px, transparent 0) 0 0/22px 22px, var(--node-bg)}
 .canvas{position:relative;width:860px;height:640px;margin:8px}
+.start-card{max-width:500px;margin:42px auto;padding:18px;border:1px solid var(--line-soft);border-radius:6px;
+  background:var(--panel);box-shadow:0 3px 9px rgba(0,0,0,.3)}
+.start-card h2{font-size:16px;margin-bottom:7px}.start-card p{color:var(--dim);margin:0 0 12px}
+.start-steps{margin:0;padding-left:20px;color:var(--dim);display:flex;flex-direction:column;gap:6px}
+.start-steps code,.command{font-family:var(--f-mono);font-size:10.5px;color:var(--warn)}
 .noodles{position:absolute;inset:0;overflow:visible;pointer-events:none}
 .node{position:absolute;width:186px;background:var(--panel);border:1px solid var(--line);
   border-radius:6px;box-shadow:0 3px 9px rgba(0,0,0,.45);text-align:left;overflow:hidden}

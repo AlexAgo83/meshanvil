@@ -103,6 +103,26 @@
     "operation_report": "Operation report",
     "view": "View",
     "render_alt": "{view} view of {operation}"
+    ,"start": "Start"
+    ,"start_title": "Start a review chain"
+    ,"start_outliner": "Run one command below; its report will become the first chain entry."
+    ,"start_intro": "Meshanvil records operations instead of changing the source. Start with the supplied demo, then inspect it or prepare a printable body."
+    ,"start_demo": "Create the demo scene:"
+    ,"start_inspect": "Inspect it for defects:"
+    ,"start_prepare": "Prepare one printable body:"
+    ,"start_environment": "Environment"
+    ,"start_environment_note": "This page only reads the last setup report; it does not run checks or install anything."
+    ,"start_doctor": "Setup check"
+    ,"start_doctor_missing": "No setup report yet. Run this command to see the Blender binary and version that Meshanvil will use."
+    ,"start_blender": "Blender binary"
+    ,"start_version": "version"
+    ,"start_missing": "not found"
+    ,"start_reports": "Reports"
+    ,"start_ops_ready": "work/ops exists and will hold operation reports."
+    ,"start_ops_missing": "work/ops has not been created yet; it will appear with the first report."
+    ,"start_contributors": "Contributor tools"
+    ,"start_contributors_note": "The pinned Logics tooling and its offline Mermaid support are for corpus work, not for running an operation."
+    ,"start_preview": "The demo scene will give this area its first geometry preview."
   },
   "operation": {
     "clean_shells": {

@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import doctor, engines, i18n, manifests, runner  # noqa: E402
+from meshanvil import doctor, engines, i18n, manifests, runner, viewer  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -131,6 +131,19 @@ def check_doctor_exit_code():
         doctor.check = original
 
 
+def check_viewer_start(tmp: Path):
+    root = tmp / "viewer-start"
+    root.mkdir()
+    (root / "viewer").symlink_to(ROOT / "viewer", target_is_directory=True)
+    (root / "work").mkdir()
+    (root / "work" / "doctor.json").write_text(
+        json.dumps({"ok": False, "requirements": [{"name": "blender", "state": "missing"}]}),
+        encoding="utf-8")
+    page = viewer.build(root)
+    payload = json.loads((page.parent / "data.js").read_text(encoding="utf-8").split("= ", 1)[1].rstrip(";\n"))
+    assert payload["reports"] == [] and payload["doctor"]["ok"] is False and not payload["ops_exists"]
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -143,6 +156,7 @@ def main() -> int:
         check_doctor(tmp)
         check_engine_floor()
         check_doctor_exit_code()
+        check_viewer_start(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")
