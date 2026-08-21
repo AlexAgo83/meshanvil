@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 98%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:43:44
+> Indicators reviewed: 2026-08-22 01:11:06
 
 # AI Context
 - Summary: The viewer reads `work/doctor.json` and `work/ops` only; it never starts checks or operations.
@@ -18,10 +18,10 @@
 - Skip when: Reviewing an existing operation chain.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_006_open_on_nothing_first_run_and_environment_checks`
@@ -34,8 +34,8 @@
 - AC5: The start screen can be reopened after the first run, so the checks stay reachable.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_004_open_on_nothing_first_run_and_environment_checks.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_004_open_on_nothing_first_run_and_environment_checks.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_004_open_on_nothing_first_run_and_environment_checks.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_004_open_on_nothing_first_run_and_environment_checks.md` after implementation.
 
 # Validation
 - `make check`
@@ -53,3 +53,6 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `make check` | result: passed | Viewer start payload self-check and French viewer build passed without running a setup check.

@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:24:42
+> Indicators reviewed: 2026-08-22 01:11:06
 
 # AI Context
 - Summary: Route CLI and viewer copy through the English and French catalogues, validate their parity, and preserve machine-readable report identifiers.
@@ -18,10 +18,10 @@
 - Skip when: Changing warning codes, report field names, or operation names; those are stable identifiers.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_010_speak_english_by_default_and_french_on_demand`
@@ -37,8 +37,8 @@
 - request-AC17 -> This task. Proof: f84e209 through dab2494; `make check`, `make fixture`, and `logics-manager i18n validate` passed.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_002_speak_english_by_default_and_french_on_demand.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_002_speak_english_by_default_and_french_on_demand.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_002_speak_english_by_default_and_french_on_demand.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_002_speak_english_by_default_and_french_on_demand.md` after implementation.
 
 # Validation
 - `make check && make fixture && logics-manager lint --require-status && logics-manager audit --group-by-doc && logics-manager i18n validate` passed on 2026-08-22.
@@ -50,3 +50,6 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `logics-manager i18n validate` | result: passed | English/French catalogue parity and placeholders passed validation.

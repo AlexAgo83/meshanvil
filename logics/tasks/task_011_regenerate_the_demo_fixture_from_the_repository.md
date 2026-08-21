@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:59:36
+> Indicators reviewed: 2026-08-22 01:11:07
 
 # AI Context
 - Summary: The checked-in fixture scripts generate only ignored `work/` data and verify the known defect findings and preserved failed branch.
@@ -18,10 +18,10 @@
 - Skip when: Testing the unversioned STEP import path.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_007_regenerate_the_demo_fixture_from_the_repository`
@@ -34,8 +34,8 @@
 - AC5: Nothing generated is committed, and the publication-hygiene gate still passes.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_011_regenerate_the_demo_fixture_from_the_repository.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_011_regenerate_the_demo_fixture_from_the_repository.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_011_regenerate_the_demo_fixture_from_the_repository.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_011_regenerate_the_demo_fixture_from_the_repository.md` after implementation.
 
 # Validation
 - `make fixture` regenerates the scene and replays the chain from repository scripts
@@ -48,3 +48,7 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC2 | date: 2026-08-22 | command: `make fixture` | result: passed | Generated fixture exposed its smear and duplicate defects without hints.
+- AC4 | date: 2026-08-22 | command: `make fixture` | result: passed | Generated fixture retained the coarse voxel failure with its measured drift.

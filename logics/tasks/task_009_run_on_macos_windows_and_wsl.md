@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:57:02
+> Indicators reviewed: 2026-08-22 01:11:06
 
 # AI Context
 - Summary: Keep discovery and WSL conversion at the engine boundary; platform claims remain limited to the documented measured matrix.
@@ -18,10 +18,10 @@
 - Skip when: Adding unsupported Linux claims or operation-specific behavior.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_011_run_on_macos_windows_and_wsl`
@@ -36,8 +36,8 @@
 - AC7: The documentation states which platforms were verified, on what, and that Linux was not.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_009_run_on_macos_windows_and_wsl.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_009_run_on_macos_windows_and_wsl.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_009_run_on_macos_windows_and_wsl.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_009_run_on_macos_windows_and_wsl.md` after implementation.
 
 # Validation
 - `make check` (including simulated WSL engine-path conversion)
@@ -50,3 +50,6 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC3 | date: 2026-08-22 | command: `make check` | result: passed | WSL engine-path translation is covered by the host self-check.

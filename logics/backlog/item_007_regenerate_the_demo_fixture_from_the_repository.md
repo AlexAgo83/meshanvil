@@ -4,11 +4,11 @@
 > Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 95%
+> Progress: 99%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:59:36
+> Indicators reviewed: 2026-08-22 01:11:06
 
 # AI Context
 - Summary: A synthetic scene built by script, carrying real export defects, that the existing sweep finds unaided -- the public fixture and the ground truth the tools lacked.

@@ -4,11 +4,11 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 99%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:57:02
+> Indicators reviewed: 2026-08-22 01:11:06
 
 # AI Context
 - Summary: One tool on macOS, Windows and WSL, with the engine located per platform, paths translated when the two sides of WSL disagree, and Linux stated as unverified rather than claimed.
