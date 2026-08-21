@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:02:54
+> Indicators reviewed: 2026-08-22 01:03:49
 
 # AI Context
 - Summary: The report must declare a same-subject render pair; the viewer presents it with one persistent, accessible wipe position and numeric deltas.
@@ -59,3 +59,4 @@
 # Evidence
 - AC1 | date: 2026-08-22 | command: `make fixture` | result: passed | Fixture rendered four declared same-camera before/after pairs.
 - AC3 | date: 2026-08-22 | command: `make check` | result: passed | The native range wipe stays active while its overlay width and aria value update.
+- AC3 | date: 2026-08-22 | command: `make check` | result: passed | Replaced the resize-based wipe with a same-size image clip mask and continuous range input.

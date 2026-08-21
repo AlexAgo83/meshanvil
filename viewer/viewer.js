@@ -337,7 +337,7 @@ function preview() {
     if (view >= pairs.length) view = 0;
     const pair = pairs[view], delta = report.bbox_delta_mm || {};
     views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
-    stage.innerHTML = `<div class="compare"><img src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><div class="compare-after" style="width:${wipe}%"><img src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"></div><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
+    stage.innerHTML = `<div class="compare" style="--wipe:${wipe}%"><img class="compare-before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
     meta.innerHTML = `<div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
     return;
   }
@@ -384,8 +384,8 @@ document.addEventListener("input", (event) => {
   const input = /** @type {HTMLInputElement} */ (event.target);
   if (!input.matches("[data-wipe]")) return;
   wipe = Number(input.value);
-  const after = /** @type {HTMLElement|null} */ (document.querySelector(".compare-after"));
-  if (after) after.style.width = `${wipe}%`;
+  const compare = /** @type {HTMLElement|null} */ (document.querySelector(".compare"));
+  if (compare) compare.style.setProperty("--wipe", `${wipe}%`);
   input.setAttribute("aria-valuetext", `${wipe}%`);
 });
 
