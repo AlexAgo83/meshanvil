@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:56:05
+> Indicators reviewed: 2026-08-22 01:10:28
 
 # AI Context
 - Summary: Select only report-owned outputs; a dry run is read-only, while apply removes the file and changes only its lifecycle fields.
@@ -18,10 +18,10 @@
 - Skip when: Handling sources under `work/in/` or regenerating an artefact.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_004_prune_heavy_artefacts_without_losing_the_record`
@@ -34,8 +34,8 @@
 - AC5: The chain still renders after a prune, with the pruned node shown as pruned and its measurements still readable.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_008_prune_heavy_artefacts_without_losing_the_record.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_008_prune_heavy_artefacts_without_losing_the_record.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_008_prune_heavy_artefacts_without_losing_the_record.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_008_prune_heavy_artefacts_without_losing_the_record.md` after implementation.
 
 # Validation
 - `make check` (dry-run/apply lifecycle self-check)
@@ -51,3 +51,7 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `make check` | result: passed | The prune self-check listed an old artefact and left it intact during dry-run.
+- AC2 | date: 2026-08-22 | command: `make check` | result: passed | The prune self-check deleted the selected file and changed only output lifecycle fields to pruned.
