@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, json, sys
 
-from . import VERSION, doctor, engines, manifests, runner, viewer
+from . import VERSION, doctor, engines, logics_bridge, manifests, runner, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -33,6 +33,8 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--serve", action="store_true",
                       help=t("cli.view.serve"))
     show.add_argument("--no-open", action="store_true", help=t("cli.view.no_open"))
+    runbook = sub.add_parser("runbook", help=t("cli.runbook.help"))
+    runbook.add_argument("chain")
     return parser
 
 
@@ -59,6 +61,15 @@ def main(argv: list[str] | None = None) -> int:
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":
         return viewer.view(serve_it=arguments.serve, open_it=not arguments.no_open)
+    if arguments.command == "runbook":
+        path, error = logics_bridge.runbook(manifests.root(), arguments.chain)
+        if error:
+            message = (t("bridge.runbook_unavailable") if error == "unavailable"
+                       else t("bridge.runbook_error", reason=error))
+            print(message, file=sys.stderr)
+            return runner.EXIT_REFUSED
+        print(path)
+        return runner.EXIT_OK
     given = {}
     for pair in arguments.set:
         if "=" not in pair:

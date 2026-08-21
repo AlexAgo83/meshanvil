@@ -4,11 +4,11 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 65%
+> Progress: 92%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:47:04
+> Indicators reviewed: 2026-08-22 00:48:42
 
 # AI Context
 - Summary: Three bridges over the logics-manager CLI: a report recorded as evidence on an acceptance criterion, document chips resolved from the corpus instead of a local table, and a runbook scaffolded from what a chain measured.

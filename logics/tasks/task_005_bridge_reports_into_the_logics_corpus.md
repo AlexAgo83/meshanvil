@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 65%
+> Progress: 92%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:47:04
+> Indicators reviewed: 2026-08-22 00:48:42
 
 # AI Context
 - Summary: Keep Logics optional through its JSON CLI: evidence after success, live document metadata for chips, and a runbook scaffold from report facts.
@@ -42,10 +42,14 @@
 - `make check`
 - `./bin/meshanvil view --no-open`
 - `node --check viewer/viewer.js`
+- `./bin/meshanvil runbook 002`
+- `logics-manager lint --require-status`
+- `logics-manager audit --group-by-doc`
 
 # Report
 - Added the optional JSON subprocess boundary and successful-run evidence hook.
 - Viewer document chips now resolve title, kind and status from the corpus and call missing references out.
+- `meshanvil runbook 002` created `run_011` with operation parameters, outcomes and measurements; the human procedure remains explicitly unverified.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
