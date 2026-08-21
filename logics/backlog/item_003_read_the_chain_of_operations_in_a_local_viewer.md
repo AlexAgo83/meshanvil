@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 21:28:40
+> Indicators reviewed: 2026-08-21 22:08:44
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.
@@ -31,16 +31,22 @@
   - Reading report files directly from work/ops/ with no build step and no server requirement.
   - Rendering the DAG with the Mermaid bundle vendored by the logics-manager dependency, so the page stays offline without a CDN and without a copy of our own (see `adr_002_depend_on_logics_manager_and_reuse_its_structure`).
   - The local-server conventions the Logics viewer already proved: bound to 127.0.0.1, --port 0, read-only, refreshed on an interval.
+  - An image editor beside the graph: the selected operation's renders shown large, one per canonical direction, with the path and camera of the one on screen.
+  - The tile thumbnail named as what it is -- the operation's first render -- so its provenance is never a guess.
+  - Menus that name the available actions and show the command each one runs, never executing anything (`adr_003_the_viewer_reads_the_command_acts`).
   - An empty state that explains how to produce the first report.
 - Out:
   - Editing, re-running or triggering operations from the viewer.
   - A force-directed graph view. On this node count a physics layout says less than a tree and discards the ordering; it stays an open question in prod_001 until a tree measurably fails.
   - A 3D viewport. The renders an operation produced are what is shown.
   - Integration into the Logics viewer, and reuse of its browser-host and stylesheet: they render workflow documents, and an operation timeline is not one.
+  - The before/after comparison (item_005), the first-run screen (item_006) and the runbook reverse index (item_008), which are their own slices.
 
 # Acceptance criteria
 - AC1: Opening the viewer with reports present renders them as a top-down DAG in execution order, with each node's status.
 - AC5: Two operations sharing a parent are shown as siblings, and a failed one is kept in the tree rather than hidden.
+- AC6: The selected operation's renders are shown large, one per canonical direction, with the path and camera of the one displayed.
+- AC7: No menu entry runs anything: each shows the command that performs the action.
 - AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.
 - AC3: The viewer opens with no Blender process running, no build step and no network access.
 - AC4: With no reports present the viewer states how to produce one instead of failing.
@@ -56,7 +62,7 @@
 
 # Links
 - Product brief(s): `prod_001_reviewable_agent_driven_3d_operations`
-- Architecture decision(s): `adr_002_depend_on_logics_manager_and_reuse_its_structure`
+- Architecture decision(s): `adr_002_depend_on_logics_manager_and_reuse_its_structure`, `adr_003_the_viewer_reads_the_command_acts`
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Primary task(s): `task_001_deliver_the_reviewable_operation_loop`
 

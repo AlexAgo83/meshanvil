@@ -4,7 +4,7 @@
 > Status: Ready
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 10%
+> Progress: 15%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -19,12 +19,18 @@
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
 
 # Plan
-- [x] 1. Settle the report shape against what the existing operations already measure, so the format records what is there rather than asking scripts to compute something new. Settled in `adr_001_operation_report_format`: twelve scripts, seven transforms and five inspections, one envelope with two payloads.
-- [ ] 2. Implement the report writer and convert the operations to it one by one, checking each converted operation against the numbers it printed before.
-- [ ] 3. Build the runner command on top of the converted operations, including the refusal to write to work/in/.
-- [ ] 4. Build the viewer last, against real reports produced by the converted chain rather than fixtures, rendering the chain as a deterministic top-down DAG.
-- [ ] 4b. Add the pruning policy (item_004) once several chains exist and the disk footprint is real, not before.
-- [ ] 5. Record what the loop changes about the way an operation is reviewed as a runbook, and note in run_006 and run_009 where the reports now carry what those procedures ask to be checked by hand.
+- [x] 1. Settle the report shape against what the existing operations already measure. Settled in `adr_001_operation_report_format`: twelve scripts, seven transforms and five inspections, one envelope with two payloads, renders and comparable pairs declared rather than inferred.
+- [x] 2. Settle what the viewer may do. Settled in `adr_003_the_viewer_reads_the_command_acts`: it reads, and every action is shown as the command that performs it.
+- [x] 3. Settle the fixture. `item_007` exists and its three scripts are in the repository: the demo scene generator, the chain replay, and the fixed-camera renders.
+- [ ] 4. `item_001` -- the report writer, then the twelve operations converted to it one at a time, each checked against the numbers it printed before. Nothing else starts until this is done: every other slice reads what it writes.
+- [ ] 5. `item_002` -- the runner command, including the refusal to write to work/in/ and the discovery of operations from pipeline/ and tools/.
+- [ ] 6. `item_007` -- assert the fixture: the generated defects must be found by the sweep unaided, which is the ground truth the tools never had.
+- [ ] 7. `item_003` -- the viewer: chain as a top-down DAG, report panel, image editor, menus that show commands.
+- [ ] 8. `item_006` -- the first run: what to do on an empty work/ops, and the environment checks.
+- [ ] 9. `item_008` -- the runbook reverse index, derived from the links the reports already carry.
+- [ ] 10. `item_005` -- the comparison: fixed-camera renders of both states, the wipe, the numeric difference beside it.
+- [ ] 11. `item_004` -- pruning, only once the disk footprint is real. Not before.
+- [ ] 12. Record what the loop changes about reviewing an operation as a runbook, and note in run_006 and run_009 where the reports now carry what those procedures ask to be checked by hand.
 - [ ] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
 - [ ] Keep commit creation under operator control; do not force one commit per micro-step.
 - [ ] GATE: do not close until lint, audit, and scaffold validation pass.

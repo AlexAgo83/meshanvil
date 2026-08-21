@@ -1,14 +1,17 @@
 {
   "budgets": {
-    "max_docs": 20,
-    "max_docs_per_ref": 4
+    "max_docs": 8,
+    "max_docs_per_ref": 8
   },
   "changed_paths": [],
-  "command": "logics-manager sync context-pack req_000_make_every_3d_operation_reviewable_without_reopening_blender item_001_define_the_operation_report_and_write_one_from_every_operation item_002_run_one_named_operation_from_a_single_agent_agnostic_command item_003_read_the_chain_of_operations_in_a_local_viewer task_001_deliver_the_reviewable_operation_loop --mode full --profile normal --handoff",
+  "command": "logics-manager sync context-pack task_001_deliver_the_reviewable_operation_loop --mode full --profile deep --handoff",
   "companion_docs": [
     {
       "kind": "product",
       "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format"
+        ],
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation",
           "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
@@ -35,35 +38,216 @@
           "- Keep every generated artefact under work/, so a public repository never carries private geometry."
         ],
         "Key product decisions": [
-          "- Use structured input as the source of truth for generated docs.",
-          "- Keep generated write paths local and repo-bounded."
+          "- One envelope, two payloads: a transform reports before and after, an inspection reports findings. Settled in `adr_001_operation_report_format`.",
+          "- The bounding-box comparison is computed by the report writer, not by the operation, because it is the check that caught every failure in the delivered chain while the manifold checks passed throughout. A verification an agent can forget is not a verification.",
+          "- What was not checked is stated as a warning code, so an agent can act on it and a reader is never left assuming.",
+          "- A failed operation is a branch of the history, kept and rendered, not a run to discard. `run_007` records three failed approaches, and they carry most of that runbook's value.",
+          "- Lineage lives in the files: a parent report id and wiki-style document references, no index and no database. A report stays understandable opened alone, years later, without the tool that wrote it.",
+          "- Reports are records and artefacts are files. Pruning deletes heavy artefacts and never the record of what was done."
         ],
         "Overview": [
-          "Turns each headless 3D operation into a self-describing unit of work: one command runs it, one report records what it did and how that was verified, and one local viewer makes the chain readable without opening the 3D application. The measurement discipline the runbooks describe becomes something the tooling produces by default rather than something the operator has to remember."
+          "Turns each headless 3D operation into a self-describing unit of work: one command runs it, one report records what it did and how that was verified, and one local viewer makes the chain readable without opening the 3D application. The measurement discipline the runbooks describe becomes something the tooling produces by default rather than something the operator has to remember.",
+          "```mermaid",
+          "flowchart TD",
+          "  agent[Any agent runtime<br/>Claude Code, Codex, a shell] --> cmd[meshanvil run &lt;operation&gt; &lt;file&gt;]",
+          "  cmd --> guard{Target under work/in/?}",
+          "  guard -->|yes| refuse[Refuse: name the copy to work on]"
         ],
         "References": [
+          "- Report format decision: `adr_001_operation_report_format`",
           "- Product back-reference: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
           "- Task back-reference: `task_001_deliver_the_reviewable_operation_loop`"
         ]
       },
       "status": "Proposed",
       "title": "Reviewable agent-driven 3D operations"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format"
+        ],
+        "item": [
+          "item_001_define_the_operation_report_and_write_one_from_every_operation",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "run": [
+          "run_006_turn_a_cad_assembly_into_a_printable_solid",
+          "run_007_hollow_a_printable_body_for_electronics",
+          "run_009_repair_export_defects_in_a_cad_derived_mesh"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_001_operation_report_format.md",
+      "ref": "adr_001_operation_report_format",
+      "sections": {
+        "Overview": [
+          "- One JSON envelope per operation, written by a single helper, carrying what was measured, what it was measured against, and what was not checked -- so a result can be reviewed, and a chain of results navigated, from the reports alone.",
+          "```mermaid",
+          "flowchart TD",
+          "  op[An operation runs] --> kind{kind}",
+          "  kind -->|transform| tr[before + after + output]",
+          "  kind -->|inspection| ins[findings, no output]"
+        ],
+        "References": [
+          "- Prior art: `transformation-report.json` in the cm-sim printable-preparation flow (schema_version, source fingerprint, warning codes)",
+          "- The check the format makes mandatory: `run_006_turn_a_cad_assembly_into_a_printable_solid`, \"compare the output bounding box against the source\"",
+          "- The branching history this format must keep: `run_007_hollow_a_printable_body_for_electronics`, three failed approaches",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_001_define_the_operation_report_and_write_one_from_every_operation`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Accepted",
+      "title": "Operation report format"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts"
+        ],
+        "item": [
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_003_the_viewer_reads_the_command_acts.md",
+      "ref": "adr_003_the_viewer_reads_the_command_acts",
+      "sections": {
+        "Overview": [
+          "- The viewer never runs an operation. Every action it offers -- run, re-run, branch, prune, re-render, open in Blender -- is presented as the exact command that does it, ready to copy, and the operator or the agent runs it themselves.",
+          "```mermaid",
+          "flowchart LR",
+          "  op[Operator or agent] --> cmd[meshanvil run \u2026]",
+          "  cmd --> blender[Headless Blender]",
+          "  blender --> report[work/ops/*.json]"
+        ],
+        "References": [
+          "- The command this decision points to: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`",
+          "- The viewer it constrains: `item_003_read_the_chain_of_operations_in_a_local_viewer`",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_003_read_the_chain_of_operations_in_a_local_viewer`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Accepted",
+      "title": "The viewer reads, the command acts"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format",
+          "adr_002_depend_on_logics_manager_and_reuse_its_structure"
+        ],
+        "item": [
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md",
+      "ref": "adr_002_depend_on_logics_manager_and_reuse_its_structure",
+      "sections": {
+        "Overview": [
+          "- The @grifhinz/logics-manager package becomes a declared devDependency rather than an assumed global tool, and meshanvil reuses three things it already ships -- the pinned CLI, the vendored Mermaid bundle, and the local-viewer conventions -- while implementing its own viewer surface.",
+          "```mermaid",
+          "flowchart LR",
+          "  dep[\"@grifhinz/logics-manager<br/>devDependency, pinned\"] --> cli[CLI: lint, audit, validate<br/>make logics, gated in CI]",
+          "  dep --> mmd[dist/vendor/mermaid.min.js<br/>renders the DAG offline]",
+          "  dep --> conv[Viewer conventions<br/>127.0.0.1, --port 0, read-only, refresh]"
+        ],
+        "References": [
+          "- Reused: the Logics CLI, its vendored Mermaid bundle, its local-viewer conventions",
+          "- Not reused: the Logics viewer browser-host bundle and stylesheet",
+          "- Report format this viewer reads: `adr_001_operation_report_format`",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_003_read_the_chain_of_operations_in_a_local_viewer`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Accepted",
+      "title": "Depend on logics-manager and reuse its structure"
     }
   ],
   "docs": [
     {
       "ai_context": {
-        "keywords": "operation, reviewable, reopening, blender",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "orchestration, report format, runner, viewer, conversion order",
+        "skip when": "Implementing one slice -- read its backlog item instead.",
+        "summary": "Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.",
+        "use when": "Sequencing the work, or checking what remains before the loop is usable end to end."
+      },
+      "kind": "task",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format",
+          "adr_003_the_viewer_reads_the_command_acts"
+        ],
+        "item": [
+          "item_001_define_the_operation_report_and_write_one_from_every_operation",
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "prod": [
+          "prod_001_reviewable_agent_driven_3d_operations"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/tasks/task_001_deliver_the_reviewable_operation_loop.md",
+      "ref": "task_001_deliver_the_reviewable_operation_loop",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Deliver the reviewable operation loop"
+    },
+    {
+      "ai_context": {
+        "keywords": "operation report, bounding-box comparison, headless Blender, local viewer, agent-agnostic command",
+        "skip when": "Working on the geometry of one procedure -- the runbooks in logics/runbook/ hold that, not this request.",
+        "summary": "Each headless operation writes a report carrying its measurements and its bounding-box comparison, one command runs it whatever agent is driving, and a local viewer makes the chain readable without opening Blender.",
+        "use when": "Deciding how an operation records what it did, how it is invoked, or how its result is reviewed."
       },
       "kind": "request",
       "linked_refs": {
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation",
           "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
-          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+          "item_003_read_the_chain_of_operations_in_a_local_viewer",
+          "item_004_prune_heavy_artefacts_without_losing_the_record",
+          "item_005_compare_two_states_of_the_same_geometry",
+          "item_006_open_on_nothing_first_run_and_environment_checks",
+          "item_007_regenerate_the_demo_fixture_from_the_repository",
+          "item_008_read_the_method_from_the_reports_runbook_reverse_index"
         ],
         "prod": [
           "prod_001_reviewable_agent_driven_3d_operations"
@@ -93,9 +277,9 @@
           "- Reviewing what an operation did must not require opening Blender and navigating to the affected geometry by hand.",
           "- Every operation must leave behind the measurements that verify it, not only its output file.",
           "- The chain of operations that produced a result must be readable in order, with what changed at each step.",
-          "- The bounding-box comparison against the source must be computed and shown for every operation, because that single check caught every failure in the delivered chain while the manifold checks passed throughout.",
-          "- An operation must be runnable by any agent from a single command, without a Blender-specific or vendor-specific integration.",
-          "- Verification renders must sit next to the numbers they illustrate, so a render is read as confirmation and never as evidence on its own."
+          "- Failed attempts must survive: three failed approaches are recorded in run_007 and they carry most of that runbook's value.",
+          "- The generated artefacts must be prunable without erasing the record of what was done, because a blend weighs 200 MB and a report a few kilobytes.",
+          "- Two states of the same geometry must be comparable side by side, not only through their numbers: a 30 mm voxel destroys the detail of a part while the volume moves by 3% and every topology check stays green."
         ]
       },
       "status": "Draft",
@@ -103,13 +287,16 @@
     },
     {
       "ai_context": {
-        "keywords": "define, operation, report, write",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "operation report, report writer, bounding-box delta, work/ops, failure report",
+        "skip when": "Deciding how an operation is invoked (item_002) or displayed (item_003).",
+        "summary": "One JSON report per operation under work/ops/, written by a single helper, carrying counts, bounding boxes before and after, the per-axis delta, render paths, and a failure path that still reports.",
+        "use when": "Changing what an operation records, or adding an operation that must report like the others."
       },
       "kind": "backlog",
       "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format"
+        ],
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation"
         ],
@@ -128,13 +315,16 @@
       "schema_version": "1.0",
       "sections": {
         "Acceptance criteria": [
-          "- AC1: Running any of the eight operations leaves exactly one report file under work/ops/, named with its execution order and operation name.",
+          "- AC1: Running any converted operation leaves exactly one report file under work/ops/, named with its execution order and operation name.",
           "- AC2: The report states the bounding box before and after in millimetres and names the axes that moved, matching what the script prints.",
           "- AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.",
-          "- AC4: The report writer is the only place a report is written; no script serialises one of its own."
+          "- AC4: The report writer is the only place a report is written; no script serialises one of its own.",
+          "- AC5: An inspection script, which has no output file, produces a valid report of kind inspection carrying its findings.",
+          "- AC6: A measurement an operation did not take is null in the report, distinguishable from a measured zero."
         ],
         "Problem": [
           "- Each script prints its measurements to stdout and they are lost when the terminal scrolls.",
+          "- Twelve scripts exist, and they are not of one kind: seven transform a file, five only measure and produce no output at all. A format built around an input and an output cannot describe the second kind.",
           "- Nothing links an output file to the operation, the input and the settings that produced it.",
           "- The bounding-box comparison is described in the runbooks as the check that caught every failure, but it is computed by hand, differently, in each script."
         ]
@@ -144,10 +334,10 @@
     },
     {
       "ai_context": {
-        "keywords": "run, named, operation, single, agent, agnostic, command",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "runner command, operation discovery, headless invocation, source protection, agent-agnostic",
+        "skip when": "Designing the report contents (item_001) or the viewer (item_003); packaging an MCP server, which this slice excludes.",
+        "summary": "One command that resolves the Blender binary, runs a named operation headless on a target file, refuses to write to work/in/, and prints the report path.",
+        "use when": "Changing how an operation is launched, or what an agent has to know to launch one."
       },
       "kind": "backlog",
       "linked_refs": {
@@ -185,13 +375,17 @@
     },
     {
       "ai_context": {
-        "keywords": "read, chain, operations, local, viewer",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "local viewer, operation timeline, verification renders, static page, no build step",
+        "skip when": "Anything that runs or edits geometry -- the viewer only reads reports.",
+        "summary": "A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.",
+        "use when": "Changing how an operator reviews what an operation did."
       },
       "kind": "backlog",
       "linked_refs": {
+        "adr": [
+          "adr_002_depend_on_logics_manager_and_reuse_its_structure",
+          "adr_003_the_viewer_reads_the_command_acts"
+        ],
         "item": [
           "item_003_read_the_chain_of_operations_in_a_local_viewer"
         ],
@@ -210,62 +404,30 @@
       "schema_version": "1.0",
       "sections": {
         "Acceptance criteria": [
-          "- AC1: Opening the viewer with reports present lists them in execution order with each one's status.",
+          "- AC1: Opening the viewer with reports present renders them as a top-down DAG in execution order, with each node's status.",
+          "- AC5: Two operations sharing a parent are shown as siblings, and a failed one is kept in the tree rather than hidden.",
+          "- AC6: The selected operation's renders are shown large, one per canonical direction, with the path and camera of the one displayed.",
+          "- AC7: No menu entry runs anything: each shows the command that performs the action.",
           "- AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.",
-          "- AC3: The viewer opens with no Blender process running, no build step and no network access.",
-          "- AC4: With no reports present the viewer states how to produce one instead of failing."
+          "- AC3: The viewer opens with no Blender process running, no build step and no network access."
         ],
         "Problem": [
           "- Reviewing an operation means reopening Blender and navigating to the affected geometry, which is slow enough that the review is skipped.",
           "- The measurements and the renders exist separately, so the render is read on its own -- exactly the mistake the runbooks warn against.",
-          "- There is no view of the chain: which operation ran before this one, and what it changed."
+          "- There is no view of the chain: which operation ran before this one, and what it changed.",
+          "- The history is a tree, not a line: `run_007` records three failed approaches before the one that worked, and a flat list cannot show that they were siblings."
         ]
       },
       "status": "Ready",
       "title": "Read the chain of operations in a local viewer"
     },
     {
-      "ai_context": {
-        "keywords": "deliver, reviewable, operation, loop",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
-      },
-      "kind": "task",
-      "linked_refs": {
-        "item": [
-          "item_001_define_the_operation_report_and_write_one_from_every_operation",
-          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
-          "item_003_read_the_chain_of_operations_in_a_local_viewer"
-        ],
-        "prod": [
-          "prod_001_reviewable_agent_driven_3d_operations"
-        ],
-        "req": [
-          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
-        ],
-        "task": [
-          "task_001_deliver_the_reviewable_operation_loop"
-        ]
-      },
-      "path": "logics/tasks/task_001_deliver_the_reviewable_operation_loop.md",
-      "ref": "task_001_deliver_the_reviewable_operation_loop",
-      "schema_version": "1.0",
-      "sections": {
-        "Context": [
-          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
-        ],
-        "Validation": [
-          "- (no validation recorded yet)"
-        ]
-      },
-      "status": "Ready",
-      "title": "Deliver the reviewable operation loop"
-    },
-    {
       "ai_context": {},
       "kind": "product",
       "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format"
+        ],
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation",
           "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
@@ -287,22 +449,73 @@
       "sections": {},
       "status": "Proposed",
       "title": "Reviewable agent-driven 3D operations"
+    },
+    {
+      "ai_context": {},
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format"
+        ],
+        "item": [
+          "item_001_define_the_operation_report_and_write_one_from_every_operation",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "run": [
+          "run_006_turn_a_cad_assembly_into_a_printable_solid",
+          "run_007_hollow_a_printable_body_for_electronics",
+          "run_009_repair_export_defects_in_a_cad_derived_mesh"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_001_operation_report_format.md",
+      "ref": "adr_001_operation_report_format",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Accepted",
+      "title": "Operation report format"
+    },
+    {
+      "ai_context": {},
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts"
+        ],
+        "item": [
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_003_the_viewer_reads_the_command_acts.md",
+      "ref": "adr_003_the_viewer_reads_the_command_acts",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Accepted",
+      "title": "The viewer reads, the command acts"
     }
   ],
   "estimates": {
-    "char_count": 11856,
-    "companion_doc_count": 1,
-    "doc_count": 6
+    "char_count": 22326,
+    "companion_doc_count": 4,
+    "doc_count": 8
   },
-  "generated_at": "2026-08-21T18:59:09Z",
+  "generated_at": "2026-08-21T20:09:25Z",
   "handoff": {
-    "companion_doc_count": 1,
+    "companion_doc_count": 4,
     "enabled": true,
     "source_refs": [
-      "req_000_make_every_3d_operation_reviewable_without_reopening_blender",
-      "item_001_define_the_operation_report_and_write_one_from_every_operation",
-      "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
-      "item_003_read_the_chain_of_operations_in_a_local_viewer",
       "task_001_deliver_the_reviewable_operation_loop"
     ],
     "validation_summary_count": 1
@@ -322,13 +535,9 @@
     "state": "absent"
   },
   "mode": "full",
-  "profile": "normal",
-  "ref": "req_000_make_every_3d_operation_reviewable_without_reopening_blender,item_001_define_the_operation_report_and_write_one_from_every_operation,item_002_run_one_named_operation_from_a_single_agent_agnostic_command,item_003_read_the_chain_of_operations_in_a_local_viewer,task_001_deliver_the_reviewable_operation_loop",
+  "profile": "deep",
+  "ref": "task_001_deliver_the_reviewable_operation_loop",
   "refs": [
-    "req_000_make_every_3d_operation_reviewable_without_reopening_blender",
-    "item_001_define_the_operation_report_and_write_one_from_every_operation",
-    "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
-    "item_003_read_the_chain_of_operations_in_a_local_viewer",
     "task_001_deliver_the_reviewable_operation_loop"
   ],
   "release": {

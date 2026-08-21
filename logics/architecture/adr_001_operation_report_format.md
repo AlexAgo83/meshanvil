@@ -1,6 +1,6 @@
 ## adr_001_operation_report_format - Operation report format
 > Date: 2026-08-21
-> Status: Proposed
+> Status: Accepted
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_001_define_the_operation_report_and_write_one_from_every_operation`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
@@ -50,6 +50,8 @@ flowchart TD
 - **A failure still reports.** `status: failed` carries the error and the measurements taken before it, because a failed attempt is a branch of the history and not a discarded run.
 - **Lineage lives in the file.** `links` carries the parent report id and wiki-style references to the documents involved (`[[run_009_repair_export_defects_in_a_cad_derived_mesh]]`, `[[item_003_read_the_chain_of_operations_in_a_local_viewer]]`). A report opened alone in a text editor stays understandable without the tool that wrote it, and without any index or database.
 - **Artefact state is a field from the start.** `output.state` is `present`, `pinned` or `pruned`, with the date when it changed. Retrofitting three fields onto reports already written is a migration worth avoiding for the price of declaring them now.
+- **Renders are declared, not discovered.** `renders[]` carries, for each image, its canonical direction, its path and the camera used. `renders[0]` is the tile thumbnail. The viewer never infers a view from a filename.
+- **Comparable pairs are declared too.** A `transform` that rendered its input state as well lists the pairs in `compare[]`, one per direction, each naming the two images and the camera they share. Without that declaration there is no comparison, because two images on two cameras prove nothing.
 - **Reports are immutable except for artefact state.** Nothing else in a written report is edited afterwards.
 
 # Consequences
@@ -58,6 +60,7 @@ flowchart TD
 - The five inspection scripts become first-class: their findings are recorded and navigable instead of scrolling out of a terminal.
 - A pruning policy can be written later without touching the format, because `input.sha256` and `output.state` are already there. That policy is its own slice.
 - The helper needs the scene both before and after, so operations that save and reopen files must hand it the measurements rather than the paths.
+- An operation that wants to be compared must render its input state on the output's camera, which costs one extra render pass and is why `item_005` carries a fixed-camera render mode rather than the per-object framing used today.
 - The format is versioned from the first write. `schema_version` is bumped on any change to the shape, and the viewer refuses a version it does not know rather than rendering it wrong.
 
 # References

@@ -4,7 +4,9 @@
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Proposed |  |  | architecture/adr_001_operation_report_format.md |
+| [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Accepted |  |  | architecture/adr_001_operation_report_format.md |
+| [adr_002_depend_on_logics_manager_and_reuse_its_structure](architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md) | Depend on logics-manager and reuse its structure | Accepted |  |  | architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md |
+| [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
 
 ## Product briefs
 
@@ -30,12 +32,16 @@ _None_
 | [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 0% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
 | [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 0% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
 | [item_004_prune_heavy_artefacts_without_losing_the_record](backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | Ready |  | 0% | backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md |
+| [item_005_compare_two_states_of_the_same_geometry](backlog/item_005_compare_two_states_of_the_same_geometry.md) | Compare two states of the same geometry | Ready |  | 0% | backlog/item_005_compare_two_states_of_the_same_geometry.md |
+| [item_006_open_on_nothing_first_run_and_environment_checks](backlog/item_006_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | Ready |  | 0% | backlog/item_006_open_on_nothing_first_run_and_environment_checks.md |
+| [item_007_regenerate_the_demo_fixture_from_the_repository](backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md) | Regenerate the demo fixture from the repository | Ready |  | 0% | backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md |
+| [item_008_read_the_method_from_the_reports_runbook_reverse_index](backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | Ready |  | 0% | backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md |
 
 ## Tasks
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 10% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 15% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
 
 ## Runbooks
 
