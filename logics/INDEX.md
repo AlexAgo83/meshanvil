@@ -31,9 +31,9 @@ _None_
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | Ready |  | 25% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
-| [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 55% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
-| [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 0% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
+| [item_001_define_the_operation_report_and_write_one_from_every_operation](backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md) | Define the operation report and write one from every operation | Ready |  | 45% | backlog/item_001_define_the_operation_report_and_write_one_from_every_operation.md |
+| [item_002_run_one_named_operation_from_a_single_agent_agnostic_command](backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md) | Run one named operation from a single agent-agnostic command | Ready |  | 75% | backlog/item_002_run_one_named_operation_from_a_single_agent_agnostic_command.md |
+| [item_003_read_the_chain_of_operations_in_a_local_viewer](backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md) | Read the chain of operations in a local viewer | Ready |  | 45% | backlog/item_003_read_the_chain_of_operations_in_a_local_viewer.md |
 | [item_004_prune_heavy_artefacts_without_losing_the_record](backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md) | Prune heavy artefacts without losing the record | Ready |  | 0% | backlog/item_004_prune_heavy_artefacts_without_losing_the_record.md |
 | [item_005_compare_two_states_of_the_same_geometry](backlog/item_005_compare_two_states_of_the_same_geometry.md) | Compare two states of the same geometry | Ready |  | 0% | backlog/item_005_compare_two_states_of_the_same_geometry.md |
 | [item_006_open_on_nothing_first_run_and_environment_checks](backlog/item_006_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | Ready |  | 0% | backlog/item_006_open_on_nothing_first_run_and_environment_checks.md |
@@ -49,7 +49,7 @@ _None_
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 25% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
+| [task_001_deliver_the_reviewable_operation_loop](tasks/task_001_deliver_the_reviewable_operation_loop.md) | Deliver the reviewable operation loop | Ready |  | 35% | tasks/task_001_deliver_the_reviewable_operation_loop.md |
 
 ## Runbooks
 
@@ -64,3 +64,4 @@ _None_
 | [run_007_hollow_a_printable_body_for_electronics](runbook/run_007_hollow_a_printable_body_for_electronics.md) | Hollow a printable body for electronics | Active | other | 2026-08-21 (open-bottom shell cut from a 1/10 body; three earlier approaches failed first) | runbook/run_007_hollow_a_printable_body_for_electronics.md |
 | [run_008_weld_and_clean_disconnected_shells_in_a_printable_model](runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md) | Weld and clean disconnected shells in a printable model | Active | other | 2026-08-21 (two loose appendages welded to a body, 3 shells reduced to 1, 0 non-manifold edges) | runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md |
 | [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |
+| [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output) | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |

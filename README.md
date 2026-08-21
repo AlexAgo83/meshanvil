@@ -66,7 +66,7 @@ here.
 
 ```
 logics/           the corpus: request, product, decisions, backlog, tasks
-  runbook/        the method: nine runbooks, read these first
+  runbook/        the method: ten runbooks, read these first
   architecture/   the decisions and why they were taken
   context-packs/  the handoff an implementation agent reads
 pipeline/         the chain that produced the delivery, in execution order
@@ -149,6 +149,8 @@ Nothing is downloaded, nothing is licensed, and nothing binary is committed.
   in this project, while the manifold checks passed throughout.
 - Name-based selection lies. Naming is a supplier convention; visibility and geometry are
   measurements.
+- A command that printed nothing is not a command that found nothing. Make the steps whose
+  failure would be silent print a proof line -- see `run_010`.
 
 ## Reference
 

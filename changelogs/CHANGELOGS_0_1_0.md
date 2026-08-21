@@ -16,6 +16,13 @@ the packaging around it is new.
   isolate it to a connected island, graft the mirrored twin island rather than rebuilding
   a whole side, then sweep the file for the same class of defect.
 
+### Method, continued
+- `run_010_verify_that_a_command_did_what_it_appeared_to_do`: six silent failures collected in
+  one session -- an unmatched zsh glob aborting a cleanup, an exit code eaten by a pipe, an
+  unquoted variable that zsh does not split, a value collapsing across four nested shells, a
+  `\b` anchor undefined in the ERE `git grep` uses, and a Blender bounding box read from a
+  stale cache. Each one produced a wrong conclusion that a single proof line would have caught.
+
 ### Code
 - `pipeline/`, the seven steps of the delivered chain, in execution order.
 - `tools/`, reusable inspection scripts: shell enumeration, symmetry check, ray probes,
