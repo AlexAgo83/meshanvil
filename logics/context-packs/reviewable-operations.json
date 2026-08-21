@@ -66,7 +66,8 @@
       "kind": "architecture",
       "linked_refs": {
         "adr": [
-          "adr_001_operation_report_format"
+          "adr_001_operation_report_format",
+          "adr_005_execution_contract_identity_concurrency_and_exit_codes"
         ],
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation",
@@ -192,6 +193,48 @@
       "linked_refs": {
         "adr": [
           "adr_001_operation_report_format",
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_004_target_technology_and_process_model",
+          "adr_005_execution_contract_identity_concurrency_and_exit_codes"
+        ],
+        "item": [
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md",
+      "ref": "adr_005_execution_contract_identity_concurrency_and_exit_codes",
+      "sections": {
+        "Overview": [
+          "- What identifies an operation, what happens when two run at once, what the command returns, and how a long operation proves it is alive -- the four things an agent needs and the corpus did not state.",
+          "```mermaid",
+          "flowchart TD",
+          "  run[\"meshanvil run &lt;op&gt; &lt;file&gt;\"] --> guard{Target under work/in/<br/>or engine missing?}",
+          "  guard -->|yes| e2[\"exit 2 \u2014 refused<br/>nothing written\"]",
+          "  guard -->|no| id[\"Allocate NNN by O_EXCL create<br/>siblings take a letter: 006a, 006b\"]"
+        ],
+        "References": [
+          "- The report these ids live in: `adr_001_operation_report_format`",
+          "- The process model that launches the engine: `adr_004_target_technology_and_process_model`",
+          "- Why the viewer does not execute: `adr_003_the_viewer_reads_the_command_acts`",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "Execution contract: identity, concurrency and exit codes"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format",
           "adr_002_depend_on_logics_manager_and_reuse_its_structure",
           "adr_004_target_technology_and_process_model"
         ],
@@ -289,7 +332,9 @@
           "item_005_compare_two_states_of_the_same_geometry",
           "item_006_open_on_nothing_first_run_and_environment_checks",
           "item_007_regenerate_the_demo_fixture_from_the_repository",
-          "item_008_read_the_method_from_the_reports_runbook_reverse_index"
+          "item_008_read_the_method_from_the_reports_runbook_reverse_index",
+          "item_009_ingest_a_step_source_through_a_second_engine",
+          "item_010_speak_english_by_default_and_french_on_demand"
         ],
         "prod": [
           "prod_001_reviewable_agent_driven_3d_operations"
@@ -384,7 +429,8 @@
       "kind": "backlog",
       "linked_refs": {
         "adr": [
-          "adr_004_target_technology_and_process_model"
+          "adr_004_target_technology_and_process_model",
+          "adr_005_execution_contract_identity_concurrency_and_exit_codes"
         ],
         "item": [
           "item_002_run_one_named_operation_from_a_single_agent_agnostic_command"
@@ -503,7 +549,8 @@
       "kind": "architecture",
       "linked_refs": {
         "adr": [
-          "adr_001_operation_report_format"
+          "adr_001_operation_report_format",
+          "adr_005_execution_contract_identity_concurrency_and_exit_codes"
         ],
         "item": [
           "item_001_define_the_operation_report_and_write_one_from_every_operation",
@@ -555,13 +602,13 @@
     }
   ],
   "estimates": {
-    "char_count": 24453,
-    "companion_doc_count": 5,
+    "char_count": 26547,
+    "companion_doc_count": 6,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:20:21Z",
+  "generated_at": "2026-08-21T20:29:52Z",
   "handoff": {
-    "companion_doc_count": 5,
+    "companion_doc_count": 6,
     "enabled": true,
     "source_refs": [
       "task_001_deliver_the_reviewable_operation_loop"

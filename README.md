@@ -74,8 +74,10 @@ Two sources, both under `work/in/`, neither versioned.
 **A STEP export**, 508 MB, CATIA V5R2025, AP203, **1319 closed solids**. The true source.
 Everything fought in the delivery above stems from working off a tessellated export instead:
 zero-thickness surfaces, split vertices, flat hierarchy, fixed resolution. Re-importing from
-STEP with FreeCAD (`freecadcmd`, installed) would remove most of it, at the cost of a long and
-memory-hungry import. Worth doing only when something actually blocks.
+STEP with FreeCAD would remove most of it, at the cost of a long and memory-hungry import.
+FreeCAD 1.0 is installed and runs headless as `/Applications/FreeCAD.app/Contents/MacOS/FreeCAD
+-c <script>` on Python 3.11 -- not as `freecadcmd`, which this repository claimed and which does
+not exist here.
 
 **A tessellated donor blend**, 2109 objects, 5.59 M vertices. Lower quality, and it carried one
 export defect: a single patch of 45 vertices smeared across 1.9 m. Repaired by grafting the

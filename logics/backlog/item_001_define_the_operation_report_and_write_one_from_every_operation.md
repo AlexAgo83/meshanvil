@@ -8,7 +8,7 @@
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 21:16:00
+> Indicators reviewed: 2026-08-21 22:29:36
 
 # AI Context
 - Summary: One JSON report per operation under work/ops/, written by a single helper, carrying counts, bounding boxes before and after, the per-axis delta, render paths, and a failure path that still reports.
@@ -30,6 +30,8 @@
   - The per-axis bounding-box delta computed by the helper from before and after, naming the axes that moved, so no operation can skip it.
   - Warnings as short codes rather than sentences, so what was not checked is stated and an agent can act on it.
   - links.parent carrying the report this one follows, and wiki-style references to the documents involved, so the history is a tree readable from the files alone.
+  - params carrying every parameter with the value actually used, read from the operation's manifest, and tool carrying the meshanvil, engine and platform versions.
+  - engine naming which binary produced the report: blender or freecad.
   - output.state as present, pinned or pruned, with the date it changed -- declared now so no report needs migrating when a pruning policy arrives.
   - A failure path that writes the report with the error and whatever was measured before it.
   - The seven pipeline steps, tools/scan_defects.py, and the five inspection scripts calling the helper.
@@ -47,6 +49,8 @@
 - AC6: A measurement an operation did not take is null in the report, distinguishable from a measured zero.
 - AC7: Every report carries the SHA-256 of its input, and links.parent when it follows another operation.
 - AC8: What an operation did not verify appears in warnings as a code, not as prose.
+- AC9: Every report records the parameters actually used, defaults included and with their units, and the versions of the tool and the engine that produced it.
+- AC10: The report names its engine, so a Blender report and a FreeCAD report are distinguishable without reading the script name.
 
 # AC Traceability
 > Shared proof: AC3, AC7
@@ -54,6 +58,8 @@
 - request-AC2 -> This backlog slice. Proof: AC2: The report states the bounding box before and after in millimetres and names the axes that moved, matching what the script prints.
 - request-AC3 -> This backlog slice. Proof: AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.
 - request-AC7 -> This backlog slice. Proof: AC3: An operation raising an exception still leaves a report whose status is failed and which carries the error text.
+
+- request-AC18 -> This backlog slice. Proof: AC9: Every report records the parameters actually used and the tool and engine versions that produced it.
 
 # Decision framing
 - Product framing: Not needed

@@ -8,6 +8,7 @@
 | [adr_002_depend_on_logics_manager_and_reuse_its_structure](architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md) | Depend on logics-manager and reuse its structure | Accepted |  |  | architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md |
 | [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
 | [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Proposed |  |  | architecture/adr_004_target_technology_and_process_model.md |
+| [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Proposed |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
 
 ## Product briefs
 
@@ -37,6 +38,8 @@ _None_
 | [item_006_open_on_nothing_first_run_and_environment_checks](backlog/item_006_open_on_nothing_first_run_and_environment_checks.md) | Open on nothing: first run and environment checks | Ready |  | 0% | backlog/item_006_open_on_nothing_first_run_and_environment_checks.md |
 | [item_007_regenerate_the_demo_fixture_from_the_repository](backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md) | Regenerate the demo fixture from the repository | Ready |  | 0% | backlog/item_007_regenerate_the_demo_fixture_from_the_repository.md |
 | [item_008_read_the_method_from_the_reports_runbook_reverse_index](backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md) | Read the method from the reports: runbook reverse index | Ready |  | 0% | backlog/item_008_read_the_method_from_the_reports_runbook_reverse_index.md |
+| [item_009_ingest_a_step_source_through_a_second_engine](backlog/item_009_ingest_a_step_source_through_a_second_engine.md) | Ingest a STEP source through a second engine | Ready |  | 0% | backlog/item_009_ingest_a_step_source_through_a_second_engine.md |
+| [item_010_speak_english_by_default_and_french_on_demand](backlog/item_010_speak_english_by_default_and_french_on_demand.md) | Speak English by default and French on demand | Ready |  | 0% | backlog/item_010_speak_english_by_default_and_french_on_demand.md |
 
 ## Tasks
 

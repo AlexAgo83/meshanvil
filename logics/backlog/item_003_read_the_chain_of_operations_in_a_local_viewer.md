@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:20:08
+> Indicators reviewed: 2026-08-21 22:29:36
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.
@@ -34,6 +34,8 @@
   - An image editor beside the graph: the selected operation's renders shown large, one per canonical direction, with the path and camera of the one on screen.
   - The tile thumbnail named as what it is -- the operation's first render -- so its provenance is never a guess.
   - Menus that name the available actions and show the command each one runs, never executing anything (`adr_003_the_viewer_reads_the_command_acts`).
+  - Every value read from a report escaped before it reaches the page: object names, paths and findings come from CAD files and are data, never markup.
+  - A visible signal when two reports were produced by different tool or engine versions, so their numbers are not compared silently.
   - Plain JavaScript typed with JSDoc, checked by `tsc --checkJs --noEmit` and wired into `make check`, with the report contract as the typed surface.
   - An empty state that explains how to produce the first report.
 - Out:
@@ -51,6 +53,8 @@
 - AC7: No menu entry runs anything: each shows the command that performs the action.
 - AC8: The viewer sources type-check under `tsc --checkJs --noEmit`, and the check runs in `make check`.
 - AC9: The page loads with no build step and no module script, so it opens from disk as well as from the opt-in server.
+- AC10: A report field containing markup renders as text, proven by a report whose object name contains angle brackets.
+- AC11: Two operations produced by different engine versions are shown as such rather than compared silently.
 - AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.
 - AC3: The viewer opens with no Blender process running, no build step and no network access.
 - AC4: With no reports present the viewer states how to produce one instead of failing.
@@ -59,6 +63,8 @@
 - request-AC5 -> This backlog slice. Proof: AC1: Opening the viewer with reports present lists them in execution order with each one's status.
 - request-AC6 -> This backlog slice. Proof: AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.
 - request-AC8 -> This backlog slice. Proof: AC3: The viewer opens with no Blender process running, no build step and no network access.
+
+- request-AC22 -> This backlog slice. Proof: AC10: A report field containing markup renders as text.
 
 # Decision framing
 - Product framing: Not needed
