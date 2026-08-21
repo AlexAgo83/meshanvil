@@ -69,8 +69,8 @@ logics/           the corpus: request, product, decisions, backlog, tasks
   runbook/        the method: ten runbooks, read these first
   architecture/   the decisions and why they were taken
   context-packs/  the handoff an implementation agent reads
-pipeline/         the chain that produced the delivery, in execution order
-tools/            inspection scripts, and the generators for the demo fixture
+pipeline/         the chain that produced the delivery, kept as its record
+tools/            the operations: parameterised scripts, each with a manifest beside it
 scripts/          repository gates, run by make
 work/             everything generated -- git-ignored
   in/             source files (STEP, donor blends)

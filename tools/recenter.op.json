@@ -1,0 +1,10 @@
+{
+  "operation": "recenter",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/recenter.py",
+  "summary": "Centre the geometry on X and Y, sit it on z = 0, optionally at a scale.",
+  "params": [
+    {"name": "scale", "type": "float", "default": 1.0, "unit": "factor"}
+  ]
+}

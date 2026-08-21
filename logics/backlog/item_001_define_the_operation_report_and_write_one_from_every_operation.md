@@ -4,7 +4,7 @@
 > Status: Ready
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 45%
+> Progress: 70%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -34,8 +34,8 @@
   - engine naming which binary produced the report: blender or freecad.
   - output.state as present, pinned or pruned, with the date it changed -- declared now so no report needs migrating when a pruning policy arrives.
   - A failure path that writes the report with the error and whatever was measured before it.
-  - The seven pipeline steps, tools/scan_defects.py, and the five inspection scripts calling the helper.
-  - Converted so far: tools/scan_defects.py (inspection, and transform when it fixes) and tools/voxel_remesh.py (transform, before/after and the drift verdict).
+  - Operations live in tools/ as parameterised scripts with a manifest. `pipeline/` is kept as the record of the delivered chain, hardcoded to it, and is not converted: generalising a step and preserving the step that produced the delivery are two different goals, and the second is worth keeping.
+  - Converted so far: scan_defects (inspection, transform when it fixes), voxel_remesh, ray_visibility, list_shells, clean_shells, recenter. Remaining from the delivered chain: the hatch cut, the appendage weld and the box cut, which carry hardcoded coordinates and need a parameter design before they generalise.
 - Out:
   - The runner command and the viewer, which are separate slices.
   - The pruning policy itself: this slice declares output.state, item_004 decides what sets it.
