@@ -4,11 +4,11 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 95%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 00:48:54
+> Indicators reviewed: 2026-08-22 00:51:14
 
 # AI Context
 - Summary: The wiki links a report already carries, read in both directions: a report leads to its runbook, and a runbook lists the operations that applied it.

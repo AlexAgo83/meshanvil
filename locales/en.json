@@ -114,7 +114,10 @@
     "operation_report": "Operation report",
     "view": "View",
     "render_alt": "{view} view of {operation}",
-    "document_missing": "document missing"
+    "document_missing": "document missing",
+    "runbooks": "Runbooks",
+    "applied_by": "Applied by reports",
+    "not_applied": "Not yet applied by an operation."
     ,"start": "Start"
     ,"start_title": "Start a review chain"
     ,"start_outliner": "Run one command below; its report will become the first chain entry."

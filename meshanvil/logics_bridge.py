@@ -40,6 +40,12 @@ def documents(refs: set[str]) -> dict[str, dict]:
     return result
 
 
+def runbooks() -> list[dict]:
+    """All runbook metadata, so a dormant method is still visible in the viewer."""
+    value, error = call("sync", "list-docs", "--kind", "runbook")
+    return value.get("items", []) if value and not error else []
+
+
 def runbook(root: Path, chain: str) -> tuple[str | None, str | None]:
     reports = []
     for path in sorted((root / "work" / "ops").glob("*.json")):

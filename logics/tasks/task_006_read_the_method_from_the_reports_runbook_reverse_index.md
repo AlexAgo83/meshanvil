@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 95%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:49:04
+> Indicators reviewed: 2026-08-22 00:51:14
 
 # AI Context
 - Summary: Derive runbook coverage at view time from report `links.docs`; preserve full slugs and use the existing Logics metadata bridge.
@@ -38,10 +38,13 @@
 - [ ] Run `python3 -m logics_manager flow finish task task_006_read_the_method_from_the_reports_runbook_reverse_index.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check`
+- `./bin/meshanvil view --no-open`
+- `node --check viewer/viewer.js`
+- `git diff --check`
 
 # Report
-- Not started.
+- Added a view-time reverse index over report links and bidirectional operation/runbook navigation.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

@@ -16,7 +16,7 @@
  *   _x?:number, _y?:number}} OperationReport */
 
 const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
- *   lang: string, strings: Object<string,string>, docs?: Object<string,Object>, doctor?: Object, ops_exists?: boolean}} */ (
+ *   lang: string, strings: Object<string,string>, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
 
@@ -32,6 +32,7 @@ function t(key, values) {
 /** @type {Map<string, OperationReport>} */
 const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
 let current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
+let currentDoc = null;
 let view = 0;
 let start = !DATA.reports.length;
 
@@ -83,6 +84,12 @@ function outliner() {
         <span class="label"><span class="idx">${esc(report.id)}</span> ${esc(report.operation)}</span>
         <span class="dot ${esc(report.status)}"></span></button>`;
     }
+  }
+  if (DATA.runbooks && DATA.runbooks.length) {
+    html += `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`;
+    for (const doc of DATA.runbooks) html += `<button type="button" class="row" data-doc="${esc(doc.ref)}"
+      aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
+      <span class="label">${esc(doc.title)}</span><span class="dot ${doc.status === "Done" ? "ok" : "pruned"}"></span></button>`;
   }
   document.getElementById("outliner").innerHTML =
     html || `<div class="blank"><span class="big">${esc(t("ui.no_operation_yet"))}</span>
@@ -216,6 +223,13 @@ function boundingBox(report) {
 
 function props() {
   const target = document.getElementById("props");
+  if (currentDoc) {
+    const doc = (DATA.runbooks || []).find((item) => item.ref === currentDoc) || (DATA.docs || {})[currentDoc];
+    const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(currentDoc));
+    target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
+      ${block(t("ui.applied_by"), applied.length ? applied.map((report) => `<button type="button" class="docref docref--op" data-id="${esc(report.id)}"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></button>`).join("") : `<div class="note">${esc(t("ui.not_applied"))}</div>`)}`;
+    return;
+  }
   if (start) {
     const doctor = /** @type {any} */ (DATA.doctor);
     const blender = doctor && (doctor.requirements || []).find((item) => item.name === "blender");
@@ -299,8 +313,8 @@ function docChip(ref) {
   const doc = (DATA.docs || {})[ref];
   if (!doc || doc.missing) return `<span class="docref docref--missing"><code>${esc(shortRef(ref))}</code>
     <span class="rtitle">${esc(t("ui.document_missing"))}</span></span>`;
-  return `<span class="docref docref--${esc(doc.kind || "runbook")}"><code>${esc(shortRef(ref))}</code>
-    <span class="rtitle">${esc(doc.title || ref)}</span><small>${esc(doc.kind || "?")} · ${esc(doc.status || "?")}</small></span>`;
+  return `<button type="button" class="docref docref--${esc(doc.kind || "runbook")}" data-doc="${esc(ref)}"><code>${esc(shortRef(ref))}</code>
+    <span class="rtitle">${esc(doc.title || ref)}</span><small>${esc(doc.kind || "?")} · ${esc(doc.status || "?")}</small></button>`;
 }
 
 /* ---------- image editor ---------- */
@@ -337,6 +351,7 @@ function preview() {
 /* ---------- shell ---------- */
 function select(id) {
   start = false;
+  currentDoc = null;
   if (id !== current) view = 0;
   current = id;
   outliner(); nodes(); props(); preview();
@@ -349,7 +364,9 @@ document.addEventListener("click", (event) => {
   const viewTab = target.closest("[data-view]");
   if (viewTab) { view = Number(/** @type {HTMLElement} */ (viewTab).dataset.view); preview(); return; }
   const node = target.closest("[data-id]");
-  if (node) select(/** @type {HTMLElement} */ (node).dataset.id);
+  if (node) { select(/** @type {HTMLElement} */ (node).dataset.id); return; }
+  const doc = target.closest("[data-doc]");
+  if (doc) { currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; outliner(); nodes(); props(); preview(); }
 });
 
 document.getElementById("start-screen").addEventListener("click", () => {

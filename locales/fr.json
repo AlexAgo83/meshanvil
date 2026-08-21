@@ -114,7 +114,10 @@
     "operation_report": "Rapport d'opération",
     "view": "Vue",
     "render_alt": "vue {view} de {operation}",
-    "document_missing": "document introuvable"
+    "document_missing": "document introuvable",
+    "runbooks": "Runbooks",
+    "applied_by": "Appliqué par les rapports",
+    "not_applied": "Pas encore appliqué par une opération."
     ,"start": "Démarrer"
     ,"start_title": "Démarrer une chaîne de revue"
     ,"start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne."
