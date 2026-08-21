@@ -1,13 +1,14 @@
 ## item_013_bridge_reports_into_the_logics_corpus - Bridge reports into the Logics corpus
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 00:43:44
 
 # AI Context
 - Summary: Three bridges over the logics-manager CLI: a report recorded as evidence on an acceptance criterion, document chips resolved from the corpus instead of a local table, and a runbook scaffolded from what a chain measured.
@@ -69,3 +70,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_005_bridge_reports_into_the_logics_corpus`
