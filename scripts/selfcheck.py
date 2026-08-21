@@ -111,6 +111,14 @@ def check_doctor(tmp: Path):
         engines.find, engines.version = original_find, original_version
 
 
+def check_engine_floor():
+    try:
+        engines.check_floor("blender", "4.1.0")
+        raise AssertionError("an old Blender must be refused")
+    except engines.EngineMissing as error:
+        assert "bpy.ops.wm.stl_export" in str(error)
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -121,6 +129,7 @@ def main() -> int:
         check_refusals()
         check_i18n()
         check_doctor(tmp)
+        check_engine_floor()
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")
