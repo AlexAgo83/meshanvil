@@ -21,6 +21,7 @@ Run an operation through the command, which writes a report:
 ```bash
 ./bin/meshanvil list
 ./bin/meshanvil run scan_defects work/out/demo_source.blend
+./bin/meshanvil view            # or --serve, to refresh while a chain is running
 ```
 
 Or run any script directly, as they all still work standalone:

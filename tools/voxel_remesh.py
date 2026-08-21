@@ -105,6 +105,41 @@ if REPORT:
         REPORT.failed("bounding box moved by %.1f mm, tolerance is %.1f mm" % (drift, DRIFT))
     REPORT.cites("run_006_turn_a_cad_assembly_into_a_printable_solid")
 
+RENDER = bool(PARAMS.get("render", True))
+if RENDER:
+    from mathutils import Vector
+    if REPORT:
+        REPORT.progress("rendering", 0.9)
+    points = [envelope.matrix_world @ v.co for v in envelope.data.vertices]
+    low = Vector([min(p[i] for p in points) for i in range(3)])
+    high = Vector([max(p[i] for p in points) for i in range(3)])
+    centre, radius = (low + high) / 2, (high - low).length / 2
+    scene = bpy.context.scene
+    camera_data = bpy.data.cameras.new("c"); camera_data.type = 'ORTHO'
+    camera_data.ortho_scale = radius * 2.3
+    camera = bpy.data.objects.new("c", camera_data)
+    scene.collection.objects.link(camera); scene.camera = camera
+    sun = bpy.data.objects.new("l", bpy.data.lights.new("l", 'SUN'))
+    scene.collection.objects.link(sun); sun.rotation_euler = (0.9, 0.2, 0.6)
+    scene.render.engine = 'BLENDER_WORKBENCH'
+    scene.display.shading.background_type = 'VIEWPORT'
+    scene.display.shading.background_color = (0.094, 0.094, 0.094)
+    scene.render.resolution_x, scene.render.resolution_y = 1200, 760
+    renders = Path(OUT).parent.parent / "renders"
+    renders.mkdir(parents=True, exist_ok=True)
+    for name, direction in (("3q", Vector((-1.1, -1.0, 0.55))), ("front", Vector((-1, 0, 0.1))),
+                            ("side", Vector((0, -1, 0.1))), ("top", Vector((0.01, 0.01, 1)))):
+        unit = direction.normalized()
+        camera.location = centre + unit * radius * 4
+        camera.rotation_euler = (-unit).to_track_quat('-Z', 'Y').to_euler()
+        identity = (JOB or {}).get("id", "standalone")
+        path = renders / f"{identity}_{Path(OUT).stem}_{name}.png"
+        scene.render.filepath = str(path)
+        bpy.ops.render.render(write_still=True)
+        if REPORT:
+            REPORT.render(name, str(path), "ortho-%s-object" % name, tile=(name == "3q"))
+    log("rendered 4 views")
+
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 log("wrote", OUT.name)
 if REPORT:

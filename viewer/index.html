@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>meshanvil</title>
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><span class="mark"></span>meshanvil</div>
+    <span class="spacer"></span>
+    <div class="scene"><span>work/ops</span><b id="chain-name">—</b><span id="op-count"></span></div>
+  </div>
+
+  <div class="editors">
+    <section class="editor" aria-label="Chain outliner">
+      <div class="ehead"><span class="icon">▤</span><span class="name">Outliner</span></div>
+      <div class="outliner" id="outliner"></div>
+    </section>
+
+    <div class="colstack">
+      <section class="editor" aria-label="Operation graph">
+        <div class="ehead"><span class="icon">⬡</span><span class="name">Node Editor</span>
+          <span style="color:var(--dimmer)">links.parent</span></div>
+        <div class="nodewrap"><div class="canvas" id="canvas">
+          <svg class="noodles" id="noodles" aria-hidden="true"></svg>
+          <div id="nodes"></div>
+        </div></div>
+      </section>
+
+      <section class="editor preview" aria-label="Render preview">
+        <div class="ehead"><span class="icon">▨</span><span class="name">Image Editor</span>
+          <span id="pvtitle" style="color:var(--dimmer)"></span><span class="push"></span>
+          <span class="pvviews" id="pvviews" role="tablist" aria-label="View"></span></div>
+        <div class="pvbody">
+          <div class="pvstage" id="pvstage"></div>
+          <div class="pvmeta" id="pvmeta"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="editor" aria-label="Operation report">
+      <div class="ehead"><span class="icon">▣</span><span class="name">Properties</span>
+        <span style="color:var(--dimmer)">report</span><span class="push"></span>
+        <span class="filter" id="schema"></span></div>
+      <div class="props"><div class="propscroll" id="props"></div></div>
+    </section>
+  </div>
+
+  <div class="status">
+    <span id="status-counts"></span><span class="push"></span>
+    <span id="generated"></span>
+  </div>
+</div>
+<script src="data.js"></script>
+<script src="viewer.js"></script>
+</body>
+</html>

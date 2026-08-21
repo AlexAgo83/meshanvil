@@ -2,9 +2,9 @@
 > From version: 1.0.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
-> Progress: 0%
+> Understanding: 95%
+> Confidence: 90%
+> Progress: 45%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -24,6 +24,7 @@
 
 # Scope
 - In:
+  - Built: `meshanvil view` generates work/viewer/data.js beside the page, opens it, and `--serve` starts a stdlib server on 127.0.0.1 for auto-refresh. Remaining: the version-mismatch signal and the JSDoc type check wired into make check.
   - A static local page rendering the chain as a deterministic top-down DAG built from links.parent: time vertical, branches horizontal, status and the axes that moved shown per node.
   - Failed operations rendered as branches that are kept, not as errors to dismiss.
   - The wiki-style references a report carries followed as links, so a report leads to the runbook it applied and back.
