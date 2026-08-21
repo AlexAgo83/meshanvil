@@ -1,5 +1,13 @@
 # meshanvil
 
+[![CI](https://github.com/AlexAgo83/meshanvil/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexAgo83/meshanvil/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-F5A623.svg)](changelogs/CHANGELOGS_0_1_0.md)
+[![Status](https://img.shields.io/badge/status-pre--1.0-8A5A25.svg)](#engineering-honesty)
+[![Blender](https://img.shields.io/badge/Blender-headless-EA7600?logo=blender&logoColor=white)](https://www.blender.org/)
+
+**Driving a 3D application with an agent, and checking what it did.**
+
 Using AI on 3D work. The method lives in `logics/runbook/`; the code is the residue.
 
 The problem this project works on: a CAD assembly of several hundred to a few thousand parts,
@@ -30,7 +38,8 @@ their interface never freezes.
 ## Layout
 
 ```
-logics/runbook/   the method: nine runbooks, read these first
+logics/           the Logics corpus: product context, requests, backlog, tasks
+  runbook/        the method: nine runbooks, read these first
 pipeline/         the chain that produced the delivery, in execution order
 tools/            reusable inspection scripts
 work/             everything generated -- git-ignored
@@ -76,6 +85,17 @@ donor puts 1637 of its 1923 objects, half the vertex mass, out of sight from eve
 direction: internal hardware, useless for a printed skin. Beware the converse — thin parts come
 out "never seen" only because they fall through the ray grid.
 
+## Engineering honesty
+
+Pre-1.0. There is no package, no test suite and no CLI yet: what exists is a method, the
+scripts that produced one delivery, and the measurements that verify them. `make check`
+compiles the scripts and runs the publication-hygiene gate; it does not run Blender,
+because every check that means anything needs a real 3D source and sources are never in
+this repository. Run the scripts on your own file and read the numbers.
+
+The runbooks are written from one delivery. They are specific on purpose -- a procedure
+without its numbers is a blog post -- but a second assembly will bend some of them.
+
 ## Working rules that earned their place
 
 - Never write to the operator's live scene without being asked; never save their .blend.
@@ -85,3 +105,9 @@ out "never seen" only because they fall through the ray grid.
   in this project, while the manifold checks passed throughout.
 - Name-based selection lies. Naming is a supplier convention; visibility and geometry are
   measurements.
+
+## Reference
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) -- how to run things, and the house rules the reviews enforce
+- [`SECURITY.md`](SECURITY.md) -- what these scripts touch, and how to report a problem
+- [`changelogs/`](changelogs/) -- one file per version
