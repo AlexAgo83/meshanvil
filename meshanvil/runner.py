@@ -164,7 +164,8 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
                "--", "--job", engines.for_engine(job_path, binary)]
     started = time.time()
     try:
-        watch(subprocess.Popen(command), root / RUNS / f"{identity}.progress")
+        watch(subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),
+              root / RUNS / f"{identity}.progress")
     except BaseException:
         report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
         raise
