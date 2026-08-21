@@ -42,7 +42,7 @@
   "engine": {
     "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
     "override_missing": "{variable} pointe sur {path}, qui n'existe pas",
-    "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis par {reason}"
+    "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis par {reason} ; définissez {variable} pour choisir un autre binaire"
   },
   "doctor": {
     "blender": {"reason": "Requis pour lancer les opérations de maillage."},

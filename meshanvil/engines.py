@@ -107,4 +107,5 @@ def check_floor(engine: str, number: str) -> None:
     if not meets_floor(engine, number):
         need = ".".join(str(part) for part in MIN_VERSION[engine])
         reason = "bpy.ops.wm.stl_export" if engine == "blender" else engine
-        raise EngineMissing(t("engine.too_old", engine=engine, found=number, needed=need, reason=reason))
+        raise EngineMissing(t("engine.too_old", engine=engine, found=number, needed=need,
+                              reason=reason, variable=OVERRIDE[engine]))

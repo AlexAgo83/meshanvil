@@ -42,7 +42,7 @@
   "engine": {
     "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
     "override_missing": "{variable} points at {path}, which does not exist",
-    "too_old": "{engine} {found} is too old: {needed} or later is required by {reason}"
+    "too_old": "{engine} {found} is too old: {needed} or later is required by {reason}; set {variable} to another binary"
   },
   "doctor": {
     "blender": {"reason": "Required to run mesh operations."},
