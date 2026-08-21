@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:53:00
+> Indicators reviewed: 2026-08-21 22:53:43
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -33,6 +33,11 @@
   reads; nothing else starts before a report exists and the twelve operations write one.
 - **Two rules that are expensive to unbreak**: host code and engine code never import each other,
   and no operator-facing string is written inline once `item_010` has landed.
+- **`logics-manager health` reports ten slices as having no task, and that is expected.** This
+  document is the orchestration task and its plan sequences them. A slice gets its own
+  implementation task when it is picked up, with
+  `logics-manager flow promote backlog-to-task item_00X_...` -- not before, so the corpus does
+  not carry ten open tasks nobody is working on.
 - **A slice is done when its acceptance criteria are verified with numbers**, on the generated
   fixture rather than on private geometry, and the fixture's own defects are found unaided.
   `logics-manager flow evidence add` records that proof; `item_013` automates it.
