@@ -456,8 +456,8 @@
           "- AC5: Two operations sharing a parent are shown as siblings, and a failed one is kept in the tree rather than hidden.",
           "- AC6: The selected operation's renders are shown large, one per canonical direction, with the path and camera of the one displayed.",
           "- AC7: No menu entry runs anything: each shows the command that performs the action.",
-          "- AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.",
-          "- AC3: The viewer opens with no Blender process running, no build step and no network access."
+          "- AC8: The viewer sources type-check under `tsc --checkJs --noEmit`, and the check runs in `make check`.",
+          "- AC9: The page loads with no build step and no module script, so it opens from disk as well as from the opt-in server."
         ],
         "Problem": [
           "- Reviewing an operation means reopening Blender and navigating to the affected geometry, which is slow enough that the review is skipped.",
@@ -555,11 +555,11 @@
     }
   ],
   "estimates": {
-    "char_count": 24442,
+    "char_count": 24453,
     "companion_doc_count": 5,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:14:53Z",
+  "generated_at": "2026-08-21T20:20:21Z",
   "handoff": {
     "companion_doc_count": 5,
     "enabled": true,

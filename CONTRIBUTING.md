@@ -37,6 +37,10 @@ Run any script on a copy:
   `.blend`.
 - No client names, no source file names, no home paths in tracked files or commit
   messages. The repository is public; the sources it is used on are not.
+- Host code never imports `bpy`; Blender-side code never imports a host module. The two run
+  in different interpreters -- Blender embeds its own -- and talk through files.
+- The viewer is plain JavaScript, typed with JSDoc. No framework, no build step: it has to
+  open from disk. See `adr_004_target_technology_and_process_model` before adding either.
 
 ## Validation
 

@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:14:39
+> Indicators reviewed: 2026-08-21 22:20:08
 
 # AI Context
 - Summary: A static local page over work/ops/: operations in execution order, and for one of them its measurements, its per-axis bounding-box comparison and its renders side by side.
@@ -34,6 +34,7 @@
   - An image editor beside the graph: the selected operation's renders shown large, one per canonical direction, with the path and camera of the one on screen.
   - The tile thumbnail named as what it is -- the operation's first render -- so its provenance is never a guess.
   - Menus that name the available actions and show the command each one runs, never executing anything (`adr_003_the_viewer_reads_the_command_acts`).
+  - Plain JavaScript typed with JSDoc, checked by `tsc --checkJs --noEmit` and wired into `make check`, with the report contract as the typed surface.
   - An empty state that explains how to produce the first report.
 - Out:
   - Editing, re-running or triggering operations from the viewer.
@@ -41,12 +42,15 @@
   - A 3D viewport. The renders an operation produced are what is shown.
   - Integration into the Logics viewer, and reuse of its browser-host and stylesheet: they render workflow documents, and an operation timeline is not one.
   - The before/after comparison (item_005), the first-run screen (item_006) and the runbook reverse index (item_008), which are their own slices.
+  - A framework and a build step. `adr_004_target_technology_and_process_model` records why, and what would make it worth revisiting.
 
 # Acceptance criteria
 - AC1: Opening the viewer with reports present renders them as a top-down DAG in execution order, with each node's status.
 - AC5: Two operations sharing a parent are shown as siblings, and a failed one is kept in the tree rather than hidden.
 - AC6: The selected operation's renders are shown large, one per canonical direction, with the path and camera of the one displayed.
 - AC7: No menu entry runs anything: each shows the command that performs the action.
+- AC8: The viewer sources type-check under `tsc --checkJs --noEmit`, and the check runs in `make check`.
+- AC9: The page loads with no build step and no module script, so it opens from disk as well as from the opt-in server.
 - AC2: Selecting an operation shows its measurements, its per-axis bounding-box comparison and its renders on one page.
 - AC3: The viewer opens with no Blender process running, no build step and no network access.
 - AC4: With no reports present the viewer states how to produce one instead of failing.

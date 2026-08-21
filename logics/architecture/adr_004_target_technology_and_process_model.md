@@ -6,6 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
+> Indicators reviewed: 2026-08-21 22:20:08
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -39,6 +40,9 @@ flowchart TD
 - **Blender side: a module imported inside Blender, `bpy`/`bmesh` plus stdlib.** The report writer lives there because only Blender can measure the scene. It must never be imported by the host process, and the host must never import `bpy`.
 - **The boundary is a file, not a pipe.** The host writes a job JSON, launches `blender -b <file> -P <operation> -- --job <path>`, and reads the report the operation wrote. stdout stays human output; nothing is parsed out of it. A crashed Blender leaves a job and no report, which is a diagnosable state rather than a truncated stream.
 - **Operations stay ordinary Blender scripts.** They keep running under a bare `blender -b file -P script`, with the report writer degrading to stdout when no job is present. The runner is a convenience over them, never a prerequisite.
+- **The viewer is written in plain JavaScript, typed with JSDoc and checked by `tsc --checkJs --noEmit`.** Types where they pay -- the report contract -- without a bundle, without an emitted artefact, and without breaking a page opened from disk. The house precedent agrees: the Logics viewer's own sources are plain `.js` modules bundled to an IIFE; its TypeScript serves the VS Code extension, not the viewer.
+- **No React, and the trigger to revisit is written down.** The viewer's state is five values -- selected operation, workspace, image view, compare view, wipe position -- across six render functions with no cross-invalidation. React earns its keep when state outgrows manual invalidation: combined filters, multi-selection, a virtualised list over thousands of operations. Any of those arriving is the moment to port, not before.
+- **The migration path is known, so the decision is cheap to reverse.** Sources move to `.ts`, esbuild bundles them `--format=iife`, and the page keeps loading a classic script. A module build would not: `<script type="module">` is refused from `file://` by the same policy that blocks a `fetch` of a neighbouring JSON, which would cost the serverless viewer.
 - **The viewer is a plain page: HTML, CSS and JavaScript, no framework and no build.** `meshanvil view` writes `work/viewer/data.js` -- the reports as one assignment -- next to a static `index.html`, then opens it. It works from `file://`, offline, with no process left running.
 - **A server is opt-in.** `meshanvil view --serve` starts `http.server` bound to `127.0.0.1` on port 0 for auto-refresh while a chain is running. It serves `work/` read-only. That is the only mode that keeps a process alive.
 - **The graph is drawn with our own SVG.** Bezier links between absolutely positioned nodes, as the mockup already demonstrates. Mermaid stays for `Export chain as Mermaid`, which produces diagram text for a Logics document and renders nothing here.
@@ -51,6 +55,9 @@ flowchart TD
 - The report writer cannot use anything Blender does not ship. No `pydantic`, no schema library: validation is a function.
 - The serverless viewer duplicates the report data into `data.js`. For a chain of tens of operations that is kilobytes; renders stay referenced by path, not inlined, so the page stays small. If a chain ever makes that file heavy, `--serve` already exists as the answer.
 - Correction to `adr_002`: the vendored Mermaid bundle is no longer what draws the chain, since the graph is our own SVG. The dependency stands on the pinned CLI and the viewer conventions; Mermaid is now only an export format.
+- Type checking runs in `make check` once the viewer exists, on the same footing as the Python compile step. The configuration lands with the code it checks, not before: a `tsconfig.json` checking nothing is a file that only ever gets stale.
+- The report contract is authored in Python and typed again in JSDoc. That duplication is deliberate and small; if the two drift, the fixture catches it, because the viewer reads reports the fixture produced.
+- Choosing plain JavaScript here diverges from cts, which is React and Vite. The reason is the constraint those repositories do not have: a page that must open from disk with no server and no build.
 - No packaging means no version pinning for users and no installation story. Acceptable while the audience is one person and the value is the method, not the distribution. It becomes a decision to revisit the day someone else wants to run it.
 
 # References
