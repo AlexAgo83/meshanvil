@@ -1,0 +1,117 @@
+{
+  "cli": {
+    "description": "meshanvil <command>. One way in, whoever is typing.",
+    "list": {
+      "help": "the operations found, and what each one takes"
+    },
+    "run": {
+      "help": "run one operation and write its report",
+      "set": "a parameter of the operation; repeatable",
+      "from": "declare the parent report instead of deriving it from the fingerprint"
+    },
+    "view": {
+      "help": "build the viewer over the reports and open it",
+      "serve": "serve it on 127.0.0.1 instead, for auto-refresh while a chain runs",
+      "no_open": "build it without opening a browser"
+    },
+    "usage": "usage: ",
+    "positional_arguments": "positional arguments",
+    "options": "options",
+    "help": "show this help message and exit",
+    "version_help": "show program's version number and exit",
+    "set": {
+      "malformed": "--set expects NAME=VALUE, got {pair}"
+    }
+  },
+  "list": {
+    "empty": "no operation found. An operation is a script plus a <script>.op.json beside it."
+  },
+  "run": {
+    "unknown_operation": "unknown operation: {name}. Try: meshanvil list",
+    "no_such_file": "no such file: {path}",
+    "source_is_read_only": "{path} is a source. Operations never write to work/in/ -- copy it into work/out/ and run on the copy.",
+    "unknown_parameters": "unknown parameter(s): {names}",
+    "no_report": "the engine wrote no report after {seconds}s; job kept at {job}",
+    "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running"
+  },
+  "engine": {
+    "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
+    "override_missing": "{variable} points at {path}, which does not exist",
+    "too_old": "{engine} {found} is too old: {needed} or later is required"
+  },
+  "view": {
+    "built": "{path}  ({count} reports)",
+    "serving": "http://127.0.0.1:{port}/  (ctrl-c to stop)",
+    "open_address": "open the address below in a browser"
+  },
+  "ui": {
+    "outliner": "Outliner",
+    "node_editor": "Node Editor",
+    "image_editor": "Image Editor",
+    "properties": "Properties",
+    "report": "report",
+    "operations": "{count} operations",
+    "failed_kept": "{count} failed, kept",
+    "read_at": "read {at}",
+    "no_report": "no report",
+    "no_operation_yet": "No operation yet",
+    "reports_appear": "Reports appear here once one has been written under work/ops/.",
+    "nothing_selected": "Nothing selected",
+    "report_shows": "A report shows its input, what changed, what was not checked, and its renders.",
+    "no_render": "This operation left no render.",
+    "no_render_hint": "Run it with rendering enabled, or open the file in Blender to look at the geometry.",
+    "input": "Input",
+    "output": "Output",
+    "parameters": "Parameters",
+    "measurements": "Measurements",
+    "bounding_box": "Bounding box, mm",
+    "findings": "Findings",
+    "not_checked": "Not checked",
+    "tool": "Tool",
+    "links": "Links",
+    "before": "before",
+    "after": "after",
+    "delta": "delta",
+    "measured": "measured",
+    "axis": "axis",
+    "axes_moved": "Axes moved: {axes}. Computed by the report writer, not by the operation.",
+    "warning_codes_note": "Warning codes, not sentences: an agent can act on a code.",
+    "nothing_declared": "nothing declared",
+    "no_parent": "No parent -- start of the chain.",
+    "parent_resolved": "parent resolved by {source}",
+    "render_provenance": "Written by the operation and listed in renders[]. The viewer renders nothing: it shows what the engine already produced.",
+    "tile_hint": "this one is the node tile",
+    "version_drift": "This report was produced by engine {mine}; others in this chain used {others}. Numbers from different engine versions are not comparable.",
+    "chain": "Chain {id}",
+    "status": "status {status}",
+    "artefact": "artefact {state}",
+    "no_output": "no output",
+    "failed_kept_node": "failed - kept",
+    "chain_outliner": "Chain outliner",
+    "operation_graph": "Operation graph",
+    "render_preview": "Render preview",
+    "operation_report": "Operation report",
+    "view": "View",
+    "render_alt": "{view} view of {operation}"
+  },
+  "operation": {
+    "clean_shells": {
+      "summary": "Drop every shell below a vertex threshold, pruning by size and never by rank."
+    },
+    "list_shells": {
+      "summary": "Enumerate the shells of an object with their size and bounding box."
+    },
+    "ray_visibility": {
+      "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere."
+    },
+    "recenter": {
+      "summary": "Centre the geometry on X and Y, sit it on z = 0, optionally at a scale."
+    },
+    "scan_defects": {
+      "summary": "Sweep a scene for smeared patches and coincident duplicate objects."
+    },
+    "voxel_remesh": {
+      "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid."
+    }
+  }
+}

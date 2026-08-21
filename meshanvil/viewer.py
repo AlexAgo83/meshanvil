@@ -10,6 +10,7 @@ from pathlib import Path
 
 from . import manifests
 from .engines import in_wsl
+from .i18n import SOURCE, catalogue, language, t
 
 OPS = "work/ops"
 OUT = "work/viewer"
@@ -44,8 +45,10 @@ def build(root: Path) -> Path:
     target.mkdir(parents=True, exist_ok=True)
     for name in ("index.html", "viewer.css", "viewer.js"):
         shutil.copyfile(root / "viewer" / name, target / name)
+    strings = {**catalogue(SOURCE), **catalogue(language())}   # English is the fallback
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-               "root": str(root), "reports": collect(root)}
+               "root": str(root), "lang": language(), "strings": strings,
+               "reports": collect(root)}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")
     return target / "index.html"
@@ -65,7 +68,7 @@ def serve(directory: Path) -> None:
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(directory))
     with socketserver.TCPServer(("127.0.0.1", 0), handler) as server:
         port = server.server_address[1]
-        print(f"http://127.0.0.1:{port}/  (ctrl-c to stop)")
+        print(t("view.serving", port=port))
         try:
             server.serve_forever()
         except KeyboardInterrupt:
@@ -78,10 +81,10 @@ def view(serve_it: bool = False, open_it: bool = True) -> int:
     count = len(json.loads(
         (page.parent / "data.js").read_text(encoding="utf-8").split("= ", 1)[1].rstrip(";\n")
     )["reports"])
-    print(f"{page.relative_to(root)}  ({count} report{'s' if count != 1 else ''})")
+    print(t("view.built", path=page.relative_to(root), count=count))
     if serve_it:
         if open_it:
-            print("open the address below in a browser")
+            print(t("view.open_address"))
         serve(page.parent)
         return 0
     if open_it:

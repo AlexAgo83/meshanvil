@@ -7,9 +7,9 @@
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile types selfcheck hygiene fixture logics
+.PHONY: check compile types selfcheck i18n hygiene fixture logics
 
-check: compile types selfcheck hygiene
+check: compile types selfcheck i18n hygiene
 
 compile:
 	$(PYTHON) -m compileall -q meshanvil meshanvil_engine pipeline tools scripts
@@ -21,6 +21,9 @@ types:
 
 selfcheck:
 	@$(PYTHON) scripts/selfcheck.py
+
+i18n:
+	@$(PYTHON) scripts/i18n_check.py
 
 hygiene:
 	@bash scripts/check_hygiene.sh

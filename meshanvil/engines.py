@@ -3,6 +3,8 @@ from __future__ import annotations
 import os, platform, shutil, subprocess
 from pathlib import Path
 
+from .i18n import t
+
 CANDIDATES = {
     "blender": [
         "/Applications/Blender.app/Contents/MacOS/Blender",
@@ -34,7 +36,8 @@ def find(engine: str) -> Path:
     override = os.environ.get(OVERRIDE[engine])
     if override:
         if not Path(override).exists():
-            raise EngineMissing(f"{OVERRIDE[engine]} points at {override}, which does not exist")
+            raise EngineMissing(t("engine.override_missing", variable=OVERRIDE[engine],
+                                  path=override))
         return Path(override)
     on_path = shutil.which(engine) or shutil.which(engine + ".exe")
     if on_path:
@@ -42,10 +45,7 @@ def find(engine: str) -> Path:
     for candidate in CANDIDATES[engine]:
         if Path(candidate).exists():
             return Path(candidate)
-    raise EngineMissing(
-        f"{engine} not found. Set {OVERRIDE[engine]} to its path, "
-        f"or install it -- see CONTRIBUTING.md."
-    )
+    raise EngineMissing(t("engine.not_found", engine=engine, variable=OVERRIDE[engine]))
 
 
 def is_windows_binary(binary: Path) -> bool:
@@ -83,4 +83,4 @@ def check_floor(engine: str, number: str) -> None:
         return  # an unreadable version is not a reason to refuse; the operation will say more
     if found < MIN_VERSION[engine]:
         need = ".".join(str(part) for part in MIN_VERSION[engine])
-        raise EngineMissing(f"{engine} {number} is too old: {need} or later is required")
+        raise EngineMissing(t("engine.too_old", engine=engine, found=number, needed=need))

@@ -3,7 +3,7 @@
   "engine": "blender",
   "kind": "inspection",
   "script": "tools/list_shells_op.py",
-  "summary": "Enumerate the shells of an object with their size and bounding box.",
+  "summary_key": "operation.list_shells.summary",
   "params": [
     {"name": "object", "type": "str", "default": ""},
     {"name": "top", "type": "int", "default": 25, "unit": "shells"}

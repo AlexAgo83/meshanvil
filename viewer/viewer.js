@@ -15,8 +15,19 @@
  *   duration_s:number, created_at:string,
  *   _x?:number, _y?:number}} OperationReport */
 
-const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string}} */ (
-  /** @type {any} */ (window).MESHANVIL || { reports: [], generated_at: "", root: "" });
+const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
+ *   lang: string, strings: Object<string,string>}} */ (
+  /** @type {any} */ (window).MESHANVIL
+  || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
+
+/** Same catalogue as the command line, shipped in data.js. English is the fallback. */
+function t(key, values) {
+  let text = (DATA.strings || {})[key] || key;
+  for (const [name, value] of Object.entries(values || {})) {
+    text = text.split(`{${name}}`).join(String(value));
+  }
+  return text;
+}
 
 /** @type {Map<string, OperationReport>} */
 const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
@@ -55,7 +66,7 @@ function outliner() {
   }
   let html = "";
   for (const [chain, reports] of chains) {
-    html += `<div class="outgroup">Chain ${esc(chain)}</div>`;
+    html += `<div class="outgroup">${esc(t("ui.chain", { id: chain }))}</div>`;
     for (const report of reports) {
       const kind = report.status === "failed" ? "failed" : report.kind;
       const glyph = report.kind === "inspection" ? "i" : "T";
@@ -68,8 +79,8 @@ function outliner() {
     }
   }
   document.getElementById("outliner").innerHTML =
-    html || `<div class="blank"><span class="big">No operation yet</span>
-      <span>Reports appear here once one has been written under work/ops/.</span></div>`;
+    html || `<div class="blank"><span class="big">${esc(t("ui.no_operation_yet"))}</span>
+      <span>${esc(t("ui.reports_appear"))}</span></div>`;
 }
 
 /* ---------- node editor ---------- */
@@ -84,7 +95,7 @@ function nodes() {
       <div class="nhead"><span class="nidx">${esc(report.id)}</span>${esc(report.operation)}</div>
       <div class="nbody">${lines}</div>
       <div class="nfoot"><span class="dot ${esc(report.status)}"></span>
-        ${report.status === "failed" ? "failed · kept" : esc(report.kind)}</div>
+        ${report.status === "failed" ? esc(t("ui.failed_kept_node")) : esc(report.kind)}</div>
     </button>`;
   }
   document.getElementById("nodes").innerHTML = html;
@@ -140,8 +151,7 @@ function driftNotice(report) {
   const others = [...versions.keys()].filter((v) => v !== mine);
   return `<div class="pblock"><div class="pbody">
     <div class="codes"><span class="code">engine_version_differs_in_chain</span></div>
-    <div class="note">This report was produced by engine ${esc(mine)}; others in this chain used
-    ${esc(others.join(", "))}. Numbers from different engine versions are not comparable.</div>
+    <div class="note">${esc(t("ui.version_drift", { mine: mine, others: others.join(", ") }))}</div>
   </div></div>`;
 }
 
@@ -155,8 +165,8 @@ function measurements(report) {
                 ["shells", "shells"], ["non-manifold", "non_manifold_edges"],
                 ["volume cm³", "volume_cm3"]];
   if (report.kind === "transform" && report.before && report.after) {
-    return block("Measurements", `<table><thead><tr><th>&nbsp;</th><th>before</th><th>after</th>
-      <th>delta</th></tr></thead><tbody>${rows.map(([label, key]) => {
+    return block(t("ui.measurements"), `<table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th><th>${esc(t("ui.after"))}</th>
+      <th>${esc(t("ui.delta"))}</th></tr></thead><tbody>${rows.map(([label, key]) => {
         const before = report.before[key], after = report.after[key];
         const delta = (before === null || after === null) ? "—" : num(after - before);
         return `<tr><td>${esc(label)}</td><td>${num(before)}</td><td>${num(after)}</td>
@@ -164,7 +174,7 @@ function measurements(report) {
       }).join("")}</tbody></table>`);
   }
   const measured = report.measured || {};
-  return block("Measurements", `<dl class="kv">${rows.map(([label, key]) =>
+  return block(t("ui.measurements"), `<dl class="kv">${rows.map(([label, key]) =>
     `<dt>${esc(label)}</dt><dd>${num(measured[key])}</dd>`).join("")}</dl>`);
 }
 
@@ -179,20 +189,20 @@ function boundingBox(report) {
     const flag = moved.includes(axis) ? " class=\"axis-moved\"" : "";
     return `<tr><td${flag}>${axis}</td><td>${esc(b)}</td>${a ? `<td${flag}>${esc(a)}</td>` : ""}</tr>`;
   }).join("");
-  const heads = after ? "<th>before</th><th>after</th>" : "<th>measured</th>";
+  const heads = after ? `<th>${esc(t("ui.before"))}</th><th>${esc(t("ui.after"))}</th>`
+                      : `<th>${esc(t("ui.measured"))}</th>`;
   const note = delta
-    ? `<div class="note">Axes moved: <span class="axis-moved">${esc(moved.join(", ") || "none")}</span>.
-       Computed by the report writer, not by the operation.</div>`
+    ? `<div class="note">${esc(t("ui.axes_moved", { axes: moved.join(", ") || "none" }))}</div>`
     : "";
-  return block("Bounding box, mm",
-    `<table><thead><tr><th>axis</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`);
+  return block(t("ui.bounding_box"),
+    `<table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`);
 }
 
 function props() {
   const target = document.getElementById("props");
   if (!current) {
-    target.innerHTML = `<div class="blank"><span class="big">Nothing selected</span>
-      <span>A report shows its input, what changed, what was not checked, and its renders.</span></div>`;
+    target.innerHTML = `<div class="blank"><span class="big">${esc(t("ui.nothing_selected"))}</span>
+      <span>${esc(t("ui.report_shows"))}</span></div>`;
     return;
   }
   const report = BY_ID.get(current);
@@ -200,49 +210,49 @@ function props() {
       <h2>${esc(report.id)} · ${esc(report.operation)}</h2>
       <div class="badges">
         <span class="badge ${esc(report.kind)}">${esc(report.kind)}</span>
-        <span class="badge ${esc(report.status)}">status ${esc(report.status)}</span>
-        ${report.output ? `<span class="badge">artefact ${esc(report.output.state)}</span>`
-                        : `<span class="badge">no output</span>`}
+        <span class="badge ${esc(report.status)}">${esc(t("ui.status", { status: report.status }))}</span>
+        ${report.output ? `<span class="badge">${esc(t("ui.artefact", { state: report.output.state }))}</span>`
+                        : `<span class="badge">${esc(t("ui.no_output"))}</span>`}
         <span class="badge">${esc(report.duration_s)} s</span>
       </div>
       ${report.error ? `<p class="note">${esc(report.error)}</p>` : ""}
     </div>`;
 
   html += driftNotice(report);
-  html += block("Input", `<dl class="kv">
+  html += block(t("ui.input"), `<dl class="kv">
       <dt>path</dt><dd>${esc(short(report.input.path))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
       <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`);
   if (report.output) {
-    html += block("Output", `<dl class="kv">
+    html += block(t("ui.output"), `<dl class="kv">
       <dt>path</dt><dd>${esc(short(report.output.path))}</dd>
       <dt>sha-256</dt><dd>${esc((report.output.sha256 || "").slice(0, 16))}…</dd>
       <dt>state</dt><dd>${esc(report.output.state)}</dd></dl>`);
   }
-  html += block("Parameters", `<dl class="kv">${Object.entries(report.params || {}).map(
+  html += block(t("ui.parameters"), `<dl class="kv">${Object.entries(report.params || {}).map(
     ([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`);
   html += measurements(report);
   html += boundingBox(report);
   if (report.findings && report.findings.length) {
-    html += block("Findings", `<ul style="margin:0;padding-left:16px;color:var(--dim);
+    html += block(t("ui.findings"), `<ul style="margin:0;padding-left:16px;color:var(--dim);
       font-size:11.5px;display:flex;flex-direction:column;gap:4px">${report.findings.map((f) =>
       `<li><b style="color:var(--txt);font-weight:500">${esc(f.code)}</b> — ${
         esc(Object.entries(f).filter(([k]) => k !== "code")
           .map(([k, v]) => `${k}: ${v}`).join(", "))}</li>`).join("")}</ul>`);
   }
-  html += block("Not checked", `<div class="codes">${(report.warnings || []).map((w) =>
-      `<span class="code">${esc(w)}</span>`).join("") || '<span class="note">nothing declared</span>'}</div>
-    <div class="note">Warning codes, not sentences: an agent can act on a code.</div>`);
-  html += block("Tool", `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
+  html += block(t("ui.not_checked"), `<div class="codes">${(report.warnings || []).map((w) =>
+      `<span class="code">${esc(w)}</span>`).join("") || `<span class="note">${esc(t("ui.nothing_declared"))}</span>`}</div>
+    <div class="note">${esc(t("ui.warning_codes_note"))}</div>`);
+  html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
       `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`);
-  html += block("Links", `<div class="wikilinks">
+  html += block(t("ui.links"), `<div class="wikilinks">
       ${report.links.parent
         ? `<a class="docref docref--op" href="#" data-goto="${esc(report.links.parent)}">
              <code>${esc(report.links.parent)}</code>
              <span class="rtitle">${esc(BY_ID.get(report.links.parent)
                ? BY_ID.get(report.links.parent).operation : "missing")}</span></a>
-           <span class="note">parent resolved by ${esc(report.links.parent_source)}</span>`
-        : `<span class="note">No parent — start of the chain.</span>`}
+           <span class="note">${esc(t("ui.parent_resolved", { source: report.links.parent_source }))}</span>`
+        : `<span class="note">${esc(t("ui.no_parent"))}</span>`}
       ${(report.links.docs || []).map((doc) =>
         `<span class="docref docref--runbook"><code>${esc(shortRef(doc))}</code>
            <span class="rtitle">${esc(doc)}</span></span>`).join("")}
@@ -267,8 +277,7 @@ function preview() {
   if (!renders.length) {
     views.innerHTML = "";
     meta.innerHTML = "";
-    stage.innerHTML = `<p class="pvempty">This operation left no render.<br>
-      Run it with rendering enabled, or open the file in Blender to look at the geometry.</p>`;
+    stage.innerHTML = `<p class="pvempty">${esc(t("ui.no_render"))}<br>${esc(t("ui.no_render_hint"))}</p>`;
     return;
   }
   if (view >= renders.length) view = 0;
@@ -276,13 +285,12 @@ function preview() {
   views.innerHTML = renders.map((r, i) =>
     `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">
        ${esc(r.view)}</button>`).join("");
-  stage.innerHTML = `<img src="${esc(render.url)}" alt="${esc(render.view)} view of ${
-    esc(report.operation)}">`;
+  stage.innerHTML = `<img src="${esc(render.url)}" alt="${esc(t("ui.render_alt", {
+    view: render.view, operation: report.operation }))}">`;
   meta.innerHTML = `<div><div class="provenance">${esc(short(render.path))}</div>
       <div class="provenance" style="color:var(--dim);padding-top:3px">${esc(render.camera)}</div></div>
-    ${render.tile ? '<div class="tilehint">▲ this one is the node tile</div>' : ""}
-    <p class="provenance">Written by the operation and listed in renders[]. The viewer renders
-    nothing: it shows what the engine already produced.</p>`;
+    ${render.tile ? '<div class="tilehint">▲ ${esc(t("ui.tile_hint"))}</div>' : ""}
+    <p class="provenance">${esc(t("ui.render_provenance"))}</p>`;
 }
 
 /* ---------- shell ---------- */
@@ -305,11 +313,19 @@ document.addEventListener("click", (event) => {
 place();
 document.getElementById("chain-name").textContent =
   DATA.reports.length ? (DATA.reports[0].chain || "—") : "—";
-document.getElementById("op-count").textContent = `${DATA.reports.length} operations`;
+document.getElementById("op-count").textContent = t("ui.operations", { count: DATA.reports.length });
 document.getElementById("schema").textContent =
   DATA.reports.length ? `schema ${DATA.reports[0].schema_version}` : "";
 document.getElementById("status-counts").textContent =
-  `${DATA.reports.length} operations · ${DATA.reports.filter((r) => r.status === "failed").length} failed, kept`;
+  t("ui.operations", { count: DATA.reports.length }) + " · "
+  + t("ui.failed_kept", { count: DATA.reports.filter((r) => r.status === "failed").length });
 document.getElementById("generated").textContent = DATA.generated_at
-  ? `read ${DATA.generated_at}` : "no report";
+  ? t("ui.read_at", { at: DATA.generated_at }) : t("ui.no_report");
+document.documentElement.lang = DATA.lang || "en";
+for (const node of document.querySelectorAll("[data-i18n]")) {
+  node.textContent = t(/** @type {HTMLElement} */ (node).dataset.i18n);
+}
+for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
+  node.setAttribute("aria-label", t(/** @type {HTMLElement} */ (node).dataset.i18nAriaLabel));
+}
 select(current);

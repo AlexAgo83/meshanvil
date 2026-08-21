@@ -3,7 +3,7 @@
   "engine": "blender",
   "kind": "transform",
   "script": "tools/clean_shells.py",
-  "summary": "Drop every shell below a vertex threshold, pruning by size and never by rank.",
+  "summary_key": "operation.clean_shells.summary",
   "params": [
     {"name": "min_vertices", "type": "int", "default": 3000, "unit": "vertices"},
     {"name": "object", "type": "str", "default": ""}

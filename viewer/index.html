@@ -15,14 +15,14 @@
   </div>
 
   <div class="editors">
-    <section class="editor" aria-label="Chain outliner">
-      <div class="ehead"><span class="icon">▤</span><span class="name">Outliner</span></div>
+    <section class="editor" aria-label="Chain outliner" data-i18n-aria-label="ui.chain_outliner">
+      <div class="ehead"><span class="icon">▤</span><span class="name" data-i18n="ui.outliner">Outliner</span></div>
       <div class="outliner" id="outliner"></div>
     </section>
 
     <div class="colstack">
-      <section class="editor" aria-label="Operation graph">
-        <div class="ehead"><span class="icon">⬡</span><span class="name">Node Editor</span>
+      <section class="editor" aria-label="Operation graph" data-i18n-aria-label="ui.operation_graph">
+        <div class="ehead"><span class="icon">⬡</span><span class="name" data-i18n="ui.node_editor">Node Editor</span>
           <span style="color:var(--dimmer)">links.parent</span></div>
         <div class="nodewrap"><div class="canvas" id="canvas">
           <svg class="noodles" id="noodles" aria-hidden="true"></svg>
@@ -30,10 +30,10 @@
         </div></div>
       </section>
 
-      <section class="editor preview" aria-label="Render preview">
-        <div class="ehead"><span class="icon">▨</span><span class="name">Image Editor</span>
+      <section class="editor preview" aria-label="Render preview" data-i18n-aria-label="ui.render_preview">
+        <div class="ehead"><span class="icon">▨</span><span class="name" data-i18n="ui.image_editor">Image Editor</span>
           <span id="pvtitle" style="color:var(--dimmer)"></span><span class="push"></span>
-          <span class="pvviews" id="pvviews" role="tablist" aria-label="View"></span></div>
+          <span class="pvviews" id="pvviews" role="tablist" aria-label="View" data-i18n-aria-label="ui.view"></span></div>
         <div class="pvbody">
           <div class="pvstage" id="pvstage"></div>
           <div class="pvmeta" id="pvmeta"></div>
@@ -41,9 +41,9 @@
       </section>
     </div>
 
-    <section class="editor" aria-label="Operation report">
-      <div class="ehead"><span class="icon">▣</span><span class="name">Properties</span>
-        <span style="color:var(--dimmer)">report</span><span class="push"></span>
+    <section class="editor" aria-label="Operation report" data-i18n-aria-label="ui.operation_report">
+      <div class="ehead"><span class="icon">▣</span><span class="name" data-i18n="ui.properties">Properties</span>
+        <span style="color:var(--dimmer)" data-i18n="ui.report">report</span><span class="push"></span>
         <span class="filter" id="schema"></span></div>
       <div class="props"><div class="propscroll" id="props"></div></div>
     </section>

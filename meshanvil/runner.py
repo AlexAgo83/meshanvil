@@ -9,6 +9,7 @@ import hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 
 from . import SCHEMA_VERSION, VERSION, engines, manifests
+from .i18n import t
 
 OPS = "work/ops"
 RUNS = "work/ops/.run"
@@ -108,8 +109,7 @@ def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
         beat = progress.stat().st_mtime if progress.exists() else None
         quiet = time.time() - (beat or 0)
         if beat and quiet > STALE_AFTER and not said:
-            print(f"no heartbeat for {quiet:.0f}s; the engine is still running",
-                  file=sys.stderr)
+            print(t("run.no_heartbeat", seconds=f"{quiet:.0f}"), file=sys.stderr)
             said = True
         elif beat and quiet <= STALE_AFTER:
             said = False
@@ -120,16 +120,13 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     root = manifests.root()
     known = manifests.discover()
     if operation not in known:
-        raise Refused(f"unknown operation: {operation}. Try: meshanvil list")
+        raise Refused(t("run.unknown_operation", name=operation))
     manifest = known[operation]
     source = Path(target).resolve()
     if not source.is_file():
-        raise Refused(f"no such file: {target}")
+        raise Refused(t("run.no_such_file", path=target))
     if (root / "work" / "in") in source.parents:
-        raise Refused(
-            f"{target} is a source. Operations never write to work/in/ -- "
-            f"copy it into work/out/ and run on the copy."
-        )
+        raise Refused(t("run.source_is_read_only", path=target))
     values = manifests.resolve(manifest, params)   # validated before an identity is claimed:
     binary = engines.find(manifest["engine"])       # a refusal must leave work/ops untouched
     number, build = engines.version(binary)
@@ -173,8 +170,8 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         raise
 
     if report_path.stat().st_size == 0:
-        print(f"the engine wrote no report after {time.time() - started:.0f}s; "
-              f"job kept at {job_path.relative_to(root)}", file=sys.stderr)
+        print(t("run.no_report", seconds=f"{time.time() - started:.0f}",
+                job=job_path.relative_to(root)), file=sys.stderr)
         return EXIT_NO_REPORT
     report = json.loads(report_path.read_text(encoding="utf-8"))
     output = report.get("output") or {}

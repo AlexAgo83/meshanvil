@@ -3,7 +3,7 @@
   "engine": "blender",
   "kind": "inspection",
   "script": "tools/ray_visibility.py",
-  "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere.",
+  "summary_key": "operation.ray_visibility.summary",
   "params": [
     {"name": "directions", "type": "int", "default": 42, "unit": "count"},
     {"name": "grid", "type": "int", "default": 110, "unit": "rays per side"}

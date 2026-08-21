@@ -1,0 +1,117 @@
+{
+  "cli": {
+    "description": "meshanvil <commande>. Une seule entrée, quel que soit celui qui tape.",
+    "list": {
+      "help": "les opérations trouvées, et ce que chacune attend"
+    },
+    "run": {
+      "help": "lancer une opération et écrire son rapport",
+      "set": "un paramètre de l'opération ; répétable",
+      "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte"
+    },
+    "view": {
+      "help": "construire le visualiseur sur les rapports et l'ouvrir",
+      "serve": "le servir sur 127.0.0.1 à la place, pour un rafraîchissement pendant qu'une chaîne tourne",
+      "no_open": "le construire sans ouvrir de navigateur"
+    },
+    "usage": "utilisation : ",
+    "positional_arguments": "arguments positionnels",
+    "options": "options",
+    "help": "afficher cette aide et quitter",
+    "version_help": "afficher le numéro de version du programme et quitter",
+    "set": {
+      "malformed": "--set attend NOM=VALEUR, reçu {pair}"
+    }
+  },
+  "list": {
+    "empty": "aucune opération trouvée. Une opération est un script accompagné d'un <script>.op.json."
+  },
+  "run": {
+    "unknown_operation": "opération inconnue : {name}. Essayez : meshanvil list",
+    "no_such_file": "fichier introuvable : {path}",
+    "source_is_read_only": "{path} est une source. Une opération n'écrit jamais dans work/in/ -- copiez-la dans work/out/ et travaillez sur la copie.",
+    "unknown_parameters": "paramètre(s) inconnu(s) : {names}",
+    "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
+    "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours"
+  },
+  "engine": {
+    "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
+    "override_missing": "{variable} pointe sur {path}, qui n'existe pas",
+    "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis"
+  },
+  "view": {
+    "built": "{path}  ({count} rapports)",
+    "serving": "http://127.0.0.1:{port}/  (ctrl-c pour arrêter)",
+    "open_address": "ouvrez l'adresse ci-dessous dans un navigateur"
+  },
+  "ui": {
+    "outliner": "Arborescence",
+    "node_editor": "Éditeur de nœuds",
+    "image_editor": "Éditeur d'image",
+    "properties": "Propriétés",
+    "report": "rapport",
+    "operations": "{count} opérations",
+    "failed_kept": "{count} en échec, conservées",
+    "read_at": "lu {at}",
+    "no_report": "aucun rapport",
+    "no_operation_yet": "Aucune opération",
+    "reports_appear": "Les rapports apparaissent ici dès qu'une opération en a écrit un dans work/ops/.",
+    "nothing_selected": "Rien de sélectionné",
+    "report_shows": "Un rapport montre son entrée, ce qui a changé, ce qui n'a pas été vérifié, et ses rendus.",
+    "no_render": "Cette opération n'a produit aucun rendu.",
+    "no_render_hint": "Relancez-la avec le rendu activé, ou ouvrez le fichier dans Blender pour regarder la géométrie.",
+    "input": "Entrée",
+    "output": "Sortie",
+    "parameters": "Paramètres",
+    "measurements": "Mesures",
+    "bounding_box": "Boîte englobante, mm",
+    "findings": "Constats",
+    "not_checked": "Non vérifié",
+    "tool": "Outil",
+    "links": "Liens",
+    "before": "avant",
+    "after": "après",
+    "delta": "écart",
+    "measured": "mesuré",
+    "axis": "axe",
+    "axes_moved": "Axes déplacés : {axes}. Calculé par l'écrivain de rapport, pas par l'opération.",
+    "warning_codes_note": "Des codes, pas des phrases : un agent peut agir sur un code.",
+    "nothing_declared": "rien de déclaré",
+    "no_parent": "Aucun parent -- début de la chaîne.",
+    "parent_resolved": "parent résolu par {source}",
+    "render_provenance": "Écrit par l'opération et listé dans renders[]. Le visualiseur ne rend rien : il montre ce que le moteur a déjà produit.",
+    "tile_hint": "c'est celui-ci la vignette du nœud",
+    "version_drift": "Ce rapport vient du moteur {mine} ; d'autres dans cette chaîne utilisaient {others}. Des nombres issus de versions différentes ne sont pas comparables.",
+    "chain": "Chaîne {id}",
+    "status": "statut {status}",
+    "artefact": "artefact {state}",
+    "no_output": "aucune sortie",
+    "failed_kept_node": "échec - conservé",
+    "chain_outliner": "Arborescence de la chaîne",
+    "operation_graph": "Graphe des opérations",
+    "render_preview": "Aperçu du rendu",
+    "operation_report": "Rapport d'opération",
+    "view": "Vue",
+    "render_alt": "vue {view} de {operation}"
+  },
+  "operation": {
+    "clean_shells": {
+      "summary": "Supprime chaque coque sous un seuil de sommets, selon sa taille et jamais son rang."
+    },
+    "list_shells": {
+      "summary": "Énumère les coques d'un objet avec leur taille et leur boîte englobante."
+    },
+    "ray_visibility": {
+      "summary": "Classe les objets par visibilité extérieure en tirant des rayons parallèles depuis une sphère."
+    },
+    "recenter": {
+      "summary": "Centre la géométrie sur X et Y, la pose sur z = 0, avec une échelle facultative."
+    },
+    "scan_defects": {
+      "summary": "Balaye une scène pour trouver les zones étirées et les objets dupliqués coïncidents."
+    },
+    "voxel_remesh": {
+      "summary": "Joint tous les maillages et les remaille à une taille de voxel pour produire un solide fermé."
+    }
+  }
+}

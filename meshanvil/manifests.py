@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .i18n import t
+
 SEARCH = ("tools", "pipeline")
 
 
@@ -32,5 +34,5 @@ def resolve(manifest: dict, given: dict[str, str]) -> dict:
         values[name] = spec.get("default") if raw is None else casts[spec["type"]](raw)
     unknown = set(given) - {spec["name"] for spec in manifest.get("params", [])}
     if unknown:
-        raise KeyError(f"unknown parameter(s): {', '.join(sorted(unknown))}")
+        raise KeyError(t("run.unknown_parameters", names=", ".join(sorted(unknown))))
     return values

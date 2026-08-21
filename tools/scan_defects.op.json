@@ -3,7 +3,7 @@
   "engine": "blender",
   "kind": "inspection",
   "script": "tools/scan_defects.py",
-  "summary": "Sweep a scene for smeared patches and coincident duplicate objects.",
+  "summary_key": "operation.scan_defects.summary",
   "params": [
     {"name": "smear_ratio_threshold", "type": "float", "default": 2.5, "unit": "ratio"},
     {"name": "min_extent_mm", "type": "float", "default": 50.0, "unit": "mm"},

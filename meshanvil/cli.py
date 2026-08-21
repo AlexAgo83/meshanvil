@@ -3,35 +3,45 @@ from __future__ import annotations
 import argparse, sys
 
 from . import VERSION, engines, manifests, runner, viewer
+from .i18n import t
+
+ARGPARSE = {
+    "usage: ": t("cli.usage"),
+    "positional arguments": t("cli.positional_arguments"),
+    "options": t("cli.options"),
+    "show this help message and exit": t("cli.help"),
+    "show program's version number and exit": t("cli.version_help"),
+}
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="meshanvil", description=__doc__)
+    argparse._ = lambda text: ARGPARSE.get(text, text)
+    parser = argparse.ArgumentParser(prog="meshanvil", description=t("cli.description"))
     parser.add_argument("--version", action="version", version=f"meshanvil {VERSION}")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("list", help="the operations found, and what each one takes")
-    run = sub.add_parser("run", help="run one operation and write its report")
+    sub.add_parser("list", help=t("cli.list.help"))
+    run = sub.add_parser("run", help=t("cli.run.help"))
     run.add_argument("operation")
     run.add_argument("target")
     run.add_argument("--set", action="append", default=[], metavar="NAME=VALUE",
-                     help="a parameter of the operation; repeatable")
+                     help=t("cli.run.set"))
     run.add_argument("--from", dest="parent", default=None, metavar="ID",
-                     help="declare the parent report instead of deriving it from the fingerprint")
-    show = sub.add_parser("view", help="build the viewer over the reports and open it")
+                     help=t("cli.run.from"))
+    show = sub.add_parser("view", help=t("cli.view.help"))
     show.add_argument("--serve", action="store_true",
-                      help="serve it on 127.0.0.1 instead, for auto-refresh while a chain runs")
-    show.add_argument("--no-open", action="store_true", help="build it without opening a browser")
+                      help=t("cli.view.serve"))
+    show.add_argument("--no-open", action="store_true", help=t("cli.view.no_open"))
     return parser
 
 
 def show_list() -> int:
     found = manifests.discover()
     if not found:
-        print("no operation found. An operation is a script plus a <script>.op.json beside it.")
+        print(t("list.empty"))
         return runner.EXIT_OK
     for name, manifest in sorted(found.items()):
         params = ", ".join(f"{p['name']}={p.get('default')}" for p in manifest.get("params", []))
-        print(f"{name:22} {manifest['engine']:8} {manifest['kind']:11} {manifest['summary']}")
+        print(f"{name:22} {manifest['engine']:8} {manifest['kind']:11} {t(manifest['summary_key'])}")
         if params:
             print(f"{'':22} {params}")
     return runner.EXIT_OK
@@ -46,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
     given = {}
     for pair in arguments.set:
         if "=" not in pair:
-            print(f"--set expects NAME=VALUE, got {pair}", file=sys.stderr)
+            print(t("cli.set.malformed", pair=pair), file=sys.stderr)
             return runner.EXIT_REFUSED
         name, value = pair.split("=", 1)
         given[name] = value

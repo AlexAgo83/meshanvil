@@ -3,7 +3,7 @@
   "engine": "blender",
   "kind": "transform",
   "script": "tools/voxel_remesh.py",
-  "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid.",
+  "summary_key": "operation.voxel_remesh.summary",
   "params": [
     {"name": "voxel_mm", "type": "float", "default": 6.0, "unit": "mm"},
     {"name": "keep_largest", "type": "bool", "default": false},
