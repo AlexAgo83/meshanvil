@@ -30,6 +30,10 @@ Verified on macOS (Blender 5.2), Windows (Blender 5.2, not on `PATH`) and WSL Ub
 Blender; the Windows binary is called through `/mnt/c` with paths translated). Linux is
 untested. `MESHANVIL_BLENDER` and `MESHANVIL_FREECAD` override the discovered paths.
 
+Before the first operation, run `./bin/meshanvil doctor`. It writes `work/doctor.json` with
+the discovered engines, their versions, the exact platform-specific override command, and the
+writability and free space of `work/`.
+
 ## Reopening this
 
 Blender is at `/Applications/Blender.app/Contents/MacOS/Blender` (not on PATH). Everything
