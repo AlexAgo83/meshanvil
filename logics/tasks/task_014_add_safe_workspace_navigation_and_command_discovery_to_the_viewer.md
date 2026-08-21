@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:34:03
+> Indicators reviewed: 2026-08-22 01:44:31
 > Owner: codex
 
 # AI Context
@@ -53,3 +53,7 @@
 # Evidence
 - AC1 | date: 2026-08-22 | command: `make check; meshanvil view --no-open; Google Chrome --headless` | result: passed | Native tab buttons retain the selected report while switching Chain, Compare and Runbooks; Compare expands the existing image editor.
 - AC2 | date: 2026-08-22 | command: `make check` | result: passed | Native details menus expose selectable CLI commands only; the runnable self-check rejects any fetch call in viewer.js.
+
+# AC Traceability
+- request-AC1 -> This task. Proof: `55261b0`; `make check` and the Chrome fixture capture passed with native Chain, Compare and Runbooks tabs.
+- request-AC2 -> This task. Proof: `55261b0`; `make check` verified command-only native menus and no viewer fetch path.

@@ -9,13 +9,13 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:35:27
+> Indicators reviewed: 2026-08-22 01:44:31
 
 # AI Context
-- Summary: (unfilled: replace before this doc is used)
+- Summary: Add filter, labelled native comparison and no-data guidance without persisting state or expanding viewer authority.
 - Keywords: complete, mockup, review, controls, weakening, local, page, boundary
-- Use when: (unfilled: replace before this doc is used)
-- Skip when: (unfilled: replace before this doc is used)
+- Use when: Implementing the remaining local review controls.
+- Skip when: Changing workspace navigation or browser smoke coverage.
 
 # Definition of Done (DoD)
 - [ ] The backlog scope is implemented.
