@@ -1,14 +1,14 @@
 ## item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary - Complete the mockup review controls without weakening the local page boundary
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:25:20
+> Indicators reviewed: 2026-08-22 01:26:05
 
 # AI Context
 - Summary: Add the mockup's filter, report navigation, labelled native wipe and first-run structure using current local data only.

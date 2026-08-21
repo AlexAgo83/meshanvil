@@ -1,6 +1,6 @@
 ## prod_002_reviewable_local_viewer_interaction_parity - Reviewable local viewer interaction parity
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Active
 > Related request: `req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface`
 > Related backlog: `item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer`, `item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary`, `item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture`
 > Related task: `task_012_deliver_reviewed_viewer_interaction_parity`

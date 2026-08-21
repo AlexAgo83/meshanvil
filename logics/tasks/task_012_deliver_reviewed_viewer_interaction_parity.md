@@ -1,14 +1,15 @@
 ## task_012_deliver_reviewed_viewer_interaction_parity - Deliver reviewed viewer interaction parity
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:25:21
+> Indicators reviewed: 2026-08-22 01:26:05
+> Owner: codex
 
 # AI Context
 - Summary: Sequence browser coverage, safe navigation, mockup review controls and validation without changing the read-only boundary.

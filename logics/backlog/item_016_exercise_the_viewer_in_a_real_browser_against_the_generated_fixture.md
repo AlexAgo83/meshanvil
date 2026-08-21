@@ -1,14 +1,14 @@
 ## item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture - Exercise the viewer in a real browser against the generated fixture
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:25:21
+> Indicators reviewed: 2026-08-22 01:26:05
 
 # AI Context
 - Summary: Exercise the generated fixture in Chrome and retain only temporary screenshots, not golden images or a new test framework.

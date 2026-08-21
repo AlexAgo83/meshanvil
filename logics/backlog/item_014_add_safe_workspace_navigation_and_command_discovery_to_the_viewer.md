@@ -1,14 +1,14 @@
 ## item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer - Add safe workspace navigation and command discovery to the viewer
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:25:20
+> Indicators reviewed: 2026-08-22 01:26:05
 
 # AI Context
 - Summary: Make Chain, Compare and Runbooks explicit workspaces and expose CLI guidance without browser-side execution.
