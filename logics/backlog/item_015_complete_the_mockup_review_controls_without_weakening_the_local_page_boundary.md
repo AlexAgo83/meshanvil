@@ -52,3 +52,6 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary`
