@@ -36,6 +36,7 @@ let currentDoc = null;
 let view = 0;
 let wipe = 50;
 let start = !DATA.reports.length;
+let workspace = "chain";
 
 /** Report text is data from CAD files, never markup. */
 function esc(value) {
@@ -66,6 +67,15 @@ function outliner() {
       <span>${esc(t("ui.start_outliner"))}</span></div>`;
     return;
   }
+  if (workspace === "runbooks") {
+    const runbooks = DATA.runbooks || [];
+    document.getElementById("outliner").innerHTML = `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`
+      + (runbooks.map((doc) => `<button type="button" class="row" data-doc="${esc(doc.ref)}"
+        aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
+        <span class="label">${esc(doc.title)}</span><span class="dot ${doc.status === "Done" ? "ok" : "pruned"}"></span></button>`).join("")
+      || `<div class="blank"><span>${esc(t("ui.not_applied"))}</span></div>`);
+    return;
+  }
   const chains = new Map();
   for (const report of DATA.reports) {
     const key = report.chain || report.id;
@@ -87,7 +97,7 @@ function outliner() {
         <span class="dot ${esc(state)}"></span></button>`;
     }
   }
-  if (DATA.runbooks && DATA.runbooks.length) {
+  if (workspace === "chain" && DATA.runbooks && DATA.runbooks.length) {
     html += `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`;
     for (const doc of DATA.runbooks) html += `<button type="button" class="row" data-doc="${esc(doc.ref)}"
       aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
@@ -369,8 +379,19 @@ function select(id) {
   outliner(); nodes(); props(); preview();
 }
 
+function selectWorkspace(next) {
+  workspace = next;
+  /** @type {HTMLElement} */ (document.querySelector(".app")).dataset.workspace = next;
+  for (const tab of document.querySelectorAll("[data-workspace]")) {
+    tab.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (tab).dataset.workspace === next));
+  }
+  outliner(); nodes(); props(); preview();
+}
+
 document.addEventListener("click", (event) => {
   const target = /** @type {Element} */ (event.target);
+  const workspaceTab = target.closest("[data-workspace]");
+  if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const goto = target.closest("[data-goto]");
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
   const viewTab = target.closest("[data-view]");

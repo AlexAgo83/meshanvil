@@ -158,9 +158,12 @@ def check_viewer_start(tmp: Path):
 def check_viewer_comparison_layout():
     css = (ROOT / "viewer" / "viewer.css").read_text(encoding="utf-8")
     script = (ROOT / "viewer" / "viewer.js").read_text(encoding="utf-8")
+    page = (ROOT / "viewer" / "index.html").read_text(encoding="utf-8")
     assert ".colstack > .editor:first-child{flex:1}" in css
     assert ".compare-after{clip-path:" in css
     assert 'compare.style.setProperty("--wipe", `${wipe}%`)' in script
+    assert 'data-workspace="compare"' in page and "function selectWorkspace" in script
+    assert 'workspace === "runbooks"' in script and "fetch(" not in script
 
 
 def check_logics_bridge():

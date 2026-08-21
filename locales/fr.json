@@ -149,6 +149,19 @@
     ,"start_contributors": "Outils contributeur"
     ,"start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération."
     ,"start_preview": "La scène de démo donnera à cette zone son premier aperçu géométrique."
+    ,"main_menu": "Menu principal"
+    ,"menu_file": "Fichier"
+    ,"menu_chain": "Chaîne"
+    ,"menu_help": "Aide"
+    ,"command_list": "Lister les opérations"
+    ,"command_doctor": "Vérifier la configuration"
+    ,"command_view": "Rafraîchir le visualiseur"
+    ,"command_prune": "Prévisualiser la purge"
+    ,"command_runbook": "Créer un runbook"
+    ,"workspace": "Espace de travail"
+    ,"workspace_chain": "Chaîne"
+    ,"workspace_compare": "Comparer"
+    ,"workspace_runbooks": "Runbooks"
   },
   "operation": {
     "clean_shells": {

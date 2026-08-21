@@ -10,6 +10,24 @@
 <div class="app">
   <div class="topbar">
     <div class="brand"><span class="mark"></span>meshanvil</div>
+    <div class="menubar" aria-label="Main menu" data-i18n-aria-label="ui.main_menu">
+      <details class="menu"><summary data-i18n="ui.menu_file">File</summary><div class="dropdown">
+        <span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code>
+        <span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code>
+      </div></details>
+      <details class="menu"><summary data-i18n="ui.menu_chain">Chain</summary><div class="dropdown">
+        <span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code>
+        <span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code>
+      </div></details>
+      <details class="menu"><summary data-i18n="ui.menu_help">Help</summary><div class="dropdown">
+        <span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code>
+      </div></details>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Workspace" data-i18n-aria-label="ui.workspace">
+      <button type="button" role="tab" aria-selected="true" data-workspace="chain" data-i18n="ui.workspace_chain">Chain</button>
+      <button type="button" role="tab" aria-selected="false" data-workspace="compare" data-i18n="ui.workspace_compare">Compare</button>
+      <button type="button" role="tab" aria-selected="false" data-workspace="runbooks" data-i18n="ui.workspace_runbooks">Runbooks</button>
+    </div>
     <button type="button" class="start-link" id="start-screen" data-i18n="ui.start">Start</button>
     <span class="spacer"></span>
     <div class="scene"><span>work/ops</span><b id="chain-name">—</b><span id="op-count"></span></div>
@@ -22,7 +40,7 @@
     </section>
 
     <div class="colstack">
-      <section class="editor" aria-label="Operation graph" data-i18n-aria-label="ui.operation_graph">
+      <section class="editor" id="graph-editor" aria-label="Operation graph" data-i18n-aria-label="ui.operation_graph">
         <div class="ehead"><span class="icon">⬡</span><span class="name" data-i18n="ui.node_editor">Node Editor</span>
           <span style="color:var(--dimmer)">links.parent</span></div>
         <div class="nodewrap"><div class="canvas" id="canvas">

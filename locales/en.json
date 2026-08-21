@@ -149,6 +149,19 @@
     ,"start_contributors": "Contributor tools"
     ,"start_contributors_note": "The pinned Logics tooling and its offline Mermaid support are for corpus work, not for running an operation."
     ,"start_preview": "The demo scene will give this area its first geometry preview."
+    ,"main_menu": "Main menu"
+    ,"menu_file": "File"
+    ,"menu_chain": "Chain"
+    ,"menu_help": "Help"
+    ,"command_list": "List operations"
+    ,"command_doctor": "Check setup"
+    ,"command_view": "Refresh viewer"
+    ,"command_prune": "Preview pruning"
+    ,"command_runbook": "Create a runbook"
+    ,"workspace": "Workspace"
+    ,"workspace_chain": "Chain"
+    ,"workspace_compare": "Compare"
+    ,"workspace_runbooks": "Runbooks"
   },
   "operation": {
     "clean_shells": {
