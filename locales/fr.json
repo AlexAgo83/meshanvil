@@ -35,6 +35,7 @@
     "source_is_read_only": "{path} est une source. Une opération n'écrit jamais dans work/in/ -- copiez-la dans work/out/ et travaillez sur la copie.",
     "unknown_parameters": "paramètre(s) inconnu(s) : {names}",
     "invalid_parameter": "valeur invalide pour {name} : {value}",
+    "work_unavailable": "{path} n'est pas inscriptible ; corrigez-le avant de lancer une opération",
     "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
     "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours"
   },

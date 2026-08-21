@@ -32,7 +32,7 @@ def _engine(name: str, required: bool) -> dict:
     return item
 
 
-def _work(root: Path) -> dict:
+def work(root: Path) -> dict:
     path = root / "work"
     try:
         path.mkdir(exist_ok=True)
@@ -77,7 +77,7 @@ def check(root: Path) -> dict:
                               encoding="utf-8")
     for item in current:
         item["reason"] = _reason(item["name"])
-    requirements = [*current, _work(root)]
+    requirements = [*current, work(root)]
     blocker = next((item["name"] for item in requirements if item["required"] and item["state"] != "found"), None)
     result = {"ok": blocker is None, "next": blocker, "requirements": requirements}
     report_path = root / REPORT

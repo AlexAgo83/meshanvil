@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 
-from . import SCHEMA_VERSION, VERSION, engines, manifests
+from . import SCHEMA_VERSION, VERSION, doctor, engines, manifests
 from .i18n import t
 
 OPS = "work/ops"
@@ -127,6 +127,8 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         raise Refused(t("run.no_such_file", path=target))
     if (root / "work" / "in") in source.parents:
         raise Refused(t("run.source_is_read_only", path=target))
+    if doctor.work(root)["state"] != "found":
+        raise Refused(t("run.work_unavailable", path=root / "work"))
     values = manifests.resolve(manifest, params)   # validated before an identity is claimed:
     binary = engines.find(manifest["engine"])       # a refusal must leave work/ops untouched
     number, build = engines.version(binary)
