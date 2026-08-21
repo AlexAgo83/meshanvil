@@ -46,16 +46,36 @@ pasting one line into the Python Console; after that, writing `~/bl_cmd.py` exec
 within half a second and `~/bl_out.txt` carries the output back. Heavy work stays headless so
 their interface never freezes.
 
+## What is being built
+
+The method exists; the tooling around it does not yet. What is specified, and ready to be
+implemented, is a loop that makes each operation reviewable:
+
+- one JSON report per operation, carrying its parameters, its measurements before and after, the
+  per-axis bounding-box delta, what it did **not** check, and the renders it produced;
+- one command that runs a named operation, callable identically by a person, Claude or Codex,
+  with exit codes an agent can branch on;
+- one local viewer -- a plain page, no framework, no build -- showing the chain as a graph, the
+  renders beside the numbers, and two states of the same geometry wiped against each other.
+
+The whole specification lives in `logics/`: `req_000` states the problem, `prod_001` the product,
+`adr_001` to `adr_006` the decisions, and `task_001` sequences thirteen slices. Start there, not
+here.
+
 ## Layout
 
 ```
-logics/           the Logics corpus: product context, requests, backlog, tasks
+logics/           the corpus: request, product, decisions, backlog, tasks
   runbook/        the method: nine runbooks, read these first
+  architecture/   the decisions and why they were taken
+  context-packs/  the handoff an implementation agent reads
 pipeline/         the chain that produced the delivery, in execution order
-tools/            reusable inspection scripts
+tools/            inspection scripts, and the generators for the demo fixture
+scripts/          repository gates, run by make
 work/             everything generated -- git-ignored
   in/             source files (STEP, donor blends)
   out/            blend and stl outputs
+  ops/            operation reports        (once item_001 exists)
   renders/        verification renders
   cache/          ray-visibility results, part lists
 ```
@@ -108,6 +128,17 @@ this repository. Run the scripts on your own file and read the numbers.
 
 The runbooks are written from one delivery. They are specific on purpose -- a procedure
 without its numbers is a blog post -- but a second assembly will bend some of them.
+
+## Demonstration data
+
+`tools/make_demo_scene.py` generates a synthetic housing carrying two real export defects: one
+island smeared along a line, and objects duplicated at identical coordinates. `tools/scan_defects.py`
+finds them without being told where they are -- a ratio of 2.9 on the smear, four duplicates at
+37% of the vertices. `tools/run_demo_chain.py` replays the chain on it, and
+`tools/render_fixed_views.py` renders the canonical directions on a camera fixed per subject,
+which is what makes two states comparable.
+
+Nothing is downloaded, nothing is licensed, and nothing binary is committed.
 
 ## Working rules that earned their place
 

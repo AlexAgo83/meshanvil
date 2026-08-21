@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: reviewability without reopening the 3D application, lineage across a branching history, safe pruning of heavy artefacts, agent-readable outcomes
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:27:37
+> Indicators reviewed: 2026-08-21 22:51:20
 
 # Overview
 - One JSON envelope per operation, written by a single helper, carrying what was measured, what it was measured against, and what was not checked -- so a result can be reviewed, and a chain of results navigated, from the reports alone.
@@ -58,6 +58,92 @@ flowchart TD
 - **Renders are declared, not discovered.** `renders[]` carries, for each image, its canonical direction, its path and the camera used. `renders[0]` is the tile thumbnail. The viewer never infers a view from a filename.
 - **Comparable pairs are declared too.** A `transform` that rendered its input state as well lists the pairs in `compare[]`, one per direction, each naming the two images and the camera they share. Without that declaration there is no comparison, because two images on two cameras prove nothing.
 - **Reports are immutable except for artefact state.** Nothing else in a written report is edited afterwards.
+
+
+# Canonical shapes
+A transform, with a comparable pair, taken from the generated fixture:
+
+```json
+{
+  "schema_version": 1,
+  "id": "002",
+  "chain": "001",
+  "created_at": "2026-08-21T19:12:44Z",
+  "kind": "transform",
+  "operation": "graft_mirror_island",
+  "script": "tools/graft_mirror_island.py",
+  "engine": "blender",
+  "status": "ok",
+  "params": {"target": "trim_R", "mirror_axis": "Y", "weld_tolerance_mm": 0.001},
+  "tool": {"meshanvil": "0.1.0", "engine_version": "5.2.0", "engine_build": "fbe6228777e7",
+           "platform": "macOS-arm64", "python": "3.13.13"},
+  "input":  {"path": "work/out/demo_source.blend", "sha256": "6b2e41c7d90a3f15…", "mode": "copy"},
+  "output": {"path": "work/out/demo_fixed.blend", "sha256": "c07d3319ae558b02…",
+             "state": "present", "state_changed_at": null},
+  "before": {"objects": 1, "vertices": 2406, "faces": 2464, "shells": 4,
+             "non_manifold_edges": 0, "volume_cm3": null,
+             "bbox_mm": {"min": [-268.0, -247.2, 52.5], "max": [4.4, 127.5, 194.8]}},
+  "after":  {"objects": 1, "vertices": 2406, "faces": 2464, "shells": 4,
+             "non_manifold_edges": 0, "volume_cm3": null,
+             "bbox_mm": {"min": [-268.0, 22.5, 52.5], "max": [-205.1, 127.5, 157.5]}},
+  "bbox_delta_mm": {"min": [0.0, 269.7, 0.0], "max": [-209.5, 0.0, -37.3],
+                    "axes_moved": ["X", "Y", "Z"]},
+  "warnings": ["mirror_symmetry_assumed"],
+  "renders": [
+    {"view": "3q",    "path": "work/renders/002_trims_3q.png",    "camera": "ortho-3q-fixed", "tile": true},
+    {"view": "front", "path": "work/renders/002_trims_front.png", "camera": "ortho-front-fixed", "tile": false}
+  ],
+  "compare": [
+    {"view": "front", "before": "work/renders/001_trims_front.png",
+     "after": "work/renders/002_trims_front.png", "camera": "ortho-front-fixed"}
+  ],
+  "links": {"parent": "001", "parent_source": "fingerprint",
+            "docs": ["run_009_repair_export_defects_in_a_cad_derived_mesh"]}
+}
+```
+
+An inspection: same envelope, `findings` instead of `before`/`after`, and no `output`.
+
+```json
+{
+  "schema_version": 1, "id": "001", "chain": "001",
+  "created_at": "2026-08-21T19:08:02Z", "kind": "inspection",
+  "operation": "scan_defects", "script": "tools/scan_defects.py", "engine": "blender",
+  "status": "ok",
+  "params": {"smear_ratio_threshold": 2.5, "fix": false},
+  "tool": {"meshanvil": "0.1.0", "engine_version": "5.2.0", "engine_build": "fbe6228777e7",
+           "platform": "macOS-arm64", "python": "3.13.13"},
+  "input": {"path": "work/out/demo_source.blend", "sha256": "6b2e41c7d90a3f15…", "mode": "read_only"},
+  "measured": {"objects": 12, "vertices": 17956, "faces": null, "shells": null,
+               "non_manifold_edges": null, "volume_cm3": null,
+               "bbox_mm": {"min": [-268.0, -247.2, -2.0], "max": [259.9, 137.8, 209.6]}},
+  "findings": [
+    {"code": "smeared_island", "subject": "trim_R", "ratio": 2.9,
+     "full_extent_mm": 375.0, "robust_extent_mm": 127.0},
+    {"code": "coincident_duplicates", "groups": 4, "objects": 4,
+     "vertices": 6636, "share_of_vertices": 0.370}
+  ],
+  "warnings": ["thin_parts_below_ray_grid"],
+  "renders": [],
+  "links": {"parent": null, "parent_source": null,
+            "docs": ["run_009_repair_export_defects_in_a_cad_derived_mesh"]}
+}
+```
+
+An operation manifest, read by the runner to parse the command line and by the report to record
+what was resolved:
+
+```json
+{
+  "operation": "scan_defects", "engine": "blender", "kind": "inspection",
+  "script": "tools/scan_defects.py",
+  "summary": "Sweep a scene for smeared patches and coincident duplicates.",
+  "params": [
+    {"name": "smear_ratio_threshold", "type": "float", "default": 2.5, "unit": "ratio"},
+    {"name": "fix", "type": "bool", "default": false}
+  ]
+}
+```
 
 # Consequences
 - The viewer renders the chain as a deterministic top-down DAG from `links.parent`, time running vertically and branches horizontally, rather than a force-directed graph. On ten nodes a physics simulation says less than a tree; it also discards the ordering, which is the most useful axis here. A graph view stays an open question in `prod_001`, to be answered when the node count makes a tree fail.

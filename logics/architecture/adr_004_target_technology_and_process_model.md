@@ -1,12 +1,12 @@
 ## adr_004_target_technology_and_process_model - Target technology and process model
 > Date: 2026-08-21
-> Status: Proposed
+> Status: Accepted
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:34:43
+> Indicators reviewed: 2026-08-21 22:51:20
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -53,6 +53,30 @@ flowchart TD
 - **Engines are located, then overridden.** The macOS bundle, the Windows install directory, a binary on PATH, each superseded by `MESHANVIL_BLENDER` or `MESHANVIL_FREECAD`. A missing engine is exit code 2 with a message naming the override.
 - **Paths are translated at the engine boundary, not before.** When the host runs in WSL and the engine is a Windows binary, every path in the job is converted with `wslpath` on the way in and back on the way out. Verified: the Windows Blender runs from WSL both on a script under `C:` and on a script inside the WSL filesystem reached through a `\\wsl.localhost` UNC path, reporting the same Python 3.13.13 in both.
 - **The viewer is opened by the platform's own opener, and WSL is the exception.** `wslview` is absent there and `xdg-open` has no browser behind it; `explorer.exe` is what works.
+
+
+# Layout and the import rule
+
+```
+bin/meshanvil            entry point, host side, stdlib only
+meshanvil/               host package: runner, manifests, doctor, viewer generation
+  engine/                launch, path translation, discovery
+meshanvil_engine/        imported INSIDE Blender or FreeCAD: report writer, measurements
+  report.py              the only writer of a report
+pipeline/                the delivered chain, ordinary engine scripts
+tools/                   inspection scripts and the fixture generators
+viewer/                  index.html, viewer.css, viewer.js -- copied next to work/viewer/data.js
+work/                    everything generated, never versioned
+```
+
+- **The engine side is reached by path, not by installation.** The runner passes the repository
+  root in the job; an operation begins with
+  `sys.path.insert(0, job["root"])` and then `from meshanvil_engine import report`. Blender's
+  interpreter knows nothing about the repository otherwise, and nothing is ever installed into it.
+- **An operation run without the runner still works**: no job means no root, and the report writer
+  falls back to printing to stdout, which is how the twelve existing scripts behave today.
+- `meshanvil/` never imports `meshanvil_engine`, and `meshanvil_engine/` never imports `meshanvil`.
+  They share a schema, not a module.
 
 # Consequences
 - The file boundary earns its keep a second time on WSL: nothing is parsed from a stream that crosses two operating systems, only a file that both sides can read once its path is translated.

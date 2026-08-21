@@ -35,6 +35,25 @@ the packaging around it is new.
   codes, lineage as a parent id plus wiki-style references, and an artefact state declared
   from the first report so no pruning policy needs a migration.
 
+### Specification, ready to implement
+- `req_000` with 25 acceptance criteria, `prod_001`, and thirteen backlog slices sequenced by
+  `task_001` in the order they must be built -- the report first, since every other slice reads
+  what it writes.
+- Six decisions with their reasons: `adr_001` the report format, with canonical JSON shapes for a
+  transform, an inspection and an operation manifest; `adr_002` the logics-manager dependency;
+  `adr_003` a viewer that reads while the command acts; `adr_004` the target technology, the
+  process model and the repository layout; `adr_005` identity, concurrency, exit codes and the
+  progress heartbeat; `adr_006` the bridges into the corpus.
+- Platform matrix measured rather than assumed: macOS, Windows and WSL verified, Linux stated as
+  unverified for want of a machine with Blender on it.
+
+### Demonstration fixture
+- `tools/make_demo_scene.py` generates a synthetic scene with two real export defects, calibrated
+  on the ones observed in practice, so `tools/scan_defects.py` finds them unaided. That is the
+  ground truth the sweep never had.
+- `tools/run_demo_chain.py` replays the chain and `tools/render_fixed_views.py` renders the
+  canonical directions on a fixed camera, which is what makes two states comparable.
+
 ### Repository
 - MIT licence, security policy, contributing guide.
 - `make check`: compiles every script and runs the publication-hygiene gate, which fails

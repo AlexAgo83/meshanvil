@@ -8,7 +8,7 @@
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:29:36
+> Indicators reviewed: 2026-08-21 22:51:20
 
 # AI Context
 - Summary: One JSON report per operation under work/ops/, written by a single helper, carrying counts, bounding boxes before and after, the per-axis delta, render paths, and a failure path that still reports.
@@ -50,7 +50,8 @@
 - AC7: Every report carries the SHA-256 of its input, and links.parent when it follows another operation.
 - AC8: What an operation did not verify appears in warnings as a code, not as prose.
 - AC9: Every report records the parameters actually used, defaults included and with their units, and the versions of the tool and the engine that produced it.
-- AC10: The report names its engine, so a Blender report and a FreeCAD report are distinguishable without reading the script name.
+- AC10: A written report matches the canonical shapes in `adr_001_operation_report_format` field for field, for a transform and for an inspection.
+- AC11: The report names its engine, so a Blender report and a FreeCAD report are distinguishable without reading the script name.
 
 # AC Traceability
 > Shared proof: AC3, AC7

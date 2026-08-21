@@ -1,6 +1,6 @@
 ## adr_006_bridges_between_meshanvil_and_logics - Bridges between meshanvil and Logics
 > Date: 2026-08-21
-> Status: Proposed
+> Status: Accepted
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_013_bridge_reports_into_the_logics_corpus`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`

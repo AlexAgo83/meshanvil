@@ -1,6 +1,6 @@
 ## prod_001_reviewable_agent_driven_3d_operations - Reviewable agent-driven 3D operations
 > Date: 2026-08-21
-> Status: Proposed
+> Status: Settled
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_001_define_the_operation_report_and_write_one_from_every_operation`, `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`, `item_003_read_the_chain_of_operations_in_a_local_viewer`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`

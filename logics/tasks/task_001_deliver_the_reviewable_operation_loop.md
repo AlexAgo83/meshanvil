@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:42:52
+> Indicators reviewed: 2026-08-21 22:53:00
 
 # AI Context
 - Summary: Orchestrates the three slices in order: settle and write the report format, build the runner on the converted operations, then build the viewer against real reports rather than fixtures.
@@ -18,6 +18,24 @@
 
 # Context
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
+
+# Picking this up
+
+- **Read in this order**: `req_000` for the problem and its 25 acceptance criteria, `prod_001`
+  for what the product is and is not, then the six decisions -- `adr_001` the report format with
+  its canonical JSON shapes, `adr_004` the technology, process model and repository layout,
+  `adr_005` identity, concurrency and exit codes, `adr_003` what the viewer may do, `adr_006` the
+  bridges into the corpus, `adr_002` the dependency. Then the slice you are about to build.
+- **The context pack is bounded to eight documents by design.** It carries this task, the request,
+  the product and the first slices. Before implementing any other slice, build its own pack:
+  `logics-manager sync context-pack item_00X_... --mode full --profile deep`.
+- **The order in the plan below is not a preference.** `item_001` writes what every other slice
+  reads; nothing else starts before a report exists and the twelve operations write one.
+- **Two rules that are expensive to unbreak**: host code and engine code never import each other,
+  and no operator-facing string is written inline once `item_010` has landed.
+- **A slice is done when its acceptance criteria are verified with numbers**, on the generated
+  fixture rather than on private geometry, and the fixture's own defects are found unaided.
+  `logics-manager flow evidence add` records that proof; `item_013` automates it.
 
 # Plan
 - [x] 1. Settle the report shape against what the existing operations already measure. Settled in `adr_001_operation_report_format`: twelve scripts, seven transforms and five inspections, one envelope with two payloads, renders and comparable pairs declared rather than inferred.

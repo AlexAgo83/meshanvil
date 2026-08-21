@@ -32,6 +32,13 @@ write that file can run Python in that session with your user's rights. It is ar
 hand, per launch, by pasting one line into the Python Console — it is not a background
 service, and it should stay off when you are not using it.
 
+## What a report contains
+
+An operation report records the path and SHA-256 of what it read and wrote, the parameters it
+ran with, and the measurements it took. Paths are the sensitive part: a file name can identify a
+client or a programme even when the geometry never leaves the machine. Reports live under
+`work/`, which is not versioned, and a report shared outside should be read before it is sent.
+
 ## Handling source files
 
 CAD sources are the sensitive part of this kind of work, not the code. `work/` is

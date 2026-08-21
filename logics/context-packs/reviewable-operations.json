@@ -59,7 +59,7 @@
           "- Task back-reference: `task_001_deliver_the_reviewable_operation_loop`"
         ]
       },
-      "status": "Proposed",
+      "status": "Settled",
       "title": "Reviewable agent-driven 3D operations"
     },
     {
@@ -185,7 +185,7 @@
           "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
         ]
       },
-      "status": "Proposed",
+      "status": "Accepted",
       "title": "Target technology and process model"
     },
     {
@@ -227,7 +227,7 @@
           "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
         ]
       },
-      "status": "Proposed",
+      "status": "Accepted",
       "title": "Execution contract: identity, concurrency and exit codes"
     },
     {
@@ -373,7 +373,7 @@
           "- Two states of the same geometry must be comparable side by side, not only through their numbers: a 30 mm voxel destroys the detail of a part while the volume moves by 3% and every topology check stays green."
         ]
       },
-      "status": "Draft",
+      "status": "Ready",
       "title": "Make every 3D operation reviewable without reopening Blender"
     },
     {
@@ -545,7 +545,7 @@
       "ref": "prod_001_reviewable_agent_driven_3d_operations",
       "schema_version": "1.0",
       "sections": {},
-      "status": "Proposed",
+      "status": "Settled",
       "title": "Reviewable agent-driven 3D operations"
     },
     {
@@ -606,11 +606,11 @@
     }
   ],
   "estimates": {
-    "char_count": 26743,
+    "char_count": 26741,
     "companion_doc_count": 6,
     "doc_count": 8
   },
-  "generated_at": "2026-08-21T20:43:08Z",
+  "generated_at": "2026-08-21T20:53:02Z",
   "handoff": {
     "companion_doc_count": 6,
     "enabled": true,

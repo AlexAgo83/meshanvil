@@ -1,7 +1,7 @@
 ## req_000_make_every_3d_operation_reviewable_without_reopening_blender - Make every 3D operation reviewable without reopening Blender
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Ready
 > Understanding: 95%
 > Confidence: 88%
 > Complexity: Medium

@@ -7,15 +7,15 @@
 | [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Accepted |  |  | architecture/adr_001_operation_report_format.md |
 | [adr_002_depend_on_logics_manager_and_reuse_its_structure](architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md) | Depend on logics-manager and reuse its structure | Accepted |  |  | architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md |
 | [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
-| [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Proposed |  |  | architecture/adr_004_target_technology_and_process_model.md |
-| [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Proposed |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
-| [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Proposed |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
+| [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Accepted |  |  | architecture/adr_004_target_technology_and_process_model.md |
+| [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Accepted |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
+| [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Accepted |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
 
 ## Product briefs
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Proposed |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
+| [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Settled |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
 
 ## Roadmaps
 
@@ -25,7 +25,7 @@ _None_
 
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
-| [req_000_make_every_3d_operation_reviewable_without_reopening_blender](request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md) | Make every 3D operation reviewable without reopening Blender | Draft |  |  | request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md |
+| [req_000_make_every_3d_operation_reviewable_without_reopening_blender](request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md) | Make every 3D operation reviewable without reopening Blender | Ready |  |  | request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md |
 
 ## Backlog
 

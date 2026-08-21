@@ -1,6 +1,6 @@
 ## adr_005_execution_contract_identity_concurrency_and_exit_codes - Execution contract: identity, concurrency and exit codes
 > Date: 2026-08-21
-> Status: Proposed
+> Status: Accepted
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`

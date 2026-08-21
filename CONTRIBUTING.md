@@ -47,6 +47,20 @@ Run any script on a copy:
 - The viewer is plain JavaScript, typed with JSDoc. No framework, no build step: it has to
   open from disk. See `adr_004_target_technology_and_process_model` before adding either.
 
+## Working from the corpus
+
+The specification is in `logics/`, not in this file. `req_000` states the problem, `prod_001` the
+product, `adr_001` to `adr_006` the decisions and their reasons, and `task_001` sequences the
+slices in the order they must be built. `logics/context-packs/` holds the handoff an
+implementation agent reads.
+
+Two rules that are easy to break and expensive to unbreak:
+
+- `meshanvil/` (host) and `meshanvil_engine/` (inside Blender or FreeCAD) never import each
+  other. They share a schema, not a module.
+- The corpus is checked in CI. `logics-manager sync update-indicators <ref> --touch` after
+  editing a document, and never hand-edit indicators, lineage links or generated sections.
+
 ## Validation
 
 ```bash
