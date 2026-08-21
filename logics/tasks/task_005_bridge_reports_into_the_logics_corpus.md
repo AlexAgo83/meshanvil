@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 92%
+> Progress: 98%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:48:42
+> Indicators reviewed: 2026-08-22 01:09:04
 
 # AI Context
 - Summary: Keep Logics optional through its JSON CLI: evidence after success, live document metadata for chips, and a runbook scaffold from report facts.
@@ -18,10 +18,10 @@
 - Skip when: Running or viewing a chain without a Logics bridge request.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_013_bridge_reports_into_the_logics_corpus`
@@ -35,8 +35,8 @@
 - AC6: No logics-manager module is imported anywhere; every bridge is a subprocess call returning JSON.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_005_bridge_reports_into_the_logics_corpus.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_005_bridge_reports_into_the_logics_corpus.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_005_bridge_reports_into_the_logics_corpus.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_005_bridge_reports_into_the_logics_corpus.md` after implementation.
 
 # Validation
 - `make check`
@@ -45,13 +45,18 @@
 - `./bin/meshanvil runbook 002`
 - `logics-manager lint --require-status`
 - `logics-manager audit --group-by-doc`
+- `meshanvil run scan_defects … --evidence task_005_bridge_reports_into_the_logics_corpus:AC1` passed: report evidence appended to this task
 
 # Report
 - Added the optional JSON subprocess boundary and successful-run evidence hook.
 - Viewer document chips now resolve title, kind and status from the corpus and call missing references out.
 - `meshanvil runbook 002` created `run_011` with operation parameters, outcomes and measurements; the human procedure remains explicitly unverified.
+- End-to-end evidence bridge verified with `005_scan_defects.json`.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `meshanvil run scan_defects work/out/fixture_check_voxel30.blend` | result: /users/alexandreagostini/documents/meshanvil/work/ops/005_scan_defects.json | scan_defects succeeded (objects=2, vertices=11936, faces=12038)
