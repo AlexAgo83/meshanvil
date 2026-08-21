@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 98%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:24:25
+> Indicators reviewed: 2026-08-22 00:24:42
 
 # AI Context
 - Summary: Route CLI and viewer copy through the English and French catalogues, validate their parity, and preserve machine-readable report identifiers.
@@ -34,14 +34,14 @@
 - AC5: Warning codes, report field names and operation names are identical in both languages.
 
 # AC Traceability
-- request-AC17 -> This task. Proof: f84e209; `make check` and `logics-manager i18n validate` passed.
+- request-AC17 -> This task. Proof: f84e209 through dab2494; `make check`, `make fixture`, and `logics-manager i18n validate` passed.
 
 # Plan
 - [ ] Use `python3 -m logics_manager flow progress task task_002_speak_english_by_default_and_french_on_demand.md --progress <n>%` during multi-wave work.
 - [ ] Run `python3 -m logics_manager flow finish task task_002_speak_english_by_default_and_french_on_demand.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check && make fixture && logics-manager lint --require-status && logics-manager audit --group-by-doc && logics-manager i18n validate` passed on 2026-08-22.
 
 # Report
 - Not started.
