@@ -47,6 +47,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .ehead .name{color:var(--txt);font-weight:500}
 .ehead .push{margin-left:auto}
 .filter{background:var(--node-bg);border:1px solid var(--line);border-radius:var(--r);color:var(--dim);padding:1px 7px;font-size:11px;font-family:var(--f-mono)}
+.filterbox{width:104px;background:var(--node-bg);border:1px solid var(--line);border-radius:var(--r);color:var(--txt);padding:1px 7px;font-size:11px;font-family:var(--f-mono)}.filterbox::placeholder{color:var(--dimmer)}
 
 /* ---------- outliner ---------- */
 .outliner{overflow-y:auto;padding:4px 0}
@@ -108,6 +109,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .compare input{appearance:none;position:absolute;z-index:2;inset:0;width:100%;height:100%;margin:0;background:transparent;cursor:ew-resize}
 .compare input::-webkit-slider-runnable-track{height:100%;background:transparent}.compare input::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--active)}
 .compare input::-moz-range-track{height:100%;background:transparent}.compare input::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:var(--active)}
+.compare-label{position:absolute;z-index:1;top:7px;padding:2px 6px;border-radius:3px;background:rgba(0,0,0,.58);font:10px var(--f-mono);color:var(--txt);pointer-events:none}.compare-label.before{left:7px}.compare-label.after{right:7px}
 .pvempty{color:var(--dimmer);font-size:11.5px;text-align:center;max-width:34ch;line-height:1.6}
 .pvempty code{font-family:var(--f-mono);color:var(--dim)}
 .pvmeta{border-left:1px solid var(--line);padding:8px 9px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}

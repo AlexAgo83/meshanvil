@@ -37,6 +37,7 @@ let view = 0;
 let wipe = 50;
 let start = !DATA.reports.length;
 let workspace = "chain";
+let filterText = "";
 
 /** Report text is data from CAD files, never markup. */
 function esc(value) {
@@ -86,6 +87,7 @@ function outliner() {
   for (const [chain, reports] of chains) {
     html += `<div class="outgroup">${esc(t("ui.chain", { id: chain }))}</div>`;
     for (const report of reports) {
+      if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
       const kind = report.status === "failed" ? "failed" : report.kind;
       const state = report.output && report.output.state === "pruned" ? "pruned" : report.status;
       const glyph = report.kind === "inspection" ? "i" : "T";
@@ -99,7 +101,7 @@ function outliner() {
   }
   if (workspace === "chain" && DATA.runbooks && DATA.runbooks.length) {
     html += `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`;
-    for (const doc of DATA.runbooks) html += `<button type="button" class="row" data-doc="${esc(doc.ref)}"
+    for (const doc of DATA.runbooks.filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText))) html += `<button type="button" class="row" data-doc="${esc(doc.ref)}"
       aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
       <span class="label">${esc(doc.title)}</span><span class="dot ${doc.status === "Done" ? "ok" : "pruned"}"></span></button>`;
   }
@@ -347,7 +349,7 @@ function preview() {
     if (view >= pairs.length) view = 0;
     const pair = pairs[view], delta = report.bbox_delta_mm || {};
     views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
-    stage.innerHTML = `<div class="compare" style="--wipe:${wipe}%"><img class="compare-before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
+    stage.innerHTML = `<div class="compare" style="--wipe:${wipe}%"><img class="compare-before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><span class="compare-label before">${esc(t("ui.compare_before"))}</span><span class="compare-label after">${esc(t("ui.compare_after"))}</span><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
     meta.innerHTML = `<div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
     return;
   }
@@ -403,6 +405,7 @@ document.addEventListener("click", (event) => {
 });
 document.addEventListener("input", (event) => {
   const input = /** @type {HTMLInputElement} */ (event.target);
+  if (input.matches("#outliner-filter")) { filterText = input.value.toLowerCase(); outliner(); return; }
   if (!input.matches("[data-wipe]")) return;
   wipe = Number(input.value);
   const compare = /** @type {HTMLElement|null} */ (document.querySelector(".compare"));
@@ -431,6 +434,9 @@ for (const node of document.querySelectorAll("[data-i18n]")) {
 }
 for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
   node.setAttribute("aria-label", t(/** @type {HTMLElement} */ (node).dataset.i18nAriaLabel));
+}
+for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
+  node.setAttribute("placeholder", t(/** @type {HTMLElement} */ (node).dataset.i18nPlaceholder));
 }
 if (current) select(current);
 else { outliner(); nodes(); props(); preview(); }

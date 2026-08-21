@@ -162,6 +162,7 @@
     ,"workspace_chain": "Chain"
     ,"workspace_compare": "Compare"
     ,"workspace_runbooks": "Runbooks"
+    ,"filter": "filter…"
   },
   "operation": {
     "clean_shells": {
