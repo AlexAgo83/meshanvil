@@ -8,7 +8,7 @@ from __future__ import annotations
 import functools, http.server, json, os, shutil, socketserver, subprocess, sys, time, webbrowser
 from pathlib import Path
 
-from . import manifests
+from . import logics_bridge, manifests
 from .engines import in_wsl
 from .i18n import SOURCE, catalogue, language, t
 
@@ -55,9 +55,11 @@ def build(root: Path) -> Path:
     for name in ("index.html", "viewer.css", "viewer.js"):
         shutil.copyfile(root / "viewer" / name, target / name)
     strings = {**catalogue(SOURCE), **catalogue(language())}   # English is the fallback
+    reports = collect(root)
+    refs = {ref for report in reports for ref in report.get("links", {}).get("docs", [])}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings,
-               "reports": collect(root), "doctor": collect_doctor(root),
+               "reports": reports, "docs": logics_bridge.documents(refs), "doctor": collect_doctor(root),
                "ops_exists": (root / OPS).is_dir()}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")

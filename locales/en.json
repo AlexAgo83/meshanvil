@@ -108,7 +108,8 @@
     "render_preview": "Render preview",
     "operation_report": "Operation report",
     "view": "View",
-    "render_alt": "{view} view of {operation}"
+    "render_alt": "{view} view of {operation}",
+    "document_missing": "document missing"
     ,"start": "Start"
     ,"start_title": "Start a review chain"
     ,"start_outliner": "Run one command below; its report will become the first chain entry."

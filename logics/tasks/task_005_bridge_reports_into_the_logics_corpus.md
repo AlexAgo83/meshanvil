@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 35%
+> Progress: 65%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:46:03
+> Indicators reviewed: 2026-08-22 00:47:04
 
 # AI Context
 - Summary: Keep Logics optional through its JSON CLI: evidence after success, live document metadata for chips, and a runbook scaffold from report facts.
@@ -39,12 +39,13 @@
 - [ ] Run `python3 -m logics_manager flow finish task task_005_bridge_reports_into_the_logics_corpus.md` after implementation.
 
 # Validation
-- `python3 -m compileall -q meshanvil`
-- `python3 scripts/i18n_check.py`
-- `./bin/meshanvil run --help`
+- `make check`
+- `./bin/meshanvil view --no-open`
+- `node --check viewer/viewer.js`
 
 # Report
 - Added the optional JSON subprocess boundary and successful-run evidence hook.
+- Viewer document chips now resolve title, kind and status from the corpus and call missing references out.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

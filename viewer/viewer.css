@@ -158,11 +158,13 @@ td.delta.moved{color:var(--active)}
   color:color-mix(in srgb,var(--ref) 72%,var(--txt));--ref:#4ea1ff}
 .docref code{font-family:var(--f-mono);font-weight:700;font-size:10.5px;padding:0;background:none;color:inherit}
 .docref .rtitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim)}
+.docref small{font-family:var(--f-mono);font-size:9px;color:var(--dimmer)}
 .docref::after{content:"";width:3px;height:3px;border-top:1px solid currentColor;border-right:1px solid currentColor;opacity:.8;transform:rotate(45deg);flex:none}
 .docref:hover{background:color-mix(in srgb,var(--ref) 28%,transparent);border-color:var(--ref)}
 .docref--request{--ref:#d97706} .docref--backlog{--ref:#2563eb} .docref--task{--ref:#0f766e}
 .docref--product{--ref:#7c3aed} .docref--roadmap{--ref:#0e7490} .docref--architecture{--ref:#be123c}
 .docref--spec{--ref:#15803d} .docref--runbook{--ref:#4ea1ff} .docref--op{--ref:#ed9e5c}
+.docref--missing{--ref:#cc4b4b}
 .wikilinks{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .wiki{font-family:var(--f-mono);font-size:11px;color:#8fb4e8;text-decoration:none;border-bottom:1px dotted #3f5b82;align-self:flex-start}
 .wiki:hover{color:#b9d2f5}

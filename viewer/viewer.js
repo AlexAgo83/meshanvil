@@ -16,7 +16,7 @@
  *   _x?:number, _y?:number}} OperationReport */
 
 const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
- *   lang: string, strings: Object<string,string>, doctor?: Object, ops_exists?: boolean}} */ (
+ *   lang: string, strings: Object<string,string>, docs?: Object<string,Object>, doctor?: Object, ops_exists?: boolean}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
 
@@ -283,9 +283,7 @@ function props() {
                ? BY_ID.get(report.links.parent).operation : "missing")}</span></a>
            <span class="note">${esc(t("ui.parent_resolved", { source: report.links.parent_source }))}</span>`
         : `<span class="note">${esc(t("ui.no_parent"))}</span>`}
-      ${(report.links.docs || []).map((doc) =>
-        `<span class="docref docref--runbook"><code>${esc(shortRef(doc))}</code>
-           <span class="rtitle">${esc(doc)}</span></span>`).join("")}
+      ${(report.links.docs || []).map(docChip).join("")}
     </div>`);
   target.innerHTML = html;
 }
@@ -295,6 +293,14 @@ function shortRef(slug) {
   const prefix = { run: "N", req: "R", item: "I", task: "T", prod: "P", adr: "A" };
   const match = /^([a-z]+)_(\d+)/.exec(slug || "");
   return match ? (prefix[match[1]] || match[1][0].toUpperCase()) + match[2] : "?";
+}
+
+function docChip(ref) {
+  const doc = (DATA.docs || {})[ref];
+  if (!doc || doc.missing) return `<span class="docref docref--missing"><code>${esc(shortRef(ref))}</code>
+    <span class="rtitle">${esc(t("ui.document_missing"))}</span></span>`;
+  return `<span class="docref docref--${esc(doc.kind || "runbook")}"><code>${esc(shortRef(ref))}</code>
+    <span class="rtitle">${esc(doc.title || ref)}</span><small>${esc(doc.kind || "?")} · ${esc(doc.status || "?")}</small></span>`;
 }
 
 /* ---------- image editor ---------- */
