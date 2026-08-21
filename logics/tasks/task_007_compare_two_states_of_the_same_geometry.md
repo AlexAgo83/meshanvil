@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:02:36
+> Indicators reviewed: 2026-08-22 01:02:54
 
 # AI Context
 - Summary: The report must declare a same-subject render pair; the viewer presents it with one persistent, accessible wipe position and numeric deltas.
@@ -44,6 +44,8 @@
 - `./bin/meshanvil view --no-open`
 - `node --check viewer/viewer.js`
 - `git diff --check`
+- `make fixture` passed on 2026-08-22: four declared same-camera pairs
+- `make check` passed on 2026-08-22: wipe input retains focus while updating its overlay
 
 # Report
 - `voxel_remesh` records four explicit before/after pairs rendered from the same per-view camera.
