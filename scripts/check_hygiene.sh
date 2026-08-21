@@ -13,8 +13,10 @@ if git grep -I --untracked -nE '/Users/[A-Za-z0-9_.-]+|/home/[A-Za-z0-9_.-]+|C:\
 fi
 
 # Words that would name the client or the product family the runbooks were written on.
-if git grep -I --untracked -niE '(^|[^a-z])(circle|jokon|hella|soverep)([^a-z]|$)' \
-      -- . ':!scripts/check_hygiene.sh' | grep -viE 'circle the operator|circular|circle exists|a circle'; then
+# `circle` is also CSS and SVG vocabulary, so it counts only where a name would put it:
+# touching an underscore or a hyphen, or capitalised as a word of its own.
+if git grep -I --untracked -nE '[Cc]ircle[_-]|CIRCLE[_-]|[_-][Cc]ircle|[_-]CIRCLE|(^|[^A-Za-z])Circle([^a-z]|$)|[Jj]okon|[Hh]ella|[Ss]overep' \
+      -- . ':!scripts/check_hygiene.sh'; then
   echo "^ identifying name in a tracked file"
   status=1
 fi
