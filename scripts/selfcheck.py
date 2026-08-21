@@ -25,6 +25,11 @@ def check_parameters():
         raise AssertionError("an unknown parameter must be refused")
     except KeyError:
         pass
+    try:
+        manifests.resolve(manifest, {"ratio": "nope"})
+        raise AssertionError("an invalid parameter must be refused")
+    except KeyError:
+        pass
 
 
 def check_identity(tmp: Path):

@@ -31,7 +31,13 @@ def resolve(manifest: dict, given: dict[str, str]) -> dict:
     for spec in manifest.get("params", []):
         name = spec["name"]
         raw = given.get(name)
-        values[name] = spec.get("default") if raw is None else casts[spec["type"]](raw)
+        if raw is None:
+            values[name] = spec.get("default")
+            continue
+        try:
+            values[name] = casts[spec["type"]](raw)
+        except ValueError:
+            raise KeyError(t("run.invalid_parameter", name=name, value=raw)) from None
     unknown = set(given) - {spec["name"] for spec in manifest.get("params", [])}
     if unknown:
         raise KeyError(t("run.unknown_parameters", names=", ".join(sorted(unknown))))

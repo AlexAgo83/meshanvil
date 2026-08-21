@@ -31,6 +31,7 @@
     "no_such_file": "no such file: {path}",
     "source_is_read_only": "{path} is a source. Operations never write to work/in/ -- copy it into work/out/ and run on the copy.",
     "unknown_parameters": "unknown parameter(s): {names}",
+    "invalid_parameter": "invalid value for {name}: {value}",
     "no_report": "the engine wrote no report after {seconds}s; job kept at {job}",
     "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running"
   },
