@@ -53,8 +53,9 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.command == "list":
         return show_list()
     if arguments.command == "doctor":
-        print(json.dumps(doctor.check(manifests.root()), indent=1))
-        return runner.EXIT_OK
+        result = doctor.check(manifests.root())
+        print(json.dumps(result, indent=1))
+        return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":
         return viewer.view(serve_it=arguments.serve, open_it=not arguments.no_open)
     given = {}

@@ -121,6 +121,16 @@ def check_engine_floor():
     assert "MESHANVIL_BLENDER" in engines.fix_command("blender")
 
 
+def check_doctor_exit_code():
+    from meshanvil import cli
+    original = doctor.check
+    try:
+        doctor.check = lambda root: {"ok": False, "requirements": []}
+        assert cli.main(["doctor"]) == runner.EXIT_REFUSED
+    finally:
+        doctor.check = original
+
+
 def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="meshanvil-selfcheck-"))
     try:
@@ -132,6 +142,7 @@ def main() -> int:
         check_i18n()
         check_doctor(tmp)
         check_engine_floor()
+        check_doctor_exit_code()
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("selfcheck: ok")
