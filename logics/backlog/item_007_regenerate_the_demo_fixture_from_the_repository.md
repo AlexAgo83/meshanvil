@@ -2,9 +2,9 @@
 > From version: 1.0.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
-> Progress: 0%
+> Understanding: 95%
+> Confidence: 90%
+> Progress: 80%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -27,6 +27,7 @@
   - tools/run_demo_chain.py: the chain replayed on that scene -- dedupe, voxel envelope, a coarse-voxel attempt kept as a failure, an opening cut in the floor.
   - tools/render_fixed_views.py: the canonical directions on a camera fixed for a subject, which is what makes two states comparable.
   - Everything written under work/, nothing binary committed.
+  - Built: `make fixture` regenerates the scene, replays four operations through the command, and asserts the smear at its ratio, the four duplicates, the coarse-voxel drift, the parent resolved by fingerprint, the sibling letter and the uniqueness of identities. 24 s, Blender required, out of CI on purpose.
 - Out:
   - Shipping the generated blends or renders in the repository.
   - Making the demo scene resemble any particular product.

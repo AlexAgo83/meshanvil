@@ -72,8 +72,9 @@ Two rules that are easy to break and expensive to unbreak:
 ## Validation
 
 ```bash
-make check      # compiles the scripts, runs the publication-hygiene gate
+make check      # compiles everything, runs the self-check and the publication-hygiene gate
 make logics     # lints and audits the corpus with the pinned logics-manager
+make fixture    # needs Blender: regenerates the demo scene and asserts its defects are found
 ```
 
 `make check` compiles every script and runs the publication-hygiene gate. It deliberately
