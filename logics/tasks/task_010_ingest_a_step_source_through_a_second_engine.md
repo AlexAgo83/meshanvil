@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 99%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:01:20
+> Indicators reviewed: 2026-08-22 01:09:49
 
 # AI Context
 - Summary: FreeCAD receives the normal job file, writes an STL and report directly, and owns its import heartbeat without a Blender-side import.
@@ -18,10 +18,10 @@
 - Skip when: Repairing geometry or making FreeCAD a global runtime requirement.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_009_ingest_a_step_source_through_a_second_engine`
@@ -34,8 +34,8 @@
 - AC5: The import reports progress, so a caller can tell a slow import from a hung one.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_010_ingest_a_step_source_through_a_second_engine.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_010_ingest_a_step_source_through_a_second_engine.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_010_ingest_a_step_source_through_a_second_engine.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_010_ingest_a_step_source_through_a_second_engine.md` after implementation.
 
 # Validation
 - `make check`
@@ -51,3 +51,7 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `meshanvil run import_step work/in/fixture_box.step` | result: passed | FreeCAD 1.0.2 imported the generated STEP box headlessly and wrote work/out/fixture_box_step.stl.
+- AC3 | date: 2026-08-22 | command: `meshanvil run import_step work/in/fixture_box.step` | result: passed | The import report recorded one solid and a 40×30×20 mm source/result bounding box.
