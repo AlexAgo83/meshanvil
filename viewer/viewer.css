@@ -93,6 +93,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---------- properties ---------- */
 .props{display:flex;flex:1;min-height:0}
 .colstack{display:flex;flex-direction:column;gap:2px;min-height:0}
+.colstack > .editor:first-child{flex:1}
 .preview{height:236px;flex:none}
 .pvbody{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 216px;min-height:0}
 .pvstage{position:relative;display:grid;place-items:center;padding:8px;min-width:0;
