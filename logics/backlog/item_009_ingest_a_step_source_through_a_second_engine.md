@@ -1,13 +1,14 @@
 ## item_009_ingest_a_step_source_through_a_second_engine - Ingest a STEP source through a second engine
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 00:57:08
 
 # AI Context
 - Summary: A STEP file read by FreeCAD headless and converted to a working mesh, as an operation like any other: same job contract, same report, engine named freecad.
@@ -66,3 +67,6 @@
 - Hybrid rationale: Derived from request `req_000_make_every_3d_operation_reviewable_without_reopening_blender` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md`.
 - Generated locally by logics-manager.
+
+# Tasks
+- `task_010_ingest_a_step_source_through_a_second_engine`
