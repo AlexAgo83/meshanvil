@@ -57,6 +57,14 @@ def allocate(root: Path, name: str, parent: str | None) -> tuple[str, Path]:
 
 
 def _claim(path: Path) -> bool:
+    """An identity is taken as soon as any report carries it, whatever operation wrote it.
+
+    O_EXCL alone only makes the filename unique, and two operations with different names would
+    both have claimed 003a.
+    """
+    identity = path.name.split("_", 1)[0]
+    if any(path.parent.glob(f"{identity}_*.json")):
+        return False
     try:
         os.close(os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
         return True
@@ -82,6 +90,29 @@ def resolve_parent(root: Path, digest: str) -> str | None:
         if (report.get("output") or {}).get("sha256") == digest:
             latest = report.get("id")
     return latest
+
+
+STALE_AFTER = 60.0
+
+
+def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
+    """A long operation proves it is alive by touching its progress file.
+
+    There is no default timeout -- a legitimate pass can take an hour -- but a heartbeat that
+    stops moving is worth saying out loud, because silence is what makes a caller kill a run
+    that was still working. See adr_005.
+    """
+    said = False
+    while process.poll() is None:
+        time.sleep(poll)
+        beat = progress.stat().st_mtime if progress.exists() else None
+        quiet = time.time() - (beat or 0)
+        if beat and quiet > STALE_AFTER and not said:
+            print(f"no heartbeat for {quiet:.0f}s; the engine is still running",
+                  file=sys.stderr)
+            said = True
+        elif beat and quiet <= STALE_AFTER:
+            said = False
 
 
 def run(operation: str, target: str, params: dict[str, str], parent: str | None = None) -> int:
@@ -136,7 +167,7 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
                "--", "--job", engines.for_engine(job_path, binary)]
     started = time.time()
     try:
-        subprocess.run(command, check=False)
+        watch(subprocess.Popen(command), root / RUNS / f"{identity}.progress")
     except BaseException:
         report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
         raise

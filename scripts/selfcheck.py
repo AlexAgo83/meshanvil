@@ -37,8 +37,11 @@ def check_identity(tmp: Path):
     child, path_c = runner.allocate(tmp, "op", "001")
     assert child == "003", child            # first child keeps a bare ordinal
     path_c.write_text(json.dumps({"id": child, "links": {"parent": "001"}}), encoding="utf-8")
-    sibling, _ = runner.allocate(tmp, "op", "001")
+    sibling, path_s = runner.allocate(tmp, "op", "001")
     assert sibling == "003a", sibling       # a second child of the same parent takes a letter
+    path_s.write_text(json.dumps({"id": sibling, "links": {"parent": "001"}}), encoding="utf-8")
+    other, _ = runner.allocate(tmp, "other", "001")
+    assert other == "003b", other           # an identity is taken whatever operation wrote it
 
 
 def check_parent(tmp: Path):
