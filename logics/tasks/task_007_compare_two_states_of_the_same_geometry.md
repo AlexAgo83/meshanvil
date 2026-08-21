@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:01:54
+> Indicators reviewed: 2026-08-22 01:02:36
 
 # AI Context
 - Summary: The report must declare a same-subject render pair; the viewer presents it with one persistent, accessible wipe position and numeric deltas.
@@ -18,10 +18,10 @@
 - Skip when: Comparing unrelated source files or inferring pairs from render names.
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_005_compare_two_states_of_the_same_geometry`
@@ -35,8 +35,8 @@
 - AC6: The report lists its comparable pairs; the viewer reads that list and does not infer it from filenames.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_007_compare_two_states_of_the_same_geometry.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_007_compare_two_states_of_the_same_geometry.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_007_compare_two_states_of_the_same_geometry.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_007_compare_two_states_of_the_same_geometry.md` after implementation.
 
 # Validation
 - `make check`
@@ -53,3 +53,7 @@
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# Evidence
+- AC1 | date: 2026-08-22 | command: `make fixture` | result: passed | Fixture rendered four declared same-camera before/after pairs.
+- AC3 | date: 2026-08-22 | command: `make check` | result: passed | The native range wipe stays active while its overlay width and aria value update.
