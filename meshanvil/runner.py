@@ -126,7 +126,7 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     source = Path(target).resolve()
     if not source.is_file():
         raise Refused(t("run.no_such_file", path=target))
-    if (root / "work" / "in") in source.parents:
+    if (root / "work" / "in") in source.parents and manifest["engine"] != "freecad":
         raise Refused(t("run.source_is_read_only", path=target))
     if doctor.work(root)["state"] != "found":
         raise Refused(t("run.work_unavailable", path=root / "work"))

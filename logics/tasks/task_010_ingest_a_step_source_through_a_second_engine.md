@@ -4,12 +4,12 @@
 > Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 88%
+> Progress: 95%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 00:58:43
+> Indicators reviewed: 2026-08-22 01:01:20
 
 # AI Context
 - Summary: FreeCAD receives the normal job file, writes an STL and report directly, and owns its import heartbeat without a Blender-side import.
@@ -41,10 +41,11 @@
 - `make check`
 - `./bin/meshanvil list` exposes `import_step` with `engine: freecad`
 - Missing source refusal exits 2 before any engine is launched
-- Real STEP import remains pending a local non-versioned STEP source
+- `tools/make_step_fixture.py` + `meshanvil run import_step work/in/fixture_box.step` passed with FreeCAD 1.0.2: one solid, 40×30×20 mm bounds and `work/out/fixture_box_step.stl`
 
 # Report
 - Added the FreeCAD job command, `import_step` manifest and headless script with progress, source solid count, bounds and recorded tessellation parameters.
+- Corrected the source-read-only guard: only FreeCAD STEP ingestion may read `work/in/`; all Blender operations remain refused there.
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
