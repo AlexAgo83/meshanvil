@@ -6,7 +6,7 @@
 > Related backlog: (none yet)
 > Related task: (none yet)
 > Reminder: Update status, category, verification, and linked refs when you edit this doc.
-> Indicators reviewed: 2026-08-21 19:10:59
+> Indicators reviewed: 2026-08-21 23:13:16
 
 # Trigger
 - A printable model is wanted from a CAD assembly: scale model, mock-up, physical prop.
@@ -58,6 +58,16 @@ Parameters below are for 1/10 on a 0.4 mm nozzle; scale them, do not copy them b
 - Glazing: filled solid (simple, strong) or hollowed out for clear inserts (needs the glazing separated first).
 - Detached appendages: fused to the body or kept as separate bodies.
 - Splitting: a 279 mm model does not fit a 256 mm bed. Cut with locating pins, or drop to 1/12.
+
+# Measured afterwards
+- A voxel that erases detail is not caught by comparing the voxel to the smallest part. On the
+  generated fixture the smallest object extent is 64 mm, so a 30 mm voxel passes that test while
+  destroying the trims: a thin feature can sit inside an object whose own bounding box is large.
+  What caught it was the bounding-box drift -- 106.5 mm against a 30 mm voxel, where a clean run
+  drifts by less than one voxel.
+- The same check caught an unrepaired defect leaking through the remesh: 8.8 mm of drift at a
+  6 mm voxel with a smeared island still in the file, against 0.6 mm once repaired. Refusing a
+  result whose bounding box moved by more than one voxel turns both into an exit code.
 
 # References
 - Input: run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility

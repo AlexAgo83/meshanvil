@@ -1,0 +1,12 @@
+{
+  "operation": "voxel_remesh",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/voxel_remesh.py",
+  "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid.",
+  "params": [
+    {"name": "voxel_mm", "type": "float", "default": 6.0, "unit": "mm"},
+    {"name": "keep_largest", "type": "bool", "default": false},
+    {"name": "max_bbox_drift_mm", "type": "float", "default": 0.0, "unit": "mm"}
+  ]
+}

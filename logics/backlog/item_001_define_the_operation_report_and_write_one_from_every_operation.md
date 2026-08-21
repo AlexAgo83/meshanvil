@@ -4,7 +4,7 @@
 > Status: Ready
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 25%
+> Progress: 35%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -35,6 +35,7 @@
   - output.state as present, pinned or pruned, with the date it changed -- declared now so no report needs migrating when a pruning policy arrives.
   - A failure path that writes the report with the error and whatever was measured before it.
   - The seven pipeline steps, tools/scan_defects.py, and the five inspection scripts calling the helper.
+  - Converted so far: tools/scan_defects.py (inspection, and transform when it fixes) and tools/voxel_remesh.py (transform, before/after and the drift verdict).
 - Out:
   - The runner command and the viewer, which are separate slices.
   - The pruning policy itself: this slice declares output.state, item_004 decides what sets it.
