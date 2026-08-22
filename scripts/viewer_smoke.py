@@ -103,7 +103,14 @@ SMOKE = r"""
     assert(document.querySelector("#graph-name").textContent.toLowerCase().includes("runbook"),
       "runbooks table is still filed under the node editor header");
     document.querySelector(".rbbody .rbrow").click();
-    assert(document.querySelector("#props .doccontent"), "runbook row did not open its content");
+    const doccontent = document.querySelector("#props .doccontent");
+    assert(doccontent, "runbook row did not open its content");
+    // A runbook renders as formatted HTML, not raw Markdown source: real heading/list
+    // elements, and no literal '##'/'- '/backtick syntax left over in the visible text.
+    assert(doccontent.querySelector("h2, h3, h4"), "runbook content has no rendered heading");
+    assert(doccontent.querySelector("li"), "runbook content has no rendered list item");
+    assert(!/^#{1,6}\s|^[-*]\s|`[^`]+`/m.test(doccontent.textContent),
+      "runbook content still shows literal Markdown syntax");
 
     assert(/^v\d+\.\d+\.\d+$/.test(document.querySelector("#app-version").textContent), "app version missing from Help");
     const reportMenu = document.querySelectorAll(".menubar summary")[2];

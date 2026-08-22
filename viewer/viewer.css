@@ -222,7 +222,16 @@ td.delta.moved{color:var(--active)}
 .wiki:hover{color:#b9d2f5}
 .note{font-size:11px;color:var(--dim);line-height:1.5}
 .doccontent{font-family:var(--f-mono);font-size:11px;line-height:1.6;color:var(--txt);
-  white-space:pre-wrap;overflow-wrap:anywhere;max-height:60vh;overflow-y:auto}
+  overflow-wrap:anywhere;max-height:60vh;overflow-y:auto}
+.doccontent p{margin:0 0 10px}
+.doccontent h2,.doccontent h3,.doccontent h4{margin:16px 0 6px;color:var(--txt);font-weight:600}
+.doccontent h2:first-child,.doccontent h3:first-child{margin-top:0}
+.doccontent ul,.doccontent ol{margin:0 0 10px;padding-left:20px}
+.doccontent li{margin-bottom:6px}
+.doccontent code{background:var(--region);border-radius:3px;padding:0 4px;color:var(--warn)}
+.doccontent pre{background:var(--node-bg);border-radius:4px;padding:8px 10px;overflow-x:auto;margin:0 0 10px}
+.doccontent pre code{background:none;padding:0;color:var(--txt)}
+.doccontent blockquote{margin:0 0 10px;padding-left:8px;border-left:2px solid var(--line);color:var(--dim)}
 /* A run's own result, shown where the command used to just be text -- adr_007. Only a
    served page ever shows one; a file:// page never gets past copy-to-clipboard. */
 .cmdout{margin:0 4px 4px;padding:6px 8px;background:var(--node-bg);border-radius:3px;
