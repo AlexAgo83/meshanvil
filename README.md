@@ -135,14 +135,29 @@ without its numbers is a blog post -- but a second assembly will bend some of th
 
 ## Demonstration data
 
-`tools/make_demo_scene.py` generates a synthetic housing carrying two real export defects: one
-island smeared along a line, and objects duplicated at identical coordinates. `tools/scan_defects.py`
-finds them without being told where they are -- a ratio of 2.9 on the smear, four duplicates at
-37% of the vertices. `tools/run_demo_chain.py` replays the chain on it, and
-`tools/render_fixed_views.py` renders the canonical directions on a camera fixed per subject,
-which is what makes two states comparable.
+`tools/build_demo_chain.sh` runs the demonstration: `fixtures/demo_car.blend`, a roadster
+modelled for rendering, taken through the pipeline until it is one printable solid. Nothing in
+it was planted. It carries what a render asset carries -- half the body held in Mirror
+modifiers, panels with no thickness, three parts never visible from outside, a uniform 1.6x
+oversize, a coincident duplicate -- and each step is where one of those surfaces.
 
-Nothing is downloaded, nothing is licensed, and nothing binary is committed.
+The branch is the part worth reading. Two siblings, same parent, same voxel, one step apart:
+one remeshes a walled body and returns a single closed shell; the other remeshes the bare
+panels and returns 714 fragments with the body gone. The one that destroyed the car reports
+`ok`. The one that worked reports `failed`, on a bounding box that moved 1.5 voxels. That is
+the whole argument for reading reports instead of trusting exit codes.
+
+`tools/strip_asset.py` is how the fixture was reduced to 0.75 MB: it drops materials, node
+trees, UV layers, images, cameras and lamps, none of which any operation reads, and removes
+any object whose geometry spells a brand. See `fixtures/PROVENANCE.md` for where the model
+comes from and what is known about its licence.
+
+`tools/make_demo_scene.py` stays for a different job. It generates a synthetic housing with
+two defects planted deliberately -- one island smeared along a line, objects duplicated at
+identical coordinates -- so `scripts/fixture_check.py` can assert that `tools/scan_defects.py`
+finds exactly what was built in, unaided: a ratio of 2.9 on the smear, four duplicates at 37%
+of the vertices. Ground truth and demonstration are different jobs, and the fixture restores
+the demonstration chain when it is done.
 
 ## Working rules that earned their place
 
