@@ -8,7 +8,7 @@
 > Complexity: High
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 01:02:26
 
 # AI Context
 - Summary: One repo-first resolution rule replaces the repository-root lookup at every call site, each asset directory is declared in the package, and a build missing one fails.
@@ -36,6 +36,14 @@
 # AC Traceability
 - request-AC3 -> This backlog slice. Proof: AC1: One rule resolves every runtime asset and no call site reaches for the repository root directly.
 - request-AC4 -> This backlog slice. Proof: AC2: The tool finds every asset both from a working tree and from an installed package.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- `paths.code_root()` (`meshanvil/paths.py:32`) is `Path(__file__).resolve().parent.parent` -- the repository root only because the package sits directly inside it. Its callers, exhaustively: `meshanvil/paths.py:46` and `:56` (the installation-versus-project rule), `meshanvil/i18n.py:17` (locales), `meshanvil/manifests.py:13` (operation manifests under `tools/` and `pipeline/`), `meshanvil/runner.py:134` (the operation script and the engine package), `meshanvil/viewer.py:71` (viewer sources), `:75` (catalogues), `:88` (runbooks), `:121` (the subprocess -- `item_053` owns that one), `meshanvil/cli.py:81` (runbooks), and `scripts/selfcheck.py:100`.
+- Those are five distinct asset kinds, not one: `viewer/`, `locales/`, `*.op.json` under `tools/` and `pipeline/`, `meshanvil_engine/`, and `logics/runbook/`. Only the last is in doubt, and `item_054` owns it.
+- `manifests.discover()` globs `tools/*.op.json` and `pipeline/*.op.json` (`meshanvil/manifests.py:21`, `SEARCH` at `:9`) -- so the operation scripts themselves ship, not just their manifests, since `runner.py:134` launches them by path inside the engine.
+- The `paths.name()` answer `installation` (`meshanvil/paths.py:55`) is operator-visible text that assumes the installation is a directory someone might be standing in. Installed, that stops being true and the string wants re-reading.
 
 # Decision framing
 - Product framing: Not needed

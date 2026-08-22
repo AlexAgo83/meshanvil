@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:43:05
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: One viewer per project, reused when it is alive and reclaimed when it is not, at an address that does not move between launches -- and serving becomes what `meshanvil view` does by default.
@@ -44,6 +44,14 @@
 - request-AC14 -> This backlog slice. Proof: AC2: With a viewer already alive for this project, the command opens that one, starts no second process, and states which of the two it did.
 - request-AC15 -> This backlog slice. Proof: AC3: A project's address is the same across launches.
 - request-AC16 -> This backlog slice. Proof: AC4: A registration left by a viewer that died is reclaimed, not mistaken for a live one.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- Where the address moves: `make_server()` binds `("127.0.0.1", 0)` (`meshanvil/viewer.py:166`), so the port is assigned per launch, and `view()` mints a fresh `secrets.token_urlsafe(24)` each time (`meshanvil/viewer.py:184`).
+- The token is the coupling that makes this depend on `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`: it is written into the build's `data.js` and read as `DATA.run_token` (`viewer/viewer.js:29`). Reusing a live server means the page must carry *that* server's token, which a baked file cannot supply -- so the payload route lands first or this slice re-solves it.
+- The project identity a registry keys on already exists: `paths.resolve()` (`meshanvil/paths.py:37`) returns the canonical root and the rule that chose it, and `paths.name()` (`:53`) names it, answering `installation` for the code root itself.
+- `view()` (`meshanvil/viewer.py:184`) is the single entry point where both the default-mode flip and the reuse check belong; its flags come from `meshanvil/cli.py:35` (`--serve`, `--no-open`).
 
 # Decision framing
 - Product framing: Not needed

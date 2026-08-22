@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:33
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: A standard-library event stream tells the open page which component changed, detected by a bounded signature poll, with a self-throttling fallback where the stream is unavailable.
@@ -46,6 +46,14 @@
 - request-AC5 -> This backlog slice. Proof: AC4: The stream carries component names, not data, and no client path reloads the page on a data change.
 
 - request-AC17 -> This backlog slice. Proof: AC7: The `Refresh viewer` row is gone or does something real; no row tells the operator to re-run a command the page now does for itself.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- What to watch, and where each is already read: reports under `work/ops` (`OPS` at `meshanvil/viewer.py:15`, globbed in `collect()` `:23`), `work/doctor.json` (`collect_doctor()` `:58`), and the runbooks under `logics/runbook/` reached through `logics_bridge.runbooks()` (`meshanvil/viewer.py:90`). Three components, three signatures.
+- The server is already `ThreadingHTTPServer` (`meshanvil/viewer.py:166`), chosen so the single-flight lock refuses rather than queues. A long-lived streaming response needs exactly that and would have deadlocked the single-threaded server this replaced.
+- `RunHandler` subclasses `SimpleHTTPRequestHandler` with `directory=` (`meshanvil/viewer.py:165`), so a streaming GET is a `do_GET` that handles its own route and calls `super().do_GET()` for everything else -- the same fall-through shape `item_047` turns into a convention.
+- There is no `EventSource`, no polling and no reload anywhere in `viewer/viewer.js` today. This is new client code, not a rewrite, and the opened-from-disk build has no server at all -- so the fallback is not a degraded path, it is the only path there.
 
 # Decision framing
 - Product framing: Not needed

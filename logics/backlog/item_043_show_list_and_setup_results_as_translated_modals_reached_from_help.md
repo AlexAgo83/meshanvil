@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:32
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: List operations and Check setup render as translated modals built from structured data instead of raw stdout in a menu dropdown, and both move to the Help menu.
@@ -44,6 +44,16 @@
 - request-AC9 -> This backlog slice. Proof: AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.
 
 - request-AC11 -> This backlog slice. Proof: AC5: The `Create a runbook` row either carries a real report id or says why it does not; no row shows a placeholder that looks like a value.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- The two rows to move: `viewer/index.html:19` (`data-copy="meshanvil list" data-run="list"`) and `viewer/index.html:21` (doctor), each followed by the `<pre class="cmdout" data-cmdout="...">` at `:20` and `:22` that is the raw dump to remove. The Help menu they move into is `viewer/index.html:41`.
+- The modal pattern to copy is `#splash`: markup at `viewer/index.html` (`.scrim`, `role="dialog"`, `aria-modal="true"`, a `data-splash="close"` button) and behaviour in `showSplash(show)` (`viewer/viewer.js:797`), which already force-closes every open `details.menu` at `viewer/viewer.js:810` -- that is AC3, and it exists; reuse it rather than re-solving it.
+- Client side today: `runCommand(button)` (`viewer/viewer.js:737`) POSTs `{command}` to `/run` and writes `result.stdout` into `[data-cmdout]` (`viewer/viewer.js:740`). Only the rendering changes; the transport is fine.
+- Setup is already structured: `doctor.check(root)` (`meshanvil/doctor.py:64`) returns `{requirements: [{name, class, required, state, path, reason, fix}], ok, project: {name, path, resolved_by}}`, printed as JSON by `meshanvil/cli.py:77`, and the viewer already reads a cached copy through `collect_doctor()` (`meshanvil/viewer.py:58`). The modal can render that shape with no new server work.
+- The operations list is the one that is not: `show_list()` (`meshanvil/cli.py:46`) formats columns by hand from `manifests.discover()` (`meshanvil/manifests.py:18`), which already returns a dict keyed by operation carrying `engine`, `kind`, `summary_key`, `params` and `manifest_path`. A machine-readable form is a dump of that dict, not new logic. Note `summary_key` is a catalogue key, so the modal translates it client-side like any other.
+- The `Create a runbook <report-id>` row is `viewer/index.html:43`; the real command behind it is `meshanvil/cli.py:81`, which calls `logics_bridge.runbook(work_root, code_root, chain)` and needs a real chain id -- which the page has, in the selected report.
 
 # Decision framing
 - Product framing: Not needed

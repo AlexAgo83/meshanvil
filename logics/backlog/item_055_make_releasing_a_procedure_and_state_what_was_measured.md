@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:33
+> Indicators reviewed: 2026-08-23 01:02:26
 
 # AI Context
 - Summary: The ADR superseding `No publication yet`, plus build, verify and release as commands with a dry run, a measured-platform statement, and a README that leads with the engine requirement.
@@ -41,6 +41,15 @@
 - request-AC8 -> This backlog slice. Proof: AC1: An ADR supersedes `No publication yet` and records the channel, the rejected channels and the scope of an install.
 - request-AC9 -> This backlog slice. Proof: AC2: Building, verifying and releasing are commands, and the dry run publishes nothing.
 - request-AC10 -> This backlog slice. Proof: AC3: A release states its measured platforms and names the unverified ones.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- The sentence to supersede is in `adr_004`'s Decision list: "No publication yet. No PyPI package, no npm package, no installer. The repository is cloned and run. The npm devDependency remains for the corpus tooling only, as `adr_002` decided."
+- The measured matrix is in the same ADR and is what AC3 reports: macOS with Blender 5.2 on Python 3.13.13 and host 3.11.15, Windows with Blender 5.2 not on PATH and host 3.10.4, WSL Ubuntu with host 3.14.4 reaching the Windows binary through `/mnt/c`, and Linux unverified with no machine carrying Blender to check it.
+- `README.md:140` is the line to rewrite: "Pre-1.0, and no package on an index yet -- clone it, run `./bin/meshanvil`." The engine requirement it must lead with is already stated at `README.md:126`.
+- `.github/workflows/ci.yml:22` is `npm ci`, `:23` `make check`, `:24` `make logics`. A release job builds on that, and `make logics` gating the corpus is the precedent for gating the package the same way.
+- `logics-manager release status` reports this project as `not_configured` (no `logics/release/contract.json`); `logics-manager release discover --write` produces a draft. That is the corpus side of AC2, separate from building the package itself.
 
 # Decision framing
 - Product framing: Not needed

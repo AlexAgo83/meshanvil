@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:37:30
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: The viewer's three host jobs -- payload, HTTP serving, host interaction -- separate, behind a route convention where a new endpoint never grows the dispatcher.
@@ -35,6 +35,13 @@
 
 # AC Traceability
 - request-AC9 -> This backlog slice. Proof: AC1: Payload construction, HTTP serving and host interaction are in separate modules.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- The three jobs as they sit in `meshanvil/viewer.py` (199 lines): payload is `collect` (`:24`), `with_render_urls` (`:41`), `collect_doctor` (`:58`), `build` (`:68`); serving is `run_command` (`:116`), `make_server` (`:126`), `serve` (`:170`); host interaction is `open_in_browser` (`:107`); and `view` (`:179`) is the entry point that orchestrates all three.
+- Importers that must keep working: `meshanvil/cli.py:77` calls `viewer.view(serve_it=, open_it=)`, and `scripts/selfcheck.py` reaches in at `check_viewer_start` (`:198`), `check_run_endpoint` (`:211`) and `check_viewer_comparison_layout` (`:266`). Whatever the split, those three checks are the proof it did not change behaviour.
+- `RUNNABLE` (`meshanvil/viewer.py:20`) is `adr_007`'s closed set as data. It moves with the server module unchanged -- the ADR's guarantee is that the server holds the argument lists, so it must not become a parameter of anything.
 
 # Decision framing
 - Product framing: Not needed

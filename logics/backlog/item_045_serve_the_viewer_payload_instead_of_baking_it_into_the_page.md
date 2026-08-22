@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:37:30
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: The payload comes from a route on the served page and from the generated file only when the page was opened from disk.
@@ -36,6 +36,14 @@
 # AC Traceability
 - request-AC1 -> This backlog slice. Proof: AC1: A served page renders from the route, not from the generated file.
 - request-AC12 -> This backlog slice. Proof: AC2: A page opened from disk renders exactly as it does today.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- What bakes it: `build()` (`meshanvil/viewer.py:68`) assembles the payload dict and writes `window.MESHANVIL = {...}` into `work/viewer/data.js` at `meshanvil/viewer.py:101`. The client reads it once into a single const at `viewer/viewer.js:21`.
+- One consumer disappears with the change: `view()` (`meshanvil/viewer.py:184`) counts reports by re-reading `data.js` and string-splitting on `"= "` (`meshanvil/viewer.py:184`). With the payload a return value, that parse of a file the same function just wrote goes away.
+- The served root is `root/"work"`, not `work/viewer` -- deliberately, so renders under `work/renders/` are reachable (`meshanvil/viewer.py:193` states why). A payload route lives under that root, so its path must not collide with a real file there.
+- The payload already includes every project, every catalogue and the doctor snapshot, so the route returns what `build()` returns; nothing new is computed.
 
 # Decision framing
 - Product framing: Not needed

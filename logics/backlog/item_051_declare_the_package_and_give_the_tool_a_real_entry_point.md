@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: A package declaration with a console entry point replacing the sys.path insertion, and one source for the version.
@@ -40,6 +40,14 @@
 - request-AC2 -> This backlog slice. Proof: AC2: The install pulls no third-party runtime dependency.
 - request-AC6 -> This backlog slice. Proof: AC3: The declared version and the reported version come from one source.
 - request-AC11 -> This backlog slice. Proof: AC4: `./bin/meshanvil` still runs from a clone with nothing installed.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- `bin/meshanvil` is 12 lines: a Python floor check (3.10), `sys.path.insert(0, parent.parent)`, then `from meshanvil.cli import main`. The entry point is `meshanvil.cli:main`, which already returns an exit code -- nothing about the CLI needs to change for a console script to call it.
+- The version literal is `VERSION = "0.1.0"` in `meshanvil/__init__.py:6`, next to `SCHEMA_VERSION = 1`. It reaches the page through the payload (`meshanvil/viewer.py:96`) and is asserted by the smoke suite as `/^v\d+\.\d+\.\d+$/` (`scripts/viewer_smoke.py:115`), so a change of source has a visible consumer.
+- `package.json` already declares `"version": "0.1.0"` independently -- a third place, and today nothing keeps the three in step.
+- Nothing in `meshanvil/` imports anything outside the standard library; the runtime-dependency claim is checkable, not aspirational.
 
 # Decision framing
 - Product framing: Not needed

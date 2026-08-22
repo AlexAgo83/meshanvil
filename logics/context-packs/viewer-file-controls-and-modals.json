@@ -4,59 +4,15 @@
     "max_docs_per_ref": 4
   },
   "changed_paths": [],
-  "command": "logics-manager sync context-pack req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows item_043_show_list_and_setup_results_as_translated_modals_reached_from_help item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals --mode full --profile normal --handoff",
-  "companion_docs": [
-    {
-      "kind": "product",
-      "linked_refs": {
-        "item": [
-          "item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group",
-          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows",
-          "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help",
-          "item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite"
-        ],
-        "prod": [
-          "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
-        ],
-        "req": [
-          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
-        ],
-        "task": [
-          "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
-        ]
-      },
-      "path": "logics/product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md",
-      "ref": "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names",
-      "sections": {
-        "Goals": [
-          "- A file reference is a place the operator can go, not a string to copy and retype.",
-          "- Nothing routes the operator through a terminal for something the host system already does.",
-          "- A command's result is presented in the operator's language, in a container built for it.",
-          "- Menu rows sit in the menu that describes them."
-        ],
-        "Key product decisions": [
-          "- Use structured input as the source of truth for generated docs.",
-          "- Keep generated write paths local and repo-bounded."
-        ],
-        "Overview": [
-          "Takes the viewer past showing a file reference or a command result as text: a file becomes something to open or locate, and a command result becomes a translated panel, without the viewer gaining a dependency or an open execution surface."
-        ],
-        "References": [
-          "- Product back-reference: `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls`",
-          "- Task back-reference: `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals`"
-        ]
-      },
-      "status": "Proposed",
-      "title": "Direct controls over the files and results the viewer already names"
-    }
-  ],
+  "command": "logics-manager sync context-pack req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows item_043_show_list_and_setup_results_as_translated_modals_reached_from_help item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals --mode full --profile normal",
+  "companion_docs": [],
   "docs": [
     {
       "ai_context": {
-        "keywords": "turn, viewer, file, references, command, rows, direct, translated, controls",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "file controls, open and reveal, icon-only affordance, translated result modal, closed action set, Help menu",
+        "skip when": "Deciding what an operation measures or reports -- adr_001 and req_000 hold that, not this request.",
+        "summary": "A file the viewer names becomes something to open or locate rather than a string to copy, and a command's result becomes a translated panel instead of raw stdout -- both without a new dependency or an open execution surface.",
+        "use when": "Deciding how the viewer presents a file reference or the result of a command it can run."
       },
       "kind": "request",
       "linked_refs": {
@@ -70,7 +26,8 @@
           "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
         ],
         "req": [
-          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
         ]
       },
       "path": "logics/request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md",
@@ -81,7 +38,7 @@
           "- AC1: Every place the viewer labels a file reference calls it `file`, not `path`, in both catalogues, and no label reads `path` where a file is meant.",
           "- AC2: Every file reference the viewer shows (report Input, report Output/Artefact, render provenance, and any other) offers the same three controls -- Open, Copy path, Reveal -- rendered as icons with no visible text label, each carrying an accessible name resolved from the string catalogue.",
           "- AC3: On a served page, Open launches the file through the host system's default handler and Reveal opens the containing folder with the file selected where the platform supports it; both are verified on the platform under test and the platforms not verified are stated as unverified.",
-          "- AC4: On a `file://` page, Copy path behaves exactly as it does today and Open and Reveal are not offered as controls that appear to work -- absent or explicitly shown as unavailable, never silently inert.",
+          "- AC4: On a page opened from disk, Copy path behaves exactly as it does today and Open and Reveal are not offered as controls that appear to work -- absent or explicitly shown as unavailable, never silently inert.",
           "- AC5: A decision is recorded (an amendment to adr_007 or a new ADR) covering how a file reaches the server without an operator-supplied path becoming a subprocess argument, and the implementation matches it.",
           "- AC6: No `blender <path>` command is offered for copying anywhere in the viewer; opening a report's artefact goes through the Open control of AC2."
         ],
@@ -92,15 +49,64 @@
           "- Both rows sit in menus that do not describe them: `List operations` under File and `Check setup` under File, while both are reference material about the tool and its environment rather than actions on the current project."
         ]
       },
-      "status": "Draft",
+      "status": "Ready",
       "title": "Turn the viewer's file references and command rows into direct, translated controls"
     },
     {
       "ai_context": {
-        "keywords": "replace, each, file, reference, icon, only, open, copy, reveal, group",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "server-sent events, mtime signature poll, payload route, module split by screen, line budget, pytest layout, adr_004 amendment",
+        "skip when": "Deciding what the viewer displays or what a report contains -- req_000 and adr_001 hold that.",
+        "summary": "The served page becomes a live view onto the reports directory instead of a build-time snapshot, and both sides of the viewer gain a module structure, a checked size budget and a real test layout.",
+        "use when": "Deciding how the viewer stays current, or how the viewer's code is divided and checked."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+          "item_050_reuse_a_running_viewer_and_keep_its_address_stable"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ]
+      },
+      "path": "logics/request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md",
+      "ref": "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The served page's payload is fetched from the server rather than read from a build-time file, and a page opened from disk keeps working exactly as it does today from its generated fallback.",
+          "- AC2: A served page reflects a new, changed or removed report without the operator restarting the server or reloading the page, within a few seconds of the file landing.",
+          "- AC3: Change detection uses the standard library only -- no file-watching dependency -- and its cost is bounded so that an idle viewer does not consume a meaningful share of a core; the bound is stated and measured, not asserted.",
+          "- AC4: The event stream carries what changed, not the changed data, and the client refetches only the affected part; no code path in the client reloads the whole page on a data change.",
+          "- AC5: A client with no event-stream support still converges on fresh data through a self-throttling fallback, and neither path leaves a timer or a connection running after the page is closed.",
+          "- AC6: `adr_004` is amended (or superseded) to record that the auto-refresh it promised now exists and how, that the served page is now the default mode with the opened-from-disk one behind a flag, and the build step the client split requires -- with the rejected alternative named."
+        ],
+        "Needs": [
+          "- `meshanvil view` builds and opens a page from disk by default and only serves behind `--serve`, so the mode that can refresh itself is the one nobody gets unless they ask. Every launch also starts a fresh server on port 0, so the address changes every time -- an open tab, a bookmark and a second `meshanvil view` all point somewhere that no longer exists, and nothing notices that a viewer for this project is already running.",
+          "- `adr_004` states that `meshanvil view --serve` starts a server `for auto-refresh`. Nothing auto-refreshes: there is no watcher, no event stream and no polling anywhere in `meshanvil/viewer.py` or `viewer/viewer.js`. The promise is documented and was never built, so an operator watching a chain run has to stop the server, re-run the command and reopen the page to see the report that just landed.",
+          "- Even a manual browser refresh shows nothing new: the payload is baked into `work/viewer/data.js` at build time, so the page is a snapshot of the moment the command ran rather than a view onto the reports directory.",
+          "- `viewer/viewer.js` is 908 lines in one file covering every screen, every renderer and every event handler. Each slice that touches the viewer -- and the last four have -- edits the same file, and nothing states when it has grown too large.",
+          "- `meshanvil/viewer.py` is 199 lines doing three unrelated jobs: computing the payload, serving it over HTTP, and launching a browser. It is the file the next three endpoints (a data route, an event stream, and the open/reveal route `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls` needs) would all land in.",
+          "- There is no test directory and no test runner. `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering the whole host codebase in one file, so a single module's behaviour has nowhere of its own to be checked and a failure names the script rather than the unit."
+        ]
+      },
+      "status": "Ready",
+      "title": "Make the viewer refresh itself and give the code a module structure that holds"
+    },
+    {
+      "ai_context": {
+        "keywords": "file reference renderer, icon-only controls, accessible name, path label rename, opened-from-disk degradation",
+        "skip when": "Deciding what the server does when a control is clicked -- item_042 holds that.",
+        "summary": "One renderer for every file reference in the viewer, producing three icon-only controls (open, copy path, reveal) with catalogue-resolved accessible names, and retiring the copyable `blender <path>` command.",
+        "use when": "Changing how the viewer presents a file it already names."
       },
       "kind": "backlog",
       "linked_refs": {
@@ -126,7 +132,7 @@
           "- AC2: Each control has an accessible name from the catalogue and no visible text label.",
           "- AC3: No catalogue string labels a file reference `path`.",
           "- AC4: No `blender <path>` command is offered anywhere.",
-          "- AC5: On a `file://` page Copy path works and the other two are not presented as working controls."
+          "- AC5: On a page opened from disk Copy path works and the other two are not presented as working controls."
         ],
         "Problem": [
           "- A file reference is shown as its own path text under the label `path`, wrapped in one copy-to-clipboard button, so the two things an operator usually wants -- open it, show me where it is -- have no control at all.",
@@ -138,15 +144,20 @@
     },
     {
       "ai_context": {
-        "keywords": "let, served, page, open, reveal, file, build, already, knows",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "closed action set, build-owned reference, host default handler, reveal folder, adr_007 amendment",
+        "skip when": "Deciding what the controls look like -- item_041 holds that.",
+        "summary": "The server side of open and reveal: a reference the build already owns resolves to a real file, so no page-supplied path ever becomes a subprocess argument, with the rule recorded as an ADR.",
+        "use when": "Deciding how the served page is allowed to act on a local file."
       },
       "kind": "backlog",
       "linked_refs": {
+        "adr": [
+          "adr_004_target_technology_and_process_model",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
         "item": [
-          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows"
+          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point"
         ],
         "prod": [
           "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
@@ -178,50 +189,10 @@
     },
     {
       "ai_context": {
-        "keywords": "show, list, setup, results, translated, modals, reached, help",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
-      },
-      "kind": "backlog",
-      "linked_refs": {
-        "item": [
-          "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help"
-        ],
-        "prod": [
-          "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
-        ],
-        "req": [
-          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
-        ],
-        "task": [
-          "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
-        ]
-      },
-      "path": "logics/backlog/item_043_show_list_and_setup_results_as_translated_modals_reached_from_help.md",
-      "ref": "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help",
-      "schema_version": "1.0",
-      "sections": {
-        "Acceptance criteria": [
-          "- AC1: The operations list is available in a machine-readable form and the modal renders from it.",
-          "- AC2: Both modals show catalogue-resolved strings in both languages, with no raw stdout and no JSON visible to the operator.",
-          "- AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.",
-          "- AC4: Both rows are in Help and in no other menu."
-        ],
-        "Problem": [
-          "- `List operations` and `Check setup` dump raw, untranslated process stdout -- a JSON object in the case of setup -- into a `<pre>` inside the menu dropdown that launched them, which stays open behind it.",
-          "- Both rows sit in the File menu though neither acts on the current project."
-        ]
-      },
-      "status": "Ready",
-      "title": "Show list and setup results as translated modals reached from Help"
-    },
-    {
-      "ai_context": {
-        "keywords": "deliver, viewer, direct, file, controls, translated, result, modals",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "orchestration, file controls, open and reveal endpoint, translated modals, viewer smoke coverage",
+        "skip when": "Looking for what any one slice must satisfy -- the backlog items hold that.",
+        "summary": "Sequences the pass: record the open/reveal rule first, build the server side against a build-owned reference set, then the icon-only file controls, the translated modals under Help, and the smoke coverage over all of it.",
+        "use when": "Picking up or ordering the work of req_009."
       },
       "kind": "task",
       "linked_refs": {
@@ -284,10 +255,89 @@
     },
     {
       "ai_context": {
-        "keywords": "cover, new, controls, modals, viewer, smoke, suite",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "entry point subprocess, closed command set, adr_007 guarantees",
+        "skip when": "Changing which commands the viewer may run.",
+        "summary": "The served viewer's closed command set runs through the installed entry point instead of a file inside a checkout, with adr_007's guarantees untouched.",
+        "use when": "Changing how the viewer invokes the tool."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point.md",
+      "ref": "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The closed command set runs from an installed tool and from a clone, with the same result.",
+          "- AC2: The closed set, the token check, the single-flight guard and the refusals are unchanged, and no operator-supplied value reaches a subprocess."
+        ],
+        "Problem": [
+          "- The served viewer's `/run` endpoint launches a file inside a checkout, which an installed tool does not have."
+        ]
+      },
+      "status": "Ready",
+      "title": "Run the viewer's closed command set through the installed entry point"
+    },
+    {
+      "ai_context": {
+        "keywords": "translated modal, structured command result, machine-readable list, menu placement, Help menu",
+        "skip when": "Changing what either command computes or reports.",
+        "summary": "List operations and Check setup render as translated modals built from structured data instead of raw stdout in a menu dropdown, and both move to the Help menu.",
+        "use when": "Changing how a command's result is presented in the viewer."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help"
+        ],
+        "prod": [
+          "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
+        ],
+        "task": [
+          "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
+        ]
+      },
+      "path": "logics/backlog/item_043_show_list_and_setup_results_as_translated_modals_reached_from_help.md",
+      "ref": "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The operations list is available in a machine-readable form and the modal renders from it.",
+          "- AC2: Both modals show catalogue-resolved strings in both languages, with no raw stdout and no JSON visible to the operator.",
+          "- AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.",
+          "- AC4: Both rows are in Help and in no other menu.",
+          "- AC5: The `Create a runbook` row either carries a real report id or says why it does not; no row shows a placeholder that looks like a value."
+        ],
+        "Problem": [
+          "- `List operations` and `Check setup` dump raw, untranslated process stdout -- a JSON object in the case of setup -- into a `<pre>` inside the menu dropdown that launched them, which stays open behind it.",
+          "- Both rows sit in the File menu though neither acts on the current project."
+        ]
+      },
+      "status": "Ready",
+      "title": "Show list and setup results as translated modals reached from Help"
+    },
+    {
+      "ai_context": {
+        "keywords": "viewer smoke, regression coverage, accessible names, degradation check",
+        "skip when": "Adding a new test framework -- the existing smoke suite is the target.",
+        "summary": "Smoke coverage over the new file controls and modals: the control group and its accessible names, the opened-from-disk degradation, and translated modal content.",
+        "use when": "Adding or changing coverage for the viewer's presentation behaviour."
       },
       "kind": "backlog",
       "linked_refs": {
@@ -310,11 +360,11 @@
       "sections": {
         "Acceptance criteria": [
           "- AC1: The smoke suite fails if a file reference loses any of its three controls or its accessible names.",
-          "- AC2: The smoke suite fails if a `file://` page presents Open or Reveal as working controls.",
+          "- AC2: The smoke suite fails if a page opened from disk presents Open or Reveal as working controls.",
           "- AC3: The smoke suite fails if either modal shows raw output instead of translated content."
         ],
         "Problem": [
-          "- The three-control group, the `file://` degradation and the two modals are all presentation behaviour that no existing check would notice regressing."
+          "- The three-control group, the opened-from-disk degradation and the two modals are all presentation behaviour that no existing check would notice regressing."
         ]
       },
       "status": "Ready",
@@ -322,14 +372,14 @@
     }
   ],
   "estimates": {
-    "char_count": 14929,
-    "companion_doc_count": 1,
-    "doc_count": 7
+    "char_count": 21330,
+    "companion_doc_count": 0,
+    "doc_count": 9
   },
-  "generated_at": "2026-08-22T22:18:08Z",
+  "generated_at": "2026-08-22T23:02:26Z",
   "handoff": {
-    "companion_doc_count": 1,
-    "enabled": true,
+    "companion_doc_count": 0,
+    "enabled": false,
     "source_refs": [
       "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
       "item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group",
@@ -338,7 +388,7 @@
       "item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite",
       "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
     ],
-    "validation_summary_count": 1
+    "validation_summary_count": 0
   },
   "i18n": {
     "actions": [
@@ -408,13 +458,5 @@
     "target_version": null,
     "targets": []
   },
-  "validation_summary": [
-    {
-      "items": [
-        "- (no validation recorded yet)"
-      ],
-      "path": "logics/tasks/task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals.md",
-      "ref": "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
-    }
-  ]
+  "validation_summary": []
 }

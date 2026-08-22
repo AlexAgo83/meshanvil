@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:19:03
+> Indicators reviewed: 2026-08-23 01:02:24
 
 # AI Context
 - Summary: One renderer for every file reference in the viewer, producing three icon-only controls (open, copy path, reveal) with catalogue-resolved accessible names, and retiring the copyable `blender <path>` command.
@@ -42,6 +42,17 @@
 - request-AC2 -> This backlog slice. Proof: AC2: Each control has an accessible name from the catalogue and no visible text label.
 - request-AC4 -> This backlog slice. Proof: AC3: No catalogue string labels a file reference `path`.
 - request-AC6 -> This backlog slice. Proof: AC4: No `blender <path>` command is offered anywhere.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- Every site that renders a file today, all in `viewer/viewer.js`: report Input `viewer/viewer.js:491`, report Output `viewer/viewer.js:497`, the Artefact provenance `viewer/viewer.js:519`, the render provenance `viewer/viewer.js:629`, and the `blender <path>` command to delete `viewer/viewer.js:635`. Five call sites, one renderer to replace them.
+- The mechanism already in place: `cmdButton(label, full)` (`viewer/viewer.js:698`) builds the button, `copyCommand(button)` (`viewer/viewer.js:705`) copies -- async clipboard first, a hidden textarea plus `execCommand("copy")` where permission is refused (`viewer/viewer.js:722`) -- and one delegated `[data-copy]` handler dispatches every one of them (`viewer/viewer.js:837`). Add controls to that delegation rather than binding listeners per button.
+- The opened-from-disk test already exists and is a protocol read, not a probe: `const SERVED = location.protocol !== "file:" && !!DATA.run_token` (`viewer/viewer.js:29`). Reuse it; `adr_007` chose it deliberately over a capability probe.
+- `esc()` (`viewer/viewer.js:58`) is the only escaping in the client and `req_000` AC22 requires every report value to pass through it. An icon control still renders a report-supplied path into an attribute, so it is not exempt.
+- The `path` label is a hardcoded English literal `<dt>path</dt>` at `viewer/viewer.js:491` and `:497` -- it never went through the catalogue at all. Renaming it to `file` means introducing the key, not editing one.
+- `scripts/i18n_check.py:38` discovers used keys by regex over `t("key")` and `data-i18n="key"` across `meshanvil/ viewer/ scripts/ bin/`. An accessible name reaching the DOM by any other route reads as an unused key and fails `make check`.
+- Existing CSS hooks to extend rather than invent: `.pathcopy`, `.provenance`, `.command` in `viewer/viewer.css`.
 
 # Decision framing
 - Product framing: Not needed

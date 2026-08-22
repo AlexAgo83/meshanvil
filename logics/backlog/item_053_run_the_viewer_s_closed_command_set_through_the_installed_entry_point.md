@@ -8,7 +8,7 @@
 > Complexity: Low
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:33
+> Indicators reviewed: 2026-08-23 01:02:26
 
 # AI Context
 - Summary: The served viewer's closed command set runs through the installed entry point instead of a file inside a checkout, with adr_007's guarantees untouched.
@@ -33,6 +33,14 @@
 
 # AC Traceability
 - request-AC5 -> This backlog slice. Proof: AC1: The closed command set runs from an installed tool and from a clone, with the same result.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- The one line: `run_command()` (`meshanvil/viewer.py:116`) runs `[sys.executable, str(paths.code_root() / "bin" / "meshanvil"), *args]` with `cwd=root`. Installed, that file does not exist; `python -m meshanvil` or the console script does.
+- `adr_007`'s guarantee lives in the same function and must survive verbatim: the argument list comes from `RUNNABLE` (`meshanvil/viewer.py:20`), the request body only selects a key, and nothing from the page reaches `args`.
+- `scripts/selfcheck.py:211` (`check_run_endpoint`) exercises this over a real socket and is the proof the change is behaviour-preserving.
+- `scripts/viewer_smoke.py:286` (`check_served`) starts `bin/meshanvil view --serve` by path too -- a second site with the same assumption, in the test harness rather than the product.
 
 # Decision framing
 - Product framing: Not needed

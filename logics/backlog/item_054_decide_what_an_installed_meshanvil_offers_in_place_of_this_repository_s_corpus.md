@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:33
+> Indicators reviewed: 2026-08-23 01:02:26
 
 # AI Context
 - Summary: Settles what the runbook workspace shows when the installation is not this repository: shipped content, the project's own, or an explained empty state.
@@ -33,6 +33,15 @@
 
 # AC Traceability
 - request-AC7 -> This backlog slice. Proof: AC1: The decision is recorded with its alternatives.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- The dependency is a subprocess, not an import: `logics_bridge.call()` (`meshanvil/logics_bridge.py:7`) shells out to `logics-manager` and returns `(None, "unavailable")` when it is absent -- so an installed tool without the corpus tooling already degrades rather than crashing. The question is what it should *show*, not whether it survives.
+- Three consumers to keep consistent with whatever is decided: `runbooks()` (`meshanvil/logics_bridge.py:43`) fills the runbook workspace, `documents()` (`:35`) resolves the doc chips a report links to, and `runbook()` (`:76`) is the `meshanvil runbook <chain>` command (`meshanvil/cli.py:82`).
+- `purpose()` (`meshanvil/logics_bridge.py:52`) reads a line out of each runbook file directly, so the runbook workspace needs the files themselves, not just metadata -- shipping "just the index" is not one of the options.
+- The viewer already lists runbooks nobody has applied, deliberately (`meshanvil/viewer.py:90` says why). An empty workspace is therefore a state the design already has an opinion about.
+- `adr_006_bridges_between_meshanvil_and_logics` is the decision this amends.
 
 # Decision framing
 - Product framing: Not needed

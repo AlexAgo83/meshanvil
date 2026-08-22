@@ -8,7 +8,7 @@
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:19:03
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: Smoke coverage over the new file controls and modals: the control group and its accessible names, the opened-from-disk degradation, and translated modal content.
@@ -32,6 +32,14 @@
 
 # AC Traceability
 - request-AC10 -> This backlog slice. Proof: AC1: The smoke suite fails if a file reference loses any of its three controls or its accessible names.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- `scripts/viewer_smoke.py` injects JavaScript into a headless Chrome and reads the result out of the DOM; there is no framework and adding one is not in scope. Assertions are plain `assert(condition, message)` inside the injected payloads.
+- Two passes to extend, and they are different: `SERVED_SMOKE` (`scripts/viewer_smoke.py:12`) runs against a real `meshanvil view --serve` subprocess started in `check_served()` (`scripts/viewer_smoke.py:286`) -- that is where Open, Reveal and the modals belong. The offline pass in `main()` (`scripts/viewer_smoke.py:334`) uses `--dump-dom` on the built page and is where the opened-from-disk degradation belongs.
+- `chrome_path()` (`scripts/viewer_smoke.py:269`) locates the binary; with no Chrome the suite skips rather than fails, so a new assertion must not be the only thing proving a criterion.
+- The regression precedent to mirror is at `scripts/viewer_smoke.py:94` -- the menu-stays-open-behind-the-splash check added by `task_022`, written as one assertion naming the defect.
 
 # Decision framing
 - Product framing: Not needed

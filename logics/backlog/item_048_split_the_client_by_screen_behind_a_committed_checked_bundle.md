@@ -8,7 +8,7 @@
 > Complexity: High
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:33
+> Indicators reviewed: 2026-08-23 01:02:25
 
 # AI Context
 - Summary: Client sources split by screen behind a committed bundle with a staleness check and an enforced per-file line budget, and the ADR that makes the build step legal.
@@ -42,6 +42,15 @@
 - request-AC6 -> This backlog slice. Proof: AC1: No client source file exceeds the stated budget, or it is in the registry with its reason.
 - request-AC7 -> This backlog slice. Proof: AC2: The bundle is committed and a check fails when it is stale against its sources.
 - request-AC8 -> This backlog slice. Proof: AC3: A page opened from disk still works with no build tool present on the machine.
+
+# Implementation anchors
+> Line numbers read at `50e5b00`; treat them as a starting point, not a contract -- the named function or literal is the anchor that survives an edit.
+
+- Sizes as they stand: `viewer/viewer.js` 908 lines, `viewer/viewer.css` 288, `viewer/index.html` 129.
+- What ships is a literal tuple: `build()` copies exactly `("index.html", "viewer.css", "viewer.js", "icon.png")` (`meshanvil/viewer.py:72`). A bundle under a new name is not shipped until it is in that tuple.
+- `tsconfig.json` sets `include: ["viewer/*.js"]` with `checkJs` and `noEmit`. Sources moving into a subdirectory means that glob moves with them, and the committed bundle has to be excluded or `make types` checks the same code twice and reports duplicate-symbol noise.
+- The toolchain today is two devDependencies -- `@grifhinz/logics-manager` and `typescript` -- and `make types` runs `npx --no-install tsc --noEmit`, so CI depends on `npm ci` having installed everything. A bundler joins that list on the same terms.
+- `adr_004` already wrote the escape clause this slice invokes: it names the migration as sources moving and esbuild bundling `--format=iife`, and states why a module build is refused -- `<script type="module">` is blocked from a page opened from disk by the same policy that blocks fetching a neighbouring JSON. The ADR amendment is exercising a path the ADR itself described, which is worth saying in it.
 
 # Decision framing
 - Product framing: Not needed
