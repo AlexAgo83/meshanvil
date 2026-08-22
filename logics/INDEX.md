@@ -23,6 +23,7 @@
 | [prod_005_demonstrations_that_show_the_checks_discriminating](product/prod_005_demonstrations_that_show_the_checks_discriminating.md) | Demonstrations that show the checks discriminating | Settled |  |  | product/prod_005_demonstrations_that_show_the_checks_discriminating.md |
 | [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Settled |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
 | [prod_007_a_served_viewer_that_can_run_what_it_already_shows](product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md) | A served viewer that can run what it already shows | Settled |  |  | product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md |
+| [prod_008_demonstrations_that_own_every_asset_they_run_on](product/prod_008_demonstrations_that_own_every_asset_they_run_on.md) | Demonstrations that own every asset they run on | Proposed |  |  | product/prod_008_demonstrations_that_own_every_asset_they_run_on.md |
 
 ## Roadmaps
 
@@ -39,6 +40,7 @@ _None_
 | [req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show](request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md) | Demonstrate on a clean organic subject what the vehicle chain cannot show | Done |  |  | request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md |
 | [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done |  |  | request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
+| [req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Draft |  |  | request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 
 ## Backlog
 
@@ -77,6 +79,8 @@ _None_
 | [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Done |  | 100% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
 | [item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server](backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md) | Run a closed set of commands from the served viewer's own server | Done |  | 100% | backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md |
 | [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | Done |  | 100% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
+| [item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects](backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md) | Generate a vehicle-scale subject that carries the same defects | Ready |  | 0% | backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md |
+| [item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature](backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md) | Generate a figurine-scale subject with a real thin feature | Ready |  | 0% | backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md |
 
 ## Tasks
 
@@ -102,6 +106,7 @@ _None_
 | [task_018_deliver_the_figurine_demonstration_project](tasks/task_018_deliver_the_figurine_demonstration_project.md) | Deliver the figurine demonstration project | Done | Claude | 100% | tasks/task_018_deliver_the_figurine_demonstration_project.md |
 | [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done | Claude | 100% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
+| [task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Ready |  | 0% | tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 
 ## Runbooks
 
@@ -116,5 +121,5 @@ _None_
 | [run_007_hollow_a_printable_body_for_electronics](runbook/run_007_hollow_a_printable_body_for_electronics.md) | Hollow a printable body for electronics | Active | other | 2026-08-21 (open-bottom shell cut from a 1/10 body; three earlier approaches failed first) | runbook/run_007_hollow_a_printable_body_for_electronics.md |
 | [run_008_weld_and_clean_disconnected_shells_in_a_printable_model](runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md) | Weld and clean disconnected shells in a printable model | Active | other | 2026-08-21 (two loose appendages welded to a body, 3 shells reduced to 1, 0 non-manifold edges) | runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md |
 | [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |
-| [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh, from a headless-browser smoke rather than a shell | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
+| [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh and an eighth, both from headless-browser smokes rather than a shell | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
 | [run_011_chain_002](runbook/run_011_chain_002.md) | Chain 002 | Draft | other | Report facts captured; human procedure not yet verified | runbook/run_011_chain_002.md |
