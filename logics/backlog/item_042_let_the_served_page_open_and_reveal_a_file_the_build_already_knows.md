@@ -1,14 +1,14 @@
 ## item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows - Let the served page open and reveal a file the build already knows
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 65%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:34:59
+> Indicators reviewed: 2026-08-23 01:48:56
 
 # AI Context
 - Summary: The server side of open and reveal: a reference the build already owns resolves to a real file, so no page-supplied path ever becomes a subprocess argument, with the rule recorded as an ADR.
@@ -60,7 +60,11 @@
 
 # Notes
 - The open and reveal actions launch host processes, so they land on the same surface `item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point` repoints at the installed entry point. Whichever ships second inherits the other's shape.
+- Task `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals` was finished via `logics-manager flow finish task` on 2026-08-23.
 
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals`

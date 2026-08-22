@@ -1,13 +1,13 @@
 ## req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls - Turn the viewer's file references and command rows into direct, translated controls
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:32
+> Indicators reviewed: 2026-08-23 01:48:55
 
 # AI Context
 - Summary: A file the viewer names becomes something to open or locate rather than a string to copy, and a command's result becomes a translated panel instead of raw stdout -- both without a new dependency or an open execution surface.

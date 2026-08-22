@@ -1,14 +1,14 @@
 ## item_043_show_list_and_setup_results_as_translated_modals_reached_from_help - Show list and setup results as translated modals reached from Help
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 65%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:34:59
+> Indicators reviewed: 2026-08-23 01:48:56
 
 # AI Context
 - Summary: List operations and Check setup render as translated modals built from structured data instead of raw stdout in a menu dropdown, and both move to the Help menu.
@@ -68,3 +68,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals`
+
+# Notes
+- Task `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals` was finished via `logics-manager flow finish task` on 2026-08-23.
