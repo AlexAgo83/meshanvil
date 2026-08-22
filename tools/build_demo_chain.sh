@@ -6,7 +6,7 @@
 # fixtures/demo_car.blend is a render asset, not a CAD model, and that is the scenario: it
 # carries every failure a printing pipeline runs into, none of them planted. Each step below
 # is where one of them surfaces, and the branch is where skipping a step destroys the model
-# with every topology check still green. See fixtures/PROVENANCE.md.
+# with every topology check still green.
 #
 # Any .blend works in its place; no operation in the chain is specific to this one.
 #

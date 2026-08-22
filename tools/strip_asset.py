@@ -2,9 +2,10 @@
 
 A .blend from a model library carries materials, node trees, UV layers, colour attributes,
 cameras and lamps. None of it survives a voxel remesh and none of it is read by any operation
-here -- the viewer renders with Workbench, which shades from geometry alone. Dropping it takes
-the AC Cobra from 4.8 MB to 0.8 MB with every defect the demonstration depends on intact:
-the modifier stacks, the parts sealed inside the body, the uniform oversize, the duplicate.
+here -- the viewer renders with Workbench, which shades from geometry alone. Dropping it can
+cut a multi-megabyte donor file to a fraction of its size with every defect a demonstration
+might depend on left intact: the modifier stacks, the parts sealed inside the body, an
+oversize, a duplicate.
 
     blender -b <source.blend> -P tools/strip_asset.py -- <destination.blend>
 """
@@ -17,7 +18,7 @@ out = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
 # Raised lettering spelling a brand is a trademark whatever the mesh licence says, and the
 # pipeline has no use for it. Named objects go, and so does anything whose geometry is a
 # word: an asset that ships as a fixture should carry no mark it does not own.
-BRANDED = {"text", "logo", "badge", "watermark", "copyright", "shelby", "cobra"}
+BRANDED = {"text", "logo", "badge", "watermark", "copyright"}
 
 dropped = []
 for ob in list(bpy.data.objects):

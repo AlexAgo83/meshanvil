@@ -245,9 +245,9 @@ function nodes() {
   if (start) {
     document.getElementById("nodes").innerHTML = `<div class="start-card"><h2>${esc(t("ui.start_title"))}</h2>
       <p>${esc(t("ui.start_intro"))}</p><ol class="start-steps">
-      <li>${esc(t("ui.start_demo"))} <code>blender -b -P tools/make_demo_scene.py</code></li>
-      <li>${esc(t("ui.start_inspect"))} <code>meshanvil run scan_defects work/out/demo_source.blend</code></li>
-      <li>${esc(t("ui.start_prepare"))} <code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></li></ol></div>`;
+      <li>${esc(t("ui.start_demo"))} <code>tools/build_demo_chain.sh</code></li>
+      <li>${esc(t("ui.start_inspect"))} <code>meshanvil init &lt;directory&gt;</code></li>
+      <li>${esc(t("ui.start_prepare"))} <code>meshanvil run scan_defects &lt;file&gt;.blend</code></li></ol></div>`;
     const canvas = document.getElementById("canvas"); canvas.style.width = "860px"; canvas.style.height = "420px";
     document.getElementById("noodles").innerHTML = "";
     return;
@@ -540,7 +540,7 @@ function preview() {
   const pairs = (report && report.comparisons) || [];
   if (start) {
     title.textContent = t("ui.start_title"); views.innerHTML = ""; meta.innerHTML = "";
-    stage.innerHTML = `<p class="pvempty">${esc(t("ui.start_preview"))}<br><code>tools/make_demo_scene.py</code></p>`;
+    stage.innerHTML = `<p class="pvempty">${esc(t("ui.start_preview"))}<br><code>tools/build_demo_chain.sh</code></p>`;
     return;
   }
   title.textContent = report ? `${report.id}_${report.operation}` : "";

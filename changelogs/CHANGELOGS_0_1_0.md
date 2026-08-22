@@ -58,8 +58,10 @@ the packaging around it is new.
 - `tools/make_demo_scene.py` generates a synthetic scene with two real export defects, calibrated
   on the ones observed in practice, so `tools/scan_defects.py` finds them unaided. That is the
   ground truth the sweep never had.
-- `tools/run_demo_chain.py` replays the chain and `tools/render_fixed_views.py` renders the
-  canonical directions on a fixed camera, which is what makes two states comparable.
+- The chain is replayed through the runner, and renders use the canonical directions on a
+  fixed camera, which is what makes two states comparable. (Superseded by
+  `tools/build_demo_chain.sh` and `tools/build_figurine_chain.sh`, which run the same idea
+  through `bin/meshanvil` instead of a standalone script.)
 
 ### Repository
 - MIT licence, security policy, contributing guide.

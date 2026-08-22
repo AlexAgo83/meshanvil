@@ -23,8 +23,6 @@ what failed, and how each claim was checked.
 The working assumption throughout: an agent driving a 3D application is only as good as the
 measurements it takes. Renders are how you get fooled.
 
-![The viewer: a chain graph, a render, and the findings a defect sweep found unaided.](docs/img/viewer-vehicle-defect.png)
-
 ## What it needs
 
 Blender 4.2 or later. That is the only requirement to run an operation -- the floor comes from
@@ -89,7 +87,6 @@ meshanvil/        the command: run, view, doctor, init, runbook, prune
 tools/            the operations: parameterised scripts, each with a manifest beside it
 viewer/           the page source, copied into a project's work/viewer/ at build time
 scripts/          repository gates, run by make
-fixtures/         the two demonstration subjects and their provenance
 work/             everything generated -- git-ignored, one tree per project
   in/             source files (STEP, donor blends)
   out/            blend and stl outputs
@@ -186,41 +183,27 @@ that share nothing.
 Two demonstrations, sibling projects under `work/demo/`, so the viewer can offer both:
 
 ```
-tools/build_demo_chain.sh          # the vehicle
-tools/build_figurine_chain.sh      # the figurine
+tools/build_demo_chain.sh <asset.blend>        # a render-scale subject
+tools/build_figurine_chain.sh <asset.blend>    # a small, sound subject
 ```
 
-`fixtures/demo_car.blend` is a roadster modelled for rendering. Nothing in it was planted: it
-carries half a body held in Mirror modifiers, panels with no thickness, three parts never
-visible from outside, a uniform 1.6x oversize and a coincident duplicate, and each step of its
-chain is where one of those surfaces. Its branch is the part worth reading. Two siblings, same
-parent, same voxel, one step apart: one remeshes a walled body into a single closed shell, the
-other remeshes the bare panels into 714 fragments with the body gone. The one that destroyed
-the car reports `ok`.
+Neither script ships a bundled example: point either at a `.blend` of your own. No operation
+in either chain is specific to one subject.
 
-![A 12 mm voxel remesh that ate the bodywork down to the chassis skeleton -- status `ok`, and the measurements panel shows the volume collapsing.](docs/img/viewer-vehicle-destroyed.png)
+The vehicle-scale chain is built to expose defects a render asset typically carries and a
+printing pipeline cannot ignore: unapplied modifiers, panels with no thickness, geometry never
+visible from any exterior angle. Its branch is the part worth reading -- two siblings off the
+same parent, at the same voxel, one step apart: one remeshes a walled body into a single closed
+shell, the other remeshes the bare panels into fragments with the body gone, and both report
+`ok`.
 
-`fixtures/demo_figure.blend` is a sculpting base mesh, and its job is to be sound. The defect
-sweep reports nothing on it, which is the only way to show that the sweeps discriminate rather
-than firing on everything. It is authored at 20 741 mm tall -- an interchange file declares no
-unit, so the size is a decision, and `recenter` is where that decision is recorded. At 180 mm
-it is a figurine.
-
-Its branch carries the lesson the vehicle cannot. The vehicle is remeshed at its real size,
-four metres long, where a voxel in millimetres and a voxel as a fraction of the subject feel
-like the same number. On a 180 mm figurine they do not. Its fingers measure 1.5 mm, so:
-
-| voxel | across a finger | shells | non-manifold | volume lost | status |
-|---|---|---|---|---|---|
-| 0.5 mm | 3.0 | 1 | 0 | 0.1% | ok |
-| 1.5 mm | 1.0 | 1 | 0 | 1.3% | ok |
-
-Both pass every topology and volume check. One keeps the fingers and the other fuses them into
-mittens, and the only thing that says so before you look at the render is the thin-feature
-guard, which warns below two voxels across. A voxel size is a fraction of the subject, and the
-checks that pass do not measure feature loss.
-
-![The 1.5 mm branch: status `ok`, `thin_feature_voxels: 1` in the parameters panel -- one voxel across a finger, below the two-voxel floor.](docs/img/viewer-figurine-thin-feature.png)
+The figurine-scale chain is built around a sound, closed, single-object subject reduced to a
+small print size. The defect sweep reporting nothing on it is the point: a demonstration where
+every check fires on everything never shows that the checks discriminate. Its branch carries
+the lesson the vehicle-scale chain cannot: at a subject's real size, an absolute voxel and a
+voxel as a fraction of that size feel like the same number; at a small size they do not. Two
+voxel sizes both pass every topology and volume check, and only the thin-feature guard -- and
+the render -- say that one of them fused a thin feature into the surrounding mass.
 
 `tools/make_demo_scene.py` and `tools/make_guard_fixture.py` are a different job. They generate
 subjects whose defects are planted deliberately -- an island smeared along a line, objects
@@ -228,9 +211,6 @@ duplicated at identical coordinates, a slab exactly 2 mm thick, a sphere with a 
 removed -- so `scripts/fixture_check.py` can assert that a sweep finds what was built in and
 that a guard reads a thickness it already knows. Ground truth and demonstration are different
 jobs.
-
-See `fixtures/PROVENANCE.md` for where the two subjects come from and what is known about
-their licence.
 
 ## Working rules that earned their place
 

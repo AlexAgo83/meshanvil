@@ -21,8 +21,8 @@ Run an operation through the command, which writes a report:
 ```bash
 ./bin/meshanvil doctor          # requirements, version floors, fixes; writes work/doctor.json
 ./bin/meshanvil list
-./bin/meshanvil run scan_defects work/out/demo_source.blend
-./bin/meshanvil view            # or --serve, to refresh while a chain is running
+./bin/meshanvil run scan_defects <your-file>.blend
+./bin/meshanvil view            # or --serve, to also run List/Check setup/Preview pruning from the page
 ```
 
 Or run any script directly, as they all still work standalone:
@@ -59,9 +59,9 @@ Or run any script directly, as they all still work standalone:
 ## Working from the corpus
 
 The specification is in `logics/`, not in this file. `req_000` states the problem, `prod_001` the
-product, `adr_001` to `adr_006` the decisions and their reasons, and `task_001` sequences the
-slices in the order they must be built. `logics/context-packs/` holds the handoff an
-implementation agent reads.
+product, and `adr_001` to `adr_007` the decisions and their reasons -- read `adr_003` and
+`adr_007` together before touching what the viewer is or is not allowed to do.
+`logics/context-packs/` holds the handoff an implementation agent reads.
 
 Two rules that are easy to break and expensive to unbreak:
 
@@ -73,9 +73,10 @@ Two rules that are easy to break and expensive to unbreak:
 ## Validation
 
 ```bash
-make check      # compiles everything, runs the self-check and the publication-hygiene gate
-make logics     # lints and audits the corpus with the pinned logics-manager
-make fixture    # needs Blender: regenerates the demo scene and asserts its defects are found
+make check         # compiles everything, runs the self-check and the publication-hygiene gate
+make logics        # lints and audits the corpus with the pinned logics-manager
+make fixture       # needs Blender: regenerates the demo scene and asserts its defects are found
+make viewer-smoke  # needs Blender and Chrome: exercises the generated viewer, file:// and --serve
 ```
 
 `make check` compiles every script and runs the publication-hygiene gate. It deliberately

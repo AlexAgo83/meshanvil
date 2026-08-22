@@ -7,7 +7,7 @@
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 15:13:21
+> Indicators reviewed: 2026-08-22 18:01:34
 
 # AI Context
 - Summary: The demonstration has one subject and every report in it is a defect being found, at a scale where an absolute voxel and a relative one feel identical. A sound organic subject reduced to a 180 mm figurine shows sweeps staying silent, and shows two voxel sizes both passing every check while only one keeps the fingers.
@@ -53,7 +53,6 @@
 - tools/voxel_remesh.py
 - tools/recenter.py
 - tools/scan_defects.py
-- fixtures/PROVENANCE.md
 - README.md
 
 # Backlog

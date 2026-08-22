@@ -6,7 +6,6 @@
     "tools/voxel_remesh.py",
     "tools/recenter.py",
     "tools/scan_defects.py",
-    "fixtures/PROVENANCE.md",
     "README.md"
   ],
   "request": {
