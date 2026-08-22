@@ -16,11 +16,12 @@
 | Doc | Title | Status | Owner | Progress | Path |
 |---|---|---|---|---|---|
 | [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Settled |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
-| [prod_002_reviewable_local_viewer_interaction_parity](product/prod_002_reviewable_local_viewer_interaction_parity.md) | Reviewable local viewer interaction parity | Active |  |  | product/prod_002_reviewable_local_viewer_interaction_parity.md |
+| [prod_002_reviewable_local_viewer_interaction_parity](product/prod_002_reviewable_local_viewer_interaction_parity.md) | Reviewable local viewer interaction parity | Settled |  |  | product/prod_002_reviewable_local_viewer_interaction_parity.md |
 | [prod_003_strict_local_viewer_mockup_parity_closure](product/prod_003_strict_local_viewer_mockup_parity_closure.md) | Strict local viewer mockup parity closure | Settled |  |  | product/prod_003_strict_local_viewer_mockup_parity_closure.md |
 | [prod_004_multi_project_operator_workspaces](product/prod_004_multi_project_operator_workspaces.md) | Multi-project operator workspaces | Settled |  |  | product/prod_004_multi_project_operator_workspaces.md |
 | [prod_005_demonstrations_that_show_the_checks_discriminating](product/prod_005_demonstrations_that_show_the_checks_discriminating.md) | Demonstrations that show the checks discriminating | Settled |  |  | product/prod_005_demonstrations_that_show_the_checks_discriminating.md |
 | [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Settled |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
+| [prod_007_a_served_viewer_that_can_run_what_it_already_shows](product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md) | A served viewer that can run what it already shows | Proposed |  |  | product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md |
 
 ## Roadmaps
 
@@ -36,6 +37,7 @@ _None_
 | [req_003_hold_several_model_projects_side_by_side_and_switch_between_them](request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md) | Hold several model projects side by side and switch between them | Done |  |  | request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md |
 | [req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show](request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md) | Demonstrate on a clean organic subject what the vehicle chain cannot show | Done |  |  | request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md |
 | [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
+| [req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Draft |  |  | request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
 
 ## Backlog
 
@@ -72,6 +74,8 @@ _None_
 | [item_029_measure_the_thinnest_feature_not_the_smallest_object](backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md) | Measure the thinnest feature, not the smallest object | Done |  | 100% | backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md |
 | [item_030_decide_walling_on_how_open_a_body_is](backlog/item_030_decide_walling_on_how_open_a_body_is.md) | Decide walling on how open a body is | Done |  | 100% | backlog/item_030_decide_walling_on_how_open_a_body_is.md |
 | [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Done |  | 100% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
+| [item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server](backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md) | Run a closed set of commands from the served viewer's own server | Ready |  | 0% | backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md |
+| [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | Ready |  | 0% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
 
 ## Tasks
 
@@ -96,6 +100,7 @@ _None_
 | [task_017_deliver_multi_project_workspaces_and_the_viewer_switcher](tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md) | Deliver multi-project workspaces and the viewer switcher | Done | Claude | 100% | tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md |
 | [task_018_deliver_the_figurine_demonstration_project](tasks/task_018_deliver_the_figurine_demonstration_project.md) | Deliver the figurine demonstration project | Done | Claude | 100% | tasks/task_018_deliver_the_figurine_demonstration_project.md |
 | [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
+| [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Ready |  | 0% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
 
 ## Runbooks
 

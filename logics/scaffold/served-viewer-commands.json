@@ -1,0 +1,124 @@
+{
+  "title": "Let the viewer run the commands it already shows, when it is served",
+  "references": [
+    "meshanvil/viewer.py",
+    "viewer/viewer.js",
+    "viewer/index.html",
+    "bin/meshanvil",
+    "logics/architecture/adr_003_the_viewer_reads_the_command_acts.md",
+    "logics/architecture/adr_004_target_technology_and_process_model.md"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Operator workflow and runtime integration",
+    "needs": [
+      "adr_003 refused execution on purpose and priced the reversal: a local server with authentication, a job model, and a decision about concurrent access to a file Blender may already hold. That price is now being paid deliberately, not discovered as a surprise later.",
+      "The menu bar already shows the exact command for List operations, Check setup and Preview pruning, and this session made that text copyable to the clipboard. A person still has to leave the page and paste it into a terminal to see the result.",
+      "`meshanvil view --serve` already runs an opt-in `http.server` on 127.0.0.1, port 0, for auto-refresh (adr_004). It currently serves `work/` read-only; nothing posts to it.",
+      "A page opened from `file://` has no server behind it at all and can never run anything -- the copy-to-clipboard behaviour just shipped has to stay its only option there.",
+      "`Refresh viewer` would restart the very server handling the request that triggers it, and `Create a runbook <report-id>` shows a placeholder id, not a real one -- neither is safe to wire to real execution in this slice."
+    ],
+    "context": [
+      "The runner already refuses a busy target (target_busy) and already serialises identity allocation per project; this request does not re-implement that, it only serialises its own subprocess calls so two clicks on the same button cannot race each other.",
+      "The three commands in scope take no destructive action and no operator-supplied argument: they are the same closed set already printed in the menu, never a string typed on the page.",
+      "The port is already random per launch (port 0); a per-launch token embedded in the page's own data.js is the authentication adr_003 named, sized to a single-operator localhost tool rather than a login system."
+    ],
+    "acceptance_criteria": [
+      "AC1: Opened via `meshanvil view --serve`, each of List operations, Check setup and Preview pruning runs from its menu row and shows its stdout, stderr and exit code in the page; opened from a plain file, the same rows still only copy the command, exactly as they do today.",
+      "AC2: The server refuses to run anything unless the request carries the exact per-launch token embedded in that session's data.js; a missing or mismatched token is refused before any subprocess starts.",
+      "AC3: The server accepts only one of the three fixed named commands; any other value is refused, and nothing the page sends can become part of the command line.",
+      "AC4: A second run request arriving while one is still executing is refused, not queued, and the first request's result is still returned to whoever asked for it.",
+      "AC5: `Refresh viewer` and `Create a runbook <report-id>` stay copy-only in this slice; the cut is recorded as a backlog item rather than silently dropped.",
+      "AC6: adr_003 is marked Superseded by a new ADR that records the security boundary chosen -- localhost-only, per-launch token, one command at a time, a closed command set -- and states why it satisfies the price adr_003 named rather than reopening the question from zero."
+    ]
+  },
+  "product": {
+    "title": "A served viewer that can run what it already shows",
+    "overview": "Reverses adr_003's refusal to execute, on the terms adr_003 itself priced: a local server, a per-launch token, and one command at a time, limited to the closed set of commands the menu already prints.",
+    "goals": [
+      "Let the three safe, argument-free menu commands run from a served viewer page and show their result in place.",
+      "Keep a plain file:// page exactly as safe as it is today -- copy-to-clipboard, nothing more.",
+      "Record the reversal as a superseding ADR rather than editing adr_003's decision in place."
+    ],
+    "non_goals": [
+      "Running `meshanvil run <operation> <source>` or any command that takes an operator-supplied argument.",
+      "A job queue, a task history, or cancellation of an in-flight command.",
+      "Authentication beyond a single per-launch token; no accounts, no login, no remote access.",
+      "Wiring `Refresh viewer` or `Create a runbook <report-id>` to real execution."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Run a closed set of commands from the served viewer's own server",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC2", "AC3", "AC4", "AC6"],
+      "problem": [
+        "The `--serve` server only serves files; there is no way for the page to ask it to do anything.",
+        "adr_003 named the price of changing that -- authentication, a job model, a concurrency decision -- without paying it, so paying it now needs its own recorded decision, not a quiet code change.",
+        "Nothing today stops a page from sending an arbitrary string if a run endpoint is added without a closed command set and a token."
+      ],
+      "scope_in": [
+        "One POST endpoint on the existing `--serve` server that runs one of List operations, Check setup or Preview pruning as a subprocess of `bin/meshanvil`, the same entry point a person would type.",
+        "A random token generated per server launch, embedded in `data.js`, required on every request to the endpoint.",
+        "Serialising the endpoint's own subprocess calls so a second request while one runs is refused outright.",
+        "Superseding adr_003 with a new ADR naming this exact boundary."
+      ],
+      "scope_out": [
+        "Any command that takes a path, an operation name, or any other operator-supplied value.",
+        "A queue, retry, or history of past runs.",
+        "Changing what `--serve` does when no run is requested; file serving is unchanged."
+      ],
+      "acceptance_criteria": [
+        "AC1: The endpoint runs exactly one of the three fixed commands by name, never a string from the request body.",
+        "AC2: A request without the current per-launch token, or with a stale one from a previous launch, is refused before any subprocess starts.",
+        "AC3: A request that arrives while another is executing is refused immediately; the request already running still returns its result.",
+        "AC4: adr_003 carries a Superseded status pointing at the new ADR, and the new ADR references adr_003's named price and states how each part of it was paid."
+      ]
+    },
+    {
+      "title": "Show a command's own output where its text used to sit",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Viewer parity",
+      "request_acs": ["AC1", "AC5"],
+      "problem": [
+        "The menu's command rows currently only copy their text to the clipboard, on every kind of page.",
+        "A page opened from `file://` has no server to ask and must keep doing exactly that.",
+        "A page opened via `--serve` does have a server now, but nothing on the page knows to use it instead."
+      ],
+      "scope_in": [
+        "Detecting whether the page was opened from `--serve` (location.protocol) or from a plain file, once, at load.",
+        "On a served page, the three in-scope command rows call the run endpoint instead of copying, and show stdout, stderr and exit code where the command text was.",
+        "On a file:// page, and for `Refresh viewer` / `Create a runbook <report-id>` on any page, the existing copy-to-clipboard behaviour is unchanged."
+      ],
+      "scope_out": [
+        "Any visual redesign of the menu beyond showing a result in place of, or beside, the command.",
+        "Streaming partial output; the full result arrives once the subprocess finishes."
+      ],
+      "acceptance_criteria": [
+        "AC1: A served page running List operations, Check setup or Preview pruning shows the real stdout/stderr/exit code, not the copy-to-clipboard flash.",
+        "AC2: The same rows on a file:// page still only copy to the clipboard, byte-for-byte the behaviour shipped this session.",
+        "AC3: `Refresh viewer` and `Create a runbook <report-id>` copy on every kind of page, served or not."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Let the viewer run the commands it already shows, when it is served",
+    "plan": [
+      "Write the superseding ADR first: the exact boundary (localhost-only, per-launch token, one command at a time, closed command set) decided before any code depends on it.",
+      "Add the run endpoint to the existing --serve server: token check, closed command dispatch, single-flight guard, subprocess of bin/meshanvil.",
+      "Thread the per-launch token into data.js next to the other build-time payload fields.",
+      "Wire the three in-scope menu rows to the endpoint on a served page, rendering stdout/stderr/exit code; confirm file:// pages and the two out-of-scope rows are unchanged.",
+      "Extend viewer_smoke (served mode) and add a host-side check for the endpoint's token and single-flight refusal.",
+      "Mark adr_003 Superseded, cross-link it to the new ADR, and update adr_004's consequence note about the reversal cost.",
+      "Run make check, the fixture check and both smokes (file:// and --serve) before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/served-viewer-commands.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
