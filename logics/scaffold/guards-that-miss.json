@@ -1,0 +1,150 @@
+{
+  "title": "Fix the guards that pass while the geometry is wrong",
+  "references": [
+    "tools/voxel_remesh.py",
+    "tools/solidify.py",
+    "tools/scan_defects.py",
+    "meshanvil_engine/report.py",
+    "scripts/fixture_check.py",
+    "README.md"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Operation review loop",
+    "needs": [
+      "Running the pipeline on sculpting base meshes rather than the vehicle exposed guards that report a result they did not measure.",
+      "`voxel_remesh` records `smallest_input_extent_mm` as the smallest object's bounding extent, so on a single-object organic subject it reported 180 mm for a 180 mm figurine and could not warn that the fingers were about to be erased. The guard is blind on any subject whose thin features are not separate objects.",
+      "`solidify` treats a body as open unless it has exactly zero open edges. A figure with 4 open edges out of 14 803 faces was walled: 14 813 vertices became 29 626 and a solid body became a shell with a wall inside it. A body that is 0.03% open should be repaired or reported, not thickened.",
+      "A subject delivered as OBJ alone cannot enter the pipeline; the only import operation needs FreeCAD and reads STEP.",
+      "The project's own rule is that a geometric claim gets a number, and these three report numbers that do not answer the question being asked."
+    ],
+    "context": [
+      "These were found by running the existing operations on assets from a different class, not by reading the code.",
+      "The vehicle never exposed them: its parts are separate objects, its panels are wide open, and it arrives as a .blend.",
+      "`smallest_input_extent_mm` is written into the report parameters, so changing what it measures changes what a reader is told, not only what the operation logs.",
+      "A wall thinner than one voxel is erased by the remesh that follows, which is why the thin-feature measure and the walling decision are related and belong in one request.",
+      "The reports already carry a warning vocabulary, so a guard that cannot decide can say so rather than staying silent."
+    ],
+    "acceptance_criteria": [
+      "AC1: The remesh states the thinnest feature it is about to remesh, measured on geometry rather than on object bounds, and warns when that feature is at or below the voxel size.",
+      "AC2: The figurine case is covered: a 180 mm single-object subject remeshed at a voxel that erases its fingers produces a warning naming the thin feature, and the same subject at a voxel that keeps them does not.",
+      "AC3: Walling decides on how open a body is rather than on whether it is open at all, and a body that is closed within a stated tolerance is repaired or left alone instead of thickened.",
+      "AC4: A subject that is walled when it should not have been is visible in the report: the operation records what it decided and why.",
+      "AC5: A mesh source that is not a .blend can enter the pipeline through a recorded operation rather than a hand-run script.",
+      "AC6: Each fixed guard has a check that fails when the guard goes back to reporting what it does not measure."
+    ]
+  },
+  "product": {
+    "title": "Guards that measure what they claim",
+    "overview": "Corrects three checks that report a number answering a different question than the one asked, all found by running the existing operations on asset classes the demonstration does not cover.",
+    "goals": [
+      "Make the thin-feature guard measure geometry rather than object bounds.",
+      "Make the walling decision proportional rather than all-or-nothing.",
+      "Let a mesh source enter the pipeline without a hand-run script."
+    ],
+    "non_goals": [
+      "A general mesh analysis library or a thickness solver of research quality.",
+      "Automatic repair of arbitrary non-manifold geometry.",
+      "Import formats nobody in this project has a source for.",
+      "Changing the report schema or existing report contents."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Measure the thinnest feature, not the smallest object",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operation review loop",
+      "request_acs": ["AC1", "AC2", "AC6"],
+      "problem": [
+        "`smallest_input_extent_mm` is the smallest object's bounding extent, which equals the whole subject when the subject is one object.",
+        "On a 180 mm figurine it reported 180 mm while a 1.5 mm voxel fused the fingers into mittens.",
+        "The report therefore tells a reader the smallest thing at risk is the entire model, which is never true and is worst on organic subjects."
+      ],
+      "scope_in": [
+        "Estimate the thinnest feature from the geometry itself rather than from object bounds.",
+        "Warn when the estimate is at or below the voxel about to be used.",
+        "Keep the estimate cheap enough to run before every remesh, and say so when it is only an estimate."
+      ],
+      "scope_out": [
+        "An exact medial-axis or wall-thickness solver.",
+        "Blocking a remesh the operator asked for; the guard reports, it does not refuse."
+      ],
+      "acceptance_criteria": [
+        "AC1: The remesh records a thin-feature measure taken from geometry, distinct from the smallest object extent.",
+        "AC2: A voxel at or above that measure produces a warning naming it; a voxel below it does not.",
+        "AC3: The single-object figurine case is asserted, including the voxel that erases the fingers and the one that keeps them.",
+        "AC4: The measure states that it is an estimate wherever it is shown."
+      ]
+    },
+    {
+      "title": "Decide walling on how open a body is",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operation review loop",
+      "request_acs": ["AC3", "AC4", "AC6"],
+      "problem": [
+        "Walling skips a body only when it has exactly zero open edges.",
+        "A sculpt with 4 open edges out of 14 803 faces was walled, doubling its vertices and hollowing a solid body.",
+        "The report recorded `walled 1, already_closed 0`, which is true and tells the reader nothing about the decision being wrong."
+      ],
+      "scope_in": [
+        "Judge a body by how open it is against a stated tolerance rather than by a zero test.",
+        "For a body closed within tolerance, repair the seam or leave it alone rather than thickening it.",
+        "Record the openness measured and the decision taken for every object."
+      ],
+      "scope_out": [
+        "Repairing arbitrary non-manifold geometry.",
+        "Guessing the operator's intent when a body is genuinely half open."
+      ],
+      "acceptance_criteria": [
+        "AC1: The walling decision uses a stated openness tolerance, not a zero test.",
+        "AC2: A body closed within tolerance is not thickened, and the report says which rule applied to it.",
+        "AC3: The sculpt case is asserted: a body with a handful of open edges out of thousands of faces keeps its vertex count.",
+        "AC4: A genuinely open panel is still walled, so the vehicle chain is unchanged."
+      ]
+    },
+    {
+      "title": "Let a mesh source enter the pipeline",
+      "priority": "Medium",
+      "complexity": "Low",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC5", "AC6"],
+      "problem": [
+        "The only import operation reads STEP and needs FreeCAD.",
+        "A subject delivered as a mesh file alone has to be converted with a hand-run script, which leaves no report and no fingerprint.",
+        "That breaks the chain at its first link: the imported state has no recorded parent and no recorded input."
+      ],
+      "scope_in": [
+        "One recorded operation that reads a common mesh interchange file and writes an artefact the chain can continue from.",
+        "Record the source fingerprint and the counts on both sides, as every other operation does.",
+        "Cover the formats there is a real source for in this project."
+      ],
+      "scope_out": [
+        "A format matrix, a conversion service, or formats nobody here has a file for.",
+        "Material, texture or rig import."
+      ],
+      "acceptance_criteria": [
+        "AC1: A mesh source outside the .blend format enters the chain through an operation that writes a report.",
+        "AC2: The report records the source fingerprint, the counts read, and the artefact written.",
+        "AC3: The operation refuses a file it cannot read with a stated reason rather than writing a partial artefact."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Fix the guards that pass while the geometry is wrong",
+    "plan": [
+      "Reproduce each of the three on the assets that exposed them and keep the numbers in the task notes.",
+      "Replace the smallest-object measure with a thin-feature estimate and warn against the voxel about to be used.",
+      "Make the walling decision proportional and record what it decided per object.",
+      "Add the mesh import operation and confirm a chain can start from it.",
+      "Extend the fixture check so each guard fails when it goes back to reporting what it does not measure.",
+      "Confirm the vehicle demonstration is unchanged, then run make check, the fixture check and the browser smoke before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/guards-that-miss.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}

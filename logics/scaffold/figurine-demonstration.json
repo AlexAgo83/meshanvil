@@ -1,0 +1,151 @@
+{
+  "title": "Demonstrate on a clean organic subject what the vehicle chain cannot show",
+  "references": [
+    "tools/build_demo_chain.sh",
+    "tools/strip_asset.py",
+    "tools/voxel_remesh.py",
+    "tools/recenter.py",
+    "tools/scan_defects.py",
+    "fixtures/PROVENANCE.md",
+    "README.md"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Operation review loop",
+    "needs": [
+      "The demonstration has one subject, a vehicle modelled for rendering, and every report in it is a defect being found; nothing shows the sweeps staying silent when a model is sound.",
+      "The vehicle is remeshed at its real size, where a voxel in millimetres and a voxel as a fraction of the subject feel like the same number, so the chain never shows that voxel size is meaningless without the subject's size.",
+      "Measured on a human base mesh reduced to a 180 mm figurine: a 1.5 mm voxel and a 0.5 mm voxel both report ok, one shell, no non-manifold edge, and at most 1.3% of volume lost, while the renders show fingers fused into mittens at 1.5 mm and separated at 0.5 mm.",
+      "The vehicle carries parts sealed inside its body, so visibility always finds something; a subject with nothing hidden would show what a clean visibility result reads like.",
+      "A second subject cannot share the current work directory: its reports would take the vehicle's identity numbering and merge into an outliner group named after the vehicle."
+    ],
+    "context": [
+      "The subject is a sculpting base mesh: one object, pure quads, closed or nearly closed, no modifier, no material -- the opposite of the vehicle in every property the chain reads.",
+      "The vehicle chain's repair steps are no-ops on it, and walling it is actively wrong: it hollows a solid body rather than giving an open panel a thickness.",
+      "The only import operation is `import_step`, which needs FreeCAD; a subject delivered as OBJ alone cannot enter the pipeline today.",
+      "This request depends on multi-project workspaces: without them two demonstration chains share one identity counter, one outliner group and one retention window.",
+      "The existing demonstration asset and its provenance record set the pattern for shipping a second one."
+    ],
+    "acceptance_criteria": [
+      "AC1: A second demonstration subject ships as a project of its own, with its own provenance record, and does not disturb the vehicle demonstration in any way.",
+      "AC2: The chain shows a sound subject passing: the defect sweep reports no finding and the report reads as a deliberate result rather than an absence of data.",
+      "AC3: The chain sets the subject's size explicitly as a decision, taking it from its authored size to a print size, and the reports state both.",
+      "AC4: A branch remeshes the same subject at two voxel sizes chosen as fractions of the subject, both reporting ok on every topology and volume check, so the difference is visible only in the renders.",
+      "AC5: The documentation states the lesson the branch carries: a voxel size is a fraction of the subject, and the checks that pass do not measure feature loss.",
+      "AC6: A visibility pass on a subject with nothing sealed inside reports that explicitly rather than silently.",
+      "AC7: Both demonstration projects rebuild from a single command each, and the checks that guard the first also guard the second."
+    ]
+  },
+  "product": {
+    "title": "Demonstrations that show the checks discriminating",
+    "overview": "Adds a second demonstration subject whose properties are the opposite of the first, so the chain shows sweeps staying silent on a sound model and shows that a passing check is not a guarantee the geometry survived.",
+    "goals": [
+      "Show what a clean result looks like, not only what a defect looks like.",
+      "Make the relationship between voxel size and subject size visible.",
+      "Give the multi-project work a real second project instead of an invented one."
+    ],
+    "non_goals": [
+      "A gallery of subjects, or one demonstration per asset class.",
+      "Rigging, animation, texturing or sculpting workflows.",
+      "Replacing or shortening the vehicle demonstration.",
+      "Shipping a subject whose provenance cannot be recorded."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Ship the figurine subject as its own demonstration project",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operation review loop",
+      "request_acs": ["AC1", "AC7"],
+      "problem": [
+        "The demonstration asset today is a single file at a fixed path, assumed to be the only one.",
+        "A second subject needs the same treatment: reduced to what the pipeline reads, with its origin and licence position recorded.",
+        "Two subjects in one work directory collide on identity, grouping and retention."
+      ],
+      "scope_in": [
+        "Reduce the subject with the existing strip tool and record its provenance the way the first one is recorded.",
+        "Give it its own project directory and its own build command.",
+        "Keep the vehicle demonstration byte-identical in its own project."
+      ],
+      "scope_out": [
+        "A subject registry, an asset manager or a download step.",
+        "Shipping a subject whose origin cannot be stated."
+      ],
+      "acceptance_criteria": [
+        "AC1: The subject ships reduced to geometry, with a provenance record stating where it came from and what is known about its licence.",
+        "AC2: Building either demonstration leaves the other's reports, renders and artefacts unchanged.",
+        "AC3: Each demonstration rebuilds from one command with no argument the operator has to remember."
+      ]
+    },
+    {
+      "title": "Build the figurine chain around a sound subject and a size decision",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operation review loop",
+      "request_acs": ["AC2", "AC3", "AC6"],
+      "problem": [
+        "Every report in the current demonstration is a defect being found, so nothing shows a sweep staying silent.",
+        "The subject is authored at roughly twenty metres tall, which is a scale decision waiting to be made rather than a defect.",
+        "A visibility pass that finds nothing hidden currently reads as an empty result rather than a stated one."
+      ],
+      "scope_in": [
+        "Run the defect sweep on the sound subject and keep the empty result as a deliberate step.",
+        "Set the print size explicitly and record the authored size next to it.",
+        "Run the visibility pass and keep its nothing-hidden result."
+      ],
+      "scope_out": [
+        "Running the vehicle's repair steps on a subject that has nothing to repair.",
+        "Walling a closed body, which hollows it rather than thickening a panel."
+      ],
+      "acceptance_criteria": [
+        "AC1: The defect sweep reports no finding on this subject, and the viewer shows that as a result rather than a blank panel.",
+        "AC2: The size step states the authored size and the chosen print size, and the chain that follows is measured at the print size.",
+        "AC3: The visibility pass reports that nothing is sealed inside, distinguishable from a pass that was never run."
+      ]
+    },
+    {
+      "title": "Branch the remesh at two fractions of the subject",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operation review loop",
+      "request_acs": ["AC4", "AC5"],
+      "problem": [
+        "The vehicle is remeshed at its real size, where an absolute voxel and a relative one feel like the same number.",
+        "Measured on the figurine, 1.5 mm and 0.5 mm both pass every check while one destroys the hands and the other does not.",
+        "Nothing in the documentation states that a passing volume and shell count do not measure feature loss."
+      ],
+      "scope_in": [
+        "Two sibling remeshes of the same parent, at voxel sizes chosen and stated as fractions of the subject.",
+        "Keep both results whatever they report, including when both report ok.",
+        "State the lesson where a reader of the demonstration will meet it."
+      ],
+      "scope_out": [
+        "Adding a feature-thickness check, which is a separate defect.",
+        "Tuning voxel sizes until one of them fails for the sake of a red node."
+      ],
+      "acceptance_criteria": [
+        "AC1: Two sibling remeshes exist on the same parent with their voxel sizes recorded both in millimetres and as a fraction of the subject.",
+        "AC2: The reports show the topology and volume checks passing on both, so the difference appears only in the renders.",
+        "AC3: The documentation states that a voxel is a fraction of the subject and that the passing checks do not measure feature loss."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver the figurine demonstration project",
+    "plan": [
+      "Confirm multi-project workspaces are in place, since two demonstrations cannot share one work directory.",
+      "Reduce the subject with the strip tool and write its provenance record.",
+      "Create the project and its build script, mirroring the vehicle one.",
+      "Run the sweep, the size decision and the visibility pass, and check each result reads as deliberate.",
+      "Add the two-voxel branch and confirm both report ok while the renders differ.",
+      "Write the lesson into the documentation next to the demonstration section.",
+      "Run make check, the fixture check, the browser smoke and both demonstration builds before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/figurine-demonstration.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
