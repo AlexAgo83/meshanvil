@@ -56,6 +56,16 @@ SMOKE = r"""
     assert(document.querySelector(".compare").style.getPropertyValue("--wipe") === "72%", "wipe value did not update");
 
     assert(document.querySelector(".pvmeta table"), "compare before/after table missing");
+    // The handle offset and the clip-path percentage must resolve against the same box, or
+    // they drift apart everywhere except the exact middle.
+    const frame = document.querySelector(".compare");
+    const shot = document.querySelector(".compare-before");
+    const after = document.querySelector(".compare-after");
+    const near = (a, b) => Math.abs(a - b) <= 1;
+    assert(near(frame.getBoundingClientRect().width, shot.getBoundingClientRect().width)
+        && near(frame.getBoundingClientRect().width, after.getBoundingClientRect().width),
+      `wipe frame ${frame.getBoundingClientRect().width} does not hug the render `
+      + `${shot.getBoundingClientRect().width}/${after.getBoundingClientRect().width}`);
 
     document.querySelector('[data-workspace="chain"]').click();
     assert(document.querySelector(".node .thumb"), "node tiles carry no render thumbnail");

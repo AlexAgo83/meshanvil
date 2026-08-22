@@ -440,6 +440,19 @@ function docChip(ref) {
 }
 
 /* ---------- image editor ---------- */
+/** Give the wipe frame the render's own proportions, so the handle sweeps the picture and
+    not the empty band beside it. Both images and the handle then share one reference box. */
+function fitCompare(stage) {
+  const frame = stage.querySelector(".compare");
+  const first = frame && frame.querySelector(".compare-before");
+  if (!first) return;
+  const fit = () => {
+    if (first.naturalWidth) frame.style.aspectRatio = `${first.naturalWidth} / ${first.naturalHeight}`;
+  };
+  if (first.complete) fit();
+  else first.addEventListener("load", fit, { once: true });
+}
+
 /** Compare says in numbers what the wipe says in pixels; neither is enough alone. */
 function compareTable(report) {
   if (!report.before || !report.after) return "";
@@ -474,6 +487,7 @@ function preview() {
     const pair = pairs[view], delta = report.bbox_delta_mm || {};
     views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
     stage.innerHTML = `<div class="compare wipe" style="--wipe:${wipe}%"><img class="compare-before before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><span class="wipelabel l">${esc(t("ui.compare_before"))}</span><span class="wipelabel r">${esc(t("ui.compare_after"))}</span><span class="handle"></span><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
+    fitCompare(stage);
     meta.innerHTML = `<div class="filter">${esc(t("ui.workspace_compare"))}</div>
       <div class="provenance">${esc(pair.camera)}</div>
       ${compareTable(report)}
