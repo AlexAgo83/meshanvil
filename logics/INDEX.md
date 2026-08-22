@@ -101,6 +101,7 @@ _None_
 | [item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction](backlog/item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction.md) | Split the viewer host module into payload, server and host interaction | Ready |  | 0% | backlog/item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction.md |
 | [item_048_split_the_client_by_screen_behind_a_committed_checked_bundle](backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md) | Split the client by screen behind a committed, checked bundle | Ready |  | 0% | backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md |
 | [item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module](backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md) | Give the host code a test layout with one module per host module | Ready |  | 0% | backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md |
+| [item_050_reuse_a_running_viewer_and_keep_its_address_stable](backlog/item_050_reuse_a_running_viewer_and_keep_its_address_stable.md) | Reuse a running viewer and keep its address stable | Ready |  | 0% | backlog/item_050_reuse_a_running_viewer_and_keep_its_address_stable.md |
 
 ## Tasks
 

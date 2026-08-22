@@ -2,11 +2,11 @@
 > Date: 2026-08-23
 > Status: Proposed
 > Related request: `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`
-> Related backlog: `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`, `item_046_push_change_to_the_open_page_over_a_standard_library_event_stream`, `item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction`, `item_048_split_the_client_by_screen_behind_a_committed_checked_bundle`, `item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module`
+> Related backlog: `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`, `item_046_push_change_to_the_open_page_over_a_standard_library_event_stream`, `item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction`, `item_048_split_the_client_by_screen_behind_a_committed_checked_bundle`, `item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module`, `item_050_reuse_a_running_viewer_and_keep_its_address_stable`
 > Related task: `task_024_deliver_the_live_viewer_and_the_module_structure`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:37:30
+> Indicators reviewed: 2026-08-23 00:42:54
 
 # Overview
 Turns the served viewer into a live view onto the reports directory instead of a snapshot, and gives both sides of it -- the host code and the page -- a module structure, a size budget and a real test layout, so the next slice edits a small file instead of the only file.
@@ -25,6 +25,7 @@ flowchart LR
 
 # Goals
 - A running chain's reports appear in an open page without anyone restarting or reloading anything.
+- Launching the viewer twice gets you the viewer you already have, at the address it always had.
 - The refresh mechanism costs almost nothing when nothing is happening and adds no dependency to detect change.
 - Every screen of the client and every job of the server has its own file, with a size limit that is checked rather than hoped for.
 - A host module has a test module, and a failing check names the unit that broke.
@@ -34,6 +35,7 @@ flowchart LR
 - The caching machinery `logics-manager` needs at its scale -- ETags, status TTLs, a large endpoint surface.
 - Client-side unit tests while the client modules are DOM assembly; the smoke suite covers them.
 - Any change to what the viewer displays or to the report format.
+- Running the viewer as a background service; it stays a foreground process the operator started.
 
 # Scope and guardrails
 - In: scaffolded request, product, backlog, orchestration task, validation, and handoff context.

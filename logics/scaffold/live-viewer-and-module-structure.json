@@ -22,7 +22,8 @@
       "Even a manual browser refresh shows nothing new: the payload is baked into `work/viewer/data.js` at build time, so the page is a snapshot of the moment the command ran rather than a view onto the reports directory.",
       "`viewer/viewer.js` is 908 lines in one file covering every screen, every renderer and every event handler. Each slice that touches the viewer -- and the last four have -- edits the same file, and nothing states when it has grown too large.",
       "`meshanvil/viewer.py` is 199 lines doing three unrelated jobs: computing the payload, serving it over HTTP, and launching a browser. It is the file the next three endpoints (a data route, an event stream, and the open/reveal route `req_009` needs) would all land in.",
-      "There is no test directory and no test runner. `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering the whole host codebase in one file, so a single module's behaviour has nowhere of its own to be checked and a failure names the script rather than the unit."
+      "There is no test directory and no test runner. `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering the whole host codebase in one file, so a single module's behaviour has nowhere of its own to be checked and a failure names the script rather than the unit.",
+      "`meshanvil view` builds and opens a page from disk by default and only serves behind `--serve`, so the mode that can refresh itself is the one nobody gets unless they ask. Every launch also starts a fresh server on port 0, so the address changes every time -- an open tab, a bookmark and a second `meshanvil view` all point somewhere that no longer exists, and nothing notices that a viewer for this project is already running."
     ],
     "context": [
       "`logics-manager` (../logics-manager) solves the same refresh problem with stdlib only and is the reference to follow rather than reinvent: one `GET /api/events` server-sent-event endpoint whose change detection is a cheap mtime/signature poll (no watchdog dependency, no websocket), emitting *component names* rather than data, with the client refetching only what changed and never calling `location.reload()`, and a self-throttling timer as the fallback where `EventSource` is unavailable. Its poll sleep is duty-cycle adaptive so detection never costs more than a fraction of a core.",
@@ -30,7 +31,8 @@
       "`logics-manager` also shows the structural conventions worth adopting: client modules split by screen rather than by layer (no `components/`, no `api/`, no store), server route modules exposing `handle_get(handler, route, parsed) -> bool` so a new endpoint never grows an existing file, and a per-file line budget enforced by a script with a registry of justified exceptions rather than by convention.",
       "The build-step question is the hard constraint, not a preference: Chrome refuses `import` from a page opened from disk, so native ES modules would break `meshanvil view`'s default mode. Bundling is therefore required to split the client at all, and bundling contradicts `adr_004`'s no-build-step stance -- which makes it an ADR-level decision. The alternative considered and rejected was hand-writing a small concatenator inside `build()` to avoid the dependency; that is more code to own than the dependency it avoids.",
       "Client unit tests are deliberately out of scope for this pass. While the client modules are DOM assembly, `scripts/viewer_smoke.py` already covers them end to end; a unit runner is worth adding when a module carries real logic of its own (the Markdown renderer is the first candidate).",
-      "This request should land before `req_009` is implemented. `req_009` rewrites large parts of `viewer/viewer.js`; doing it first means rewriting the same code twice."
+      "This request should land before `req_009` is implemented. `req_009` rewrites large parts of `viewer/viewer.js`; doing it first means rewriting the same code twice.",
+      "`logics-manager` treats this as a registry problem rather than a port problem: its viewer registry module keeps one live viewer per repository root, guarded by a cross-process file lock, with a liveness probe endpoint so a registration left behind by a killed process is reclaimed instead of believed. That is the shape to follow -- reuse-if-alive, reclaim-if-not -- and it is what makes a stable address safe to promise."
     ],
     "acceptance_criteria": [
       "AC1: The served page's payload is fetched from the server rather than read from a build-time file, and a page opened from disk keeps working exactly as it does today from its generated fallback.",
@@ -38,12 +40,16 @@
       "AC3: Change detection uses the standard library only -- no file-watching dependency -- and its cost is bounded so that an idle viewer does not consume a meaningful share of a core; the bound is stated and measured, not asserted.",
       "AC4: The event stream carries what changed, not the changed data, and the client refetches only the affected part; no code path in the client reloads the whole page on a data change.",
       "AC5: A client with no event-stream support still converges on fresh data through a self-throttling fallback, and neither path leaves a timer or a connection running after the page is closed.",
-      "AC6: `adr_004` is amended (or superseded) to record that the auto-refresh it promised now exists and how, and to record the build step the client split requires -- with the rejected alternative named.",
+      "AC6: `adr_004` is amended (or superseded) to record that the auto-refresh it promised now exists and how, that the served page is now the default mode with the opened-from-disk one behind a flag, and the build step the client split requires -- with the rejected alternative named.",
       "AC7: The client is split into modules by screen, each within a stated per-file line budget, with the budget enforced by a check in `make check` and any exception carried in a registry with its justification.",
       "AC8: The client bundle is produced by a build step, committed, and a check fails when the committed bundle no longer matches its sources.",
       "AC9: `meshanvil/viewer.py`'s three jobs -- payload, HTTP serving, host interaction -- live in separate modules, and adding a route does not require editing the module that dispatches them.",
       "AC10: The host code has a test directory with a runner, at least one test module per host module, and `make check` runs it; `scripts/selfcheck.py`'s coverage is carried over rather than dropped, and a failure names the unit that failed.",
       "AC11: `scripts/viewer_smoke.py` still passes end to end against the restructured client and server, and covers the live-refresh path itself.",
+      "AC13: `meshanvil view` with no flag starts a served page; the build-and-open-from-disk mode stays reachable behind an explicit flag and behaves exactly as it does today.",
+      "AC14: With a viewer already running for this project, the command opens that one instead of starting a second process, and says which of the two it did.",
+      "AC15: A project's viewer address is stable across launches, so a tab left open or a bookmark keeps working; an address already taken by something else is reported rather than silently reassigned.",
+      "AC16: A registration left behind by a viewer that died is reclaimed rather than believed, and two projects can each have a viewer at once without colliding.",
       "AC12: Nothing in this request changes what the viewer shows or what an operation reports; a report rendered before and after is identical."
     ]
   },
@@ -52,6 +58,7 @@
     "overview": "Turns the served viewer into a live view onto the reports directory instead of a snapshot, and gives both sides of it -- the host code and the page -- a module structure, a size budget and a real test layout, so the next slice edits a small file instead of the only file.",
     "goals": [
       "A running chain's reports appear in an open page without anyone restarting or reloading anything.",
+      "Launching the viewer twice gets you the viewer you already have, at the address it always had.",
       "The refresh mechanism costs almost nothing when nothing is happening and adds no dependency to detect change.",
       "Every screen of the client and every job of the server has its own file, with a size limit that is checked rather than hoped for.",
       "A host module has a test module, and a failing check names the unit that broke."
@@ -60,7 +67,8 @@
       "A framework, a reactive runtime, or a state library on the client; modules and a bundler, nothing more.",
       "The caching machinery `logics-manager` needs at its scale -- ETags, status TTLs, a large endpoint surface.",
       "Client-side unit tests while the client modules are DOM assembly; the smoke suite covers them.",
-      "Any change to what the viewer displays or to the report format."
+      "Any change to what the viewer displays or to the report format.",
+      "Running the viewer as a background service; it stays a foreground process the operator started."
     ]
   },
   "backlog_items": [
@@ -69,7 +77,10 @@
       "priority": "High",
       "complexity": "Medium",
       "theme": "Runtime architecture and code structure",
-      "request_acs": ["AC1", "AC12"],
+      "request_acs": [
+        "AC1",
+        "AC12"
+      ],
       "problem": [
         "The payload is written into `work/viewer/data.js` when the command runs, so the page is a snapshot: reloading it cannot show a report that landed afterwards."
       ],
@@ -93,7 +104,12 @@
       "priority": "High",
       "complexity": "Medium",
       "theme": "Runtime architecture and code structure",
-      "request_acs": ["AC2", "AC3", "AC4", "AC5"],
+      "request_acs": [
+        "AC2",
+        "AC3",
+        "AC4",
+        "AC5"
+      ],
       "problem": [
         "`adr_004` promised auto-refresh and nothing implements it, so watching a chain run means restarting the server and reopening the page for every report."
       ],
@@ -121,7 +137,9 @@
       "priority": "High",
       "complexity": "Medium",
       "theme": "Runtime architecture and code structure",
-      "request_acs": ["AC9"],
+      "request_acs": [
+        "AC9"
+      ],
       "problem": [
         "`meshanvil/viewer.py` computes the payload, serves HTTP and launches a browser in one 199-line module, and the data route, the event stream and `req_009`'s open/reveal route would all land in it."
       ],
@@ -145,7 +163,11 @@
       "priority": "High",
       "complexity": "High",
       "theme": "Runtime architecture and code structure",
-      "request_acs": ["AC6", "AC7", "AC8"],
+      "request_acs": [
+        "AC6",
+        "AC7",
+        "AC8"
+      ],
       "problem": [
         "`viewer/viewer.js` is 908 lines covering every screen, so every viewer slice edits the same file, and nothing says when it is too big.",
         "A page opened from disk cannot load ES modules, so splitting the client requires a build step, which `adr_004` currently rules out."
@@ -174,7 +196,10 @@
       "priority": "Medium",
       "complexity": "Medium",
       "theme": "Runtime architecture and code structure",
-      "request_acs": ["AC10", "AC11"],
+      "request_acs": [
+        "AC10",
+        "AC11"
+      ],
       "problem": [
         "`scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering every host module at once, so no module has a place of its own to be checked and a failure names the script rather than the unit."
       ],
@@ -192,18 +217,54 @@
         "AC2: Every host module has a test module, and nothing `scripts/selfcheck.py` asserted today is lost.",
         "AC3: The smoke suite passes against the restructured client and server and covers the live-refresh path."
       ]
+    },
+    {
+      "title": "Reuse a running viewer and keep its address stable",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Runtime architecture and code structure",
+      "request_acs": [
+        "AC13",
+        "AC14",
+        "AC15",
+        "AC16"
+      ],
+      "problem": [
+        "`meshanvil view` builds and opens a page from disk by default and only serves behind `--serve`, so the one mode that can refresh itself is the one nobody gets unless they ask for it.",
+        "Every launch starts a fresh server on port 0, so the address changes each time: an open tab and a bookmark both go stale, and a second `meshanvil view` starts a second process rather than noticing the first."
+      ],
+      "scope_in": [
+        "Making the served page what `meshanvil view` produces by default, with the build-and-open-from-disk mode behind an explicit flag.",
+        "A per-project registry of the running viewer, guarded across processes, with a liveness probe so a registration outliving its process is reclaimed rather than believed.",
+        "Reusing a live viewer -- open its address, start nothing -- and saying which of the two happened.",
+        "A stable address per project across launches, and a clear report when it is already taken by something else."
+      ],
+      "scope_out": [
+        "Running a viewer as a background service or a daemon; it stays a foreground process the operator started.",
+        "Serving to anything but the loopback address.",
+        "Any change to what the viewer serves once it is running."
+      ],
+      "acceptance_criteria": [
+        "AC1: `meshanvil view` with no flag starts a served page, and the build-and-open-from-disk mode stays reachable behind an explicit flag with today's behaviour.",
+        "AC2: With a viewer already alive for this project, the command opens that one, starts no second process, and states which of the two it did.",
+        "AC3: A project's address is the same across launches.",
+        "AC4: A registration left by a viewer that died is reclaimed, not mistaken for a live one.",
+        "AC5: An address already taken by something that is not this project's viewer is reported clearly and never silently reassigned.",
+        "AC6: Two projects can each have a viewer running at the same time without colliding."
+      ]
     }
   ],
   "orchestration_task": {
     "title": "Deliver the live viewer and the module structure",
     "plan": [
       "1. Serve the payload from a route, keeping the generated file as the opened-from-disk fallback.",
-      "2. Add the standard-library event stream, the component-scoped client refetch and the throttled fallback; measure the idle cost.",
-      "3. Split the viewer host module into payload, server and host interaction behind a route-module convention.",
-      "4. Record the ADR amendment: the delivered auto-refresh and the build step the client split requires.",
-      "5. Split the client by screen behind a committed bundle, with the staleness check and the line budget in make check.",
-      "6. Stand up the test layout, carry over selfcheck's assertions module by module, and extend the smoke suite over live refresh.",
-      "7. Re-run make check, viewer-smoke and the Logics gates before closeout, and confirm a report renders identically to before."
+      "2. Make the served page what `meshanvil view` produces by default, reuse a live viewer per project, and pin its address.",
+      "3. Add the standard-library event stream, the component-scoped client refetch and the throttled fallback; measure the idle cost.",
+      "4. Split the viewer host module into payload, server and host interaction behind a route-module convention.",
+      "5. Record the ADR amendment: the delivered auto-refresh, the default serving mode, and the build step the client split requires.",
+      "6. Split the client by screen behind a committed bundle, with the staleness check and the line budget in make check.",
+      "7. Stand up the test layout, carry over selfcheck's assertions module by module, and extend the smoke suite over live refresh.",
+      "8. Re-run make check, viewer-smoke and the Logics gates before closeout, and confirm a report renders identically to before."
     ]
   },
   "context_pack": {
