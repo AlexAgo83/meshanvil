@@ -1,0 +1,14 @@
+{
+  "operation": "import_mesh",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/import_mesh.py",
+  "summary_key": "operation.import_mesh.summary",
+  "opens_target": false,
+  "params": [],
+  "accepts": [
+    ".obj",
+    ".stl",
+    ".ply"
+  ]
+}

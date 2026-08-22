@@ -49,7 +49,8 @@
     "work_unavailable": "{path} n'est pas inscriptible ; corrigez-le avant de lancer une opération",
     "target_busy": "une autre opération travaille déjà sur cette source ; attendez sa fin",
     "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
-    "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours"
+    "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours",
+    "unreadable_format": "{operation} ne sait pas lire {suffix} ; formats acceptés : {accepts}"
   },
   "engine": {
     "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
@@ -232,6 +233,9 @@
     },
     "solidify": {
       "summary": "Donne une épaisseur à chaque surface ouverte, pour que le remesh qui suit ait un volume."
+    },
+    "import_mesh": {
+      "summary": "Lit une source OBJ, STL ou PLY dans la chaîne, en enregistrant ce qui est entré."
     }
   }
 }
