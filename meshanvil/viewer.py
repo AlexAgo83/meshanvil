@@ -66,7 +66,7 @@ def build(root: Path) -> Path:
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings,
                "reports": reports, "docs": logics_bridge.documents(refs),
-               "runbooks": logics_bridge.runbooks(), "doctor": collect_doctor(root),
+               "runbooks": logics_bridge.runbooks(root), "doctor": collect_doctor(root),
                "ops_exists": (root / OPS).is_dir()}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")

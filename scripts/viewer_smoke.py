@@ -33,6 +33,9 @@ SMOKE = r"""
     assert(document.querySelector(".app").dataset.workspace === "runbooks", "runbooks workspace did not activate");
     assert(document.querySelector(".rbbody .rbrow"), "runbooks primary rows missing");
     assert(document.querySelector(".rbpurpose") && document.querySelector(".rbapplied"), "runbook row details missing");
+    assert(document.querySelector(".rbcols"), "runbooks column header missing");
+    assert(document.querySelector("#graph-name").textContent.toLowerCase().includes("runbook"),
+      "runbooks table is still filed under the node editor header");
 
     document.querySelector('[data-workspace="compare"]').click();
     assert(document.querySelector(".app").dataset.workspace === "compare", "compare workspace did not activate");
@@ -41,7 +44,8 @@ SMOKE = r"""
     filter.value = "voxel";
     filter.dispatchEvent(new Event("input", { bubbles: true }));
     const rows = [...document.querySelectorAll("#outliner .row")];
-    assert(rows.length === 1 && rows[0].textContent.toLowerCase().includes("voxel"), "filter did not isolate voxel row");
+    assert(rows.length && rows.every((row) => row.textContent.toLowerCase().includes("voxel")),
+      "filter did not isolate the voxel rows");
 
     rows[0].click();
     const wipe = document.querySelector("[data-wipe]");
@@ -50,6 +54,23 @@ SMOKE = r"""
     wipe.value = "72";
     wipe.dispatchEvent(new Event("input", { bubbles: true }));
     assert(document.querySelector(".compare").style.getPropertyValue("--wipe") === "72%", "wipe value did not update");
+
+    assert(document.querySelector(".pvmeta table"), "compare before/after table missing");
+
+    document.querySelector('[data-workspace="chain"]').click();
+    assert(document.querySelector(".node .thumb"), "node tiles carry no render thumbnail");
+    assert(document.querySelector(".pvstage img") && !document.querySelector(".pvstage .compare"),
+      "the chain workspace shows the comparison instead of the render");
+    assert(document.querySelector(".tilehint") && !document.querySelector(".tilehint").textContent.includes("${"),
+      "tile hint is missing or unrendered");
+    assert(document.querySelector('[data-section="renders"] .renders img'), "renders block missing");
+    assert(document.querySelector('[data-section="artefact"] .state'), "artefact block missing");
+    assert(document.querySelector(".title-row .note"), "operation summary missing");
+    assert(document.querySelector("#status-branches").textContent.trim()
+        && document.querySelector("#status-vertices").textContent.trim()
+        && document.querySelector("#status-schema").textContent.trim(), "status bar totals missing");
+    assert(!document.querySelector(".tabs #start-screen") && document.querySelector(".status #start-screen"),
+      "the start button is not in the status bar");
 
     document.querySelector('[data-section-goto="measurements"]').click();
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");
@@ -101,7 +122,11 @@ def main() -> int:
         page = tmp_root / "viewer" / "smoke.html"
         page.write_text((tmp_root / "viewer" / "index.html").read_text(encoding="utf-8").replace("</body>", SMOKE + "\n</body>"), encoding="utf-8")
         url = page.resolve().as_uri()
-        base = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--window-size=2048,1200", "--virtual-time-budget=1500"]
+        # --use-mock-keychain: a headless Chrome otherwise asks macOS for the login keychain
+        # on every launch, which turns a smoke run into a stream of password prompts.
+        base = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
+                "--use-mock-keychain", "--password-store=basic", "--no-first-run",
+                "--window-size=2048,1200", "--virtual-time-budget=1500"]
         dom = subprocess.run([*base, "--dump-dom", url], text=True, capture_output=True)
         if dom.returncode:
             raise SystemExit((dom.stderr or dom.stdout or "Chrome did not load the smoke page").strip())

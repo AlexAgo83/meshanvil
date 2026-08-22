@@ -31,6 +31,7 @@
         <span class="grp" data-i18n="ui.menu_group_sections">Sections</span>
         <button type="button" class="cmdrow" data-section-goto="input"><span data-i18n="ui.input">Input</span><kbd>I</kbd></button>
         <button type="button" class="cmdrow" data-section-goto="measurements"><span data-i18n="ui.measurements">Measurements</span><kbd>M</kbd></button>
+        <button type="button" class="cmdrow" data-section-goto="renders"><span data-i18n="ui.renders">Renders</span><kbd>R</kbd></button>
         <button type="button" class="cmdrow" data-section-goto="links"><span data-i18n="ui.links">Links</span><kbd>L</kbd></button>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_help">Help</summary><div class="dropdown">
@@ -39,7 +40,6 @@
       </div></details>
     </div>
     <div class="tabs" role="tablist" aria-label="Workspace" data-i18n-aria-label="ui.workspace">
-      <button type="button" id="start-screen" data-i18n="ui.start">Start</button>
       <button type="button" role="tab" aria-selected="true" data-workspace="chain" data-i18n="ui.workspace_chain">Chain</button>
       <button type="button" role="tab" aria-selected="false" data-workspace="compare" data-i18n="ui.workspace_compare">Compare</button>
       <button type="button" role="tab" aria-selected="false" data-workspace="runbooks" data-i18n="ui.workspace_runbooks">Runbooks</button>
@@ -57,8 +57,8 @@
 
     <div class="colstack">
       <section class="editor" id="graph-editor" aria-label="Operation graph" data-i18n-aria-label="ui.operation_graph">
-        <div class="ehead"><span class="icon">⬡</span><span class="name" data-i18n="ui.node_editor">Node Editor</span>
-          <span style="color:var(--dimmer)">links.parent</span></div>
+        <div class="ehead"><span class="icon" id="graph-icon">⬡</span><span class="name" id="graph-name" data-i18n="ui.node_editor">Node Editor</span>
+          <span style="color:var(--dimmer)" id="graph-scope">links.parent</span></div>
         <div class="nodewrap"><div class="canvas" id="canvas">
           <svg class="noodles" id="noodles" aria-hidden="true"></svg>
           <div id="nodes"></div>
@@ -82,9 +82,10 @@
         <span class="filter" id="schema"></span></div>
       <div class="props">
         <nav class="rail" aria-label="Report sections" data-i18n-aria-label="ui.report_sections">
-          <button type="button" data-section-goto="input" aria-selected="true" title="Input" data-i18n-title="ui.input">I</button>
-          <button type="button" data-section-goto="measurements" aria-selected="false" title="Measurements" data-i18n-title="ui.measurements">M</button>
-          <button type="button" data-section-goto="links" aria-selected="false" title="Links" data-i18n-title="ui.links">L</button>
+          <button type="button" role="tab" data-section-goto="input" aria-selected="true" title="Input" data-i18n-title="ui.input">▣</button>
+          <button type="button" role="tab" data-section-goto="measurements" aria-selected="false" title="Measurements" data-i18n-title="ui.measurements">◫</button>
+          <button type="button" role="tab" data-section-goto="renders" aria-selected="false" title="Renders" data-i18n-title="ui.renders">◲</button>
+          <button type="button" role="tab" data-section-goto="links" aria-selected="false" title="Links" data-i18n-title="ui.links">⛓</button>
         </nav>
         <div class="propscroll" id="props"></div>
       </div>
@@ -92,7 +93,10 @@
   </div>
 
   <div class="status">
-    <span id="status-counts"></span><span class="push"></span>
+    <span id="status-counts"></span><span id="status-branches"></span>
+    <span id="status-vertices"></span><span class="push"></span>
+    <button type="button" id="start-screen" class="firstrun" data-i18n="ui.first_run">↺ first run</button>
+    <span id="status-schema"></span>
     <span id="generated"></span>
   </div>
 </div>

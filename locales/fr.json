@@ -10,8 +10,8 @@
     "run": {
       "help": "lancer une opération et écrire son rapport",
       "set": "un paramètre de l'opération ; répétable",
-      "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte"
-      ,"evidence": "ajouter ce rapport réussi comme preuve d'une tâche Logics (TÂCHE:AC)"
+      "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte",
+      "evidence": "ajouter ce rapport réussi comme preuve d'une tâche Logics (TÂCHE:AC)"
     },
     "view": {
       "help": "construire le visualiseur sur les rapports et l'ouvrir",
@@ -57,9 +57,15 @@
     "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis par {reason} ; définissez {variable} pour choisir un autre binaire"
   },
   "doctor": {
-    "blender": {"reason": "Requis pour lancer les opérations de maillage."},
-    "freecad": {"reason": "Optionnel ; nécessaire uniquement pour importer une source STEP."},
-    "work": {"reason": "Requis pour les rapports, sorties et rendus."}
+    "blender": {
+      "reason": "Requis pour lancer les opérations de maillage."
+    },
+    "freecad": {
+      "reason": "Optionnel ; nécessaire uniquement pour importer une source STEP."
+    },
+    "work": {
+      "reason": "Requis pour les rapports, sorties et rendus."
+    }
   },
   "view": {
     "built": "{path}  ({count} rapports)",
@@ -111,9 +117,8 @@
     "render_provenance": "Écrit par l'opération et listé dans renders[]. Le visualiseur ne rend rien : il montre ce que le moteur a déjà produit.",
     "tile_hint": "c'est celui-ci la vignette du nœud",
     "version_drift": "Ce rapport vient du moteur {mine} ; d'autres dans cette chaîne utilisaient {others}. Des nombres issus de versions différentes ne sont pas comparables.",
-    "chain": "Chaîne {id}",
     "status": "statut {status}",
-    "artefact": "artefact {state}",
+    "artefact": "Artefact",
     "no_output": "aucune sortie",
     "failed_kept_node": "échec - conservé",
     "chain_outliner": "Arborescence de la chaîne",
@@ -125,64 +130,80 @@
     "document_missing": "document introuvable",
     "runbooks": "Runbooks",
     "applied_by": "Appliqué par les rapports",
-    "not_applied": "Pas encore appliqué par une opération."
-    ,"compare_before": "avant l'opération"
-    ,"compare_after": "après l'opération"
-    ,"compare_wipe": "Position du balayage de comparaison"
-    ,"start": "Démarrer"
-    ,"start_title": "Démarrer une chaîne de revue"
-    ,"start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne."
-    ,"start_intro": "Meshanvil consigne les opérations au lieu de modifier la source. Commencez avec la démo, puis inspectez-la ou préparez un corps imprimable."
-    ,"start_demo": "Créer la scène de démo :"
-    ,"start_inspect": "L'inspecter pour trouver des défauts :"
-    ,"start_prepare": "Préparer un corps imprimable :"
-    ,"start_environment": "Environnement"
-    ,"start_environment_note": "Cette page lit seulement le dernier rapport de configuration ; elle ne lance aucun contrôle et n'installe rien."
-    ,"start_doctor": "Contrôle de configuration"
-    ,"start_doctor_missing": "Pas encore de rapport de configuration. Lancez cette commande pour voir le binaire Blender et la version que Meshanvil utilisera."
-    ,"start_blender": "Binaire Blender"
-    ,"start_version": "version"
-    ,"start_missing": "introuvable"
-    ,"start_reports": "Rapports"
-    ,"start_ops_ready": "work/ops existe et recevra les rapports d'opération."
-    ,"start_ops_missing": "work/ops n'a pas encore été créé ; il apparaîtra avec le premier rapport."
-    ,"start_contributors": "Outils contributeur"
-    ,"start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération."
-    ,"start_preview": "La scène de démo donnera à cette zone son premier aperçu géométrique."
-    ,"main_menu": "Menu principal"
-    ,"menu_file": "Fichier"
-    ,"menu_chain": "Chaîne"
-    ,"menu_report": "Rapport"
-    ,"menu_help": "Aide"
-    ,"menu_group_project": "Projet"
-    ,"menu_group_view": "Vue"
-    ,"menu_group_sections": "Sections"
-    ,"menu_group_docs": "Docs"
-    ,"command_start": "Écran de démarrage"
-    ,"command_list": "Lister les opérations"
-    ,"command_doctor": "Vérifier la configuration"
-    ,"command_view": "Rafraîchir le visualiseur"
-    ,"command_prune": "Prévisualiser la purge"
-    ,"command_runbook": "Créer un runbook"
-    ,"workspace": "Espace de travail"
-    ,"workspace_chain": "Chaîne"
-    ,"workspace_compare": "Comparer"
-    ,"workspace_runbooks": "Runbooks"
-    ,"filter": "filtrer…"
-    ,"report_sections": "Sections du rapport"
-    ,"close": "Fermer"
-    ,"splash_subtitle": "visualiseur local de rapports"
-    ,"splash_continue": "Continuer avec le jeu de données démo"
-    ,"splash_templates": "Modèles"
-    ,"splash_tpl_demo": "Générer le jeu de données démo"
-    ,"splash_tpl_inspect": "Inspecter une source"
-    ,"splash_tpl_repair": "Réparer les défauts d'export"
-    ,"splash_recent": "Chaîne récente"
-    ,"splash_recent_empty": "Aucune chaîne récente n'est encore chargée. Lancez une commande puis reconstruisez le visualiseur."
-    ,"splash_recent_found": "{count} rapports chargés depuis la chaîne actuelle."
-    ,"splash_demo_note": "Pas encore de source à vous ? La scène démo construit un petit boîtier synthétique avec des défauts d'export."
-    ,"runbook_empty": "Aucun runbook ne correspond au filtre actuel."
-    ,"runbook_no_summary": "Ouvrez le runbook pour lire sa procédure."
+    "not_applied": "Pas encore appliqué par une opération.",
+    "compare_before": "avant l'opération",
+    "compare_after": "après l'opération",
+    "compare_wipe": "Position du balayage de comparaison",
+    "start_title": "Démarrer une chaîne de revue",
+    "start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne.",
+    "start_intro": "Meshanvil consigne les opérations au lieu de modifier la source. Commencez avec la démo, puis inspectez-la ou préparez un corps imprimable.",
+    "start_demo": "Créer la scène de démo :",
+    "start_inspect": "L'inspecter pour trouver des défauts :",
+    "start_prepare": "Préparer un corps imprimable :",
+    "start_environment": "Environnement",
+    "start_environment_note": "Cette page lit seulement le dernier rapport de configuration ; elle ne lance aucun contrôle et n'installe rien.",
+    "start_doctor": "Contrôle de configuration",
+    "start_doctor_missing": "Pas encore de rapport de configuration. Lancez cette commande pour voir le binaire Blender et la version que Meshanvil utilisera.",
+    "start_blender": "Binaire Blender",
+    "start_version": "version",
+    "start_missing": "introuvable",
+    "start_reports": "Rapports",
+    "start_ops_ready": "work/ops existe et recevra les rapports d'opération.",
+    "start_ops_missing": "work/ops n'a pas encore été créé ; il apparaîtra avec le premier rapport.",
+    "start_contributors": "Outils contributeur",
+    "start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération.",
+    "start_preview": "La scène de démo donnera à cette zone son premier aperçu géométrique.",
+    "main_menu": "Menu principal",
+    "menu_file": "Fichier",
+    "menu_chain": "Chaîne",
+    "menu_report": "Rapport",
+    "menu_help": "Aide",
+    "menu_group_project": "Projet",
+    "menu_group_view": "Vue",
+    "menu_group_sections": "Sections",
+    "menu_group_docs": "Docs",
+    "command_start": "Écran de démarrage",
+    "command_list": "Lister les opérations",
+    "command_doctor": "Vérifier la configuration",
+    "command_view": "Rafraîchir le visualiseur",
+    "command_prune": "Prévisualiser la purge",
+    "command_runbook": "Créer un runbook",
+    "workspace": "Espace de travail",
+    "workspace_chain": "Chaîne",
+    "workspace_compare": "Comparer",
+    "workspace_runbooks": "Runbooks",
+    "filter": "filtrer…",
+    "report_sections": "Sections du rapport",
+    "close": "Fermer",
+    "splash_subtitle": "visualiseur local de rapports",
+    "splash_continue": "Continuer avec le jeu de données démo",
+    "splash_templates": "Modèles",
+    "splash_tpl_demo": "Générer le jeu de données démo",
+    "splash_tpl_inspect": "Inspecter une source",
+    "splash_tpl_repair": "Réparer les défauts d'export",
+    "splash_recent": "Chaîne récente",
+    "splash_recent_empty": "Aucune chaîne récente n'est encore chargée. Lancez une commande puis reconstruisez le visualiseur.",
+    "splash_recent_found": "{count} rapports chargés depuis la chaîne actuelle.",
+    "splash_demo_note": "Pas encore de source à vous ? La scène démo construit un petit boîtier synthétique avec des défauts d'export.",
+    "runbook_empty": "Aucun runbook ne correspond au filtre actuel.",
+    "runbook_no_summary": "Ouvrez le runbook pour lire sa procédure.",
+    "first_run": "↺ premier lancement",
+    "renders": "Rendus",
+    "artefact_badge": "artefact {state}",
+    "open_in_blender": "Ouvrir dans Blender",
+    "branches": "{count} branches",
+    "vertices_total": "{count} sommets",
+    "schema_ops": "schéma {version} · work/ops/",
+    "rb_col_doc": "document",
+    "rb_col_settles": "ce qu'il tranche",
+    "rb_col_applied": "appliqué par",
+    "chain_named": "Chaîne — {name}",
+    "branch_named": "Branche — {name}",
+    "no_renders": "Cette opération n'a produit aucun rendu.",
+    "compare_note": "Même caméra des deux côtés. Ce que les chiffres minimisent, le volet le montre.",
+    "node_tile": "vignette du nœud",
+    "no_comparison": "Cette opération n'a écrit aucune paire avant/après. La comparaison exige deux rendus pris avec la même caméra.",
+    "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier."
   },
   "operation": {
     "clean_shells": {

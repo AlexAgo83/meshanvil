@@ -40,10 +40,37 @@ def documents(refs: set[str]) -> dict[str, dict]:
     return result
 
 
-def runbooks() -> list[dict]:
+def runbooks(root: Path | None = None) -> list[dict]:
     """All runbook metadata, so a dormant method is still visible in the viewer."""
     value, error = call("sync", "list-docs", "--kind", "runbook")
-    return value.get("items", []) if value and not error else []
+    items = value.get("items", []) if value and not error else []
+    for item in items:
+        item["purpose"] = purpose(root, item.get("path"))
+    return items
+
+
+def purpose(root: Path | None, relative: str | None) -> str:
+    """What a runbook settles, in one line: its first Trigger bullet.
+
+    list-docs returns metadata only, and a read-doc per runbook is a subprocess per row.
+    The file is already local, so it is read directly -- the bridge stays JSON-only for
+    anything Logics computes, and this computes nothing.
+    """
+    if not relative or root is None:
+        return ""
+    path = root / relative
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return ""
+    in_trigger = False
+    for line in lines:
+        if line.startswith("# "):
+            in_trigger = line[2:].strip().lower() == "trigger"
+            continue
+        if in_trigger and line.startswith("- "):
+            return line[2:].strip()
+    return ""
 
 
 def runbook(root: Path, chain: str) -> tuple[str | None, str | None]:

@@ -37,7 +37,22 @@ def main() -> int:
     if not Path(BLENDER).exists():
         print(f"blender not found at {BLENDER}; set MESHANVIL_BLENDER")
         return 2
-    shutil.rmtree(OPS, ignore_errors=True)
+    # The fixture chain is a correctness test, not the dataset the viewer ships. It used to
+    # wipe work/ops and leave its own four reports behind, so whatever ran last decided what
+    # the viewer showed. Put the demo chain back on the way out.
+    kept = OPS.with_name("ops.kept")
+    shutil.rmtree(kept, ignore_errors=True)
+    if OPS.is_dir():
+        OPS.rename(kept)
+    try:
+        return check()
+    finally:
+        shutil.rmtree(OPS, ignore_errors=True)
+        if kept.is_dir():
+            kept.rename(OPS)
+
+
+def check() -> int:
     subprocess.run([BLENDER, "-b", "-P", str(ROOT / "tools" / "make_demo_scene.py")],
                    capture_output=True, text=True, check=True)
     source = ROOT / "work" / "out" / "demo_source.blend"

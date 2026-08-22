@@ -47,6 +47,21 @@ function esc(value) {
 }
 const num = (v) => (v === null || v === undefined ? "—" : Number(v).toLocaleString("en-US"));
 
+/** What the operation is for, from the manifest catalogue. Absent is normal, not an error. */
+function summaryOf(operation) {
+  const key = `operation.${operation}.summary`;
+  const text = t(key);
+  return text === key ? "" : text;
+}
+
+/** present, pruned or pinned -- the artefact state drives the node dot and the outliner dot. */
+function artefactState(report) {
+  const output = report.output || null;
+  if (!output) return report.status;
+  if (output.pinned) return "pinned";
+  return output.state === "pruned" ? "pruned" : report.status;
+}
+
 /* ---------- layout: depth from the parent chain, siblings stacked ---------- */
 function place() {
   const depth = new Map(), row = new Map();
@@ -57,7 +72,7 @@ function place() {
     const used = row.get(level) || 0;
     row.set(level, used + 1);
     report._x = 20 + level * 232;
-    report._y = 20 + used * 128;
+    report._y = 20 + used * 196;
   }
 }
 
@@ -84,12 +99,17 @@ function outliner() {
     chains.get(key).push(report);
   }
   let html = "";
+  let first = true;
   for (const [chain, reports] of chains) {
-    html += `<div class="outgroup">${esc(t("ui.chain", { id: chain }))}</div>`;
+    const parent = BY_ID.get(chain);
+    const label = first ? t("ui.chain_named", { name: chainName(reports) })
+                        : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : chain });
+    first = false;
+    html += `<div class="outgroup">${esc(label)}</div>`;
     for (const report of reports) {
       if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
       const kind = report.status === "failed" ? "failed" : report.kind;
-      const state = report.output && report.output.state === "pruned" ? "pruned" : report.status;
+      const state = artefactState(report);
       const glyph = report.kind === "inspection" ? "i" : "T";
       html += `<button type="button" class="row" data-id="${esc(report.id)}"
         aria-current="${report.id === current}">
@@ -99,15 +119,16 @@ function outliner() {
         <span class="dot ${esc(state)}"></span></button>`;
     }
   }
-  if (workspace === "chain" && DATA.runbooks && DATA.runbooks.length) {
-    html += `<div class="outgroup">${esc(t("ui.runbooks"))}</div>`;
-    for (const doc of DATA.runbooks.filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText))) html += `<button type="button" class="row" data-doc="${esc(doc.ref)}"
-      aria-current="${doc.ref === currentDoc}"><span class="tri">▾</span><span class="kindicon inspection">N</span>
-      <span class="label">${esc(doc.title)}</span><span class="dot ${doc.status === "Done" ? "ok" : "pruned"}"></span></button>`;
-  }
   document.getElementById("outliner").innerHTML =
     html || `<div class="blank"><span class="big">${esc(t("ui.no_operation_yet"))}</span>
       <span>${esc(t("ui.reports_appear"))}</span></div>`;
+}
+
+/** A chain is named after the file it started from; the identity is already in the row. */
+function chainName(reports) {
+  const root = reports[0];
+  const path = String((root.input || {}).path || "");
+  return path.split("/").pop().replace(/\.blend$/, "") || root.chain || root.id;
 }
 
 function docFromRef(ref) {
@@ -116,13 +137,15 @@ function docFromRef(ref) {
 
 function docPurpose(doc) {
   const sections = doc.sections || {};
-  const first = (sections.Trigger || sections.Overview || sections.Procedure || [])[0];
+  const first = doc.purpose || (sections.Trigger || sections.Overview || sections.Procedure || [])[0];
   return String(first || doc.content || t("ui.runbook_no_summary")).replace(/^[-\d. ]+/, "").slice(0, 180);
 }
 
 function runbookRows() {
   const docs = (DATA.runbooks || []).filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText));
-  return docs.map((doc) => {
+  const head = `<div class="rbcols"><span>${esc(t("ui.rb_col_doc"))}</span>
+    <span>${esc(t("ui.rb_col_settles"))}</span><span>${esc(t("ui.rb_col_applied"))}</span></div>`;
+  return (docs.length ? head : "") + (docs.map((doc) => {
     const full = docFromRef(doc.ref);
     const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(doc.ref));
     return `<button type="button" class="rbrow" data-doc="${esc(doc.ref)}" aria-current="${doc.ref === currentDoc}">
@@ -132,10 +155,18 @@ function runbookRows() {
         `<span class="docref docref--op"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></span>`).join("")
         : `<span class="unapplied">${esc(t("ui.not_applied"))}</span>`}</span>
     </button>`;
-  }).join("") || `<div class="blank"><span class="big">${esc(t("ui.runbooks"))}</span><span>${esc(t("ui.runbook_empty"))}</span></div>`;
+  }).join("") || `<div class="blank"><span class="big">${esc(t("ui.runbooks"))}</span><span>${esc(t("ui.runbook_empty"))}</span></div>`);
 }
 
 /* ---------- node editor ---------- */
+/** One panel, two workspaces: the header says which, so the runbooks table is not
+    filed under "Node Editor" the way it was. */
+function graphHead(icon, name, scope) {
+  document.getElementById("graph-icon").textContent = icon;
+  document.getElementById("graph-name").textContent = name;
+  document.getElementById("graph-scope").textContent = scope;
+}
+
 function nodes() {
   if (start) {
     document.getElementById("nodes").innerHTML = `<div class="start-card"><h2>${esc(t("ui.start_title"))}</h2>
@@ -148,29 +179,38 @@ function nodes() {
     return;
   }
   if (workspace === "runbooks") {
+    graphHead("▤", t("ui.runbooks"), "logics/runbook");
     document.getElementById("nodes").innerHTML = `<div class="rbbody">${runbookRows()}</div>`;
     const canvas = document.getElementById("canvas"); canvas.style.width = "100%"; canvas.style.height = "100%";
     document.getElementById("noodles").innerHTML = "";
     return;
   }
+  graphHead("⬡", t("ui.node_editor"),
+    DATA.reports.length ? `chain / ${chainName(DATA.reports)}` : "links.parent");
   let html = "";
   for (const report of DATA.reports) {
     const kind = report.status === "failed" ? "failed" : report.kind;
-    const state = report.output && report.output.state === "pruned" ? "pruned" : report.status;
+    const state = artefactState(report);
     const lines = headline(report).map(([key, value]) =>
       `<div class="nline"><span>${esc(key)}</span><b>${esc(value)}</b></div>`).join("");
+    // The tile is the operation's own verification render -- renders[0], or the one it flagged.
+    const tile = (report.renders || []).find((r) => r.tile) || (report.renders || [])[0];
+    const thumb = tile ? `<img class="thumb" src="${esc(tile.url)}" alt="${esc(t("ui.render_alt", {
+      view: tile.view, operation: report.operation }))}" loading="lazy">` : "";
+    const foot = [report.status === "failed" ? t("ui.failed_kept_node") : report.kind,
+                  report.output ? report.output.state : null].filter(Boolean).join(" · ");
     html += `<button type="button" class="node ${esc(kind)}" data-id="${esc(report.id)}"
         aria-current="${report.id === current}" style="left:${report._x}px;top:${report._y}px">
       <div class="nhead"><span class="nidx">${esc(report.id)}</span>${esc(report.operation)}</div>
       <div class="nbody">${lines}</div>
-      <div class="nfoot"><span class="dot ${esc(state)}"></span>
-        ${report.status === "failed" ? esc(t("ui.failed_kept_node")) : esc(report.kind)}</div>
+      ${thumb}
+      <div class="nfoot"><span class="dot ${esc(state)}"></span>${esc(foot)}</div>
     </button>`;
   }
   document.getElementById("nodes").innerHTML = html;
   const canvas = document.getElementById("canvas");
   canvas.style.width = Math.max(860, ...DATA.reports.map((r) => r._x + 240)) + "px";
-  canvas.style.height = Math.max(420, ...DATA.reports.map((r) => r._y + 180)) + "px";
+  canvas.style.height = Math.max(420, ...DATA.reports.map((r) => r._y + 200)) + "px";
   noodles();
 }
 
@@ -267,6 +307,19 @@ function boundingBox(report) {
     `<table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`, "bbox");
 }
 
+function rendersBlock(report) {
+  const renders = report.renders || [];
+  if (!renders.length) {
+    return block(t("ui.renders"), `<div class="note">${esc(t("ui.no_renders"))}</div>`, "renders");
+  }
+  return block(t("ui.renders"), `<div class="renders">${renders.map((render, index) =>
+    `<figure><img src="${esc(render.url)}" alt="${esc(t("ui.render_alt", {
+       view: render.view, operation: report.operation }))}" loading="lazy">
+     <figcaption>${esc(render.view)}${render.tile ? ` · ${esc(t("ui.node_tile"))}` : ""}</figcaption></figure>`
+    ).join("")}</div>
+    <div class="note">${esc(t("ui.render_provenance"))}</div>`, "renders");
+}
+
 function props() {
   const target = document.getElementById("props");
   if (currentDoc) {
@@ -301,11 +354,12 @@ function props() {
       <div class="badges">
         <span class="badge ${esc(report.kind)}">${esc(report.kind)}</span>
         <span class="badge ${esc(report.status)}">${esc(t("ui.status", { status: report.status }))}</span>
-        ${report.output ? `<span class="badge">${esc(t("ui.artefact", { state: report.output.state }))}</span>`
+        ${report.output ? `<span class="badge">${esc(t("ui.artefact_badge", { state: report.output.state }))}</span>`
                         : `<span class="badge">${esc(t("ui.no_output"))}</span>`}
         <span class="badge">${esc(report.duration_s)} s</span>
       </div>
       ${report.error ? `<p class="note">${esc(report.error)}</p>` : ""}
+      ${summaryOf(report.operation) ? `<p class="note">${esc(summaryOf(report.operation))}</p>` : ""}
     </div>`;
 
   html += driftNotice(report);
@@ -333,6 +387,13 @@ function props() {
   html += block(t("ui.not_checked"), `<div class="codes">${(report.warnings || []).map((w) =>
       `<span class="code">${esc(w)}</span>`).join("") || `<span class="note">${esc(t("ui.nothing_declared"))}</span>`}</div>
     <div class="note">${esc(t("ui.warning_codes_note"))}</div>`, "warnings");
+  html += rendersBlock(report);
+  if (report.output) {
+    html += block(t("ui.artefact"), `<div class="artefact">
+        <span class="state ${esc(report.output.state)}">${esc(report.output.state)}</span>
+        <span>${esc(short(report.output.path))}</span></div>
+      <div class="note">${esc(t("ui.artefact_note"))}</div>`, "artefact");
+  }
   html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
       `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>`, "tool");
   html += block(t("ui.links"), `<div class="wikilinks">
@@ -364,6 +425,23 @@ function docChip(ref) {
 }
 
 /* ---------- image editor ---------- */
+/** Compare says in numbers what the wipe says in pixels; neither is enough alone. */
+function compareTable(report) {
+  if (!report.before || !report.after) return "";
+  const rows = [["vertices", "vertices"], ["faces", "faces"], ["shells", "shells"],
+                ["volume cm³", "volume_cm3"]];
+  const body = rows.map(([label, key]) => {
+    const before = report.before[key], after = report.after[key];
+    if (before === null || before === undefined || after === null || after === undefined) return "";
+    const delta = after - before;
+    return `<tr><td>${esc(label)}</td><td>${num(before)}</td><td>${num(after)}</td>
+      <td class="delta${delta ? " moved" : ""}">${esc(num(delta))}</td></tr>`;
+  }).join("");
+  if (!body) return "";
+  return `<table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th>
+    <th>${esc(t("ui.after"))}</th><th>${esc(t("ui.delta"))}</th></tr></thead><tbody>${body}</tbody></table>`;
+}
+
 function preview() {
   const stage = document.getElementById("pvstage"), meta = document.getElementById("pvmeta");
   const views = document.getElementById("pvviews"), title = document.getElementById("pvtitle");
@@ -376,12 +454,21 @@ function preview() {
     return;
   }
   title.textContent = report ? `${report.id}_${report.operation}` : "";
-  if (pairs.length) {
+  if (workspace === "compare" && pairs.length) {
     if (view >= pairs.length) view = 0;
     const pair = pairs[view], delta = report.bbox_delta_mm || {};
     views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
     stage.innerHTML = `<div class="compare wipe" style="--wipe:${wipe}%"><img class="compare-before before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><span class="wipelabel l">${esc(t("ui.compare_before"))}</span><span class="wipelabel r">${esc(t("ui.compare_after"))}</span><span class="handle"></span><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
-    meta.innerHTML = `<div class="filter">${esc(t("ui.workspace_compare"))}</div><div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
+    meta.innerHTML = `<div class="filter">${esc(t("ui.workspace_compare"))}</div>
+      <div class="provenance">${esc(pair.camera)}</div>
+      ${compareTable(report)}
+      <div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>
+      <div class="note">${esc(t("ui.compare_note"))}</div>`;
+    return;
+  }
+  if (workspace === "compare" && !pairs.length) {
+    views.innerHTML = ""; meta.innerHTML = "";
+    stage.innerHTML = `<p class="pvempty">${esc(t("ui.no_comparison"))}</p>`;
     return;
   }
   if (!renders.length) {
@@ -399,7 +486,11 @@ function preview() {
     view: render.view, operation: report.operation }))}">`;
   meta.innerHTML = `<div><div class="provenance">${esc(short(render.path))}</div>
       <div class="provenance" style="color:var(--dim);padding-top:3px">${esc(render.camera)}</div></div>
-    ${render.tile ? '<div class="tilehint">▲ ${esc(t("ui.tile_hint"))}</div>' : ""}
+    ${render.tile ? `<div class="tilehint">▲ ${esc(t("ui.tile_hint"))}</div>` : ""}
+    ${report.output ? `<div class="act">
+      <span class="hint">${esc(t("ui.open_in_blender"))}</span>
+      <code class="command">blender ${esc(short(report.output.path))}</code>
+    </div>` : ""}
     <p class="provenance">${esc(t("ui.render_provenance"))}</p>`;
 }
 
@@ -414,6 +505,7 @@ function select(id) {
 
 function selectWorkspace(next) {
   start = false;
+  if (next !== workspace) view = 0;   // view indexes renders in Chain and pairs in Compare
   workspace = next;
   /** @type {HTMLElement} */ (document.querySelector(".app")).dataset.workspace = next;
   for (const tab of document.querySelectorAll('[role="tab"][data-workspace]')) {
@@ -494,13 +586,29 @@ document.getElementById("start-screen").addEventListener("click", () => {
 
 place();
 document.getElementById("chain-name").textContent =
-  DATA.reports.length ? (DATA.reports[0].chain || "—") : "—";
+  DATA.reports.length ? chainName(DATA.reports) : "—";
 document.getElementById("op-count").textContent = t("ui.operations", { count: DATA.reports.length });
 document.getElementById("schema").textContent =
   DATA.reports.length ? `schema ${DATA.reports[0].schema_version}` : "";
 document.getElementById("status-counts").textContent =
   t("ui.operations", { count: DATA.reports.length }) + " · "
   + t("ui.failed_kept", { count: DATA.reports.filter((r) => r.status === "failed").length });
+// A branch is a report with more than one child: that is where a chain forked and where a
+// reviewer has to choose. Counting parents would count the trunk as a branch too.
+const children = new Map();
+for (const report of DATA.reports) {
+  const parent = report.links && report.links.parent;
+  if (parent) children.set(parent, (children.get(parent) || 0) + 1);
+}
+document.getElementById("status-branches").textContent =
+  t("ui.branches", { count: [...children.values()].filter((n) => n > 1).length });
+const leaf = [...DATA.reports].reverse().find((r) =>
+  (r.after && r.after.vertices !== null && r.after.vertices !== undefined)
+  || (r.measured && r.measured.vertices !== null && r.measured.vertices !== undefined));
+document.getElementById("status-vertices").textContent = leaf
+  ? t("ui.vertices_total", { count: num((leaf.after || leaf.measured).vertices) }) : "";
+document.getElementById("status-schema").textContent = DATA.reports.length
+  ? t("ui.schema_ops", { version: DATA.reports[0].schema_version }) : "";
 document.getElementById("generated").textContent = DATA.generated_at
   ? t("ui.read_at", { at: DATA.generated_at }) : t("ui.no_report");
 document.documentElement.lang = DATA.lang || "en";
