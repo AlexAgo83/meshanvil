@@ -86,10 +86,12 @@ new_object("body", body_mesh)
 # --- a belly panel under most of the cabin, not the whole underside (no full floor pan, as
 # above): it blocks most rays looking up through that gap, not all of them. A real car has
 # exactly this shape -- an under-engine skid plate -- for an unrelated reason.
+# Sized to stay inside the body's sill width at every station it spans (the sill tapers
+# toward nose and tail) -- a wider panel pokes past the hull as a visible sliver at the ends.
 belly = bpy.data.meshes.new("belly")
 belly.from_pydata([
-    (-HL * 0.75, -HW * 0.95, Z0), (HL * 0.75, -HW * 0.95, Z0),
-    (HL * 0.75, HW * 0.95, Z0), (-HL * 0.75, HW * 0.95, Z0),
+    (-HL * 0.7, -HW * 0.6, Z0), (HL * 0.35, -HW * 0.6, Z0),
+    (HL * 0.35, HW * 0.6, Z0), (-HL * 0.7, HW * 0.6, Z0),
 ], [], [(0, 1, 2, 3)])
 belly.update()
 new_object("belly_panel", belly)

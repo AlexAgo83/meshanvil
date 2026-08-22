@@ -11,7 +11,7 @@ defects are planted on purpose.
 
     blender -b -P tools/make_demo_figure.py -- <destination.blend>
 """
-import bpy, os, sys, math
+import bpy, bmesh, os, sys, math
 
 HEIGHT = 1.75                          # a real adult height, metres
 FINGER_R = 0.008                       # 16 mm diameter -- ~1.6 mm once recentred to 180 mm
@@ -26,11 +26,25 @@ def part(verts_op, loc, rot=(0, 0, 0), scale=(1, 1, 1), **kwargs):
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     return ob
 
-def uncapped(loc, rot, scale):
-    """A cylinder with no end caps: nothing to sit near-tangent to the sphere it is embedded
-    in. A flat disk meeting a sphere anywhere but its own equator leaves a sliver behind at
-    the crossing; an open tube has no disk there to leave one."""
-    return part(bpy.ops.mesh.primitive_cylinder_add, loc, rot, scale, end_fill_type='NOTHING')
+def half_capped(loc, rot, scale, open_end):
+    """A cylinder capped at one end only: nothing sits near-tangent to the sphere embedding
+    the open end, while the capped end stays a solid-looking limb rather than a visible pipe.
+    A flat disk meeting a sphere anywhere but its own equator leaves a sliver behind at the
+    crossing; the torso's top meets the head off-equator (open), its bottom meets the hip
+    dead-on at the hip sphere's own equator (safe to cap)."""
+    bpy.ops.mesh.primitive_cylinder_add(location=loc, rotation=rot, end_fill_type='NGON')
+    ob = bpy.context.object
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.faces.ensure_lookup_table()
+    top = open_end == "top"
+    doomed = [f for f in bm.faces if len(f.verts) > 4 and (f.calc_center_median().z > 0) == top]
+    bmesh.ops.delete(bm, geom=doomed, context='FACES')
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.scale = scale
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    return ob
 
 clear()
 parts = []
@@ -41,8 +55,8 @@ parts.append(part(bpy.ops.mesh.primitive_uv_sphere_add, loc=(0, 0, HEIGHT - head
 
 torso_h, torso_r = HEIGHT * 0.32, HEIGHT * 0.11
 torso_top = HEIGHT - head_r * 1.6
-parts.append(uncapped(loc=(0, 0, torso_top - torso_h / 2), rot=(0, 0, 0),
-                       scale=(torso_r, torso_r * 0.65, torso_h / 2)))
+parts.append(half_capped(loc=(0, 0, torso_top - torso_h / 2), rot=(0, 0, 0),
+                          scale=(torso_r, torso_r * 0.65, torso_h / 2), open_end="top"))
 
 hip_r = torso_r * 0.9
 hip_z = torso_top - torso_h
@@ -59,8 +73,8 @@ leg_bottom = foot_r * 1.15
 for side in (-1, 1):
     x = side * torso_r * 0.5
     leg_len = hip_z - leg_bottom
-    parts.append(uncapped(loc=(x, 0, leg_bottom + leg_len / 2), rot=(0, 0, 0),
-                          scale=(leg_r, leg_r, leg_len / 2)))
+    parts.append(part(bpy.ops.mesh.primitive_cylinder_add, loc=(x, 0, leg_bottom + leg_len / 2),
+                       scale=(leg_r, leg_r, leg_len / 2)))
     parts.append(part(bpy.ops.mesh.primitive_uv_sphere_add, loc=(x, HEIGHT * 0.03, foot_r),
                        scale=(foot_r * 1.6, foot_r * 2.2, foot_r)))
 
@@ -70,9 +84,10 @@ for side in (-1, 1):
     shoulder_x = side * torso_r * 0.95
     hand_x = side * (torso_r * 0.95 + arm_len * math.sin(math.radians(12)))
     hand_z = shoulder_z - arm_len * math.cos(math.radians(12))
-    parts.append(uncapped(loc=((shoulder_x + hand_x) / 2, 0, (shoulder_z + hand_z) / 2),
-                          rot=(0, side * math.radians(12), 0),
-                          scale=(arm_r, arm_r, arm_len / 2)))
+    parts.append(part(bpy.ops.mesh.primitive_cylinder_add,
+                       loc=((shoulder_x + hand_x) / 2, 0, (shoulder_z + hand_z) / 2),
+                       rot=(0, side * math.radians(12), 0),
+                       scale=(arm_r, arm_r, arm_len / 2)))
 
     # palm: a small flattened box at the wrist
     palm_len = HEIGHT * 0.045
