@@ -1,0 +1,464 @@
+{
+  "budgets": {
+    "max_docs": 28,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page item_046_push_change_to_the_open_page_over_a_standard_library_event_stream item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction item_048_split_the_client_by_screen_behind_a_committed_checked_bundle item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module task_024_deliver_the_live_viewer_and_the_module_structure --mode full --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md",
+      "ref": "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible",
+      "sections": {
+        "Goals": [
+          "- A running chain's reports appear in an open page without anyone restarting or reloading anything.",
+          "- The refresh mechanism costs almost nothing when nothing is happening and adds no dependency to detect change.",
+          "- Every screen of the client and every job of the server has its own file, with a size limit that is checked rather than hoped for.",
+          "- A host module has a test module, and a failing check names the unit that broke."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Turns the served viewer into a live view onto the reports directory instead of a snapshot, and gives both sides of it -- the host code and the page -- a module structure, a size budget and a real test layout, so the next slice edits a small file instead of the only file."
+        ],
+        "References": [
+          "- Product back-reference: `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`",
+          "- Task back-reference: `task_024_deliver_the_live_viewer_and_the_module_structure`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "A viewer that stays current and a codebase that stays divisible"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "viewer, refresh, itself, code, module, structure, holds",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ]
+      },
+      "path": "logics/request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md",
+      "ref": "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The served page's payload is fetched from the server rather than read from a build-time file, and a page opened from disk keeps working exactly as it does today from its generated fallback.",
+          "- AC2: A served page reflects a new, changed or removed report without the operator restarting the server or reloading the page, within a few seconds of the file landing.",
+          "- AC3: Change detection uses the standard library only -- no file-watching dependency -- and its cost is bounded so that an idle viewer does not consume a meaningful share of a core; the bound is stated and measured, not asserted.",
+          "- AC4: The event stream carries what changed, not the changed data, and the client refetches only the affected part; no code path in the client reloads the whole page on a data change.",
+          "- AC5: A client with no event-stream support still converges on fresh data through a self-throttling fallback, and neither path leaves a timer or a connection running after the page is closed.",
+          "- AC6: `adr_004` is amended (or superseded) to record that the auto-refresh it promised now exists and how, and to record the build step the client split requires -- with the rejected alternative named."
+        ],
+        "Needs": [
+          "- `adr_004` states that `meshanvil view --serve` starts a server `for auto-refresh`. Nothing auto-refreshes: there is no watcher, no event stream and no polling anywhere in `meshanvil/viewer.py` or `viewer/viewer.js`. The promise is documented and was never built, so an operator watching a chain run has to stop the server, re-run the command and reopen the page to see the report that just landed.",
+          "- Even a manual browser refresh shows nothing new: the payload is baked into `work/viewer/data.js` at build time, so the page is a snapshot of the moment the command ran rather than a view onto the reports directory.",
+          "- `viewer/viewer.js` is 908 lines in one file covering every screen, every renderer and every event handler. Each slice that touches the viewer -- and the last four have -- edits the same file, and nothing states when it has grown too large.",
+          "- `meshanvil/viewer.py` is 199 lines doing three unrelated jobs: computing the payload, serving it over HTTP, and launching a browser. It is the file the next three endpoints (a data route, an event stream, and the open/reveal route `req_009` needs) would all land in.",
+          "- There is no test directory and no test runner. `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering the whole host codebase in one file, so a single module's behaviour has nowhere of its own to be checked and a failure names the script rather than the unit."
+        ]
+      },
+      "status": "Draft",
+      "title": "Make the viewer refresh itself and give the code a module structure that holds"
+    },
+    {
+      "ai_context": {
+        "keywords": "serve, viewer, payload, instead, baking, page",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/backlog/item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page.md",
+      "ref": "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A served page renders from the route, not from the generated file.",
+          "- AC2: A page opened from disk renders exactly as it does today.",
+          "- AC3: A report rendered before and after this change is identical."
+        ],
+        "Problem": [
+          "- The payload is written into `work/viewer/data.js` when the command runs, so the page is a snapshot: reloading it cannot show a report that landed afterwards."
+        ]
+      },
+      "status": "Ready",
+      "title": "Serve the viewer payload instead of baking it into the page"
+    },
+    {
+      "ai_context": {
+        "keywords": "push, change, open, page, over, standard, library, event, stream",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/backlog/item_046_push_change_to_the_open_page_over_a_standard_library_event_stream.md",
+      "ref": "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A report written while the page is open appears without a restart or a reload, within a few seconds.",
+          "- AC2: A removed or modified report is reflected the same way.",
+          "- AC3: Detection uses the standard library only and its idle cost is measured and stated against a bound.",
+          "- AC4: The stream carries component names, not data, and no client path reloads the page on a data change.",
+          "- AC5: With the event stream unavailable, the fallback still converges and throttles itself against its own last refresh cost.",
+          "- AC6: Closing the page leaves no live timer and no live connection."
+        ],
+        "Problem": [
+          "- `adr_004` promised auto-refresh and nothing implements it, so watching a chain run means restarting the server and reopening the page for every report."
+        ]
+      },
+      "status": "Ready",
+      "title": "Push change to the open page over a standard-library event stream"
+    },
+    {
+      "ai_context": {
+        "keywords": "split, viewer, host, module, payload, server, interaction",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/backlog/item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction.md",
+      "ref": "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Payload construction, HTTP serving and host interaction are in separate modules.",
+          "- AC2: Adding a route does not require editing the dispatching module.",
+          "- AC3: `/run` behaves identically, including its token check, its single-flight guard and its refusals."
+        ],
+        "Problem": [
+          "- `meshanvil/viewer.py` computes the payload, serves HTTP and launches a browser in one 199-line module, and the data route, the event stream and `req_009`'s open/reveal route would all land in it."
+        ]
+      },
+      "status": "Ready",
+      "title": "Split the viewer host module into payload, server and host interaction"
+    },
+    {
+      "ai_context": {
+        "keywords": "deliver, live, viewer, module, structure",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md",
+      "ref": "task_024_deliver_the_live_viewer_and_the_module_structure",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Deliver the live viewer and the module structure"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md",
+      "ref": "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Proposed",
+      "title": "A viewer that stays current and a codebase that stays divisible"
+    },
+    {
+      "ai_context": {
+        "keywords": "split, client, screen, behind, committed, checked, bundle",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md",
+      "ref": "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: No client source file exceeds the stated budget, or it is in the registry with its reason.",
+          "- AC2: The bundle is committed and a check fails when it is stale against its sources.",
+          "- AC3: A page opened from disk still works with no build tool present on the machine.",
+          "- AC4: The ADR records the build step, the delivered auto-refresh, and the rejected alternative.",
+          "- AC5: The rendered page is unchanged."
+        ],
+        "Problem": [
+          "- `viewer/viewer.js` is 908 lines covering every screen, so every viewer slice edits the same file, and nothing says when it is too big.",
+          "- A page opened from disk cannot load ES modules, so splitting the client requires a build step, which `adr_004` currently rules out."
+        ]
+      },
+      "status": "Ready",
+      "title": "Split the client by screen behind a committed, checked bundle"
+    },
+    {
+      "ai_context": {
+        "keywords": "host, code, test, layout, module, per",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md",
+      "ref": "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: `make check` runs the test suite and a failure names the failing unit.",
+          "- AC2: Every host module has a test module, and nothing `scripts/selfcheck.py` asserted today is lost.",
+          "- AC3: The smoke suite passes against the restructured client and server and covers the live-refresh path."
+        ],
+        "Problem": [
+          "- `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering every host module at once, so no module has a place of its own to be checked and a failure names the script rather than the unit."
+        ]
+      },
+      "status": "Ready",
+      "title": "Give the host code a test layout with one module per host module"
+    }
+  ],
+  "estimates": {
+    "char_count": 16162,
+    "companion_doc_count": 1,
+    "doc_count": 8
+  },
+  "generated_at": "2026-08-22T22:36:59Z",
+  "handoff": {
+    "companion_doc_count": 1,
+    "enabled": true,
+    "source_refs": [
+      "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+      "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+      "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+      "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+      "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+      "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+      "task_024_deliver_the_live_viewer_and_the_module_structure"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Keep catalogs valid with logics-manager i18n validate in the project quality gate."
+    ],
+    "applicable": true,
+    "catalogs": {
+      "en": 199,
+      "fr": 199
+    },
+    "configured": true,
+    "contract": {
+      "applicability": "applicable",
+      "catalog": {
+        "path": "locales/{locale}.json"
+      },
+      "default_locale": "en",
+      "fallback_locale": "en",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "schema_version": "1.0",
+      "source_locale": "en"
+    },
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "The i18n contract is valid.",
+    "ok": true,
+    "state": "valid"
+  },
+  "mode": "full",
+  "profile": "normal",
+  "ref": "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds,item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page,item_046_push_change_to_the_open_page_over_a_standard_library_event_stream,item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction,item_048_split_the_client_by_screen_behind_a_committed_checked_bundle,item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module,task_024_deliver_the_live_viewer_and_the_module_structure",
+  "refs": [
+    "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+    "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+    "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+    "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+    "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+    "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+    "task_024_deliver_the_live_viewer_and_the_module_structure"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_id": null,
+    "target_version": null,
+    "targets": []
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md",
+      "ref": "task_024_deliver_the_live_viewer_and_the_module_structure"
+    }
+  ]
+}

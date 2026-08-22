@@ -26,6 +26,7 @@
 | [prod_008_demonstrations_that_own_every_asset_they_run_on](product/prod_008_demonstrations_that_own_every_asset_they_run_on.md) | Demonstrations that own every asset they run on | Settled |  |  | product/prod_008_demonstrations_that_own_every_asset_they_run_on.md |
 | [prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it](product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md) | A viewer that acts on what it shows, not just displays it | Settled |  |  | product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md |
 | [prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names](product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md) | Direct controls over the files and results the viewer already names | Proposed |  |  | product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md |
+| [prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible](product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md) | A viewer that stays current and a codebase that stays divisible | Proposed |  |  | product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md |
 
 ## Roadmaps
 
@@ -45,6 +46,7 @@ _None_
 | [req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done |  |  | request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 | [req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable](request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md) | Make the viewer's start screen, runbooks and file references actionable | Done |  |  | request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md |
 | [req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls](request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md) | Turn the viewer's file references and command rows into direct, translated controls | Draft |  |  | request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md |
+| [req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds](request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md) | Make the viewer refresh itself and give the code a module structure that holds | Draft |  |  | request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md |
 
 ## Backlog
 
@@ -94,6 +96,11 @@ _None_
 | [item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows](backlog/item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows.md) | Let the served page open and reveal a file the build already knows | Ready |  | 0% | backlog/item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows.md |
 | [item_043_show_list_and_setup_results_as_translated_modals_reached_from_help](backlog/item_043_show_list_and_setup_results_as_translated_modals_reached_from_help.md) | Show list and setup results as translated modals reached from Help | Ready |  | 0% | backlog/item_043_show_list_and_setup_results_as_translated_modals_reached_from_help.md |
 | [item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite](backlog/item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite.md) | Cover the new controls and modals in the viewer smoke suite | Ready |  | 0% | backlog/item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite.md |
+| [item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page](backlog/item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page.md) | Serve the viewer payload instead of baking it into the page | Ready |  | 0% | backlog/item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page.md |
+| [item_046_push_change_to_the_open_page_over_a_standard_library_event_stream](backlog/item_046_push_change_to_the_open_page_over_a_standard_library_event_stream.md) | Push change to the open page over a standard-library event stream | Ready |  | 0% | backlog/item_046_push_change_to_the_open_page_over_a_standard_library_event_stream.md |
+| [item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction](backlog/item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction.md) | Split the viewer host module into payload, server and host interaction | Ready |  | 0% | backlog/item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction.md |
+| [item_048_split_the_client_by_screen_behind_a_committed_checked_bundle](backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md) | Split the client by screen behind a committed, checked bundle | Ready |  | 0% | backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md |
+| [item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module](backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md) | Give the host code a test layout with one module per host module | Ready |  | 0% | backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md |
 
 ## Tasks
 
@@ -122,6 +129,7 @@ _None_
 | [task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done | Claude | 100% | tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 | [task_022_deliver_the_viewer_actionability_pass](tasks/task_022_deliver_the_viewer_actionability_pass.md) | Deliver the viewer actionability pass | Done | Claude | 100% | tasks/task_022_deliver_the_viewer_actionability_pass.md |
 | [task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals](tasks/task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals.md) | Deliver the viewer's direct file controls and translated result modals | Ready |  | 0% | tasks/task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals.md |
+| [task_024_deliver_the_live_viewer_and_the_module_structure](tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md) | Deliver the live viewer and the module structure | Ready |  | 0% | tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md |
 
 ## Runbooks
 
