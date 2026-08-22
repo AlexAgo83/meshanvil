@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-22 17:08:53
+> Indicators reviewed: 2026-08-23 01:22:48
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -53,6 +53,9 @@ flowchart TD
 - **Engines are located, then overridden.** The macOS bundle, the Windows install directory, a binary on PATH, each superseded by `MESHANVIL_BLENDER` or `MESHANVIL_FREECAD`. A missing engine is exit code 2 with a message naming the override.
 - **Paths are translated at the engine boundary, not before.** When the host runs in WSL and the engine is a Windows binary, every path in the job is converted with `wslpath` on the way in and back on the way out. Verified: the Windows Blender runs from WSL both on a script under `C:` and on a script inside the WSL filesystem reached through a `\\wsl.localhost` UNC path, reporting the same Python 3.13.13 in both.
 - **The viewer is opened by the platform's own opener, and WSL is the exception.** `wslview` is absent there and `xdg-open` has no browser behind it; `explorer.exe` is what works.
+- **Amendment, 2026-08-23: the served viewer is now the default.** `meshanvil view` starts the loopback server, reuses a live viewer for the same project when one answers its liveness probe, and keeps the opened-from-disk snapshot behind `meshanvil view --file`. The snapshot still writes `work/viewer/data.js` and still opens with no server.
+- **Amendment, 2026-08-23: auto-refresh is delivered with stdlib polling and browser primitives.** The server exposes `/api/data` for the current payload and `/api/events` as a server-sent event stream carrying component names, not report data. The client refetches the payload and rerenders; when `EventSource` is unavailable it falls back to a self-throttling timer. There is no websocket and no file-watching dependency.
+- **Amendment, 2026-08-23: the client has a build step.** Source lives under `viewer/src/`, esbuild bundles it to the committed classic script `viewer/viewer.js`, and `make check` fails if the bundle is stale. This exercises the migration path this ADR already named. The rejected alternative was a hand-written concatenator in Python: it would be more local code to own than the devDependency it avoids.
 
 
 # Layout and the import rule
@@ -85,6 +88,8 @@ work/                    everything generated, never versioned
 - Two codebases in one repository with a hard rule between them: `tools/` and `pipeline/` import `bpy`, `bin/` and the host module never do. A host module importing `bpy` is a defect, and it is cheap to check.
 - The report writer cannot use anything Blender does not ship. No `pydantic`, no schema library: validation is a function.
 - The serverless viewer duplicates the report data into `data.js`. For a chain of tens of operations that is kilobytes; renders stay referenced by path, not inlined, so the page stays small. If a chain ever makes that file heavy, `--serve` already exists as the answer.
+- That answer is now the default mode because it is the only one that can stay current. The file snapshot remains the offline fallback and compatibility path; it is no longer the normal workflow for watching reports land.
+- The event stream's idle bound is explicit in code: each poll sleeps at least 1 second and otherwise at least 20 times the signature-scan cost. The browser smoke covers the fallback path by disabling `EventSource` and proving a report written after page load appears without a reload.
 - `--serve` is no longer only that answer: `adr_007_let_the_served_viewer_execute_a_closed_command_set` adds one endpoint to this same server, so a served page can run a closed set of commands a `file://` page can only copy. The bind address, the opt-in nature, and the read-only file serving this ADR decided are unchanged; the new endpoint is additional surface on the same process, not a second one.
 - Correction to `adr_002`: the vendored Mermaid bundle is no longer what draws the chain, since the graph is our own SVG. The dependency stands on the pinned CLI and the viewer conventions; Mermaid is now only an export format.
 - Type checking runs in `make check` once the viewer exists, on the same footing as the Python compile step. The configuration lands with the code it checks, not before: a `tsconfig.json` checking nothing is a file that only ever gets stale.
