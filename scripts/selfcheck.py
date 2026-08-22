@@ -57,6 +57,50 @@ def check_parent(tmp: Path):
     assert runner.resolve_parent(tmp, "nope") is None
 
 
+def check_projects(tmp: Path):
+    """Two projects, and nothing crosses between them.
+
+    Every namespace here reads whatever directory it is handed, so isolation is a property of
+    which root each call receives. That is exactly what regresses the first time a path
+    constant is reached for directly, and it is invisible until a second project exists.
+    """
+    from meshanvil import paths
+
+    alpha, beta = tmp / "alpha", tmp / "beta"
+    for project in (alpha, beta):
+        root, fresh = paths.initialise(project)
+        assert fresh and (root / paths.MARKER).is_dir(), root
+
+    assert paths.resolve(alpha)[0] == alpha.resolve(), paths.resolve(alpha)
+    assert paths.resolve(alpha)[1] == paths.BY_MARKER
+    # A directory under a project belongs to it; the walk-up is what makes that true.
+    inner = alpha / "work" / "out"
+    assert paths.resolve(inner)[0] == alpha.resolve(), paths.resolve(inner)
+    # Nothing above either of them is a project, so an unmarked directory is the installation.
+    assert paths.resolve(tmp)[1] == paths.BY_INSTALLATION, paths.resolve(tmp)
+
+    # Identity restarts per project rather than continuing another one's numbering.
+    first_a, path_a = runner.allocate(alpha, "op", None)
+    assert first_a == "001", first_a
+    path_a.write_text(json.dumps({"id": "001", "links": {"parent": None},
+                                  "output": {"sha256": "shared"}}), encoding="utf-8")
+    first_b, path_b = runner.allocate(beta, "op", None)
+    assert first_b == "001", f"beta continued alpha's numbering: {first_b}"
+    path_b.write_text(json.dumps({"id": "001", "links": {"parent": None}}), encoding="utf-8")
+
+    # Two projects opened from the same source share a fingerprint and must still not be
+    # linked: parentage is resolved inside a project, never across the disk.
+    assert runner.resolve_parent(alpha, "shared") == "001"
+    assert runner.resolve_parent(beta, "shared") is None, "a parent was resolved across projects"
+
+    # Retention counts one project's reports, not another's activity.
+    dropped, _ = prune.run(beta, 0, dry_run=True)
+    assert all(alpha not in path.parents for path, _ in dropped), dropped
+
+    code = paths.code_root()
+    assert code != alpha.resolve() and (code / "meshanvil" / "paths.py").is_file(), code
+
+
 def check_bbox_delta():
     before = {"bbox_mm": {"min": [-268.0, -247.2, 52.5], "max": [4.4, 127.5, 194.8]}}
     after = {"bbox_mm": {"min": [-268.0, 22.5, 52.5], "max": [-205.1, 127.5, 157.5]}}
@@ -217,6 +261,7 @@ def main() -> int:
         check_parameters()
         check_identity(tmp)
         check_parent(tmp)
+        check_projects(tmp)
         check_bbox_delta()
         check_refusals()
         check_i18n()
