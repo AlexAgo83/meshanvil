@@ -1,14 +1,14 @@
 ## item_025_prove_the_isolation_and_keep_the_current_setup_working - Prove the isolation and keep the current setup working
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:34:51
+> Indicators reviewed: 2026-08-22 15:00:07
 
 # AI Context
 - Summary: Isolation that is not asserted is lost the first time a path constant moves. Two projects must be run against each other in the self-check, and the browser smoke must fail when the switcher is gone, while the demo chain keeps running unchanged against the installation.
@@ -53,3 +53,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`
+
+# Notes
+- Task `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher` was finished via `logics-manager flow finish task` on 2026-08-22.

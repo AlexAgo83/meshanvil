@@ -1,14 +1,14 @@
 ## item_021_split_the_code_root_from_the_work_root - Split the code root from the work root
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:34:51
+> Indicators reviewed: 2026-08-22 15:00:07
 
 # AI Context
 - Summary: One value answers two questions today: `manifests.root()` locates both the installed code and the operator's work. This separates them and moves every call site to the one it meant, including the job file the engine reads to import its package and place renders.
@@ -52,3 +52,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`
+
+# Notes
+- Task `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher` was finished via `logics-manager flow finish task` on 2026-08-22.

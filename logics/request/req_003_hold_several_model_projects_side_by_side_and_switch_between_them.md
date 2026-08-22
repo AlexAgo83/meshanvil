@@ -1,13 +1,13 @@
 ## req_003_hold_several_model_projects_side_by_side_and_switch_between_them - Hold several model projects side by side and switch between them
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 13:37:01
+> Indicators reviewed: 2026-08-22 15:00:06
 
 # AI Context
 - Summary: One installation currently owns one work directory, so every model an operator opens shares the same reports, identity counter, retention window and viewer page. This separates the installed code from a project's work, makes each namespace per project, and lets the viewer move between projects.

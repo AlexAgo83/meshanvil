@@ -1,11 +1,12 @@
 ## prod_004_multi_project_operator_workspaces - Multi-project operator workspaces
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_003_hold_several_model_projects_side_by_side_and_switch_between_them`
-> Related backlog: `item_021_split_the_code_root_from_the_work_root`, `item_022_resolve_the_active_project_without_an_invisible_setting`, `item_023_scope_identity_parentage_and_retention_to_one_project`, `item_024_add_a_project_switcher_to_the_viewer`, `item_025_prove_the_isolation_and_keep_the_current_setup_working`
+> Related backlog: `item_021_split_the_code_root_from_the_work_root`
 > Related task: `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 15:00:07
 
 # Overview
 Lets one installation serve several model projects, each with its own reports, artefacts and viewer, and lets the operator move between them from the page instead of rebuilding it.
@@ -51,5 +52,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_003_hold_several_model_projects_side_by_side_and_switch_between_them`
+- Product back-reference: `item_021_split_the_code_root_from_the_work_root`
 - Task back-reference: `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`

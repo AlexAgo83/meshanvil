@@ -1,14 +1,14 @@
 ## item_023_scope_identity_parentage_and_retention_to_one_project - Scope identity, parentage and retention to one project
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:34:51
+> Indicators reviewed: 2026-08-22 15:00:07
 
 # AI Context
 - Summary: Three namespaces scan the whole report directory: identity allocation, parent resolution by input fingerprint, and prune's retention window. Each has to look at one project only, without weakening the exclusive-create arbitration that keeps two runners in one project apart.
@@ -52,3 +52,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`
+
+# Notes
+- Task `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher` was finished via `logics-manager flow finish task` on 2026-08-22.

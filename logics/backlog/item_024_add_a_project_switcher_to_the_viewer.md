@@ -1,14 +1,14 @@
 ## item_024_add_a_project_switcher_to_the_viewer - Add a project switcher to the viewer
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:34:51
+> Indicators reviewed: 2026-08-22 15:00:07
 
 # AI Context
 - Summary: The page is built for one report directory and names a fixed path. It has to list the projects that hold reports, let the operator select one, and scope every count and total to the one shown -- without a rebuild, a request or a write.
@@ -54,3 +54,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher`
+
+# Notes
+- Task `task_017_deliver_multi_project_workspaces_and_the_viewer_switcher` was finished via `logics-manager flow finish task` on 2026-08-22.
