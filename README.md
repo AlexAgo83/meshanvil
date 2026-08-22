@@ -187,12 +187,11 @@ tools/build_demo_chain.sh [asset.blend]        # a render-scale subject
 tools/build_figurine_chain.sh [asset.blend]    # a small, sound subject
 ```
 
-Given no argument, each defaults to a hand-modelled subject checked in under
-`logics/external/modeles-3D/` -- authored for this project, nothing downloaded, nothing to
-license. `tools/make_demo_vehicle.py` and `tools/make_demo_figure.py` build the same kind of
-subject from primitives instead, with no donor file at all; generate one and pass it as the
-argument to use it in either chain's place. No operation in either chain is specific to one
-subject.
+Given no argument, each defaults to a hand-modelled subject committed under `fixtures/` --
+authored for this project, nothing downloaded, nothing to license. `tools/make_demo_vehicle.py`
+and `tools/make_demo_figure.py` build the same kind of subject from primitives instead, with no
+donor file at all, and are what each chain falls back to if its fixture is ever missing. Any
+`.blend` works in either chain's place; no operation in either chain is specific to one subject.
 
 The vehicle-scale chain is built to expose defects a render asset typically carries and a
 printing pipeline cannot ignore: on the current subject, `scan_defects` finds a real coincident

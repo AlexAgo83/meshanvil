@@ -736,6 +736,12 @@ function showSplash(show) {
   go.textContent = empty ? t("ui.splash_nothing") : t("ui.splash_continue");
   go.disabled = empty;
   document.getElementById("splash").classList.toggle("hidden", !show);
+  // Opening the splash is reached from a File-menu row, whose own click handler returns
+  // early (the row is inside the open <details>, so the generic "click outside a menu
+  // closes it" check at the bottom of the click listener never runs) -- left the dropdown
+  // sitting open on top of the modal it just opened.
+  if (show) for (const menu of document.querySelectorAll("details.menu[open]"))
+    /** @type {HTMLDetailsElement} */ (menu).open = false;
 }
 
 function jumpReportSection(section) {

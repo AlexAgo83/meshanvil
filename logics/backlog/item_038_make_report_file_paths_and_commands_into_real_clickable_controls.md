@@ -1,13 +1,14 @@
 ## item_038_make_report_file_paths_and_commands_into_real_clickable_controls - Make report file paths and commands into real, clickable controls
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 23:15:12
 
 # AI Context
 - Summary: (unfilled: replace before this doc is used)

@@ -3,11 +3,10 @@
 # the real CLI. Nothing here fabricates a report -- every number in work/ops/ comes out of
 # Blender, which is the whole point of the viewer.
 #
-# No donor file is shipped: given no argument, this prefers a hand-modelled asset under
-# logics/external/modeles-3D/ if one is present locally (that path is gitignored -- a personal
-# asset, never committed, never shipped with the repo), and falls back to generating one from
-# primitives with tools/make_demo_vehicle.py otherwise, so a fresh clone always has a subject
-# to run this on with nothing to license.
+# Given no argument, this uses the hand-modelled asset committed at fixtures/, authored for
+# this project -- nothing downloaded, nothing to license. tools/make_demo_vehicle.py (a
+# from-primitives generator, no donor file at all) is the fallback if that fixture is ever
+# missing, so this always has a subject to run on.
 #
 # Any .blend works in this chain's place; no operation in it is specific to one subject.
 #
@@ -21,14 +20,14 @@ INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
 M="$INSTALL/bin/meshanvil"
 BLENDER="${MESHANVIL_BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}"
 PROJECT="$INSTALL/work/demo/vehicle"
-LOCAL_ASSET="$INSTALL/logics/external/modeles-3D/base_meshanvil_vehicle.blend"
+FIXTURE_ASSET="$INSTALL/fixtures/base_meshanvil_vehicle.blend"
 
 ASSET="${1:-}"
 if [ -z "$ASSET" ]; then
-  if [ -f "$LOCAL_ASSET" ]; then
-    ASSET="$LOCAL_ASSET"
+  if [ -f "$FIXTURE_ASSET" ]; then
+    ASSET="$FIXTURE_ASSET"
   else
-    echo "== generating a vehicle-scale asset (no local or given asset)"
+    echo "== generating a vehicle-scale asset (fixture missing, no asset given)"
     ASSET="$INSTALL/work/out/generated_vehicle.blend"
     "$BLENDER" -b -P "$INSTALL/tools/make_demo_vehicle.py" -- "$ASSET"
   fi

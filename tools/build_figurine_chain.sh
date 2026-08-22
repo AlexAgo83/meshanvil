@@ -5,11 +5,11 @@
 # reporting nothing, and that is the point -- a demonstration where every check fires on
 # everything never shows that the checks discriminate.
 #
-# No donor file is shipped: given no argument, this prefers a hand-modelled asset under
-# logics/external/modeles-3D/ if one is present locally (that path is gitignored -- a personal
-# asset, never committed, never shipped with the repo), and falls back to generating one from
-# primitives with tools/make_demo_figure.py otherwise, so a fresh clone always has a sound,
-# closed subject with a genuinely thin feature (fingers) for the branch below to expose.
+# Given no argument, this uses the hand-modelled asset committed at fixtures/, authored for
+# this project -- nothing downloaded, nothing to license. tools/make_demo_figure.py (a
+# from-primitives generator, no donor file at all) is the fallback if that fixture is ever
+# missing, so this always has a sound, closed subject with a genuinely thin feature (fingers)
+# for the branch below to expose.
 #
 # The branch at the end is the lesson the vehicle cannot carry. It is remeshed at its real
 # size, where a voxel in millimetres and a voxel as a fraction of the subject feel like the
@@ -24,14 +24,14 @@ INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
 M="$INSTALL/bin/meshanvil"
 BLENDER="${MESHANVIL_BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}"
 PROJECT="$INSTALL/work/demo/figurine"
-LOCAL_ASSET="$INSTALL/logics/external/modeles-3D/base_meshanvil_figurine.blend"
+FIXTURE_ASSET="$INSTALL/fixtures/base_meshanvil_figurine.blend"
 
 ASSET="${1:-}"
 if [ -z "$ASSET" ]; then
-  if [ -f "$LOCAL_ASSET" ]; then
-    ASSET="$LOCAL_ASSET"
+  if [ -f "$FIXTURE_ASSET" ]; then
+    ASSET="$FIXTURE_ASSET"
   else
-    echo "== generating a figurine-scale asset (no local or given asset)"
+    echo "== generating a figurine-scale asset (fixture missing, no asset given)"
     ASSET="$INSTALL/work/out/generated_figure.blend"
     "$BLENDER" -b -P "$INSTALL/tools/make_demo_figure.py" -- "$ASSET"
   fi

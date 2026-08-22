@@ -1,13 +1,14 @@
 ## item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures - Commit the two hand-modelled demo assets as project fixtures
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 23:15:12
 
 # AI Context
 - Summary: (unfilled: replace before this doc is used)
