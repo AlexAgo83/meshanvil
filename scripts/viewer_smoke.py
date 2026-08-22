@@ -18,6 +18,20 @@ SERVED_SMOKE = r"""
   };
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const run = async () => {
+    // The regression this guards: http.server never serves above the directory it is given,
+    // so serving only work/viewer/ left every render under work/renders/ 404ing on a served
+    // page while the identical file:// page (no server, no root to escape) loaded them fine.
+    select(DATA.reports[0].id);   // the first report of a demo chain always carries a render
+    await new Promise((done) => setTimeout(done, 100));
+    const shown = document.querySelector("#pvstage img");
+    assert(shown, "no render is shown on the served page");
+    await new Promise((done) => {
+      if (shown.complete) return done();
+      shown.addEventListener("load", done, { once: true });
+      shown.addEventListener("error", done, { once: true });
+    });
+    assert(shown.naturalWidth > 0, `a render 404'd on the served page: ${shown.src}`);
+
     document.querySelector(".menu").open = true;
     const button = document.querySelector('[data-run="list"]');
     assert(button, "the List operations row carries no data-run");
@@ -281,7 +295,7 @@ def check_served(chrome: str, project: Path) -> None:
         smoke_page.write_text((served_dir / "index.html").read_text(encoding="utf-8")
                               .replace("</body>", SERVED_SMOKE + "\n</body>"), encoding="utf-8")
         try:
-            url = f"http://127.0.0.1:{port}/served_smoke.html"
+            url = f"http://127.0.0.1:{port}/viewer/served_smoke.html"
             live = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
                     "--use-mock-keychain", "--password-store=basic", "--no-first-run",
                     "--window-size=1200,900", "--virtual-time-budget=5000"]

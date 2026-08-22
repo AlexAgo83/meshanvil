@@ -166,10 +166,10 @@ def make_server(directory: Path, root: Path, token: str) -> http.server.Threadin
     return http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
 
 
-def serve(directory: Path, root: Path, token: str) -> None:
+def serve(directory: Path, root: Path, token: str, entry: str) -> None:
     with make_server(directory, root, token) as server:
         port = server.server_address[1]
-        print(t("view.serving", port=port))
+        print(t("view.serving", port=port, entry=entry))
         try:
             server.serve_forever()
         except KeyboardInterrupt:
@@ -185,9 +185,14 @@ def view(serve_it: bool = False, open_it: bool = True) -> int:
     )["reports"])
     print(t("view.built", path=page.relative_to(root), count=count))
     if serve_it:
+        # adr_004: "It serves work/ read-only" -- serving only work/viewer/ (the page's own
+        # directory) left every render under work/renders/ unreachable, since http.server
+        # never serves above the directory it is given. work/ is the directory that holds
+        # both, so it is the one that has to be the server's root.
+        served_root = root / "work"
         if open_it:
             print(t("view.open_address"))
-        serve(page.parent, root, token)
+        serve(served_root, root, token, str(page.relative_to(served_root)))
         return 0
     if open_it:
         open_in_browser(page)

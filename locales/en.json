@@ -78,7 +78,7 @@
   },
   "view": {
     "built": "{path}  ({count} reports)",
-    "serving": "http://127.0.0.1:{port}/  (ctrl-c to stop)",
+    "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c to stop)",
     "open_address": "open the address below in a browser"
   },
   "bridge": {
