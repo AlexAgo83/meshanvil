@@ -186,7 +186,12 @@ function chainName(reports) {
 }
 
 function docFromRef(ref) {
-  return (DATA.runbooks || []).find((item) => item.ref === ref) || (DATA.docs || {})[ref] || { ref };
+  // list-docs (DATA.runbooks) gives title/status/kind for every runbook, applied or not.
+  // read-doc (DATA.docs) gives the full content, but only for refs a report or a runbook
+  // actually names. A runbook read from the list needs both merged, content on top.
+  const meta = (DATA.runbooks || []).find((item) => item.ref === ref);
+  const full = (DATA.docs || {})[ref];
+  return { ref, ...meta, ...full };
 }
 
 function docPurpose(doc) {
@@ -381,6 +386,7 @@ function props() {
     const doc = docFromRef(currentDoc);
     const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(currentDoc));
     target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
+      ${doc.content ? block(t("ui.runbook_content"), `<pre class="doccontent">${esc(doc.content)}</pre>`, "input") : ""}
       ${block(t("ui.applied_by"), applied.length ? applied.map((report) => `<button type="button" class="docref docref--op" data-id="${esc(report.id)}"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></button>`).join("") : `<div class="note">${esc(t("ui.not_applied"))}</div>`, "links")}`;
     return;
   }

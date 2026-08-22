@@ -78,13 +78,18 @@ def build(root: Path) -> Path:
     # the command was typed sends a reader to the splash while the reports sit one click away.
     # The splash still states where a run would land, which is the question the root answers.
     active = next((entry for entry in known if entry["reports"]), known[0])
+    runbooks = logics_bridge.runbooks(paths.code_root())
+    # A report links only the docs it applied. A runbook nobody has applied yet is still
+    # listed (that's the point -- a dormant method stays visible), so reading it from the
+    # list needs its content fetched here too, not just the ones a report already points to.
     refs = {ref for entry in known for report in entry["reports"]
             for ref in report.get("links", {}).get("docs", [])}
+    refs |= {doc["ref"] for doc in runbooks}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings,
                "projects": known, "active": active["name"],
                "reports": active["reports"], "docs": logics_bridge.documents(refs),
-               "runbooks": logics_bridge.runbooks(paths.code_root()), "doctor": collect_doctor(root),
+               "runbooks": runbooks, "doctor": collect_doctor(root),
                "ops_exists": active["ops_exists"]}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")

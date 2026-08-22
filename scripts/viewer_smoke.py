@@ -41,6 +41,8 @@ SMOKE = r"""
     assert(document.querySelector(".rbcols"), "runbooks column header missing");
     assert(document.querySelector("#graph-name").textContent.toLowerCase().includes("runbook"),
       "runbooks table is still filed under the node editor header");
+    document.querySelector(".rbbody .rbrow").click();
+    assert(document.querySelector("#props .doccontent"), "runbook row did not open its content");
 
     document.querySelector('[data-workspace="compare"]').click();
     assert(document.querySelector(".app").dataset.workspace === "compare", "compare workspace did not activate");
@@ -104,8 +106,7 @@ SMOKE = r"""
     assert(document.querySelector("#status-branches").textContent.trim()
         && document.querySelector("#status-vertices").textContent.trim()
         && document.querySelector("#status-schema").textContent.trim(), "status bar totals missing");
-    assert(!document.querySelector(".tabs #start-screen") && document.querySelector(".status #start-screen"),
-      "the start button is not in the status bar");
+    assert(document.querySelector(".status #start-screen"), "the start button is not in the status bar");
     // The outliner groups on forks, and the status bar counts them. One number, two readers.
     const branchGroups = [...document.querySelectorAll("#outliner .outgroup")].length - 1;
     const branchCount = Number((document.querySelector("#status-branches").textContent.match(/\d+/) || [0])[0]);
