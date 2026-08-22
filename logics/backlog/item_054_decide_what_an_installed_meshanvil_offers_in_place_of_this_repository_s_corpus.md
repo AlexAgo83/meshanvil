@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:26
+> Indicators reviewed: 2026-08-23 01:05:30
 
 # AI Context
 - Summary: Settles what the runbook workspace shows when the installation is not this repository: shipped content, the project's own, or an explained empty state.
@@ -42,6 +42,7 @@
 - `purpose()` (`meshanvil/logics_bridge.py:52`) reads a line out of each runbook file directly, so the runbook workspace needs the files themselves, not just metadata -- shipping "just the index" is not one of the options.
 - The viewer already lists runbooks nobody has applied, deliberately (`meshanvil/viewer.py:90` says why). An empty workspace is therefore a state the design already has an opinion about.
 - `adr_006_bridges_between_meshanvil_and_logics` is the decision this amends.
+- Recommendation, to argue with rather than to follow: read the runbooks of the project the tool is pointed at, ship none. It is the only option consistent with what already exists -- `logics_bridge` resolves against a root rather than a bundled copy, the installation-versus-project split already says a project holds its own work, shipping this repository's runbooks is already a non-goal of the request, and the empty state has a design opinion behind it (`meshanvil/viewer.py:90` explains why a runbook nobody has applied stays listed). The ADR may still choose otherwise; this is a starting position, not the decision.
 
 # Decision framing
 - Product framing: Not needed

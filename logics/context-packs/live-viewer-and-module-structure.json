@@ -130,7 +130,7 @@
         "Acceptance criteria": [
           "- AC1: A served page renders from the route, not from the generated file.",
           "- AC2: A page opened from disk renders exactly as it does today.",
-          "- AC3: A report rendered before and after this change is identical."
+          "- AC3: A report rendered before and after this change is identical, compared against a baseline captured before any code in this request was touched."
         ],
         "Problem": [
           "- The payload is written into `work/viewer/data.js` when the command runs, so the page is a snapshot: reloading it cannot show a report that landed afterwards."
@@ -415,11 +415,11 @@
     }
   ],
   "estimates": {
-    "char_count": 22777,
+    "char_count": 22859,
     "companion_doc_count": 0,
     "doc_count": 10
   },
-  "generated_at": "2026-08-22T23:02:35Z",
+  "generated_at": "2026-08-22T23:05:44Z",
   "handoff": {
     "companion_doc_count": 0,
     "enabled": false,

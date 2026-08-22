@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:42:54
+> Indicators reviewed: 2026-08-23 01:05:31
 
 # AI Context
 - Summary: Sequences the pass: payload route first, then the event stream, then the host split, the ADR, the client split behind a committed bundle, and the test layout last.
@@ -20,6 +20,7 @@
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
 
 # Plan
+- [ ] 0. Capture the before-baseline this request is measured against, before touching any code: `python3 scripts/fixture_check.py` then `meshanvil view --no-open`, keeping `work/viewer/data.js` outside the tree. `work/` is gitignored, so nothing captures it for you.
 - [ ] 1. Serve the payload from a route, keeping the generated file as the opened-from-disk fallback.
 - [ ] 2. Make the served page what `meshanvil view` produces by default, reuse a live viewer per project, and pin its address.
 - [ ] 3. Add the standard-library event stream, the component-scoped client refetch and the throttled fallback; measure the idle cost.

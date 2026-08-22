@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:05:30
 
 # AI Context
 - Summary: The payload comes from a route on the served page and from the generated file only when the page was opened from disk.
@@ -31,7 +31,7 @@
 # Acceptance criteria
 - AC1: A served page renders from the route, not from the generated file.
 - AC2: A page opened from disk renders exactly as it does today.
-- AC3: A report rendered before and after this change is identical.
+- AC3: A report rendered before and after this change is identical, compared against a baseline captured before any code in this request was touched.
 
 # AC Traceability
 - request-AC1 -> This backlog slice. Proof: AC1: A served page renders from the route, not from the generated file.
@@ -44,6 +44,8 @@
 - One consumer disappears with the change: `view()` (`meshanvil/viewer.py:184`) counts reports by re-reading `data.js` and string-splitting on `"= "` (`meshanvil/viewer.py:184`). With the payload a return value, that parse of a file the same function just wrote goes away.
 - The served root is `root/"work"`, not `work/viewer` -- deliberately, so renders under `work/renders/` are reachable (`meshanvil/viewer.py:193` states why). A payload route lives under that root, so its path must not collide with a real file there.
 - The payload already includes every project, every catalogue and the doctor snapshot, so the route returns what `build()` returns; nothing new is computed.
+
+- The baseline AC3 compares against does not exist in the repository: `work/` is gitignored and empty on a fresh clone. Capture it first, before editing anything -- `python3 scripts/fixture_check.py` writes reports into `work/ops` (it needs Blender; `/Applications/Blender.app/Contents/MacOS/Blender` by default, `MESHANVIL_BLENDER` to override), then `meshanvil view --no-open` builds the page. Keep the resulting `work/viewer/data.js` outside the tree as the reference. Captured after the work has started, this criterion proves nothing.
 
 # Decision framing
 - Product framing: Not needed
