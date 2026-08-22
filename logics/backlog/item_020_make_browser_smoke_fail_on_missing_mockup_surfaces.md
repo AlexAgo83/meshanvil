@@ -1,14 +1,14 @@
 ## item_020_make_browser_smoke_fail_on_missing_mockup_surfaces - Make browser smoke fail on missing mockup surfaces
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Low
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:21:09
+> Indicators reviewed: 2026-08-22 02:29:58
 
 # AI Context
 - Summary: Extend the browser smoke so missing menu, Runbooks, splash or Compare surfaces fail automatically.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_016_deliver_remaining_viewer_mockup_parity_gaps`
+
+# Notes
+- Task `task_016_deliver_remaining_viewer_mockup_parity_gaps` was finished via `logics-manager flow finish task` on 2026-08-22.

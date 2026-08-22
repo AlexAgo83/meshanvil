@@ -1,14 +1,14 @@
 ## item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list - Build Runbooks as a primary workspace instead of an outliner-only list
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:21:09
+> Indicators reviewed: 2026-08-22 02:29:58
 
 # AI Context
 - Summary: Make Runbooks a central workspace with coverage rows and applied-operation chips, not only an outliner/detail side feature.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_016_deliver_remaining_viewer_mockup_parity_gaps`
+
+# Notes
+- Task `task_016_deliver_remaining_viewer_mockup_parity_gaps` was finished via `logics-manager flow finish task` on 2026-08-22.

@@ -1,13 +1,13 @@
 ## req_002_close_the_remaining_local_viewer_mockup_parity_gaps - Close the remaining local viewer mockup parity gaps
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:29:09
+> Indicators reviewed: 2026-08-22 02:29:57
 
 # AI Context
 - Summary: Follow-up viewer parity request for the mockup blocks missed by the first pass: command menus, Runbooks, splash and Compare.

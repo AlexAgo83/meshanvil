@@ -1,12 +1,12 @@
 ## prod_003_strict_local_viewer_mockup_parity_closure - Strict local viewer mockup parity closure
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_002_close_the_remaining_local_viewer_mockup_parity_gaps`
-> Related backlog: `item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface`, `item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list`, `item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout`, `item_020_make_browser_smoke_fail_on_missing_mockup_surfaces`
+> Related backlog: `item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface`
 > Related task: `task_016_deliver_remaining_viewer_mockup_parity_gaps`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:18:05
+> Indicators reviewed: 2026-08-22 02:29:58
 
 # Overview
 Tightens the viewer parity scope after the first pass by requiring the specific reviewed mockup surfaces that remain visibly different from the current implementation.
@@ -47,5 +47,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_002_close_the_remaining_local_viewer_mockup_parity_gaps`
+- Product back-reference: `item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface`
 - Task back-reference: `task_016_deliver_remaining_viewer_mockup_parity_gaps`
