@@ -20,6 +20,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"meshanvil {VERSION}")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help=t("cli.list.help"))
+    started = sub.add_parser("init", help=t("cli.init.help"))
+    started.add_argument("directory", nargs="?", default=".")
     sub.add_parser("doctor", help=t("cli.doctor.help"))
     run = sub.add_parser("run", help=t("cli.run.help"))
     run.add_argument("operation")
@@ -58,8 +60,19 @@ def main(argv: list[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     if arguments.command == "list":
         return show_list()
+    if arguments.command == "init":
+        root, fresh = paths.initialise(arguments.directory)
+        # Literal keys: the i18n check reads the source, and a key hidden behind a
+        # conditional reads as unused right up until a locale drops it.
+        if fresh:
+            print(t("cli.project.made", name=paths.name(root), path=root))
+        else:
+            print(t("cli.project.already", name=paths.name(root), path=root))
+        return runner.EXIT_OK
     if arguments.command == "doctor":
-        result = doctor.check(paths.work_root())
+        active, rule = paths.resolve()
+        print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
+        result = doctor.check(active)
         print(json.dumps(result, indent=1))
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":

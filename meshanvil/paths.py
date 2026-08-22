@@ -73,3 +73,18 @@ def projects(root: Path | None = None) -> list[Path]:
             if (candidate / MARKER).is_dir() and (candidate / "work" / "ops").is_dir():
                 found.append(candidate.resolve())
     return found
+
+
+def initialise(root: Path) -> tuple[Path, bool]:
+    """Make a directory a project. Idempotent: running it twice is not an error.
+
+    Only the marker and the work directories. There is nothing to configure, because a
+    project is a place, not a set of settings.
+    """
+    root = Path(root).expanduser().resolve()
+    marker = root / MARKER
+    fresh = not marker.is_dir()
+    marker.mkdir(parents=True, exist_ok=True)
+    for directory in ("in", "out", "ops", "renders"):
+        (root / "work" / directory).mkdir(parents=True, exist_ok=True)
+    return root, fresh

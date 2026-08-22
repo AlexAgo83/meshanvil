@@ -3,7 +3,7 @@ from __future__ import annotations
 import json, os, shutil
 from pathlib import Path
 
-from . import engines
+from . import engines, paths
 from .i18n import t
 
 CACHE = "work/.doctor-cache.json"
@@ -81,7 +81,11 @@ def check(root: Path) -> dict:
         item["reason"] = _reason(item["name"])
     requirements = [*current, work(root)]
     blocker = next((item["name"] for item in requirements if item["required"] and item["state"] != "found"), None)
-    result = {"ok": blocker is None, "next": blocker, "requirements": requirements}
+    active, rule = paths.resolve()
+    # An operator has to be able to see where a destructive run will land, and the working
+    # directory only tells them that if the tool says what it made of it.
+    result = {"ok": blocker is None, "next": blocker, "requirements": requirements,
+              "project": {"name": paths.name(active), "path": str(active), "resolved_by": rule}}
     report_path = root / REPORT
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")

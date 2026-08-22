@@ -35,6 +35,14 @@
     "version_help": "show program's version number and exit",
     "set": {
       "malformed": "--set expects NAME=VALUE, got {pair}"
+    },
+    "init": {
+      "help": "make this directory a project and create its work directories"
+    },
+    "project": {
+      "made": "project {name} ready at {path}",
+      "already": "{path} is already a project",
+      "where": "project {name} ({path}), resolved by {rule}"
     }
   },
   "list": {

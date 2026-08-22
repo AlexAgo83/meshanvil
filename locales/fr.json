@@ -35,6 +35,14 @@
     "version_help": "afficher le numéro de version du programme et quitter",
     "set": {
       "malformed": "--set attend NOM=VALEUR, reçu {pair}"
+    },
+    "init": {
+      "help": "faire de ce répertoire un projet et créer ses dossiers de travail"
+    },
+    "project": {
+      "made": "projet {name} prêt dans {path}",
+      "already": "{path} est déjà un projet",
+      "where": "projet {name} ({path}), résolu par {rule}"
     }
   },
   "list": {
