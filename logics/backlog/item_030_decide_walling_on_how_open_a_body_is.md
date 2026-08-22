@@ -1,13 +1,14 @@
 ## item_030_decide_walling_on_how_open_a_body_is - Decide walling on how open a body is
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:02:34
 
 # AI Context
 - Summary: Walling skips a body only at exactly zero open edges. A sculpt with 4 open edges out of 14 803 faces was walled, doubling its vertices and hollowing a solid body, and the report said `walled 1` without saying that was wrong.

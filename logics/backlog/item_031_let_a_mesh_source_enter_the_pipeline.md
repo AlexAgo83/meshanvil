@@ -1,13 +1,14 @@
 ## item_031_let_a_mesh_source_enter_the_pipeline - Let a mesh source enter the pipeline
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:02:34
 
 # AI Context
 - Summary: The only import operation reads STEP through FreeCAD, so a subject delivered as a mesh file has to be converted by a hand-run script that leaves no report and no fingerprint. The chain then starts with no recorded input.

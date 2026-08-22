@@ -1,13 +1,15 @@
 ## task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong - Fix the guards that pass while the geometry is wrong
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: Claude
+> Indicators reviewed: 2026-08-22 14:02:34
 
 # AI Context
 - Summary: Orchestrates three corrections to checks that report what they did not measure, each reproduced on the asset that exposed it, each left with a check that fails if it regresses.

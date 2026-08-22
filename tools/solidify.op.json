@@ -23,6 +23,12 @@
       "default": true
     },
     {
+      "name": "closed_tolerance",
+      "type": "float",
+      "default": 0.01,
+      "unit": "share"
+    },
+    {
       "name": "thickness_clamp",
       "type": "float",
       "default": 1.0,
