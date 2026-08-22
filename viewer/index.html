@@ -16,8 +16,8 @@
         <span class="grp" data-i18n="ui.menu_group_project">Project</span>
         <button type="button" class="cmdrow" data-splash="open"><span data-i18n="ui.command_start">Start screen</span><kbd>Ctrl N</kbd></button>
         <span class="sep"></span>
-        <span class="cmdrow"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></span>
-        <span class="cmdrow"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></span>
+        <button type="button" class="cmdrow" data-copy="meshanvil list"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></button>
+        <button type="button" class="cmdrow" data-copy="meshanvil doctor"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></button>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_view">View</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.workspace">Workspace</span>
@@ -25,8 +25,8 @@
         <button type="button" class="cmdrow" role="tab" aria-selected="false" data-workspace="compare"><span data-i18n="ui.workspace_compare">Compare</span><kbd>2</kbd></button>
         <button type="button" class="cmdrow" role="tab" aria-selected="false" data-workspace="runbooks"><span data-i18n="ui.workspace_runbooks">Runbooks</span><kbd>3</kbd></button>
         <span class="sep"></span>
-        <span class="cmdrow"><span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code></span>
-        <span class="cmdrow"><span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code></span>
+        <button type="button" class="cmdrow" data-copy="meshanvil view --serve"><span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code></button>
+        <button type="button" class="cmdrow" data-copy="meshanvil prune --dry-run"><span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code></button>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_report">Report</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.menu_group_sections">Sections</span>
@@ -37,7 +37,7 @@
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_help">Help</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.menu_group_docs">Docs</span>
-        <span class="cmdrow"><span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code></span>
+        <button type="button" class="cmdrow" data-copy="meshanvil runbook <report-id>"><span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code></button>
         <span class="sep"></span>
         <span class="grp" data-i18n="ui.menu_group_language">Language</span>
         <button type="button" class="cmdrow" role="tab" aria-selected="true" data-lang="en"><span>English</span></button>

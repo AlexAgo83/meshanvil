@@ -178,6 +178,7 @@
     "command_view": "Rafraîchir le visualiseur",
     "command_prune": "Prévisualiser la purge",
     "command_runbook": "Créer un runbook",
+    "copied": "copié ✓",
     "workspace": "Espace de travail",
     "workspace_chain": "Chaîne",
     "workspace_compare": "Comparer",

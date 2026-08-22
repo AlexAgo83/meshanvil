@@ -20,7 +20,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---------- topbar ---------- */
 .topbar{background:var(--head);display:flex;align-items:center;gap:14px;padding:0 10px;height:34px;flex:none}
 .brand{display:flex;align-items:center;gap:7px}
-.brand .mark{width:20px;height:20px;display:block}
+.brand .mark{width:26px;height:26px;display:block}
 .brand .wordmark{font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.6px;
   background:linear-gradient(150deg,var(--active),#c4713a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .menubar{display:flex;gap:2px;color:var(--dim)}

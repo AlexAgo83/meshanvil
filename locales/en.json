@@ -178,6 +178,7 @@
     "command_view": "Refresh viewer",
     "command_prune": "Preview pruning",
     "command_runbook": "Create a runbook",
+    "copied": "copied ✓",
     "workspace": "Workspace",
     "workspace_chain": "Chain",
     "workspace_compare": "Compare",

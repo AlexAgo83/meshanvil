@@ -24,6 +24,12 @@ SMOKE = r"""
     const fileMenu = document.querySelector(".menu");
     fileMenu.open = true;
     assert(document.querySelector(".dropdown .grp") && document.querySelector(".cmdrow code"), "command menu surface missing");
+    // The clipboard itself needs a focused, permissioned window that headless Chrome never
+    // has -- both navigator.clipboard and execCommand("copy") reject here on principle, not
+    // on a bug. What the smoke can prove is that clicking the row is safe either way.
+    const listRow = document.querySelector('[data-copy="meshanvil list"]');
+    assert(listRow && listRow.tagName === "BUTTON", "a menu command is not a clickable button");
+    listRow.click();
     fileMenu.open = false;
 
     document.querySelector("#start-screen").click();

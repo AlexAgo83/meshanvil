@@ -631,6 +631,38 @@ function setLanguage(code) {
   renderSplash();
 }
 
+/** The viewer reads and starts no process -- adr_003. A menu command cannot run itself, but
+    it can put its exact text where a terminal is one paste away. */
+function copyCommand(button) {
+  const code = button.querySelector("code");
+  const text = button.dataset.copy || (code ? code.textContent : "");
+  const original = code ? code.textContent : "";
+  const flash = () => {
+    if (!code) return;
+    code.textContent = t("ui.copied");
+    setTimeout(() => { code.textContent = original; }, 900);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(flash, () => legacyCopy(text, flash));
+  } else {
+    legacyCopy(text, flash);
+  }
+}
+
+/** navigator.clipboard needs a secure context, and a page opened from file:// is not always
+    granted one. A hidden, selected textarea plus execCommand works everywhere it does not. */
+function legacyCopy(text, done) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.style.position = "fixed";
+  area.style.opacity = "0";
+  document.body.appendChild(area);
+  area.select();
+  try { document.execCommand("copy"); done(); }
+  catch { /* clipboard unavailable here; the command stays visible to copy by hand */ }
+  area.remove();
+}
+
 function renderSplash() {
   const doctor = /** @type {any} */ (DATA.doctor);
   // Where a run will land. The working directory chose it and the operator cannot see that
@@ -691,6 +723,8 @@ document.addEventListener("click", (event) => {
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const langTab = target.closest("[data-lang]");
   if (langTab) { setLanguage(/** @type {HTMLElement} */ (langTab).dataset.lang || "en"); return; }
+  const copy = target.closest("[data-copy]");
+  if (copy) { copyCommand(/** @type {HTMLElement} */ (copy)); return; }
   const goto = target.closest("[data-goto]");
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
   const viewTab = target.closest("[data-view]");
