@@ -1,5 +1,5 @@
 ## run_011_chain_002 - Chain 002
-> Status: Draft
+> Status: Archived
 > Category: other
 > Verified: Report facts captured; human procedure not yet verified
 > Related request: req_000_make_every_3d_operation_reviewable_without_reopening_blender
