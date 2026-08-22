@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:55:25
+> Indicators reviewed: 2026-08-22 02:02:07
 
 # AI Context
 - Summary: Add filter, labelled native comparison and no-data guidance without persisting state or expanding viewer authority.
@@ -55,3 +55,8 @@
 - AC2 | date: 2026-08-22 | command: `make check; make fixture` | result: passed | The native range comparison keeps keyboard adjustment and now labels before and after states visibly.
 - AC1 | date: 2026-08-22 | command: `make check; Chrome headless screenshot /tmp/meshanvil-viewer-task015.png` | result: passed | The outliner filter now applies in both chain and runbook workspaces, and the report rail jumps to existing rendered sections without persisting UI state.
 - AC3 | date: 2026-08-22 | command: `make check; make fixture; ./bin/meshanvil view --no-open` | result: passed | The first-run properties use local doctor and ops data only: setup, reports and contributor-tool states each include an explanation plus a valid command fallback.
+
+# AC Traceability
+- request-AC3 -> This task. Proof: `1d888c3`; `make check` and the Chrome task015 screenshot verified reversible filtering in chain and runbook workspaces plus report-section rail navigation.
+- request-AC4 -> This task. Proof: `1d888c3`; `make check`, `make fixture` and the Chrome task015 screenshot verified labelled before/after comparison with a native draggable and keyboard-adjustable range control.
+- request-AC5 -> This task. Proof: `1d888c3`; `make check`, `make fixture` and `./bin/meshanvil view --no-open` verified first-run command guidance and local doctor/report state explanations.
