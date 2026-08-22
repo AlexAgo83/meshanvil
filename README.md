@@ -187,18 +187,21 @@ tools/build_demo_chain.sh [asset.blend]        # a render-scale subject
 tools/build_figurine_chain.sh [asset.blend]    # a small, sound subject
 ```
 
-Neither ships a bundled example: given no argument, each generates its own subject from
-primitives (`tools/make_demo_vehicle.py`, `tools/make_demo_figure.py`) -- nothing to license,
-nothing to verify, everything regenerates. Point either at a `.blend` of your own instead; no
-operation in either chain is specific to one subject.
+Given no argument, each defaults to a hand-modelled subject checked in under
+`logics/external/modeles-3D/` -- authored for this project, nothing downloaded, nothing to
+license. `tools/make_demo_vehicle.py` and `tools/make_demo_figure.py` build the same kind of
+subject from primitives instead, with no donor file at all; generate one and pass it as the
+argument to use it in either chain's place. No operation in either chain is specific to one
+subject.
 
 The vehicle-scale chain is built to expose defects a render asset typically carries and a
-printing pipeline cannot ignore: unapplied modifiers, panels with no thickness, most of an
-interior part staying out of sight behind them. Its branch is the part worth reading -- two
-siblings off the same parent, at the same voxel, one step apart: one remeshes a walled body
-into a single closed shell and reports `ok`; the other remeshes the bare panels into
-fragments with the body gone, and the bounding box collapse that follows is what catches it
-and keeps it as evidence, refused rather than silently reported.
+printing pipeline cannot ignore: on the current subject, `scan_defects` finds a real coincident
+duplicate unaided, and `solidify` genuinely walls panels that had no thickness (23 of them, 20
+already closed, per its own report). The clearest branch is the coarse-voxel one at the end
+(006a): a tolerance-based refusal, kept as evidence rather than silently reported. The
+walled-vs-unwalled remesh just above it (006 vs 005a) is the same voxel with and without the
+wall; whether the unwalled side collapses far enough to be refused too depends on how much
+other closed geometry the rest of the subject carries nearby.
 
 The figurine-scale chain is built around a sound, closed, single-object subject reduced to a
 small print size. The defect sweep reporting nothing on it is the point: a demonstration where

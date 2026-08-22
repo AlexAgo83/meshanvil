@@ -3,13 +3,13 @@
 # the real CLI. Nothing here fabricates a report -- every number in work/ops/ comes out of
 # Blender, which is the whole point of the viewer.
 #
-# No donor file is shipped or downloaded: tools/make_demo_vehicle.py builds the asset from
-# primitives, on the fly, with the same class of defects a real render asset carries, planted
-# on purpose -- unapplied Mirror modifiers, panels with no thickness, a part sealed inside the
-# shell, a coincident duplicate. Each step below is where one of them surfaces, and the branch
-# is where skipping a step destroys the model with every topology check still green.
+# No donor file is shipped: given no argument, this prefers a hand-modelled asset under
+# logics/external/modeles-3D/ if one is present locally (that path is gitignored -- a personal
+# asset, never committed, never shipped with the repo), and falls back to generating one from
+# primitives with tools/make_demo_vehicle.py otherwise, so a fresh clone always has a subject
+# to run this on with nothing to license.
 #
-# Any .blend works in its place; no operation in the chain is specific to this one.
+# Any .blend works in this chain's place; no operation in it is specific to one subject.
 #
 # The demonstrations are sibling projects under work/demo/. That is what lets the viewer
 # offer both: the neighbourhood a page may switch between is the active project's siblings.
@@ -21,12 +21,17 @@ INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
 M="$INSTALL/bin/meshanvil"
 BLENDER="${MESHANVIL_BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}"
 PROJECT="$INSTALL/work/demo/vehicle"
+LOCAL_ASSET="$INSTALL/logics/external/modeles-3D/base_meshanvil_vehicle.blend"
 
 ASSET="${1:-}"
 if [ -z "$ASSET" ]; then
-  echo "== generating a vehicle-scale asset (no asset given)"
-  ASSET="$INSTALL/work/out/generated_vehicle.blend"
-  "$BLENDER" -b -P "$INSTALL/tools/make_demo_vehicle.py" -- "$ASSET"
+  if [ -f "$LOCAL_ASSET" ]; then
+    ASSET="$LOCAL_ASSET"
+  else
+    echo "== generating a vehicle-scale asset (no local or given asset)"
+    ASSET="$INSTALL/work/out/generated_vehicle.blend"
+    "$BLENDER" -b -P "$INSTALL/tools/make_demo_vehicle.py" -- "$ASSET"
+  fi
 fi
 
 echo "== project"
@@ -56,12 +61,15 @@ echo "== 005 wall every open panel, above the voxel that follows"
 $M run solidify work/out/demo_car_fixed_baked_placed.blend --set thickness_mm=20 --set next_voxel_mm=12
 
 # The branch worth reading. Same parent, same voxel, one step apart: the walled body remeshes
-# into a single closed shell and reports ok. The bare panels, with no wall to hold a volume,
-# shred into dozens of fragments and the bounding box itself collapses -- the operation
-# catches that on its own and refuses it, kept as evidence rather than silently reported.
+# into a single closed solid and reports ok. On the current asset (23 panels genuinely walled,
+# per 005's own report) the unwalled remesh does not always collapse the same way a single
+# open shell would -- with 43 separate objects, several already closed on their own, there is
+# enough other volume nearby that the bounding box does not always drift past a zero tolerance.
+# What is guaranteed and always worth reading: 006 vs 005a is the same voxel with and without
+# the wall, and 006a below still shows a real, tolerance-based refusal on the coarse voxel.
 echo "== 006 one closed solid at 12 mm"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed_solid.blend --set voxel_mm=12
-echo "== 005a the same remesh without the wall -- refused, kept as evidence"
+echo "== 005a the same remesh without the wall -- compare against 006"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed.blend --set voxel_mm=12
 
 # A coarse voxel is what someone reaches for to cut the triangle count. The tolerance is the

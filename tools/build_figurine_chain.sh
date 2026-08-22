@@ -5,10 +5,11 @@
 # reporting nothing, and that is the point -- a demonstration where every check fires on
 # everything never shows that the checks discriminate.
 #
-# No donor file is shipped or downloaded: tools/make_demo_figure.py builds a simple standing
-# figure from primitives, on the fly, at a real human height with a genuinely thin feature
-# (fingers) for the branch below to expose. Every part is an individually closed primitive,
-# joined without welding, so the source is sound by construction -- no defect to plant.
+# No donor file is shipped: given no argument, this prefers a hand-modelled asset under
+# logics/external/modeles-3D/ if one is present locally (that path is gitignored -- a personal
+# asset, never committed, never shipped with the repo), and falls back to generating one from
+# primitives with tools/make_demo_figure.py otherwise, so a fresh clone always has a sound,
+# closed subject with a genuinely thin feature (fingers) for the branch below to expose.
 #
 # The branch at the end is the lesson the vehicle cannot carry. It is remeshed at its real
 # size, where a voxel in millimetres and a voxel as a fraction of the subject feel like the
@@ -23,12 +24,17 @@ INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
 M="$INSTALL/bin/meshanvil"
 BLENDER="${MESHANVIL_BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}"
 PROJECT="$INSTALL/work/demo/figurine"
+LOCAL_ASSET="$INSTALL/logics/external/modeles-3D/base_meshanvil_figurine.blend"
 
 ASSET="${1:-}"
 if [ -z "$ASSET" ]; then
-  echo "== generating a figurine-scale asset (no asset given)"
-  ASSET="$INSTALL/work/out/generated_figure.blend"
-  "$BLENDER" -b -P "$INSTALL/tools/make_demo_figure.py" -- "$ASSET"
+  if [ -f "$LOCAL_ASSET" ]; then
+    ASSET="$LOCAL_ASSET"
+  else
+    echo "== generating a figurine-scale asset (no local or given asset)"
+    ASSET="$INSTALL/work/out/generated_figure.blend"
+    "$BLENDER" -b -P "$INSTALL/tools/make_demo_figure.py" -- "$ASSET"
+  fi
 fi
 
 echo "== project"
@@ -44,11 +50,18 @@ $M run scan_defects work/out/figure.blend
 echo "== 002 what is sealed inside it"
 $M run ray_visibility work/out/figure.blend --set grid=48
 
-# The subject is authored at a real 1750 mm human height. A generated asset knows its own
-# unit, but the decision to shrink it to a figurine is still a decision, and this is where
-# it gets recorded: 0.10286 takes it to 180 mm.
-echo "== 003 the size decision: 1750 mm to 180 mm"
-$M run recenter work/out/figure.blend --set scale=0.10286
+# Whichever subject this is (the local hand-modelled one, a generated one, or one passed on
+# the command line), it is not authored to any particular real-world unit -- the decision to
+# shrink it to a 180 mm figurine is still a decision, computed from what op 001 just measured
+# rather than a constant sized for one specific asset's own height.
+FIGURE_HEIGHT_MM=$(python3 -c "
+import json
+b = json.load(open('work/ops/001_scan_defects.json'))['measured']['bbox_mm']
+print(b['max'][2] - b['min'][2])
+")
+FIGURE_SCALE=$(python3 -c "print(180 / $FIGURE_HEIGHT_MM)")
+echo "== 003 the size decision: ${FIGURE_HEIGHT_MM} mm to 180 mm"
+$M run recenter work/out/figure.blend --set scale="$FIGURE_SCALE"
 
 # 0.5 mm is a third of the finger; 1.5 mm is close to all of it. Neither is refused, both
 # report ok, and only the renders and the thin-feature guard tell them apart.
