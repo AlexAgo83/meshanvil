@@ -11,6 +11,12 @@
   --f-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
 }
 *{box-sizing:border-box}
+/* Discreet everywhere a panel scrolls: no track background, a thin muted thumb. */
+*{scrollbar-width:thin;scrollbar-color:var(--widget) transparent}
+*::-webkit-scrollbar{width:8px;height:8px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:var(--widget);border-radius:4px}
+*::-webkit-scrollbar-thumb:hover{background:var(--widget-hi)}
 body{margin:0;background:var(--ed);color:var(--txt);font-family:var(--f-ui);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased}
 h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
