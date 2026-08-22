@@ -2,7 +2,7 @@
 """Exercise the generated viewer in Chrome without adding a browser framework."""
 from __future__ import annotations
 
-import argparse, os, re, shutil, subprocess, sys, tempfile, time
+import argparse, json, os, re, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +17,8 @@ SERVED_SMOKE = r"""
     document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: message }));
   };
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
-  const run = async () => {
+    const run = async () => {
+    const originalCount = DATA.reports.length;
     // The regression this guards: http.server never serves above the directory it is given,
     // so serving only work/viewer/ left every render under work/renders/ 404ing on a served
     // page while the identical file:// page (no server, no root to escape) loaded them fine.
@@ -44,6 +45,11 @@ SERVED_SMOKE = r"""
     assert(!out.classList.contains("hidden"), "the output panel never appeared");
     assert(out.textContent.includes("scan_defects") && out.textContent.includes("exit 0"),
       `served page did not show real command output: ${out.textContent.slice(0, 200)}`);
+    for (let waited = 0; waited < 6000 && DATA.reports.length === originalCount; waited += 100) {
+      await new Promise((done) => setTimeout(done, 100));
+    }
+    assert(DATA.reports.length === originalCount + 1, "live refresh did not add the new report");
+    if (window.__meshanvilStopLive) window.__meshanvilStopLive();
     document.body.dataset.smoke = "ok";
     document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: "ok" }));
   };
@@ -290,6 +296,8 @@ def check_served(chrome: str, project: Path) -> None:
     just needs enough budget for a real subprocess round trip, not the 1.5s the offline pass
     uses."""
     environment = {**os.environ, "MESHANVIL_PROJECT": str(project), "PYTHONUNBUFFERED": "1"}
+    injected = project / "work" / "ops" / "999_smoke_live.json"
+    injected.unlink(missing_ok=True)
     server = subprocess.Popen(
         [sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--serve", "--no-open"],
         cwd=ROOT, env=environment, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -310,17 +318,34 @@ def check_served(chrome: str, project: Path) -> None:
         served_dir = project / "work" / "viewer"
         smoke_page = served_dir / "served_smoke.html"
         smoke_page.write_text((served_dir / "index.html").read_text(encoding="utf-8")
+                              .replace('<script src="viewer.js"></script>',
+                                       '<script>window.EventSource = undefined;</script>\n<script src="viewer.js"></script>')
                               .replace("</body>", SERVED_SMOKE + "\n</body>"), encoding="utf-8")
         try:
             url = f"http://127.0.0.1:{port}/viewer/served_smoke.html"
             live = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
                     "--use-mock-keychain", "--password-store=basic", "--no-first-run",
-                    "--window-size=1200,900", "--virtual-time-budget=5000"]
-            dom = subprocess.run([*live, "--dump-dom", url], text=True, capture_output=True, timeout=30)
+                    "--window-size=1200,900", "--virtual-time-budget=12000"]
+            dom = subprocess.Popen([*live, "--dump-dom", url], text=True,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            smoke_report = next((project / "work" / "ops").glob("*.json"))
+            time.sleep(1)
+            data = json.loads(smoke_report.read_text(encoding="utf-8"))
+            data["id"] = "999"
+            data["operation"] = "smoke_live"
+            injected.write_text(json.dumps(data), encoding="utf-8")
+            try:
+                stdout, stderr = dom.communicate(timeout=30)
+            except subprocess.TimeoutExpired:
+                dom.kill()
+                stdout, stderr = dom.communicate()
+                raise
+            finally:
+                injected.unlink(missing_ok=True)
             if dom.returncode:
-                raise SystemExit((dom.stderr or dom.stdout or "Chrome did not load the served smoke page").strip())
-            if 'data-smoke="ok"' not in dom.stdout:
-                raise SystemExit((dom.stdout or "the served page did not confirm real execution").strip())
+                raise SystemExit((stderr or stdout or "Chrome did not load the served smoke page").strip())
+            if 'data-smoke="ok"' not in stdout:
+                raise SystemExit((stdout or "the served page did not confirm real execution").strip())
         finally:
             smoke_page.unlink(missing_ok=True)
     finally:
@@ -350,7 +375,7 @@ def main() -> int:
         raise SystemExit(f"no demonstration to smoke: run tools/build_demo_chain.sh "
                          f"(expected reports under {project}/work/ops)")
     environment = {**os.environ, "MESHANVIL_PROJECT": str(project)}
-    subprocess.run([sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--no-open"],
+    subprocess.run([sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--file", "--no-open"],
                    cwd=ROOT, env=environment, text=True, capture_output=True, check=True)
 
     with tempfile.TemporaryDirectory(prefix="meshanvil-viewer-smoke-") as tmp:

@@ -15,7 +15,8 @@
     },
     "view": {
       "help": "build the viewer over the reports and open it",
-      "serve": "serve it on 127.0.0.1 instead, for auto-refresh while a chain runs",
+      "serve": "accepted for compatibility; serving is now the default",
+      "file": "build a file:// snapshot instead of serving the live viewer",
       "no_open": "build it without opening a browser"
     },
     "runbook": {
@@ -79,7 +80,9 @@
   "view": {
     "built": "{path}  ({count} reports)",
     "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c to stop)",
-    "open_address": "open the address below in a browser"
+    "open_address": "open the address below in a browser",
+    "reusing": "reusing viewer on http://127.0.0.1:{port}/viewer/index.html",
+    "port_busy": "viewer port {port} is already in use by another process"
   },
   "bridge": {
     "evidence_failed": "no Logics evidence was written because the operation failed",
@@ -175,7 +178,6 @@
     "command_start": "Start screen",
     "command_list": "List operations",
     "command_doctor": "Check setup",
-    "command_view": "Refresh viewer",
     "command_prune": "Preview pruning",
     "command_runbook": "Create a runbook",
     "copied": "copied ✓",

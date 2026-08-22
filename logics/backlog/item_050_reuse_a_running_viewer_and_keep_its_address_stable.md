@@ -1,14 +1,14 @@
 ## item_050_reuse_a_running_viewer_and_keep_its_address_stable - Reuse a running viewer and keep its address stable
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:08:22
 
 # AI Context
 - Summary: One viewer per project, reused when it is alive and reclaimed when it is not, at an address that does not move between launches -- and serving becomes what `meshanvil view` does by default.

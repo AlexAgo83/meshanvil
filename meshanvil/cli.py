@@ -34,6 +34,7 @@ def build_parser() -> argparse.ArgumentParser:
     show = sub.add_parser("view", help=t("cli.view.help"))
     show.add_argument("--serve", action="store_true",
                       help=t("cli.view.serve"))
+    show.add_argument("--file", action="store_true", help=t("cli.view.file"))
     show.add_argument("--no-open", action="store_true", help=t("cli.view.no_open"))
     runbook = sub.add_parser("runbook", help=t("cli.runbook.help"))
     runbook.add_argument("chain")
@@ -76,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=1))
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":
-        return viewer.view(serve_it=arguments.serve, open_it=not arguments.no_open)
+        return viewer.view(serve_it=True, open_it=not arguments.no_open, file_it=arguments.file)
     if arguments.command == "runbook":
         path, error = logics_bridge.runbook(paths.work_root(), paths.code_root(), arguments.chain)
         if error:

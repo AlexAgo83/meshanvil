@@ -15,7 +15,8 @@
     },
     "view": {
       "help": "construire le visualiseur sur les rapports et l'ouvrir",
-      "serve": "le servir sur 127.0.0.1 à la place, pour un rafraîchissement pendant qu'une chaîne tourne",
+      "serve": "accepté pour compatibilité ; le service est désormais le défaut",
+      "file": "construire un instantané file:// au lieu du visualiseur live",
       "no_open": "le construire sans ouvrir de navigateur"
     },
     "runbook": {
@@ -79,7 +80,9 @@
   "view": {
     "built": "{path}  ({count} rapports)",
     "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c pour arrêter)",
-    "open_address": "ouvrez l'adresse ci-dessous dans un navigateur"
+    "open_address": "ouvrez l'adresse ci-dessous dans un navigateur",
+    "reusing": "visualiseur réutilisé sur http://127.0.0.1:{port}/viewer/index.html",
+    "port_busy": "le port {port} du visualiseur est déjà utilisé par un autre processus"
   },
   "bridge": {
     "evidence_failed": "aucune preuve Logics n'a été écrite car l'opération a échoué",
@@ -175,7 +178,6 @@
     "command_start": "Écran de démarrage",
     "command_list": "Lister les opérations",
     "command_doctor": "Vérifier la configuration",
-    "command_view": "Rafraîchir le visualiseur",
     "command_prune": "Prévisualiser la purge",
     "command_runbook": "Créer un runbook",
     "copied": "copié ✓",

@@ -1,14 +1,14 @@
 ## item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page - Serve the viewer payload instead of baking it into the page
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:05:30
+> Indicators reviewed: 2026-08-23 01:08:22
 
 # AI Context
 - Summary: The payload comes from a route on the served page and from the generated file only when the page was opened from disk.

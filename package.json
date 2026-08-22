@@ -5,12 +5,15 @@
   "description": "Driving a 3D application with an agent, and checking what it did.",
   "license": "MIT",
   "scripts": {
+    "build:viewer": "node scripts/build_viewer.mjs",
+    "check:viewer": "node scripts/check_viewer_bundle.mjs && node scripts/check_line_budget.mjs",
     "check": "make check",
     "logics": "logics-manager lint --require-status && logics-manager audit --group-by-doc",
     "logics:view": "logics-manager view --open --port 0"
   },
   "devDependencies": {
     "@grifhinz/logics-manager": "^2.22.2",
+    "esbuild": "^0.25.9",
     "typescript": "^7.0.2"
   }
 }

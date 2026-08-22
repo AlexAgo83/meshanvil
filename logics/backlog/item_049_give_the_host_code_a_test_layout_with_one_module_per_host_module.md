@@ -1,14 +1,14 @@
 ## item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module - Give the host code a test layout with one module per host module
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:08:22
 
 # AI Context
 - Summary: A test directory and runner with one test module per host module, carrying over what the single selfcheck script asserts today, plus smoke coverage of live refresh.

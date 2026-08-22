@@ -1,14 +1,14 @@
 ## item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction - Split the viewer host module into payload, server and host interaction
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:08:22
 
 # AI Context
 - Summary: The viewer's three host jobs -- payload, HTTP serving, host interaction -- separate, behind a route convention where a new endpoint never grows the dispatcher.

@@ -12,5 +12,6 @@
     "noImplicitAny": false,
     "skipLibCheck": true
   },
-  "include": ["viewer/*.js"]
+  "include": ["viewer/src/**/*.js"],
+  "exclude": ["viewer/viewer.js"]
 }

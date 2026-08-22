@@ -265,7 +265,7 @@ def check_run_endpoint(tmp: Path):
 
 def check_viewer_comparison_layout():
     css = (ROOT / "viewer" / "viewer.css").read_text(encoding="utf-8")
-    script = (ROOT / "viewer" / "viewer.js").read_text(encoding="utf-8")
+    script = (ROOT / "viewer" / "src" / "app.js").read_text(encoding="utf-8")
     page = (ROOT / "viewer" / "index.html").read_text(encoding="utf-8")
     assert ".colstack > .editor:first-child{flex:1}" in css
     assert ".compare-after{clip-path:" in css
@@ -280,7 +280,7 @@ def check_viewer_comparison_layout():
     # adr_007's one exception: fetch exists only for the run endpoint, gated by SERVED, and
     # SERVED itself is false whenever the page has no server to reach.
     assert 'fetch(`${location.origin}/run`' in script, "the run endpoint call is missing"
-    assert "const SERVED = location.protocol" in script and "if (run && SERVED)" in script
+    assert "let SERVED = location.protocol" in script and "if (run && SERVED)" in script
 
 
 def check_logics_bridge():

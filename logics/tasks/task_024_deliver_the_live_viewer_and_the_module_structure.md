@@ -1,14 +1,15 @@
 ## task_024_deliver_the_live_viewer_and_the_module_structure - Deliver the live viewer and the module structure
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:05:31
+> Indicators reviewed: 2026-08-23 01:08:22
+> Owner: codex
 
 # AI Context
 - Summary: Sequences the pass: payload route first, then the event stream, then the host split, the ADR, the client split behind a committed bundle, and the test layout last.
