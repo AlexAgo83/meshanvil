@@ -2,13 +2,13 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Done
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Progress: 100%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:26:05
+> Indicators reviewed: 2026-08-22 02:05:31
 
 # AI Context
 - Summary: Make Chain, Compare and Runbooks explicit workspaces and expose CLI guidance without browser-side execution.
@@ -56,3 +56,4 @@
 
 # Notes
 - Task `task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer` was finished via `logics-manager flow finish task` on 2026-08-22.
+- Task `task_012_deliver_reviewed_viewer_interaction_parity` was finished via `logics-manager flow finish task` on 2026-08-22.

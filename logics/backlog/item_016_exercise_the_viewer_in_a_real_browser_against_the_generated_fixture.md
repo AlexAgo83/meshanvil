@@ -2,13 +2,13 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Done
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Progress: 100%
 > Complexity: Low
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:26:05
+> Indicators reviewed: 2026-08-22 02:05:37
 
 # AI Context
 - Summary: Exercise the generated fixture in Chrome and retain only temporary screenshots, not golden images or a new test framework.
@@ -55,3 +55,4 @@
 
 # Notes
 - Task `task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture` was finished via `logics-manager flow finish task` on 2026-08-22.
+- Task `task_012_deliver_reviewed_viewer_interaction_parity` was finished via `logics-manager flow finish task` on 2026-08-22.
