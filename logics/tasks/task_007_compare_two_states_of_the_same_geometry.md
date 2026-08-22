@@ -1,10 +1,10 @@
 ## task_007_compare_two_states_of_the_same_geometry - Compare two states of the same geometry
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 98%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -46,10 +46,15 @@
 - `git diff --check`
 - `make fixture` passed on 2026-08-22: four declared same-camera pairs
 - `make check` passed on 2026-08-22: wipe input retains focus while updating its overlay
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - `voxel_remesh` records four explicit before/after pairs rendered from the same per-view camera.
 - The viewer reads those pairs as an accessible native-range wipe and shows the report's axes delta.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_005_compare_two_states_of_the_same_geometry`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

@@ -1,15 +1,15 @@
 ## task_004_open_on_nothing_first_run_and_environment_checks - Open on nothing: first run and environment checks
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:11:06
+> Indicators reviewed: 2026-08-22 02:13:19
 
 # AI Context
 - Summary: The viewer reads `work/doctor.json` and `work/ops` only; it never starts checks or operations.
@@ -38,16 +38,19 @@
 - [x] Run `python3 -m logics_manager flow finish task task_004_open_on_nothing_first_run_and_environment_checks.md` after implementation.
 
 # Validation
-- `make check`
-- `make fixture`
-- `MESHANVIL_LANG=fr ./bin/meshanvil view --no-open`
-- `node --check viewer/viewer.js`
-- `git diff --check`
+- `make check` passed on 2026-08-22.
+- `make fixture` passed on 2026-08-22.
+- `MESHANVIL_LANG=fr ./bin/meshanvil view --no-open`, `node --check viewer/viewer.js` and `git diff --check` passed on 2026-08-22.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Added a reopenable Start screen with the demo, inspection, and printable-body commands.
 - The screen reads the last doctor report, calls a missing `work/ops` normal, and explains each editor area.
-- Code delivery is complete. `flow closeout` remains blocked by root-request AC proof placeholders outside this slice.
+- Code delivery is complete.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_006_open_on_nothing_first_run_and_environment_checks`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

@@ -1,10 +1,10 @@
 ## task_010_ingest_a_step_source_through_a_second_engine - Ingest a STEP source through a second engine
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -42,10 +42,15 @@
 - `./bin/meshanvil list` exposes `import_step` with `engine: freecad`
 - Missing source refusal exits 2 before any engine is launched
 - `tools/make_step_fixture.py` + `meshanvil run import_step work/in/fixture_box.step` passed with FreeCAD 1.0.2: one solid, 40×30×20 mm bounds and `work/out/fixture_box_step.stl`
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Added the FreeCAD job command, `import_step` manifest and headless script with progress, source solid count, bounds and recorded tessellation parameters.
 - Corrected the source-read-only guard: only FreeCAD STEP ingestion may read `work/in/`; all Blender operations remain refused there.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_009_ingest_a_step_source_through_a_second_engine`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

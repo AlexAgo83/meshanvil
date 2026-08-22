@@ -1,15 +1,15 @@
 ## task_006_read_the_method_from_the_reports_runbook_reverse_index - Read the method from the reports: runbook reverse index
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:11:06
+> Indicators reviewed: 2026-08-22 02:13:19
 
 # AI Context
 - Summary: Derive runbook coverage at view time from report `links.docs`; preserve full slugs and use the existing Logics metadata bridge.
@@ -38,13 +38,15 @@
 - [x] Run `python3 -m logics_manager flow finish task task_006_read_the_method_from_the_reports_runbook_reverse_index.md` after implementation.
 
 # Validation
-- `make check`
-- `./bin/meshanvil view --no-open`
-- `node --check viewer/viewer.js`
-- `git diff --check`
+- `make check`, `./bin/meshanvil view --no-open`, `node --check viewer/viewer.js` and `git diff --check` passed on 2026-08-22.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Added a view-time reverse index over report links and bidirectional operation/runbook navigation.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_008_read_the_method_from_the_reports_runbook_reverse_index`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

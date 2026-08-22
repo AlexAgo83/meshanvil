@@ -1,10 +1,10 @@
 ## task_005_bridge_reports_into_the_logics_corpus - Bridge reports into the Logics corpus
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -46,12 +46,17 @@
 - `logics-manager lint --require-status`
 - `logics-manager audit --group-by-doc`
 - `meshanvil run scan_defects … --evidence task_005_bridge_reports_into_the_logics_corpus:AC1` passed: report evidence appended to this task
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Added the optional JSON subprocess boundary and successful-run evidence hook.
 - Viewer document chips now resolve title, kind and status from the corpus and call missing references out.
 - `meshanvil runbook 002` created `run_011` with operation parameters, outcomes and measurements; the human procedure remains explicitly unverified.
 - End-to-end evidence bridge verified with `005_scan_defects.json`.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_013_bridge_reports_into_the_logics_corpus`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

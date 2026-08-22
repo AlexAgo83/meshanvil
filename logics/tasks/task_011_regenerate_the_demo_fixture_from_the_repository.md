@@ -1,15 +1,15 @@
 ## task_011_regenerate_the_demo_fixture_from_the_repository - Regenerate the demo fixture from the repository
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:11:07
+> Indicators reviewed: 2026-08-22 02:13:19
 
 # AI Context
 - Summary: The checked-in fixture scripts generate only ignored `work/` data and verify the known defect findings and preserved failed branch.
@@ -38,11 +38,16 @@
 - [x] Run `python3 -m logics_manager flow finish task task_011_regenerate_the_demo_fixture_from_the_repository.md` after implementation.
 
 # Validation
-- `make fixture` regenerates the scene and replays the chain from repository scripts
-- `make check` confirms no generated data is tracked
+- `make fixture` passed on 2026-08-22, regenerating the scene and replaying the chain from repository scripts.
+- `make check` passed on 2026-08-22, confirming no generated data is tracked.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Confirmed the existing fixture covers deterministic scripted generation, unaided defect discovery, a coarse failed voxel attempt, and ignored outputs.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_007_regenerate_the_demo_fixture_from_the_repository`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

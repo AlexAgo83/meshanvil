@@ -1,15 +1,15 @@
 ## task_008_prune_heavy_artefacts_without_losing_the_record - Prune heavy artefacts without losing the record
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:10:28
+> Indicators reviewed: 2026-08-22 02:13:19
 
 # AI Context
 - Summary: Select only report-owned outputs; a dry run is read-only, while apply removes the file and changes only its lifecycle fields.
@@ -38,14 +38,17 @@
 - [x] Run `python3 -m logics_manager flow finish task task_008_prune_heavy_artefacts_without_losing_the_record.md` after implementation.
 
 # Validation
-- `make check` (dry-run/apply lifecycle self-check)
-- `./bin/meshanvil prune --keep 1 --dry-run`
-- `node --check viewer/viewer.js`
-- `git diff --check`
+- `make check` passed on 2026-08-22, including the dry-run/apply lifecycle self-check.
+- `./bin/meshanvil prune --keep 1 --dry-run`, `node --check viewer/viewer.js` and `git diff --check` passed on 2026-08-22.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Added explicit prune selection over report-owned outputs, respecting retention, pins and document citations.
 - Applying a prune changes only `output.state` and `state_changed_at`; the viewer keeps and marks the node.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_004_prune_heavy_artefacts_without_losing_the_record`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

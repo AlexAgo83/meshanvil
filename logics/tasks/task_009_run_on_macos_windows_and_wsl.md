@@ -1,10 +1,10 @@
 ## task_009_run_on_macos_windows_and_wsl - Run on macOS, Windows and WSL
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -42,9 +42,14 @@
 # Validation
 - `make check` (including simulated WSL engine-path conversion)
 - README and CONTRIBUTING verified against the measured platform matrix
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Confirmed the existing discovery, override, refusal, WSL conversion and explorer opener paths; added a WSL boundary self-check.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_011_run_on_macos_windows_and_wsl`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

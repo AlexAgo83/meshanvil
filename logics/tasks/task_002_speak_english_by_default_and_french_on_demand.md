@@ -1,10 +1,10 @@
 ## task_002_speak_english_by_default_and_french_on_demand - Speak English by default and French on demand
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
@@ -42,9 +42,14 @@
 
 # Validation
 - `make check && make fixture && logics-manager lint --require-status && logics-manager audit --group-by-doc && logics-manager i18n validate` passed on 2026-08-22.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Not started.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_010_speak_english_by_default_and_french_on_demand`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

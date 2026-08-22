@@ -1,15 +1,15 @@
 ## task_003_take_the_operator_through_setup_step_by_step - Take the operator through setup, step by step
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 99%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:11:06
+> Indicators reviewed: 2026-08-22 02:13:18
 
 # AI Context
 - Summary: Add a cached, machine-readable setup check for Blender, optional FreeCAD, and the writable workspace; later screens consume its report.
@@ -41,10 +41,15 @@
 - [x] Run `python3 -m logics_manager flow finish task task_003_take_the_operator_through_setup_step_by_step.md` after implementation.
 
 # Validation
-- (no validation recorded yet)
+- `make check` passed on 2026-08-22: doctor self-check verified required, optional and workspace classifications with cached engine probing.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
-- Not started.
+- Added the cached, machine-readable setup check consumed by the CLI and first-run viewer.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_012_take_the_operator_through_setup_step_by_step`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
