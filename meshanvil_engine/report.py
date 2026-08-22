@@ -76,6 +76,71 @@ def measure_object(name: str) -> dict:
     return measured
 
 
+def thin_feature_mm(objects=None, samples: int = 2000, percentile: float = 0.02,
+                    floor_mm: float | None = None) -> dict:
+    """How thin the thinnest part of a body is, measured through the geometry.
+
+    The measure this replaces was the smallest object's bounding extent, which answers a
+    different question: on a subject that is one object it returns the whole subject. A
+    180 mm figurine reported 180 mm while a 1.5 mm voxel was fusing its fingers, because a
+    finger is not an object.
+
+    This casts a ray from each sampled face straight into the body and takes the distance to
+    the far wall. On a closed body that distance is the local thickness; the low percentile
+    of it is the thinnest feature a voxel has to survive.
+
+    A hit only counts as a far wall when it faces away from the ray. Without that test the
+    measure reads gaps instead of solids: between two fingers, or across an open mouth, the
+    ray lands immediately on a surface pointing back at it and the estimate collapses to
+    microns. Measured on a 180 mm figurine, the unfiltered version returned 0.002 mm.
+
+    It is an estimate: it samples, it only sees what a ray from a face centre reaches, and on
+    an open surface there is no far wall at all -- those samples are dropped, so a body of
+    open panels reports nothing rather than a number that means something else.
+    """
+    import bpy
+    from mathutils import Vector
+
+    objects = objects if objects is not None else [
+        o for o in bpy.data.objects if o.type == 'MESH' and o.data.vertices]
+    faces = [(o, i) for o in objects for i in range(len(o.data.polygons))]
+    if not faces:
+        return {"thin_feature_mm": None, "median_mm": None, "samples": 0,
+                "share_below_floor": None, "estimate": True}
+    stride = max(1, len(faces) // max(1, samples))
+    depths = []
+    for o, index in faces[::stride]:
+        polygon = o.data.polygons[index]
+        inward = -Vector(polygon.normal)
+        if inward.length_squared < 1e-12:
+            continue
+        inward.normalize()
+        # Start just inside the surface, or the ray hits the face it was cast from.
+        origin = Vector(polygon.center) + inward * 1e-5
+        hit, location, normal, _ = o.ray_cast(origin, inward)
+        if not hit or normal.length_squared < 1e-12:
+            continue
+        if normal.normalized().dot(inward) < 0.5:
+            continue          # a facing surface across a gap, not the far side of a solid
+        # Local units are not millimetres when the object carries a scale.
+        span = (o.matrix_world @ location) - (o.matrix_world @ origin)
+        depths.append(span.length)
+    if not depths:
+        return {"thin_feature_mm": None, "median_mm": None, "samples": 0,
+                "share_below_floor": None, "estimate": True}
+    depths.sort()
+    rank = min(len(depths) - 1, int(len(depths) * percentile))
+    # The thinnest sample says a feature exists; the share says how much of the body is in
+    # that state. On a subject whose fine trim is far below the voxel the first number warns
+    # every time, and only the second tells a reader whether that matters here.
+    share = None
+    if floor_mm is not None:
+        share = round(sum(1 for d in depths if d * 1000 < floor_mm) / len(depths), 4)
+    return {"thin_feature_mm": round(depths[rank] * 1000, 3),
+            "median_mm": round(depths[len(depths) // 2] * 1000, 3),
+            "samples": len(depths), "share_below_floor": share, "estimate": True}
+
+
 def bbox_delta(before: dict, after: dict) -> dict | None:
     """The comparison the runbooks call the check that caught every failure. Computed here, so
     no operation can forget it."""

@@ -34,6 +34,11 @@ PARAMS = (JOB or {}).get("params", {})
 VOXEL = float(PARAMS.get("voxel_mm", 6.0)) / 1000.0
 KEEP_LARGEST = bool(PARAMS.get("keep_largest", False))
 DRIFT = float(PARAMS.get("max_bbox_drift_mm", 0.0)) or float(PARAMS.get("voxel_mm", 6.0))
+# A feature needs more than one voxel across it to survive being resampled onto a grid.
+# Measured on a 180 mm figurine whose fingers are 1.5 mm thick: at a 1.5 mm voxel, one voxel
+# across, they fused into mittens; at 0.5 mm, three voxels across, they came through. The
+# warning fires below two, which separates those two runs and is the usual sampling floor.
+FEATURE_VOXELS = float(PARAMS.get("min_feature_voxels", 2.0))
 OUT = Path(bpy.data.filepath).with_name(
     Path(bpy.data.filepath).stem + "_voxel%g.blend" % (VOXEL * 1000))
 ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
@@ -53,8 +58,16 @@ if not meshes:
 smallest = min(max((max(p[i] for p in (o.matrix_world @ v.co for v in o.data.vertices))
                     - min(p[i] for p in (o.matrix_world @ v.co for v in o.data.vertices)))
                    for i in range(3)) for o in meshes)
-log("objects %d | smallest extent %.1f mm | voxel %.1f mm"
-    % (len(meshes), smallest * 1000, VOXEL * 1000))
+# The smallest object is not the thinnest feature. On a subject that is one object the two
+# are the whole subject, and the guard says nothing while the fingers are being erased.
+THIN = None
+if REPORT:
+    from meshanvil_engine import report as reporting
+    THIN = reporting.thin_feature_mm(
+        meshes, floor_mm=FEATURE_VOXELS * VOXEL * 1000)
+log("objects %d | smallest extent %.1f mm | thinnest feature %s mm | voxel %.1f mm"
+    % (len(meshes), smallest * 1000,
+       (THIN or {}).get("thin_feature_mm", "not measurable"), VOXEL * 1000))
 
 if REPORT:
     REPORT.progress("joining", 0.1)
@@ -146,5 +159,25 @@ if REPORT:
     # size. On a mesh that shrinks it picked the wrong one and every check stayed green.
     REPORT.report["params"]["artefact_objects"] = len(
         [o for o in bpy.data.objects if o.type == 'MESH'])
+    thin = (THIN or {}).get("thin_feature_mm")
+    REPORT.report["params"]["thin_feature_mm"] = thin
+    REPORT.report["params"]["thin_feature_samples"] = (THIN or {}).get("samples", 0)
+    REPORT.report["params"]["thin_feature_is_estimate"] = True
+    if thin is None:
+        # Open surfaces have no far wall to measure against; saying so beats a number that
+        # answers a different question.
+        REPORT.warn("thin_feature_not_measurable")
+    else:
+        across = thin / (VOXEL * 1000)
+        REPORT.report["params"]["thin_feature_voxels"] = round(across, 2)
+        share = THIN.get("share_below_floor")
+        REPORT.report["params"]["thin_feature_median_mm"] = THIN.get("median_mm")
+        REPORT.report["params"]["share_below_feature_floor"] = share
+        if across < FEATURE_VOXELS:
+            REPORT.warn("thin_feature_below_voxel_floor")
+            REPORT.finding("thin_feature", thinnest_mm=thin, median_mm=THIN.get("median_mm"),
+                           voxel_mm=round(VOXEL * 1000, 3), voxels_across=round(across, 2),
+                           floor_voxels=FEATURE_VOXELS, share_below_floor=share,
+                           samples=THIN.get("samples", 0), estimate=True)
     REPORT.output(str(OUT))
     REPORT.write()

@@ -5,9 +5,33 @@
   "script": "tools/voxel_remesh.py",
   "summary_key": "operation.voxel_remesh.summary",
   "params": [
-    {"name": "voxel_mm", "type": "float", "default": 6.0, "unit": "mm"},
-    {"name": "keep_largest", "type": "bool", "default": false},
-    {"name": "max_bbox_drift_mm", "type": "float", "default": 0.0, "unit": "mm"},
-    {"name": "render", "type": "bool", "default": true}
+    {
+      "name": "voxel_mm",
+      "type": "float",
+      "default": 6.0,
+      "unit": "mm"
+    },
+    {
+      "name": "keep_largest",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "name": "max_bbox_drift_mm",
+      "type": "float",
+      "default": 0.0,
+      "unit": "mm"
+    },
+    {
+      "name": "min_feature_voxels",
+      "type": "float",
+      "default": 2.0,
+      "unit": "voxels"
+    },
+    {
+      "name": "render",
+      "type": "bool",
+      "default": true
+    }
   ]
 }
