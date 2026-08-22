@@ -6,7 +6,7 @@
 > Related task: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
 > Drivers: paying the exact price adr_003 named rather than reopening the question, keeping a file:// page exactly as safe as it always was, no operator-supplied argument ever reaching a subprocess
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-22 23:26:49
+> Indicators reviewed: 2026-08-23 01:42:04
 
 # Overview
 - Supersedes `adr_003_the_viewer_reads_the_command_acts` for three commands only: List operations, Check setup, Preview pruning. A page opened via `meshanvil view --serve` can run them and see their result; a page opened from `file://` cannot reach a server at all and keeps copying the command to the clipboard, exactly as it did before this decision.
@@ -36,6 +36,7 @@ flowchart LR
 - **Concurrency is a single flight, held for the shortest useful time.** One command runs at a time; a second request while the first is still running is refused outright (not queued, not silently dropped), and the first request's caller still gets its result. This is the "concurrent access" cost adr_003 named, paid at the smallest scope that makes the button safe to click twice.
 - **The two out-of-scope commands stay commands, not buttons that pretend to run.** `Refresh viewer` and `Create a runbook <report-id>` keep the copy-to-clipboard behaviour on every kind of page, served or not, until a later slice gives them what real execution would need.
 - **A `file://` page is unchanged.** It has no server to reach, so detection is a read of `location.protocol`, not a capability probe: nothing about opening the plain page differently is required to keep it exactly as safe as `adr_003` made it.
+- **Amendment, 2026-08-23: Open and Reveal use build-owned file ids, not page-supplied paths.** The viewer payload includes an allow-list of files already named by reports: inputs, outputs, renders, and comparison images. The page sends only the opaque id from that list to `POST /file`; the server recomputes the current allow-list and resolves the id before calling the host opener. A path string rendered in the page never becomes an argument to a subprocess or host opener request.
 
 # Consequences
 - `adr_003` moves to Superseded for the three commands this decision covers; its refusal stands unchanged for every other command, present or future, until a request pays for that one too.
@@ -43,6 +44,7 @@ flowchart LR
 - A `--serve` session becomes slightly more capable than the plain viewer it was interchangeable with before. `adr_004`'s consequence that "`--serve` already exists as the answer" for a heavy chain now also means `--serve` is the more capable mode generally, which is worth stating rather than leaving implicit.
 - Extending the command set later is a request against this ADR's own boundary, not a silent code change: the same three checks (closed set, token, single-flight) have to be re-argued for whatever is added.
 - 2026-08-22, `req_008`: the start screen's two demonstration-build buttons (`tools/build_demo_chain.sh`, `tools/build_figurine_chain.sh`) were considered for this set and declined. Both are destructive by their own documented intent -- they `rm -rf` and rebuild a whole sibling project from scratch on every run -- which is a different class of action from the three read-mostly commands this ADR actually covers, and re-arguing the boundary properly (a fourth check, beyond closed-set/token/single-flight, for "safe to run unattended and repeatedly from a button") is out of scope for a UI polish pass. They stay copy-to-clipboard buttons, styled and wired like every other command row, on both `file://` and served pages.
+- Open and Reveal are not part of `/run`: they are host file actions over an allow-list the server owns. A `file://` page shows them disabled because it has no server token and no route to call; Copy path remains the only working file action in that mode.
 
 # References
 - The refusal this reverses, and the price it named for reversing it: `adr_003_the_viewer_reads_the_command_acts`

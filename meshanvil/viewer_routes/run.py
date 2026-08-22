@@ -3,7 +3,7 @@ from __future__ import annotations
 import json, subprocess, sys
 from urllib.parse import urlparse
 
-from .. import paths
+from .. import doctor, manifests, paths
 
 # adr_007: the closed command set a served page may run. A name from the page selects one of
 # these argument lists; nothing the page sends ever becomes part of the command line itself.
@@ -11,6 +11,11 @@ RUNNABLE = {"list": ["list"], "doctor": ["doctor"], "prune": ["prune", "--dry-ru
 
 
 def run_command(root, name: str) -> dict:
+    if name == "list":
+        found = manifests.discover()
+        return {"stdout": "", "stderr": "", "exit_code": 0, "data": {"operations": found}}
+    if name == "doctor":
+        return {"stdout": "", "stderr": "", "exit_code": 0, "data": doctor.check(root)}
     args = RUNNABLE[name]
     completed = subprocess.run(
         [sys.executable, str(paths.code_root() / "bin" / "meshanvil"), *args],

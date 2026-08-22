@@ -1,14 +1,14 @@
 ## item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite - Cover the new controls and modals in the viewer smoke suite
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 65%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:34:59
 
 # AI Context
 - Summary: Smoke coverage over the new file controls and modals: the control group and its accessible names, the opened-from-disk degradation, and translated modal content.

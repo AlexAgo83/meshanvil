@@ -249,6 +249,11 @@ td.delta.moved{color:var(--active)}
 .pathcopy{display:inline;text-align:left;min-width:0;border-radius:2px}
 .pathcopy:hover{background:var(--sel)}
 .pathcopy .provenance{display:inline}
+.filectrls{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:100%}
+.filelabel{min-width:0;overflow-wrap:anywhere}
+.iconbtn{width:22px;height:22px;display:inline-grid;place-items:center;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--text);font-size:12px}
+.iconbtn:disabled{opacity:.38;cursor:not-allowed}
+.result #result-body{padding:12px 14px;overflow:auto}
 
 /* ---------- first run splash ---------- */
 .scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.58);display:grid;place-items:center;padding:20px}

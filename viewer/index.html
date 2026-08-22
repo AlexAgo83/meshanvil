@@ -15,11 +15,6 @@
       <details class="menu"><summary data-i18n="ui.menu_file">File</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.menu_group_project">Project</span>
         <button type="button" class="cmdrow" data-splash="open"><span data-i18n="ui.command_start">Start screen</span><kbd>Ctrl N</kbd></button>
-        <span class="sep"></span>
-        <button type="button" class="cmdrow" data-copy="meshanvil list" data-run="list"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></button>
-        <pre class="cmdout hidden" data-cmdout="list"></pre>
-        <button type="button" class="cmdrow" data-copy="meshanvil doctor" data-run="doctor"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></button>
-        <pre class="cmdout hidden" data-cmdout="doctor"></pre>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_view">View</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.workspace">Workspace</span>
@@ -39,7 +34,10 @@
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_help">Help</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.menu_group_docs">Docs</span>
-        <button type="button" class="cmdrow" data-copy="meshanvil runbook <report-id>"><span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code></button>
+        <button type="button" class="cmdrow" id="runbook-command" data-copy="meshanvil runbook"><span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook</code></button>
+        <span class="sep"></span>
+        <button type="button" class="cmdrow" data-copy="meshanvil list" data-run="list"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></button>
+        <button type="button" class="cmdrow" data-copy="meshanvil doctor" data-run="doctor"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></button>
         <span class="sep"></span>
         <span class="grp" data-i18n="ui.menu_group_language">Language</span>
         <button type="button" class="cmdrow" role="tab" aria-selected="true" data-lang="en"><span>English</span></button>
@@ -120,6 +118,16 @@
       <span class="push"></span>
       <button type="button" class="ghost primary" id="splash-continue" data-splash="close" data-i18n="ui.splash_continue">Continue</button>
     </div>
+  </div>
+</div>
+<div class="scrim hidden" id="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+  <div class="splash result">
+    <div class="splashtop">
+      <div><h1 id="result-title"></h1><span class="ver" id="result-subtitle"></span></div>
+      <span class="push"></span>
+      <button type="button" class="ghost" data-result-close data-i18n="ui.close">Close</button>
+    </div>
+    <div id="result-body"></div>
   </div>
 </div>
 <script src="data.js"></script>

@@ -23,7 +23,7 @@ import { esc, mdToHtml } from "./markdown.js";
 
 let DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
  *   lang: string, strings: Object<string,string>, catalogs?: Object<string,Object<string,string>>,
- *   version?: string, run_token?: string|null, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
+ *   version?: string, run_token?: string|null, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean, files?: {id:string,path:string}[]}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
 /** @type {any} */ (window).DATA = DATA;
@@ -238,6 +238,22 @@ function docPurpose(doc) {
   const sections = doc.sections || {};
   const first = doc.purpose || (sections.Trigger || sections.Overview || sections.Procedure || [])[0];
   return String(first || doc.content || t("ui.runbook_no_summary")).replace(/^[-\d. ]+/, "").slice(0, 180);
+}
+
+function fileId(path) {
+  const hit = (DATA.files || []).find((item) => item.path === path);
+  return hit ? hit.id : "";
+}
+
+function fileControls(path, label) {
+  const id = fileId(path);
+  const served = SERVED && id;
+  const disabled = served ? "" : " disabled";
+  return `<span class="filectrls"><span class="filelabel">${label}</span>
+    <button type="button" class="iconbtn" data-file-open="${esc(id)}"${disabled} aria-label="${esc(t("ui.open_file"))}" title="${esc(t("ui.open_file"))}">↗</button>
+    <button type="button" class="iconbtn" data-copy="${esc(path)}" aria-label="${esc(t("ui.copy_path"))}" title="${esc(t("ui.copy_path"))}">⧉</button>
+    <button type="button" class="iconbtn" data-file-reveal="${esc(id)}"${disabled} aria-label="${esc(t("ui.reveal_file"))}" title="${esc(t("ui.reveal_file"))}">⌖</button>
+  </span>`;
 }
 
 function runbookRows() {
@@ -465,14 +481,12 @@ function props() {
 
   html += driftNotice(report);
   html += block(t("ui.input"), `<dl class="kv">
-      <dt>path</dt><dd><button type="button" class="pathcopy" data-copy="${esc(report.input.path)}"
-        title="${esc(t("ui.copy_path"))}">${esc(short(report.input.path))}</button></dd>
+      <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
       <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`, "input");
   if (report.output) {
     html += block(t("ui.output"), `<dl class="kv">
-      <dt>path</dt><dd><button type="button" class="pathcopy" data-copy="${esc(report.output.path)}"
-        title="${esc(t("ui.copy_path"))}">${esc(short(report.output.path))}</button></dd>
+      <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.output.path, esc(short(report.output.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.output.sha256 || "").slice(0, 16))}…</dd>
       <dt>state</dt><dd>${esc(report.output.state)}</dd></dl>`, "output");
   }
@@ -493,8 +507,7 @@ function props() {
   if (report.output) {
     html += block(t("ui.artefact"), `<div class="artefact">
         <span class="state ${esc(report.output.state)}">${esc(report.output.state)}</span>
-        <button type="button" class="pathcopy" data-copy="${esc(report.output.path)}"
-          title="${esc(t("ui.copy_path"))}"><code class="provenance">${esc(short(report.output.path))}</code></button></div>
+        ${fileControls(report.output.path, `<code class="provenance">${esc(short(report.output.path))}</code>`)}</div>
       <div class="note">${esc(t("ui.artefact_note"))}</div>`, "artefact");
   }
   html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
@@ -603,15 +616,9 @@ function preview() {
        ${esc(r.view)}</button>`).join("");
   stage.innerHTML = `<img src="${esc(render.url)}" alt="${esc(t("ui.render_alt", {
     view: render.view, operation: report.operation }))}">`;
-  meta.innerHTML = `<div><button type="button" class="pathcopy" data-copy="${esc(render.path)}"
-        title="${esc(t("ui.copy_path"))}"><code class="provenance">${esc(short(render.path))}</code></button>
+  meta.innerHTML = `<div>${fileControls(render.path, `<code class="provenance">${esc(short(render.path))}</code>`)}
       <div class="provenance" style="color:var(--dim);padding-top:3px">${esc(render.camera)}</div></div>
     ${render.tile ? `<div class="tilehint">▲ ${esc(t("ui.tile_hint"))}</div>` : ""}
-    ${report.output ? `<div class="act">
-      <span class="hint">${esc(t("ui.open_in_blender"))}</span>
-      <button type="button" data-copy="blender ${esc(report.output.path)}">
-        <code class="command">blender ${esc(short(report.output.path))}</code></button>
-    </div>` : ""}
     <p class="provenance">${esc(t("ui.render_provenance"))}</p>`;
 }
 
@@ -621,6 +628,7 @@ function select(id) {
   currentDoc = null;
   if (id !== current) view = 0;
   current = id;
+  updateRunbookCommand();
   outliner(); nodes(); props(); preview();
 }
 
@@ -724,9 +732,10 @@ async function runCommand(button) {
       headers: { "X-Meshanvil-Token": /** @type {string} */ (DATA.run_token), "Content-Type": "application/json" },
       body: JSON.stringify({ command: name }),
     });
+    if (response.status === 409) { if (out) out.textContent = t("ui.run_busy"); return; }
+    if (!response.ok) { if (out) out.textContent = t("ui.run_refused", { status: response.status }); return; }
+    if (name === "list" || name === "doctor") { showResult(name, await response.json()); return; }
     if (!out) return;
-    if (response.status === 409) { out.textContent = t("ui.run_busy"); return; }
-    if (!response.ok) { out.textContent = t("ui.run_refused", { status: response.status }); return; }
     const result = await response.json();
     out.textContent = t("ui.run_result", { code: result.exit_code })
       + (result.stdout ? "\n" + result.stdout : "")
@@ -736,6 +745,62 @@ async function runCommand(button) {
   } finally {
     if (code) code.textContent = original;
   }
+}
+
+async function runFileAction(id, action) {
+  if (!SERVED || !id) return;
+  await fetch(`${location.origin}/file`, {
+    method: "POST",
+    headers: { "X-Meshanvil-Token": /** @type {string} */ (DATA.run_token), "Content-Type": "application/json" },
+    body: JSON.stringify({ id, action }),
+  });
+}
+
+function closeMenus() {
+  for (const menu of document.querySelectorAll("details.menu[open]"))
+    /** @type {HTMLDetailsElement} */ (menu).open = false;
+}
+
+function showResult(name, result) {
+  closeMenus();
+  document.getElementById("result-title").textContent = t(name === "list" ? "ui.command_list" : "ui.command_doctor");
+  document.getElementById("result-subtitle").textContent = t("ui.run_result", { code: result.exit_code });
+  document.getElementById("result-body").innerHTML = name === "list"
+    ? renderOperationList(result.data && result.data.operations)
+    : renderDoctorResult(result.data);
+  document.getElementById("result-modal").classList.remove("hidden");
+}
+
+function renderOperationList(operations) {
+  const rows = Object.entries(/** @type {Object<string, any>} */ (operations || {})).sort().map(([name, op]) => `<tr><td><code>${esc(name)}</code></td>
+    <td>${esc(op.engine)}</td><td>${esc(op.kind)}</td><td>${esc(t(op.summary_key))}</td></tr>`).join("");
+  return `<div class="tablewrap"><table><thead><tr><th>${esc(t("ui.operation"))}</th><th>${esc(t("ui.engine"))}</th><th>${esc(t("ui.kind"))}</th><th>${esc(t("ui.summary"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderDoctorResult(doctor) {
+  const project = doctor && doctor.project ? {
+    name: doctor.project.name,
+    path: doctor.project.path,
+    rule: doctor.project.resolved_by,
+  } : null;
+  const rows = (doctor && doctor.requirements || []).map((item) => `<tr><td>${esc(item.name)}</td>
+    <td>${esc(setupState(item.state))}</td><td>${esc(item.path || item.fix || "")}</td></tr>`).join("");
+  return `<p class="note">${esc(project ? t("ui.splash_project_note", project) : "")}</p>
+    <div class="tablewrap"><table><thead><tr><th>${esc(t("ui.requirement"))}</th><th>${esc(t("ui.status_label"))}</th><th>${esc(t("ui.detail"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function setupState(state) {
+  return state === "found" ? t("ui.setup_found") : t("ui.setup_missing");
+}
+
+function updateRunbookCommand() {
+  const button = /** @type {HTMLElement|null} */ (document.getElementById("runbook-command"));
+  if (!button) return;
+  const code = button.querySelector("code");
+  const report = current ? BY_ID.get(current) : null;
+  const command = report ? `meshanvil runbook ${report.chain || report.id}` : "meshanvil runbook";
+  button.dataset.copy = command;
+  if (code) code.textContent = report ? command : t("ui.runbook_select_report");
 }
 
 function renderSplash() {
@@ -784,8 +849,7 @@ function showSplash(show) {
   // early (the row is inside the open <details>, so the generic "click outside a menu
   // closes it" check at the bottom of the click listener never runs) -- left the dropdown
   // sitting open on top of the modal it just opened.
-  if (show) for (const menu of document.querySelectorAll("details.menu[open]"))
-    /** @type {HTMLDetailsElement} */ (menu).open = false;
+  if (show) closeMenus();
 }
 
 function jumpReportSection(section) {
@@ -811,6 +875,11 @@ document.addEventListener("click", (event) => {
   if (langTab) { setLanguage(/** @type {HTMLElement} */ (langTab).dataset.lang || "en"); return; }
   const run = target.closest("[data-run]");
   if (run && SERVED) { runCommand(/** @type {HTMLElement} */ (run)); return; }
+  const openFile = target.closest("[data-file-open]");
+  if (openFile) { runFileAction(/** @type {HTMLElement} */ (openFile).dataset.fileOpen, "open"); return; }
+  const revealFile = target.closest("[data-file-reveal]");
+  if (revealFile) { runFileAction(/** @type {HTMLElement} */ (revealFile).dataset.fileReveal, "reveal"); return; }
+  if (target.closest("[data-result-close]")) { document.getElementById("result-modal").classList.add("hidden"); return; }
   const copy = target.closest("[data-copy]");
   if (copy) { copyCommand(/** @type {HTMLElement} */ (copy)); return; }
   const goto = target.closest("[data-goto]");
@@ -820,7 +889,7 @@ document.addEventListener("click", (event) => {
   const node = target.closest("[data-id]");
   if (node) { select(/** @type {HTMLElement} */ (node).dataset.id); return; }
   const doc = target.closest("[data-doc]");
-  if (doc) { start = false; currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; outliner(); nodes(); props(); preview(); }
+  if (doc) { start = false; currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; updateRunbookCommand(); outliner(); nodes(); props(); preview(); }
   for (const menu of document.querySelectorAll("details.menu[open]")) {
     if (!menu.contains(target)) /** @type {HTMLDetailsElement} */ (menu).open = false;
   }
@@ -880,6 +949,7 @@ async function init() {
   }
   renderSplash();
   paintProjects();
+  updateRunbookCommand();
   document.getElementById("project-select").addEventListener("change", (event) => {
     selectProject(/** @type {HTMLSelectElement} */ (event.target).value);
   });

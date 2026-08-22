@@ -33,18 +33,35 @@ SERVED_SMOKE = r"""
     });
     assert(shown.naturalWidth > 0, `a render 404'd on the served page: ${shown.src}`);
 
-    document.querySelector(".menu").open = true;
+    const controls = document.querySelector(".filectrls");
+    assert(controls, "file controls missing on served page");
+    assert(controls.querySelector('[data-file-open][aria-label="Open file"]:not(:disabled)'), "served Open file control missing or disabled");
+    assert(controls.querySelector('[data-copy][aria-label="Copy this path"]'), "Copy path control missing accessible name");
+    assert(controls.querySelector('[data-file-reveal][aria-label="Reveal file"]:not(:disabled)'), "served Reveal file control missing or disabled");
+
+    document.querySelector('[data-run="list"]').closest("details").open = true;
     const button = document.querySelector('[data-run="list"]');
     assert(button, "the List operations row carries no data-run");
-    const out = document.querySelector('[data-cmdout="list"]');
     button.click();
-    for (let waited = 0; waited < 5000 && out.classList.contains("hidden"); waited += 100) {
+    const modal = document.querySelector("#result-modal");
+    for (let waited = 0; waited < 5000 && modal.classList.contains("hidden"); waited += 100) {
       await new Promise((done) => setTimeout(done, 100));
     }
-    await new Promise((done) => setTimeout(done, 400));
-    assert(!out.classList.contains("hidden"), "the output panel never appeared");
-    assert(out.textContent.includes("scan_defects") && out.textContent.includes("exit 0"),
-      `served page did not show real command output: ${out.textContent.slice(0, 200)}`);
+    assert(!modal.classList.contains("hidden"), "the operations modal never appeared");
+    assert(!document.querySelector("details.menu[open]"), "a menu stayed open behind the operations modal");
+    assert(modal.textContent.includes("scan_defects") && modal.textContent.includes("Bake every modifier"),
+      "operations modal did not render translated structured content");
+    assert(!modal.textContent.includes("{"), "operations modal shows raw output");
+    document.querySelector("[data-result-close]").click();
+
+    document.querySelector('[data-run="doctor"]').closest("details").open = true;
+    document.querySelector('[data-run="doctor"]').click();
+    for (let waited = 0; waited < 5000 && modal.classList.contains("hidden"); waited += 100) {
+      await new Promise((done) => setTimeout(done, 100));
+    }
+    assert(modal.textContent.includes("Blender") || modal.textContent.includes("blender"), "setup modal missing structured requirements");
+    assert(!modal.textContent.includes('"requirements"'), "setup modal shows JSON");
+    document.querySelector("[data-result-close]").click();
     for (let waited = 0; waited < 6000 && DATA.reports.length === originalCount; waited += 100) {
       await new Promise((done) => setTimeout(done, 100));
     }
@@ -175,6 +192,11 @@ SMOKE = r"""
     // its own content: an auto-sized grid track took its height from the image, so the
     // image's max-height had nothing definite to resolve against and the bottom was cut.
     await settled();
+    const fileControls = document.querySelector(".filectrls");
+    assert(fileControls, "file controls missing from file page");
+    assert(fileControls.querySelector('[data-copy][aria-label="Copy this path"]'), "file page lost copy path");
+    assert(fileControls.querySelector('[data-file-open]:disabled') && fileControls.querySelector('[data-file-reveal]:disabled'),
+      "file page presents Open or Reveal as working controls");
     const stage = document.querySelector("#pvstage"), band = document.querySelector("#pvmeta");
     assert(document.querySelector("#pvstage img").naturalWidth > 0, "the render did not load");
     assert(stage.scrollHeight <= stage.clientHeight + 1,

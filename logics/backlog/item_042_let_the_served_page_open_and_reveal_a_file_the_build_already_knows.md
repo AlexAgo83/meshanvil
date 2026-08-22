@@ -1,14 +1,14 @@
 ## item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows - Let the served page open and reveal a file the build already knows
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 65%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:25
+> Indicators reviewed: 2026-08-23 01:34:59
 
 # AI Context
 - Summary: The server side of open and reveal: a reference the build already owns resolves to a real file, so no page-supplied path ever becomes a subprocess argument, with the rule recorded as an ADR.

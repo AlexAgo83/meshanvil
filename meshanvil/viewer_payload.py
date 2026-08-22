@@ -1,7 +1,7 @@
 """Build the viewer files and data payload."""
 from __future__ import annotations
 
-import json, os, shutil, time
+import hashlib, json, os, shutil, time
 from pathlib import Path
 
 from . import VERSION, logics_bridge, paths
@@ -63,8 +63,38 @@ def payload(root: Path, target: Path, run_token: str | None = None) -> dict:
             "root": str(root), "lang": language(), "strings": strings, "catalogs": catalogs,
             "version": VERSION, "run_token": run_token, "projects": known, "active": active["name"],
             "reports": active["reports"], "docs": logics_bridge.documents(refs),
-            "runbooks": runbooks, "doctor": collect_doctor(root),
+            "runbooks": runbooks, "doctor": collect_doctor(root), "files": file_references(known),
             "ops_exists": active["ops_exists"]}
+
+
+def file_id(path: str) -> str:
+    return hashlib.sha256(path.encode("utf-8")).hexdigest()[:16]
+
+
+def file_references(projects: list[dict]) -> list[dict]:
+    paths_seen = {}
+    for project in projects:
+        for report in project["reports"]:
+            for value in ((report.get("input") or {}).get("path"), (report.get("output") or {}).get("path")):
+                if value:
+                    paths_seen[value] = {"id": file_id(value), "path": value}
+            for render in report.get("renders", []):
+                if render.get("path"):
+                    paths_seen[render["path"]] = {"id": file_id(render["path"]), "path": render["path"]}
+            for pair in report.get("comparisons", []):
+                for key in ("before", "after"):
+                    if pair.get(key):
+                        paths_seen[pair[key]] = {"id": file_id(pair[key]), "path": pair[key]}
+    return sorted(paths_seen.values(), key=lambda item: item["path"])
+
+
+def resolve_file(root: Path, file_id_value: str) -> Path | None:
+    target = root / OUT
+    for item in file_references([{"reports": collect(project, target)} for project in paths.projects(root)]):
+        if item["id"] == file_id_value:
+            path = Path(item["path"])
+            return path if path.exists() else None
+    return None
 
 
 def build(root: Path, run_token: str | None = None) -> tuple[Path, dict]:

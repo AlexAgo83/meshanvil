@@ -1,14 +1,15 @@
 ## task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals - Deliver the viewer's direct file controls and translated result modals
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 65%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:18:46
+> Indicators reviewed: 2026-08-23 01:34:59
+> Owner: codex
 
 # AI Context
 - Summary: Sequences the pass: record the open/reveal rule first, build the server side against a build-owned reference set, then the icon-only file controls, the translated modals under Help, and the smoke coverage over all of it.

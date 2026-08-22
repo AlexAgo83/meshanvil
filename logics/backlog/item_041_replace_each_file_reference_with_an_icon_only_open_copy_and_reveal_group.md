@@ -1,14 +1,14 @@
 ## item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group - Replace each file reference with an icon-only open, copy and reveal group
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 65%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:24
+> Indicators reviewed: 2026-08-23 01:34:59
 
 # AI Context
 - Summary: One renderer for every file reference in the viewer, producing three icon-only controls (open, copy path, reveal) with catalogue-resolved accessible names, and retiring the copyable `blender <path>` command.
