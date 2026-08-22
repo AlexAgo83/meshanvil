@@ -1,0 +1,220 @@
+{
+  "title": "Hold several model projects side by side and switch between them",
+  "references": [
+    "meshanvil/manifests.py",
+    "meshanvil/runner.py",
+    "meshanvil/viewer.py",
+    "meshanvil/prune.py",
+    "meshanvil/doctor.py",
+    "meshanvil_engine/views.py",
+    "viewer/index.html",
+    "viewer/viewer.js",
+    "tools/build_demo_chain.sh",
+    "scripts/viewer_smoke.py"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Operator workflow and runtime integration",
+    "needs": [
+      "An operator works on more than one model, and today every one of them writes into the same work directory: `manifests.root()` returns the installation directory and nothing overrides it.",
+      "Reports from unrelated models share one identity counter, so the first operation of a second model was allocated `009` instead of `001`.",
+      "The viewer merges unrelated models: every parentless report lands in one outliner group named after whichever model was scanned first, and the operation count in the top bar adds them together.",
+      "`prune --keep` applies its window across every report in the directory, so retention for one model is decided by activity on another.",
+      "Parent resolution matches an operation's input fingerprint against every report on disk, so two projects starting from the same source file can be linked to each other.",
+      "The operator needs to move between projects in the viewer rather than rebuilding a separate page and opening it by hand."
+    ],
+    "context": [
+      "`root()` currently answers two different questions with one value: where the code lives (`tools/*.op.json`, `locales/`, `viewer/`, `logics/`) and where the work lives (`work/ops`, `work/in`, `work/renders`, `work/viewer`, `work/doctor.json`).",
+      "The job file handed to the engine carries a single `root`, which the Blender scripts use both to import `meshanvil_engine` and to locate `work/renders`; splitting the roots has to keep both resolvable.",
+      "Identity allocation is an exclusive-create race over the report directory, so scoping it to a project is a matter of which directory is scanned, not of adding a lock.",
+      "The viewer is a static local page over a generated data file and must stay read-only: switching project cannot start a process, fetch, or write.",
+      "The repository is itself a working project today. The demo chain and `tools/build_demo_chain.sh` run against the installation directory and must keep working untouched."
+    ],
+    "acceptance_criteria": [
+      "AC1: Code location and work location are resolved separately; manifests, locales, viewer sources and Logics documents come from the installation, while reports, sources, renders, the built page and the setup report come from the active project.",
+      "AC2: An operator can create and select a project without editing a file or exporting a variable in every shell, and the command line reports which project it resolved and from where.",
+      "AC3: Identity allocation, parent resolution by fingerprint, and prune retention are each scoped to the active project; the first operation of a new project is `001` and no report of one project can become the parent of another.",
+      "AC4: The viewer offers a project switcher listing the projects that hold reports, and selecting one shows that project's chain, counts and renders without a rebuild, a server, or any write.",
+      "AC5: The viewer names the active project everywhere it currently names a fixed path, and the operation count, branch count and totals describe that project alone.",
+      "AC6: An installation with no project marker keeps behaving exactly as it does today, `tools/build_demo_chain.sh` included, and an existing work directory is readable without a migration step.",
+      "AC7: A source file outside the active project is still accepted as an operation target, and the read-only refusal that protects the sources directory follows the active project.",
+      "AC8: Automated checks cover the split: a run in one project leaves another untouched, identities restart, and the browser smoke exercises the switcher and fails when it is absent."
+    ]
+  },
+  "product": {
+    "title": "Multi-project operator workspaces",
+    "overview": "Lets one installation serve several model projects, each with its own reports, artefacts and viewer, and lets the operator move between them from the page instead of rebuilding it.",
+    "goals": [
+      "Separate where the tool is installed from where a project's work is kept.",
+      "Make every per-project namespace -- identity, parentage, retention -- actually per project.",
+      "Let the operator see and switch projects from the viewer without leaving read-only.",
+      "Keep the current single-directory behaviour working with no migration."
+    ],
+    "non_goals": [
+      "A project database, registry service, daemon or hosted workspace.",
+      "Comparing or merging chains across projects in one graph.",
+      "Moving or rewriting reports that already exist on disk.",
+      "Changing the report schema, operation behaviour or geometry results.",
+      "Remote or shared projects, locking between machines, or multi-user access control."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Split the code root from the work root",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC1", "AC6"],
+      "problem": [
+        "`manifests.root()` is derived from the module file and is used for both the installed code and the operator's work.",
+        "Roughly fifteen call sites across manifests, runner, viewer, prune, doctor, i18n and logics_bridge mix the two meanings.",
+        "The job file passed to the engine carries one `root`, which the Blender scripts use to import `meshanvil_engine` and to place renders."
+      ],
+      "scope_in": [
+        "Introduce a code root and a work root, and move every existing call site to whichever one it actually meant.",
+        "Carry both roots in the job file so an engine script can import the package and write renders to the right place.",
+        "Keep the work root defaulting to the code root when nothing else is resolved."
+      ],
+      "scope_out": [
+        "Choosing or discovering the active project, which is a separate item.",
+        "Any change to report contents, paths already recorded in reports, or the schema."
+      ],
+      "acceptance_criteria": [
+        "AC1: Manifest discovery, locale loading, viewer source files and Logics document reads resolve against the installation and keep working when the work root is elsewhere.",
+        "AC2: Reports, sources, renders, the built page and the setup report resolve against the work root.",
+        "AC3: An engine script launched with a work root different from the installation imports `meshanvil_engine` and writes its renders under the work root.",
+        "AC4: With no project resolved, every path is identical to today's."
+      ]
+    },
+    {
+      "title": "Resolve the active project without an invisible setting",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC2", "AC6", "AC7"],
+      "problem": [
+        "Nothing today depends on the working directory: the tool behaves the same wherever it is launched from.",
+        "An environment variable alone would make the destination of a run invisible, which is the failure mode this project exists to prevent.",
+        "The operator needs to create a project and know which one is active before running anything destructive."
+      ],
+      "scope_in": [
+        "Resolve the project by walking up from the working directory for a marker, with an explicit override for non-interactive runs.",
+        "Add a command that creates the marker and the work directories for a new project.",
+        "Report the resolved project and how it was resolved in the setup check and on the command line."
+      ],
+      "scope_out": [
+        "A registry of known projects stored outside the projects themselves.",
+        "Prompting, interactive selection or shell integration."
+      ],
+      "acceptance_criteria": [
+        "AC1: Running from inside a project directory resolves that project; running with no marker anywhere above resolves the installation, as today.",
+        "AC2: An explicit override selects a project for one invocation without depending on the working directory.",
+        "AC3: The setup check states which project is active and which rule resolved it, and the viewer's environment panel shows the same.",
+        "AC4: A target file outside the active project is accepted, and the sources directory that is refused as a write target is the active project's."
+      ]
+    },
+    {
+      "title": "Scope identity, parentage and retention to one project",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operation review loop",
+      "request_acs": ["AC3", "AC6"],
+      "problem": [
+        "Identity allocation scans the whole report directory, so a second model continued the first model's numbering and took `009` for its first operation.",
+        "Parent resolution matches an input fingerprint against every report on disk, so two projects opened from the same source file would be linked.",
+        "Prune applies its retention window across every report, so one model's activity decides another's artefact deletion."
+      ],
+      "scope_in": [
+        "Scope the identity scan, the fingerprint search and the prune window to the active project's report directory.",
+        "Keep exclusive creation as the arbitration for identity so two runners in one project still cannot collide.",
+        "Leave already-written reports and their recorded paths untouched."
+      ],
+      "scope_out": [
+        "Renumbering or rewriting existing reports.",
+        "Cross-project parentage, even when two projects share a source fingerprint."
+      ],
+      "acceptance_criteria": [
+        "AC1: The first operation of a project with no reports is `001`, whatever other projects contain.",
+        "AC2: No report in one project resolves as the parent of an operation in another, including when both start from the same source file.",
+        "AC3: Prune considers only the active project's reports and artefacts, and reports what it dropped for that project.",
+        "AC4: Two runners inside one project still cannot claim the same identity."
+      ]
+    },
+    {
+      "title": "Add a project switcher to the viewer",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Viewer parity",
+      "request_acs": ["AC4", "AC5"],
+      "problem": [
+        "The viewer is built for one report directory and has no way to reach another.",
+        "The top bar names a fixed path rather than the project, and the status bar totals describe whatever the directory happens to hold.",
+        "Switching today means rebuilding the page and opening it again by hand."
+      ],
+      "scope_in": [
+        "Generate the page with the projects that hold reports and let the operator select one from the page.",
+        "Show the active project where the fixed path is shown today, in the top bar and the status bar.",
+        "Keep counts, branch totals and vertex totals scoped to the shown project."
+      ],
+      "scope_out": [
+        "Drawing two projects in one graph, or comparing operations across projects.",
+        "Any fetch, server, build step or write from the page.",
+        "Persisting the selection outside the viewer."
+      ],
+      "acceptance_criteria": [
+        "AC1: The page lists the projects that hold at least one report and marks which one is shown.",
+        "AC2: Selecting a project shows its chain, outliner groups, renders and totals without a rebuild and without a network request.",
+        "AC3: The top bar and status bar name the shown project instead of a fixed path.",
+        "AC4: With a single project the page reads as it does today, with no empty switcher furniture.",
+        "AC5: New visible labels are present in the i18n catalogue and report data stays escaped."
+      ]
+    },
+    {
+      "title": "Prove the isolation and keep the current setup working",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC6", "AC8"],
+      "problem": [
+        "Isolation that is not asserted will be lost the first time a path constant is touched.",
+        "The repository is itself a working project and its demo chain must survive the split.",
+        "The existing browser smoke would pass whether or not a switcher exists."
+      ],
+      "scope_in": [
+        "Assert that a run in one project leaves another project's reports, renders and artefacts unchanged.",
+        "Assert that identities restart and that parentage does not cross projects.",
+        "Exercise the switcher in the browser smoke and fail when it is missing.",
+        "Keep `tools/build_demo_chain.sh` and the fixture check running against the installation with no argument change."
+      ],
+      "scope_out": [
+        "A performance or scale benchmark over many projects.",
+        "New test dependencies when the existing self-check and smoke paths are enough."
+      ],
+      "acceptance_criteria": [
+        "AC1: One self-check run creates two projects, runs in each, and fails if either one's reports, renders or artefacts changed because of the other.",
+        "AC2: The self-check asserts the first identity of a fresh project is `001` and that no parent link crosses projects.",
+        "AC3: The browser smoke fails when the project switcher is absent, and passes with one project without requiring a second.",
+        "AC4: The demo chain script and the fixture check run unchanged against the installation and still produce their current reports."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver multi-project workspaces and the viewer switcher",
+    "plan": [
+      "Inventory every use of the current root and record, per call site, whether it meant code or work; keep that list in the task notes.",
+      "Introduce the two roots and move the call sites, keeping the work root defaulting to the installation.",
+      "Carry both roots in the job file and confirm an engine script imports the package and writes renders correctly from a foreign work root.",
+      "Add project resolution by marker walk-up with an explicit override, and the command that creates a project.",
+      "Scope identity allocation, fingerprint parentage and prune retention to the active project.",
+      "Surface the active project in the setup check, the top bar and the status bar.",
+      "Generate the project list into the viewer data and implement the switcher as a read-only selection.",
+      "Extend the self-check with a two-project isolation case and the browser smoke with the switcher.",
+      "Run make check, the fixture check, the browser smoke and the demo chain before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/multi-project-workspaces.json",
+    "mode": "summary-only",
+    "profile": "deep"
+  }
+}

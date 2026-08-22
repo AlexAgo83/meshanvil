@@ -17,7 +17,8 @@
 |---|---|---|---|---|---|
 | [prod_001_reviewable_agent_driven_3d_operations](product/prod_001_reviewable_agent_driven_3d_operations.md) | Reviewable agent-driven 3D operations | Settled |  |  | product/prod_001_reviewable_agent_driven_3d_operations.md |
 | [prod_002_reviewable_local_viewer_interaction_parity](product/prod_002_reviewable_local_viewer_interaction_parity.md) | Reviewable local viewer interaction parity | Active |  |  | product/prod_002_reviewable_local_viewer_interaction_parity.md |
-| [prod_003_strict_local_viewer_mockup_parity_closure](product/prod_003_strict_local_viewer_mockup_parity_closure.md) | Strict local viewer mockup parity closure | Proposed |  |  | product/prod_003_strict_local_viewer_mockup_parity_closure.md |
+| [prod_003_strict_local_viewer_mockup_parity_closure](product/prod_003_strict_local_viewer_mockup_parity_closure.md) | Strict local viewer mockup parity closure | Settled |  |  | product/prod_003_strict_local_viewer_mockup_parity_closure.md |
+| [prod_004_multi_project_operator_workspaces](product/prod_004_multi_project_operator_workspaces.md) | Multi-project operator workspaces | Proposed |  |  | product/prod_004_multi_project_operator_workspaces.md |
 
 ## Roadmaps
 
@@ -29,7 +30,8 @@ _None_
 |---|---|---|---|---|---|
 | [req_000_make_every_3d_operation_reviewable_without_reopening_blender](request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md) | Make every 3D operation reviewable without reopening Blender | Done |  |  | request/req_000_make_every_3d_operation_reviewable_without_reopening_blender.md |
 | [req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface](request/req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface.md) | Bring the local viewer up to the reviewed mockup interaction surface | Done | codex |  | request/req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface.md |
-| [req_002_close_the_remaining_local_viewer_mockup_parity_gaps](request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md) | Close the remaining local viewer mockup parity gaps | Draft |  |  | request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md |
+| [req_002_close_the_remaining_local_viewer_mockup_parity_gaps](request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md) | Close the remaining local viewer mockup parity gaps | Done |  |  | request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md |
+| [req_003_hold_several_model_projects_side_by_side_and_switch_between_them](request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md) | Hold several model projects side by side and switch between them | Draft |  |  | request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md |
 
 ## Backlog
 
@@ -51,10 +53,15 @@ _None_
 | [item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer](backlog/item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md) | Add safe workspace navigation and command discovery to the viewer | Done |  | 100% | backlog/item_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md |
 | [item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary](backlog/item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md) | Complete the mockup review controls without weakening the local page boundary | Done |  | 100% | backlog/item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md |
 | [item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture](backlog/item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md) | Exercise the viewer in a real browser against the generated fixture | Done |  | 100% | backlog/item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md |
-| [item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface](backlog/item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface.md) | Replace minimal menus with the reviewed command menu surface | Ready |  | 0% | backlog/item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface.md |
-| [item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list](backlog/item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list.md) | Build Runbooks as a primary workspace instead of an outliner-only list | Ready |  | 0% | backlog/item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list.md |
-| [item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout](backlog/item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout.md) | Restore the reviewed first-run splash and Compare split layout | Ready |  | 0% | backlog/item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout.md |
-| [item_020_make_browser_smoke_fail_on_missing_mockup_surfaces](backlog/item_020_make_browser_smoke_fail_on_missing_mockup_surfaces.md) | Make browser smoke fail on missing mockup surfaces | Ready |  | 0% | backlog/item_020_make_browser_smoke_fail_on_missing_mockup_surfaces.md |
+| [item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface](backlog/item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface.md) | Replace minimal menus with the reviewed command menu surface | Done |  | 100% | backlog/item_017_replace_minimal_menus_with_the_reviewed_command_menu_surface.md |
+| [item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list](backlog/item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list.md) | Build Runbooks as a primary workspace instead of an outliner-only list | Done |  | 100% | backlog/item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list.md |
+| [item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout](backlog/item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout.md) | Restore the reviewed first-run splash and Compare split layout | Done |  | 100% | backlog/item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout.md |
+| [item_020_make_browser_smoke_fail_on_missing_mockup_surfaces](backlog/item_020_make_browser_smoke_fail_on_missing_mockup_surfaces.md) | Make browser smoke fail on missing mockup surfaces | Done |  | 100% | backlog/item_020_make_browser_smoke_fail_on_missing_mockup_surfaces.md |
+| [item_021_split_the_code_root_from_the_work_root](backlog/item_021_split_the_code_root_from_the_work_root.md) | Split the code root from the work root | Ready |  | 0% | backlog/item_021_split_the_code_root_from_the_work_root.md |
+| [item_022_resolve_the_active_project_without_an_invisible_setting](backlog/item_022_resolve_the_active_project_without_an_invisible_setting.md) | Resolve the active project without an invisible setting | Ready |  | 0% | backlog/item_022_resolve_the_active_project_without_an_invisible_setting.md |
+| [item_023_scope_identity_parentage_and_retention_to_one_project](backlog/item_023_scope_identity_parentage_and_retention_to_one_project.md) | Scope identity, parentage and retention to one project | Ready |  | 0% | backlog/item_023_scope_identity_parentage_and_retention_to_one_project.md |
+| [item_024_add_a_project_switcher_to_the_viewer](backlog/item_024_add_a_project_switcher_to_the_viewer.md) | Add a project switcher to the viewer | Ready |  | 0% | backlog/item_024_add_a_project_switcher_to_the_viewer.md |
+| [item_025_prove_the_isolation_and_keep_the_current_setup_working](backlog/item_025_prove_the_isolation_and_keep_the_current_setup_working.md) | Prove the isolation and keep the current setup working | Ready |  | 0% | backlog/item_025_prove_the_isolation_and_keep_the_current_setup_working.md |
 
 ## Tasks
 
@@ -75,7 +82,8 @@ _None_
 | [task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture](tasks/task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md) | Exercise the viewer in a real browser against the generated fixture | Done | codex | 100% | tasks/task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture.md |
 | [task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer](tasks/task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md) | Add safe workspace navigation and command discovery to the viewer | Done | codex | 95% | tasks/task_014_add_safe_workspace_navigation_and_command_discovery_to_the_viewer.md |
 | [task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary](tasks/task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md) | Complete the mockup review controls without weakening the local page boundary | Done | codex | 100% | tasks/task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary.md |
-| [task_016_deliver_remaining_viewer_mockup_parity_gaps](tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md) | Deliver remaining viewer mockup parity gaps | Ready |  | 0% | tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md |
+| [task_016_deliver_remaining_viewer_mockup_parity_gaps](tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md) | Deliver remaining viewer mockup parity gaps | Done | codex | 100% | tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md |
+| [task_017_deliver_multi_project_workspaces_and_the_viewer_switcher](tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md) | Deliver multi-project workspaces and the viewer switcher | Ready |  | 0% | tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md |
 
 ## Runbooks
 
