@@ -11,6 +11,7 @@ from types import SimpleNamespace
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from meshanvil import doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer  # noqa: E402
+from meshanvil.viewer_routes import run as viewer_run  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
 
@@ -228,13 +229,12 @@ def check_run_endpoint(tmp: Path):
         conn.close()
         return status
 
-    original_run = viewer.subprocess.run
+    original_run = viewer_run.subprocess.run
     try:
         assert post({"X-Meshanvil-Token": "wrong"}, {"command": "list"}) == 401, "a bad token was accepted"
         assert post({}, {"command": "list"}) == 401, "a missing token was accepted"
         assert post({"X-Meshanvil-Token": token}, {"command": "rm -rf /"}) == 400, "a command outside the closed set was accepted"
 
-        viewer.subprocess.run = lambda *a, **k: SimpleNamespace(stdout="ok", stderr="", returncode=0)
         assert post({"X-Meshanvil-Token": token}, {"command": "list"}) == 200, "a valid request was refused"
 
         released = threading.Event()
@@ -242,22 +242,22 @@ def check_run_endpoint(tmp: Path):
         def slow_run(*a, **k):
             released.wait(timeout=2)
             return SimpleNamespace(stdout="ok", stderr="", returncode=0)
-        viewer.subprocess.run = slow_run
 
         statuses = []
 
         def call():
-            statuses.append(post({"X-Meshanvil-Token": token}, {"command": "doctor"}))
+            statuses.append(post({"X-Meshanvil-Token": token}, {"command": "prune"}))
+        viewer_run.subprocess.run = slow_run
         first = threading.Thread(target=call)
         first.start()
         time.sleep(0.2)   # let the first request take the lock before the second arrives
-        second_status = post({"X-Meshanvil-Token": token}, {"command": "doctor"})
+        second_status = post({"X-Meshanvil-Token": token}, {"command": "prune"})
         released.set()
         first.join(timeout=2)
         assert second_status == 409, "a concurrent request was queued instead of refused"
         assert statuses == [200], "the in-flight request did not complete normally"
     finally:
-        viewer.subprocess.run = original_run
+        viewer_run.subprocess.run = original_run
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
