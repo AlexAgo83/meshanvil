@@ -1,0 +1,657 @@
+{
+  "budgets": {
+    "max_docs": 28,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone item_051_declare_the_package_and_give_the_tool_a_real_entry_point item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus item_055_make_releasing_a_procedure_and_state_what_was_measured task_025_deliver_an_installable_meshanvil --mode full --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+          "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+          "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+          "item_055_make_releasing_a_procedure_and_state_what_was_measured"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/product/prod_012_a_tool_you_install_not_a_repository_you_clone.md",
+      "ref": "prod_012_a_tool_you_install_not_a_repository_you_clone",
+      "sections": {
+        "Goals": [
+          "- Getting the tool is one command, and the only real prerequisite left is the one no packaging can remove.",
+          "- The tool finds what it needs by one rule, whether it is running from a checkout or from an installed package.",
+          "- A package that is missing part of itself fails at build time, not at an operator's first run.",
+          "- What is supported and what is unverified is stated where someone about to install reads it."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Turns meshanvil from a source tree that has to be acquired into a command an operator installs once and uses in any project directory, without giving up the working-tree route contributors depend on and without pretending to support a platform nobody measured."
+        ],
+        "References": [
+          "- Product back-reference: `req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone`",
+          "- Task back-reference: `task_025_deliver_an_installable_meshanvil`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "A tool you install, not a repository you clone"
+    },
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group",
+          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows",
+          "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help",
+          "item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite"
+        ],
+        "prod": [
+          "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
+        ],
+        "task": [
+          "task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals"
+        ]
+      },
+      "path": "logics/product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md",
+      "ref": "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names",
+      "sections": {
+        "Goals": [
+          "- A file reference is a place the operator can go, not a string to copy and retype.",
+          "- Nothing routes the operator through a terminal for something the host system already does.",
+          "- A command's result is presented in the operator's language, in a container built for it.",
+          "- Menu rows sit in the menu that describes them."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Takes the viewer past showing a file reference or a command result as text: a file becomes something to open or locate, and a command result becomes a translated panel, without the viewer gaining a dependency or an open execution surface.",
+          "```mermaid",
+          "flowchart LR",
+          "  ref[\"A file the build named<br/>(input, artefact, render)\"] --> grp[Open / Copy path / Reveal]",
+          "  grp -->|served page| ep[Server resolves the reference it owns]",
+          "  ep --> host[Host default handler, or its folder]"
+        ],
+        "References": [
+          "- Product back-reference: `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls`",
+          "- Task back-reference: `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "Direct controls over the files and results the viewer already names"
+    },
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+          "item_050_reuse_a_running_viewer_and_keep_its_address_stable"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ],
+        "task": [
+          "task_024_deliver_the_live_viewer_and_the_module_structure"
+        ]
+      },
+      "path": "logics/product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md",
+      "ref": "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible",
+      "sections": {
+        "Goals": [
+          "- A running chain's reports appear in an open page without anyone restarting or reloading anything.",
+          "- Launching the viewer twice gets you the viewer you already have, at the address it always had.",
+          "- The refresh mechanism costs almost nothing when nothing is happening and adds no dependency to detect change.",
+          "- Every screen of the client and every job of the server has its own file, with a size limit that is checked rather than hoped for.",
+          "- A host module has a test module, and a failing check names the unit that broke."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Turns the served viewer into a live view onto the reports directory instead of a snapshot, and gives both sides of it -- the host code and the page -- a module structure, a size budget and a real test layout, so the next slice edits a small file instead of the only file.",
+          "```mermaid",
+          "flowchart LR",
+          "  fs[\"work/ops/*.json, doctor, runbooks\"] --> poll[Signature poll, stdlib, bounded cost]",
+          "  poll -->|component changed| sse[Event stream: names, not data]",
+          "  sse --> client[Client refetches that component only]"
+        ],
+        "References": [
+          "- Product back-reference: `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`",
+          "- Task back-reference: `task_024_deliver_the_live_viewer_and_the_module_structure`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "A viewer that stays current and a codebase that stays divisible"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "meshanvil, installable, tool, instead, repository, you, clone",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+          "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+          "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+          "item_055_make_releasing_a_procedure_and_state_what_was_measured"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ]
+      },
+      "path": "logics/request/req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone.md",
+      "ref": "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The tool is installed from a built package into an environment that is not a checkout, and its command is available on PATH and runs.",
+          "- AC2: Installed, the tool has no third-party runtime dependency; installing it pulls nothing but itself.",
+          "- AC3: Every asset the tool reads at runtime -- operation manifests, string catalogues, the viewer's sources and its built bundle, the engine package -- is found both from a working tree and from an installed package, resolved by one rule rather than per call site.",
+          "- AC4: A built package is verified to actually carry those assets before it can be published; a missing asset fails the build rather than being discovered by an operator at first run.",
+          "- AC5: The served viewer runs its closed command set through the installed entry point rather than a file path inside a checkout, with `adr_007`'s guarantees unchanged: the same closed set, the same token, the same single flight, and still no operator-supplied value reaching a subprocess.",
+          "- AC6: The package's declared version and the version the tool reports come from one source; they cannot disagree."
+        ],
+        "Needs": [
+          "- `adr_004` records `No publication yet. No PyPI package, no npm package, no installer. The repository is cloned and run.` That was the right call pre-1.0 and it is still the state today: the only way to get meshanvil is to clone it and run `./bin/meshanvil`, which asks an operator who wants to prepare a model for printing to first acquire a source tree.",
+          "- `bin/meshanvil` reaches its own package by inserting the repository root into `sys.path`. That works only because the entry point sits inside the tree it imports from, so there is no shape in which the tool is installed once and used from anywhere.",
+          "- `paths.code_root()` returns the repository root and eleven call sites depend on it to find operation manifests, string catalogues, the viewer's sources, the engine package and the runbooks. Installed rather than cloned, that root does not exist, and every one of those lookups has to come from somewhere else.",
+          "- The served viewer's `/run` endpoint launches `code_root()/bin/meshanvil` as a subprocess -- a file path inside a checkout. An installed tool has an entry point, not that file.",
+          "- The version is a literal in `meshanvil/__init__.py` with nothing that would keep a package's declared version and it in step.",
+          "- `logics_bridge` reads runbooks from `code_root()`, which today is this repository's own `logics/` corpus. What an installed meshanvil should show in its runbook workspace has never been decided, because until now the installation and the corpus were the same directory."
+        ]
+      },
+      "status": "Draft",
+      "title": "Make meshanvil an installable tool instead of a repository you clone"
+    },
+    {
+      "ai_context": {
+        "keywords": "file controls, open and reveal, icon-only affordance, translated result modal, closed action set, Help menu",
+        "skip when": "Deciding what an operation measures or reports -- adr_001 and req_000 hold that, not this request.",
+        "summary": "A file the viewer names becomes something to open or locate rather than a string to copy, and a command's result becomes a translated panel instead of raw stdout -- both without a new dependency or an open execution surface.",
+        "use when": "Deciding how the viewer presents a file reference or the result of a command it can run."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_041_replace_each_file_reference_with_an_icon_only_open_copy_and_reveal_group",
+          "item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows",
+          "item_043_show_list_and_setup_results_as_translated_modals_reached_from_help",
+          "item_044_cover_the_new_controls_and_modals_in_the_viewer_smoke_suite"
+        ],
+        "prod": [
+          "prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls"
+        ]
+      },
+      "path": "logics/request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md",
+      "ref": "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Every place the viewer labels a file reference calls it `file`, not `path`, in both catalogues, and no label reads `path` where a file is meant.",
+          "- AC2: Every file reference the viewer shows (report Input, report Output/Artefact, render provenance, and any other) offers the same three controls -- Open, Copy path, Reveal -- rendered as icons with no visible text label, each carrying an accessible name resolved from the string catalogue.",
+          "- AC3: On a served page, Open launches the file through the host system's default handler and Reveal opens the containing folder with the file selected where the platform supports it; both are verified on the platform under test and the platforms not verified are stated as unverified.",
+          "- AC4: On a page opened from disk, Copy path behaves exactly as it does today and Open and Reveal are not offered as controls that appear to work -- absent or explicitly shown as unavailable, never silently inert.",
+          "- AC5: A decision is recorded (an amendment to adr_007 or a new ADR) covering how a file reaches the server without an operator-supplied path becoming a subprocess argument, and the implementation matches it.",
+          "- AC6: No `blender <path>` command is offered for copying anywhere in the viewer; opening a report's artefact goes through the Open control of AC2."
+        ],
+        "Needs": [
+          "- Wherever the viewer shows a file it calls it `path` and prints the path itself -- a single copy-to-clipboard button carrying the whole string (report Input, report Output/Artefact, render provenance). The operator's actual intent is almost never 'I want this string': it is 'open this file', 'show me where it sits', and only sometimes 'give me the text'. One control serves the rarest of the three.",
+          "- The render panel offers `blender <path>` as a command to copy and paste into a terminal. Opening a .blend file is what the host system's file association already does; asking the operator to open a terminal to do it is a longer route to the same place.",
+          "- `List operations` and `Check setup` run for real on a served page (adr_007) but their result is dumped as raw process stdout into a `<pre>` inside the still-open menu dropdown: untranslated, unstyled, and shown in a container sized for a menu row. `Check setup` in particular prints a JSON object at the operator.",
+          "- Both rows sit in menus that do not describe them: `List operations` under File and `Check setup` under File, while both are reference material about the tool and its environment rather than actions on the current project."
+        ]
+      },
+      "status": "Draft",
+      "title": "Turn the viewer's file references and command rows into direct, translated controls"
+    },
+    {
+      "ai_context": {
+        "keywords": "server-sent events, mtime signature poll, payload route, module split by screen, line budget, pytest layout, adr_004 amendment",
+        "skip when": "Deciding what the viewer displays or what a report contains -- req_000 and adr_001 hold that.",
+        "summary": "The served page becomes a live view onto the reports directory instead of a build-time snapshot, and both sides of the viewer gain a module structure, a checked size budget and a real test layout.",
+        "use when": "Deciding how the viewer stays current, or how the viewer's code is divided and checked."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page",
+          "item_046_push_change_to_the_open_page_over_a_standard_library_event_stream",
+          "item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction",
+          "item_048_split_the_client_by_screen_behind_a_committed_checked_bundle",
+          "item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module",
+          "item_050_reuse_a_running_viewer_and_keep_its_address_stable"
+        ],
+        "prod": [
+          "prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible"
+        ],
+        "req": [
+          "req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls",
+          "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds"
+        ]
+      },
+      "path": "logics/request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md",
+      "ref": "req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The served page's payload is fetched from the server rather than read from a build-time file, and a page opened from disk keeps working exactly as it does today from its generated fallback.",
+          "- AC2: A served page reflects a new, changed or removed report without the operator restarting the server or reloading the page, within a few seconds of the file landing.",
+          "- AC3: Change detection uses the standard library only -- no file-watching dependency -- and its cost is bounded so that an idle viewer does not consume a meaningful share of a core; the bound is stated and measured, not asserted.",
+          "- AC4: The event stream carries what changed, not the changed data, and the client refetches only the affected part; no code path in the client reloads the whole page on a data change.",
+          "- AC5: A client with no event-stream support still converges on fresh data through a self-throttling fallback, and neither path leaves a timer or a connection running after the page is closed.",
+          "- AC6: `adr_004` is amended (or superseded) to record that the auto-refresh it promised now exists and how, that the served page is now the default mode with the opened-from-disk one behind a flag, and the build step the client split requires -- with the rejected alternative named."
+        ],
+        "Needs": [
+          "- `meshanvil view` builds and opens a page from disk by default and only serves behind `--serve`, so the mode that can refresh itself is the one nobody gets unless they ask. Every launch also starts a fresh server on port 0, so the address changes every time -- an open tab, a bookmark and a second `meshanvil view` all point somewhere that no longer exists, and nothing notices that a viewer for this project is already running.",
+          "- `adr_004` states that `meshanvil view --serve` starts a server `for auto-refresh`. Nothing auto-refreshes: there is no watcher, no event stream and no polling anywhere in `meshanvil/viewer.py` or `viewer/viewer.js`. The promise is documented and was never built, so an operator watching a chain run has to stop the server, re-run the command and reopen the page to see the report that just landed.",
+          "- Even a manual browser refresh shows nothing new: the payload is baked into `work/viewer/data.js` at build time, so the page is a snapshot of the moment the command ran rather than a view onto the reports directory.",
+          "- `viewer/viewer.js` is 908 lines in one file covering every screen, every renderer and every event handler. Each slice that touches the viewer -- and the last four have -- edits the same file, and nothing states when it has grown too large.",
+          "- `meshanvil/viewer.py` is 199 lines doing three unrelated jobs: computing the payload, serving it over HTTP, and launching a browser. It is the file the next three endpoints (a data route, an event stream, and the open/reveal route `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls` needs) would all land in.",
+          "- There is no test directory and no test runner. `scripts/selfcheck.py` is 353 lines of hand-rolled asserts covering the whole host codebase in one file, so a single module's behaviour has nowhere of its own to be checked and a failure names the script rather than the unit."
+        ]
+      },
+      "status": "Draft",
+      "title": "Make the viewer refresh itself and give the code a module structure that holds"
+    },
+    {
+      "ai_context": {
+        "keywords": "declare, package, tool, real, entry, point",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_051_declare_the_package_and_give_the_tool_a_real_entry_point"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_051_declare_the_package_and_give_the_tool_a_real_entry_point.md",
+      "ref": "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Installing the built package into a clean environment puts a working command on PATH.",
+          "- AC2: The install pulls no third-party runtime dependency.",
+          "- AC3: The declared version and the reported version come from one source.",
+          "- AC4: `./bin/meshanvil` still runs from a clone with nothing installed."
+        ],
+        "Problem": [
+          "- There is no package declaration, and `bin/meshanvil` finds its own package by inserting the repository root into `sys.path` -- which only works because the entry point lives inside the tree it imports.",
+          "- The version is a literal in the package with nothing keeping a declared version in step with it."
+        ]
+      },
+      "status": "Ready",
+      "title": "Declare the package and give the tool a real entry point"
+    },
+    {
+      "ai_context": {
+        "keywords": "deliver, installable, meshanvil",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+          "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+          "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+          "item_055_make_releasing_a_procedure_and_state_what_was_measured"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/tasks/task_025_deliver_an_installable_meshanvil.md",
+      "ref": "task_025_deliver_an_installable_meshanvil",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Deliver an installable meshanvil"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+          "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+          "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+          "item_055_make_releasing_a_procedure_and_state_what_was_measured"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/product/prod_012_a_tool_you_install_not_a_repository_you_clone.md",
+      "ref": "prod_012_a_tool_you_install_not_a_repository_you_clone",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Proposed",
+      "title": "A tool you install, not a repository you clone"
+    },
+    {
+      "ai_context": {
+        "keywords": "resolve, runtime, asset, same, way, tree, package",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package.md",
+      "ref": "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: One rule resolves every runtime asset and no call site reaches for the repository root directly.",
+          "- AC2: The tool finds every asset both from a working tree and from an installed package.",
+          "- AC3: A package built without one of its asset directories fails the build with the missing one named."
+        ],
+        "Problem": [
+          "- `paths.code_root()` returns the repository root and eleven call sites use it to find manifests, catalogues, viewer sources, the engine package and the runbooks. Installed, that root does not exist."
+        ]
+      },
+      "status": "Ready",
+      "title": "Resolve every runtime asset the same way from a tree or a package"
+    },
+    {
+      "ai_context": {
+        "keywords": "run, viewer, closed, command, set, through, installed, entry, point",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point.md",
+      "ref": "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The closed command set runs from an installed tool and from a clone, with the same result.",
+          "- AC2: The closed set, the token check, the single-flight guard and the refusals are unchanged, and no operator-supplied value reaches a subprocess."
+        ],
+        "Problem": [
+          "- The served viewer's `/run` endpoint launches a file inside a checkout, which an installed tool does not have."
+        ]
+      },
+      "status": "Ready",
+      "title": "Run the viewer's closed command set through the installed entry point"
+    },
+    {
+      "ai_context": {
+        "keywords": "decide, installed, meshanvil, offers, place, repository, corpus",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus.md",
+      "ref": "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The decision is recorded with its alternatives.",
+          "- AC2: An installed tool's runbook workspace matches it, and an empty state explains itself.",
+          "- AC3: A report's links to documents behave the same way rather than pointing at nothing."
+        ],
+        "Problem": [
+          "- `logics_bridge` reads runbooks from the installation, which today is this repository's own corpus. Installed, there is no corpus there, and nothing has decided whether the runbook workspace should ship content, read the project's, or say it has none."
+        ]
+      },
+      "status": "Ready",
+      "title": "Decide what an installed meshanvil offers in place of this repository's corpus"
+    },
+    {
+      "ai_context": {
+        "keywords": "releasing, procedure, state, measured",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_055_make_releasing_a_procedure_and_state_what_was_measured"
+        ],
+        "prod": [
+          "prod_012_a_tool_you_install_not_a_repository_you_clone"
+        ],
+        "req": [
+          "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone"
+        ],
+        "task": [
+          "task_025_deliver_an_installable_meshanvil"
+        ]
+      },
+      "path": "logics/backlog/item_055_make_releasing_a_procedure_and_state_what_was_measured.md",
+      "ref": "item_055_make_releasing_a_procedure_and_state_what_was_measured",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: An ADR supersedes `No publication yet` and records the channel, the rejected channels and the scope of an install.",
+          "- AC2: Building, verifying and releasing are commands, and the dry run publishes nothing.",
+          "- AC3: A release states its measured platforms and names the unverified ones.",
+          "- AC4: The README's installation section leads with the engine requirement and keeps the contributor route."
+        ],
+        "Problem": [
+          "- `adr_004` records `No publication yet` with no successor, so the channel and its consequences are undecided rather than chosen.",
+          "- The platform matrix has Linux unverified, and putting a package on an index is an implicit support claim that nothing currently qualifies.",
+          "- The README tells a reader to clone the repository."
+        ]
+      },
+      "status": "Ready",
+      "title": "Make releasing a procedure and state what was measured"
+    }
+  ],
+  "estimates": {
+    "char_count": 29483,
+    "companion_doc_count": 3,
+    "doc_count": 10
+  },
+  "generated_at": "2026-08-22T22:47:54Z",
+  "handoff": {
+    "companion_doc_count": 3,
+    "enabled": true,
+    "source_refs": [
+      "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone",
+      "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+      "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+      "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+      "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+      "item_055_make_releasing_a_procedure_and_state_what_was_measured",
+      "task_025_deliver_an_installable_meshanvil"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Keep catalogs valid with logics-manager i18n validate in the project quality gate."
+    ],
+    "applicable": true,
+    "catalogs": {
+      "en": 199,
+      "fr": 199
+    },
+    "configured": true,
+    "contract": {
+      "applicability": "applicable",
+      "catalog": {
+        "path": "locales/{locale}.json"
+      },
+      "default_locale": "en",
+      "fallback_locale": "en",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "schema_version": "1.0",
+      "source_locale": "en"
+    },
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "The i18n contract is valid.",
+    "ok": true,
+    "state": "valid"
+  },
+  "mode": "full",
+  "profile": "normal",
+  "ref": "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone,item_051_declare_the_package_and_give_the_tool_a_real_entry_point,item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package,item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point,item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus,item_055_make_releasing_a_procedure_and_state_what_was_measured,task_025_deliver_an_installable_meshanvil",
+  "refs": [
+    "req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone",
+    "item_051_declare_the_package_and_give_the_tool_a_real_entry_point",
+    "item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package",
+    "item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point",
+    "item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus",
+    "item_055_make_releasing_a_procedure_and_state_what_was_measured",
+    "task_025_deliver_an_installable_meshanvil"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_id": null,
+    "target_version": null,
+    "targets": []
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_025_deliver_an_installable_meshanvil.md",
+      "ref": "task_025_deliver_an_installable_meshanvil"
+    }
+  ]
+}

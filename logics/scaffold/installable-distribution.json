@@ -1,0 +1,225 @@
+{
+  "title": "Make meshanvil an installable tool instead of a repository you clone",
+  "references": [
+    "bin/meshanvil",
+    "meshanvil/paths.py",
+    "meshanvil/viewer.py",
+    "meshanvil/i18n.py",
+    "meshanvil/manifests.py",
+    "meshanvil/runner.py",
+    "meshanvil/logics_bridge.py",
+    "meshanvil/__init__.py",
+    "package.json",
+    "Makefile",
+    "README.md",
+    ".github/workflows/ci.yml",
+    "adr_002",
+    "adr_004",
+    "adr_007"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Distribution and installation",
+    "needs": [
+      "`adr_004` records `No publication yet. No PyPI package, no npm package, no installer. The repository is cloned and run.` That was the right call pre-1.0 and it is still the state today: the only way to get meshanvil is to clone it and run `./bin/meshanvil`, which asks an operator who wants to prepare a model for printing to first acquire a source tree.",
+      "`bin/meshanvil` reaches its own package by inserting the repository root into `sys.path`. That works only because the entry point sits inside the tree it imports from, so there is no shape in which the tool is installed once and used from anywhere.",
+      "`paths.code_root()` returns the repository root and eleven call sites depend on it to find operation manifests, string catalogues, the viewer's sources, the engine package and the runbooks. Installed rather than cloned, that root does not exist, and every one of those lookups has to come from somewhere else.",
+      "The served viewer's `/run` endpoint launches `code_root()/bin/meshanvil` as a subprocess -- a file path inside a checkout. An installed tool has an entry point, not that file.",
+      "The version is a literal in `meshanvil/__init__.py` with nothing that would keep a package's declared version and it in step.",
+      "`logics_bridge` reads runbooks from `code_root()`, which today is this repository's own `logics/` corpus. What an installed meshanvil should show in its runbook workspace has never been decided, because until now the installation and the corpus were the same directory."
+    ],
+    "context": [
+      "Distribution channel: the host is Python 3.10 or later, standard library only, no runtime dependency of any kind. A Python index is the channel that matches what the thing is; an isolated-tool installer gives an isolated environment and a command on PATH without asking the operator to think about virtual environments. npm is not a candidate and `adr_002` already fixed its role -- nothing in the runtime is JavaScript, so shipping through npm would mean either bundling a Python or requiring one anyway.",
+      "The installation-versus-project split in `paths.py` already assumes this shape: one installation serving several project directories, each holding its own reports. The model for an installed tool is written; only the packaging is missing.",
+      "`logics-manager` has already solved the same asset problem and is the reference: a repo-first resolution that prefers the working tree when it looks like one and falls back to the packaged copy otherwise, so a fresh clone runs with no build and a wheel runs from what it carries. Its packaging declares each asset directory explicitly rather than relying on a glob to have caught them.",
+      "The real installation cost is Blender, several gigabytes the operator installs themselves, and `meshanvil doctor` already exists to report it. No distribution choice removes that, which is an argument for the tool's own installation being the trivial part rather than a second obstacle.",
+      "Timing: this should land after `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds` and `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls`. That request restructures the client and the host modules and introduces a built client bundle, so packaging before it would package a layout that is about to change and a viewer that cannot refresh itself.",
+      "Honesty about platforms is part of publishing, not separate from it: the measured matrix has Linux unverified, with no machine carrying Blender available to check it. Putting a package on an index is an implicit promise of support, so what is unverified has to be stated where an installer will read it."
+    ],
+    "acceptance_criteria": [
+      "AC1: The tool is installed from a built package into an environment that is not a checkout, and its command is available on PATH and runs.",
+      "AC2: Installed, the tool has no third-party runtime dependency; installing it pulls nothing but itself.",
+      "AC3: Every asset the tool reads at runtime -- operation manifests, string catalogues, the viewer's sources and its built bundle, the engine package -- is found both from a working tree and from an installed package, resolved by one rule rather than per call site.",
+      "AC4: A built package is verified to actually carry those assets before it can be published; a missing asset fails the build rather than being discovered by an operator at first run.",
+      "AC5: The served viewer runs its closed command set through the installed entry point rather than a file path inside a checkout, with `adr_007`'s guarantees unchanged: the same closed set, the same token, the same single flight, and still no operator-supplied value reaching a subprocess.",
+      "AC6: The package's declared version and the version the tool reports come from one source; they cannot disagree.",
+      "AC7: A decision is recorded on what an installed meshanvil offers in place of this repository's own corpus -- runbooks shipped, absent, or read from the project -- and the runbook workspace matches it rather than failing or showing an empty pane with no explanation.",
+      "AC8: `adr_004`'s `No publication yet` is superseded by a decision recording the channel chosen, the channels rejected and why, and what installing does and does not include.",
+      "AC9: Publishing is a repeatable procedure, not a sequence someone remembers: building, verifying and releasing are commands, and a release states the platforms it was measured on and names the ones that are unverified.",
+      "AC10: The README's installation section describes installing the tool, keeps the from-a-clone route for contributors, and states the Blender requirement before the install command rather than after it.",
+      "AC11: Working from a clone is unchanged for a contributor: `make check` and the smoke suites run against the working tree with nothing installed."
+    ]
+  },
+  "product": {
+    "title": "A tool you install, not a repository you clone",
+    "overview": "Turns meshanvil from a source tree that has to be acquired into a command an operator installs once and uses in any project directory, without giving up the working-tree route contributors depend on and without pretending to support a platform nobody measured.",
+    "goals": [
+      "Getting the tool is one command, and the only real prerequisite left is the one no packaging can remove.",
+      "The tool finds what it needs by one rule, whether it is running from a checkout or from an installed package.",
+      "A package that is missing part of itself fails at build time, not at an operator's first run.",
+      "What is supported and what is unverified is stated where someone about to install reads it."
+    ],
+    "non_goals": [
+      "Publishing through npm; nothing in the runtime is JavaScript and `adr_002` already fixed npm's role.",
+      "A graphical installer, a bundled Blender, or any attempt to hide the engine requirement.",
+      "Actually publishing a release in this pass -- the machinery and the decision, not the act."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Declare the package and give the tool a real entry point",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Distribution and installation",
+      "request_acs": [
+        "AC1",
+        "AC2",
+        "AC6",
+        "AC11"
+      ],
+      "problem": [
+        "There is no package declaration, and `bin/meshanvil` finds its own package by inserting the repository root into `sys.path` -- which only works because the entry point lives inside the tree it imports.",
+        "The version is a literal in the package with nothing keeping a declared version in step with it."
+      ],
+      "scope_in": [
+        "A package declaration with a console entry point calling the existing CLI.",
+        "Single-sourcing the version so the declared one and the reported one cannot diverge.",
+        "Keeping `bin/meshanvil` working from a clone for contributors."
+      ],
+      "scope_out": [
+        "Asset resolution, which the next slice owns.",
+        "Publishing anything to an index."
+      ],
+      "acceptance_criteria": [
+        "AC1: Installing the built package into a clean environment puts a working command on PATH.",
+        "AC2: The install pulls no third-party runtime dependency.",
+        "AC3: The declared version and the reported version come from one source.",
+        "AC4: `./bin/meshanvil` still runs from a clone with nothing installed."
+      ]
+    },
+    {
+      "title": "Resolve every runtime asset the same way from a tree or a package",
+      "priority": "High",
+      "complexity": "High",
+      "theme": "Distribution and installation",
+      "request_acs": [
+        "AC3",
+        "AC4"
+      ],
+      "problem": [
+        "`paths.code_root()` returns the repository root and eleven call sites use it to find manifests, catalogues, viewer sources, the engine package and the runbooks. Installed, that root does not exist."
+      ],
+      "scope_in": [
+        "One resolution rule, repo-first with a packaged fallback, replacing the direct use of the repository root at every call site.",
+        "Declaring each asset directory in the package explicitly, including the client bundle `req_010` introduces.",
+        "A build-time check that the built package carries every asset the tool reads, failing the build when one is missing."
+      ],
+      "scope_out": [
+        "Deciding what happens to the runbooks specifically, which has its own slice.",
+        "Any change to what an asset contains."
+      ],
+      "acceptance_criteria": [
+        "AC1: One rule resolves every runtime asset and no call site reaches for the repository root directly.",
+        "AC2: The tool finds every asset both from a working tree and from an installed package.",
+        "AC3: A package built without one of its asset directories fails the build with the missing one named."
+      ]
+    },
+    {
+      "title": "Run the viewer's closed command set through the installed entry point",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Distribution and installation",
+      "request_acs": [
+        "AC5"
+      ],
+      "problem": [
+        "The served viewer's `/run` endpoint launches a file inside a checkout, which an installed tool does not have."
+      ],
+      "scope_in": [
+        "Invoking the installed entry point instead of the checkout file, working identically from a clone.",
+        "Confirming `adr_007`'s guarantees are untouched by the change."
+      ],
+      "scope_out": [
+        "Widening the closed command set, or changing any of its members."
+      ],
+      "acceptance_criteria": [
+        "AC1: The closed command set runs from an installed tool and from a clone, with the same result.",
+        "AC2: The closed set, the token check, the single-flight guard and the refusals are unchanged, and no operator-supplied value reaches a subprocess."
+      ]
+    },
+    {
+      "title": "Decide what an installed meshanvil offers in place of this repository's corpus",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Distribution and installation",
+      "request_acs": [
+        "AC7"
+      ],
+      "problem": [
+        "`logics_bridge` reads runbooks from the installation, which today is this repository's own corpus. Installed, there is no corpus there, and nothing has decided whether the runbook workspace should ship content, read the project's, or say it has none."
+      ],
+      "scope_in": [
+        "A recorded decision among shipping a runbook set, reading the project's own, or offering none with an explanation.",
+        "The runbook workspace and the report-to-runbook links behaving per that decision rather than failing or showing an unexplained empty pane."
+      ],
+      "scope_out": [
+        "Shipping this repository's Logics corpus as package content, which is project history rather than tool content."
+      ],
+      "acceptance_criteria": [
+        "AC1: The decision is recorded with its alternatives.",
+        "AC2: An installed tool's runbook workspace matches it, and an empty state explains itself.",
+        "AC3: A report's links to documents behave the same way rather than pointing at nothing."
+      ]
+    },
+    {
+      "title": "Make releasing a procedure and state what was measured",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Distribution and installation",
+      "request_acs": [
+        "AC8",
+        "AC9",
+        "AC10"
+      ],
+      "problem": [
+        "`adr_004` records `No publication yet` with no successor, so the channel and its consequences are undecided rather than chosen.",
+        "The platform matrix has Linux unverified, and putting a package on an index is an implicit support claim that nothing currently qualifies.",
+        "The README tells a reader to clone the repository."
+      ],
+      "scope_in": [
+        "The decision superseding `No publication yet`: the channel chosen, the channels rejected with their reasons, and what installing does and does not include.",
+        "Build, verify and release as commands rather than remembered steps, with a dry run that publishes nothing.",
+        "A release stating the platforms it was measured on and naming the unverified ones.",
+        "A README installation section leading with the engine requirement, then the install command, keeping the from-a-clone route for contributors."
+      ],
+      "scope_out": [
+        "Publishing an actual release; this slice delivers the decision and the machinery.",
+        "Verifying Linux, which needs a machine with an engine on it."
+      ],
+      "acceptance_criteria": [
+        "AC1: An ADR supersedes `No publication yet` and records the channel, the rejected channels and the scope of an install.",
+        "AC2: Building, verifying and releasing are commands, and the dry run publishes nothing.",
+        "AC3: A release states its measured platforms and names the unverified ones.",
+        "AC4: The README's installation section leads with the engine requirement and keeps the contributor route."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver an installable meshanvil",
+    "plan": [
+      "1. Declare the package, add the console entry point, and single-source the version.",
+      "2. Replace the repository-root lookup with one repo-first resolution rule and declare every asset directory in the package.",
+      "3. Add the build-time check that a built package carries every asset the tool reads.",
+      "4. Point the viewer's closed command set at the installed entry point, confirming adr_007's guarantees are untouched.",
+      "5. Decide and implement what an installed tool offers in place of this repository's corpus.",
+      "6. Record the ADR superseding `No publication yet`, and make build, verify and release repeatable commands with a dry run.",
+      "7. Rewrite the README's installation section: engine requirement first, install command, contributor route kept.",
+      "8. Install the built package into a clean environment and run a full operation and the viewer from it; re-run make check and the smoke suites from a clone before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/installable-distribution.json",
+    "mode": "full",
+    "profile": "normal"
+  }
+}

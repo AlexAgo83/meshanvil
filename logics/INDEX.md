@@ -27,6 +27,7 @@
 | [prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it](product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md) | A viewer that acts on what it shows, not just displays it | Settled |  |  | product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md |
 | [prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names](product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md) | Direct controls over the files and results the viewer already names | Proposed |  |  | product/prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names.md |
 | [prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible](product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md) | A viewer that stays current and a codebase that stays divisible | Proposed |  |  | product/prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible.md |
+| [prod_012_a_tool_you_install_not_a_repository_you_clone](product/prod_012_a_tool_you_install_not_a_repository_you_clone.md) | A tool you install, not a repository you clone | Proposed |  |  | product/prod_012_a_tool_you_install_not_a_repository_you_clone.md |
 
 ## Roadmaps
 
@@ -47,6 +48,7 @@ _None_
 | [req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable](request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md) | Make the viewer's start screen, runbooks and file references actionable | Done |  |  | request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md |
 | [req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls](request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md) | Turn the viewer's file references and command rows into direct, translated controls | Draft |  |  | request/req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls.md |
 | [req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds](request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md) | Make the viewer refresh itself and give the code a module structure that holds | Draft |  |  | request/req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds.md |
+| [req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone](request/req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone.md) | Make meshanvil an installable tool instead of a repository you clone | Draft |  |  | request/req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone.md |
 
 ## Backlog
 
@@ -102,6 +104,11 @@ _None_
 | [item_048_split_the_client_by_screen_behind_a_committed_checked_bundle](backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md) | Split the client by screen behind a committed, checked bundle | Ready |  | 0% | backlog/item_048_split_the_client_by_screen_behind_a_committed_checked_bundle.md |
 | [item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module](backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md) | Give the host code a test layout with one module per host module | Ready |  | 0% | backlog/item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module.md |
 | [item_050_reuse_a_running_viewer_and_keep_its_address_stable](backlog/item_050_reuse_a_running_viewer_and_keep_its_address_stable.md) | Reuse a running viewer and keep its address stable | Ready |  | 0% | backlog/item_050_reuse_a_running_viewer_and_keep_its_address_stable.md |
+| [item_051_declare_the_package_and_give_the_tool_a_real_entry_point](backlog/item_051_declare_the_package_and_give_the_tool_a_real_entry_point.md) | Declare the package and give the tool a real entry point | Ready |  | 0% | backlog/item_051_declare_the_package_and_give_the_tool_a_real_entry_point.md |
+| [item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package](backlog/item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package.md) | Resolve every runtime asset the same way from a tree or a package | Ready |  | 0% | backlog/item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package.md |
+| [item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point](backlog/item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point.md) | Run the viewer's closed command set through the installed entry point | Ready |  | 0% | backlog/item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point.md |
+| [item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus](backlog/item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus.md) | Decide what an installed meshanvil offers in place of this repository's corpus | Ready |  | 0% | backlog/item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus.md |
+| [item_055_make_releasing_a_procedure_and_state_what_was_measured](backlog/item_055_make_releasing_a_procedure_and_state_what_was_measured.md) | Make releasing a procedure and state what was measured | Ready |  | 0% | backlog/item_055_make_releasing_a_procedure_and_state_what_was_measured.md |
 
 ## Tasks
 
@@ -131,6 +138,7 @@ _None_
 | [task_022_deliver_the_viewer_actionability_pass](tasks/task_022_deliver_the_viewer_actionability_pass.md) | Deliver the viewer actionability pass | Done | Claude | 100% | tasks/task_022_deliver_the_viewer_actionability_pass.md |
 | [task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals](tasks/task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals.md) | Deliver the viewer's direct file controls and translated result modals | Ready |  | 0% | tasks/task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals.md |
 | [task_024_deliver_the_live_viewer_and_the_module_structure](tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md) | Deliver the live viewer and the module structure | Ready |  | 0% | tasks/task_024_deliver_the_live_viewer_and_the_module_structure.md |
+| [task_025_deliver_an_installable_meshanvil](tasks/task_025_deliver_an_installable_meshanvil.md) | Deliver an installable meshanvil | Ready |  | 0% | tasks/task_025_deliver_an_installable_meshanvil.md |
 
 ## Runbooks
 
