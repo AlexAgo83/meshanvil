@@ -92,18 +92,14 @@ function outliner() {
       || `<div class="blank"><span>${esc(t("ui.not_applied"))}</span></div>`);
     return;
   }
-  const chains = new Map();
-  for (const report of DATA.reports) {
-    const key = report.chain || report.id;
-    if (!chains.has(key)) chains.set(key, []);
-    chains.get(key).push(report);
-  }
+  const chains = groups();
   let html = "";
   let first = true;
-  for (const [chain, reports] of chains) {
-    const parent = BY_ID.get(chain);
+  for (const [fork, reports] of chains) {
+    const parent = BY_ID.get(fork);
     const label = first ? t("ui.chain_named", { name: chainName(reports) })
-                        : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : chain });
+                        : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+    const indent = first ? "" : " child";
     first = false;
     html += `<div class="outgroup">${esc(label)}</div>`;
     for (const report of reports) {
@@ -111,7 +107,7 @@ function outliner() {
       const kind = report.status === "failed" ? "failed" : report.kind;
       const state = artefactState(report);
       const glyph = report.kind === "inspection" ? "i" : "T";
-      html += `<button type="button" class="row" data-id="${esc(report.id)}"
+      html += `<button type="button" class="row${indent}" data-id="${esc(report.id)}"
         aria-current="${report.id === current}">
         <span class="tri">▾</span>
         <span class="kindicon ${esc(kind)}">${report.status === "failed" ? "×" : glyph}</span>
@@ -122,6 +118,25 @@ function outliner() {
   document.getElementById("outliner").innerHTML =
     html || `<div class="blank"><span class="big">${esc(t("ui.no_operation_yet"))}</span>
       <span>${esc(t("ui.reports_appear"))}</span></div>`;
+}
+
+/** Reports grouped by the fork they descend from, in identity order. */
+function groups() {
+  const children = new Map();
+  for (const report of DATA.reports) {
+    const parent = report.links && report.links.parent;
+    if (parent) children.set(parent, (children.get(parent) || 0) + 1);
+  }
+  const groupOf = new Map(), result = new Map();
+  for (const report of DATA.reports) {
+    const parent = report.links && report.links.parent;
+    // A fork opens a group; anything else continues its parent's.
+    const key = !parent ? "" : (children.get(parent) > 1 ? parent : (groupOf.get(parent) ?? ""));
+    groupOf.set(report.id, key);
+    if (!result.has(key)) result.set(key, []);
+    result.get(key).push(report);
+  }
+  return result;
 }
 
 /** A chain is named after the file it started from; the identity is already in the row. */

@@ -71,6 +71,12 @@ SMOKE = r"""
         && document.querySelector("#status-schema").textContent.trim(), "status bar totals missing");
     assert(!document.querySelector(".tabs #start-screen") && document.querySelector(".status #start-screen"),
       "the start button is not in the status bar");
+    // The outliner groups on forks, and the status bar counts them. One number, two readers.
+    const branchGroups = [...document.querySelectorAll("#outliner .outgroup")].length - 1;
+    const branchCount = Number((document.querySelector("#status-branches").textContent.match(/\d+/) || [0])[0]);
+    assert(branchGroups === branchCount,
+      `outliner shows ${branchGroups} branch groups, the status bar counts ${branchCount}`);
+    assert(document.querySelector("#outliner .row.child"), "branch rows are not indented");
 
     document.querySelector('[data-section-goto="measurements"]').click();
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");
