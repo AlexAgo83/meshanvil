@@ -24,6 +24,7 @@
 | [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Settled |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
 | [prod_007_a_served_viewer_that_can_run_what_it_already_shows](product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md) | A served viewer that can run what it already shows | Settled |  |  | product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md |
 | [prod_008_demonstrations_that_own_every_asset_they_run_on](product/prod_008_demonstrations_that_own_every_asset_they_run_on.md) | Demonstrations that own every asset they run on | Settled |  |  | product/prod_008_demonstrations_that_own_every_asset_they_run_on.md |
+| [prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it](product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md) | A viewer that acts on what it shows, not just displays it | Proposed |  |  | product/prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it.md |
 
 ## Roadmaps
 
@@ -41,6 +42,7 @@ _None_
 | [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done |  |  | request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
 | [req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done |  |  | request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
+| [req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable](request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md) | Make the viewer's start screen, runbooks and file references actionable | Draft |  |  | request/req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable.md |
 
 ## Backlog
 
@@ -81,6 +83,11 @@ _None_
 | [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | Done |  | 100% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
 | [item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects](backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md) | Generate a vehicle-scale subject that carries the same defects | Done |  | 100% | backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md |
 | [item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature](backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md) | Generate a figurine-scale subject with a real thin feature | Done |  | 100% | backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md |
+| [item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures](backlog/item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures.md) | Commit the two hand-modelled demo assets as project fixtures | Ready |  | 0% | backlog/item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures.md |
+| [item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance](backlog/item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance.md) | Fix the start screen's layout overflow and decide its command affordance | Ready |  | 0% | backlog/item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance.md |
+| [item_038_make_report_file_paths_and_commands_into_real_clickable_controls](backlog/item_038_make_report_file_paths_and_commands_into_real_clickable_controls.md) | Make report file paths and commands into real, clickable controls | Ready |  | 0% | backlog/item_038_make_report_file_paths_and_commands_into_real_clickable_controls.md |
+| [item_039_render_runbook_markdown_as_formatted_content](backlog/item_039_render_runbook_markdown_as_formatted_content.md) | Render runbook Markdown as formatted content | Ready |  | 0% | backlog/item_039_render_runbook_markdown_as_formatted_content.md |
+| [item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes](backlog/item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes.md) | Root-cause the vehicle demonstration's disappearing glass panes | Ready |  | 0% | backlog/item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes.md |
 
 ## Tasks
 
@@ -107,6 +114,7 @@ _None_
 | [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done | Claude | 100% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
 | [task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done | Claude | 100% | tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
+| [task_022_deliver_the_viewer_actionability_pass](tasks/task_022_deliver_the_viewer_actionability_pass.md) | Deliver the viewer actionability pass | Ready |  | 0% | tasks/task_022_deliver_the_viewer_actionability_pass.md |
 
 ## Runbooks
 
@@ -123,4 +131,4 @@ _None_
 | [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |
 | [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh and an eighth, both from headless-browser smokes rather than a shell | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
 | [run_011_chain_002](runbook/run_011_chain_002.md) | Chain 002 | Draft | other | Report facts captured; human procedure not yet verified | runbook/run_011_chain_002.md |
-| [run_012_build_a_recognizable_low_poly_subject_from_primitives](runbook/run_012_build_a_recognizable_low_poly_subject_from_primitives.md) | Build a recognizable low-poly subject from primitives | Active | other | 2026-08-22 (both demo generators built and re-verified against the real chain across several iterations; two geometry defects found and fixed this way) | runbook/run_012_build_a_recognizable_low_poly_subject_from_primitives.md |
+| [run_012_build_a_recognizable_low_poly_subject_from_primitives](runbook/run_012_build_a_recognizable_low_poly_subject_from_primitives.md) | Build a recognizable low-poly subject from primitives | Active | other | 2026-08-22 (both demo generators built and re-verified against the real chain across several iterations; four geometry/render defects found and fixed this way) | runbook/run_012_build_a_recognizable_low_poly_subject_from_primitives.md |

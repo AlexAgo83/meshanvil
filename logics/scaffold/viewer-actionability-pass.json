@@ -1,0 +1,184 @@
+{
+  "title": "Make the viewer's start screen, runbooks and file references actionable",
+  "references": [
+    "viewer/index.html",
+    "viewer/viewer.js",
+    "viewer/viewer.css",
+    "meshanvil/viewer.py",
+    "logics/external/modeles-3D/base_meshanvil_vehicle.blend",
+    "logics/external/modeles-3D/base_meshanvil_figurine.blend",
+    "tools/build_demo_chain.sh",
+    "tools/build_figurine_chain.sh",
+    "adr_007"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Operator workflow and runtime integration",
+    "needs": [
+      "The two hand-modelled demonstration assets live under the gitignored logics/external/modeles-3D/ -- fine for a personal machine, but the project itself has nowhere committed to keep them, so a fresh clone (or CI) never sees them.",
+      "The start screen's template cards show commands as plain, uncopiable-looking text with no way to run them, even when the page is served and could run some of them for real; and its three-column layout overflows its own modal on at least one screen width, the Environment column's long paths pushing past the right edge.",
+      "Opening the File menu, then clicking 'Start screen', leaves the File dropdown open and visible behind the splash modal it just opened -- a menu-closing check exists for clicks outside a menu, but the click that opens the splash originates from inside the menu, so that check never runs. (Fixed inline this session, in viewer.js's showSplash -- kept here as a Done slice so the whole pass has one record.)",
+      "A report's render panel and its Artefact section both show a ready-to-run 'blender <path>' command and a written file's path as plain selectable text, never as a button; the same is true of every other file path the viewer prints (runbook references, doc links, project paths in the Environment panel).",
+      "The runbook workspace's right-hand content pane renders a runbook's Markdown source as raw text -- headings, bullet lists and code fences all show their literal '##', '-' and backtick characters instead of being formatted.",
+      "The vehicle demonstration's glass panes (windshield and side/rear windows, thin single-quad Plane objects in the source asset) appear to be progressively lost across the demo chain's own operations -- not yet root-caused to a specific step."
+    ],
+    "context": [
+      "adr_007 deliberately closed the set of commands a served page may run (list, doctor, prune) to a fixed, non-destructive set; build_demo_chain.sh and build_figurine_chain.sh are destructive by their own documented intent ('ponytail: destructive on this demonstration's project') and rebuild a whole sibling project from scratch, so adding them to that closed set is an architecture-level decision, not a UI tweak -- surfaced here for a decision, not pre-decided.",
+      "A file:// page has no server to reach and can only ever offer copy-to-clipboard for a command; an 'Open in Blender' affordance on a report's own artefact is a different, narrower case -- opening a local application on a local file the report already names, which a file:// page can offer via a plain file:// or blender:// style link without needing the /run endpoint at all, worth checking before assuming this needs the served-only path too.",
+      "Markdown rendering has to stay dependency-free like the rest of the viewer (adr_003/adr_004's no-framework, no-build-step stance) -- a small hand-rolled renderer covering headings, lists, code fences and links is in scope; pulling in a Markdown library is not.",
+      "The vehicle asset's glass panes are single-quad planes with very little volume of their own; scan_defects' coincident-duplicate removal, solidify's wall-or-skip decision, and voxel_remesh's shell-size floor are the three most likely places a nearly-zero-volume shell gets folded into another object or dropped outright -- named as starting points, not a diagnosis."
+    ],
+    "acceptance_criteria": [
+      "AC1: Both hand-modelled assets are committed in the repository at a path outside logics/external/ (fixtures/ or equivalent), and both build scripts default to that committed copy first, ahead of the gitignored local one and the from-primitives generator.",
+      "AC2: The start screen's layout stays within its own modal at common desktop widths -- no column's content pushes past the modal's right edge -- verified by a rendered screenshot, not by inspection of the CSS alone.",
+      "AC3: A decision is recorded (a new or amended ADR, or an explicit non-goal) on whether the start screen's demo/figurine template commands become runnable from a served page, and the start screen matches whatever that decision is -- either real run buttons wired through an extended, still-closed command set, or the copy-to-clipboard behaviour kept deliberately and explained in the UI rather than left looking broken.",
+      "AC4: Every report-owned file path the viewer prints (the render panel's 'Open in Blender' command, the Artefact section's written-file path, runbook references, doc links) is a real clickable control -- a button that copies or runs per the file://-vs-served rule already established, or a link that opens the file directly where the platform allows it -- not plain unstyled text.",
+      "AC5: The runbook workspace renders a runbook's Markdown body as formatted HTML (headings, lists, code fences, links at minimum), with no literal Markdown syntax characters visible, using no new dependency.",
+      "AC6: The File-menu-stays-open-behind-the-splash defect is fixed and covered by the same viewer smoke suite so it cannot silently return.",
+      "AC7: The vehicle demonstration's glass-pane loss is root-caused to a specific operation and either fixed (the panes survive the full chain) or, if keeping them intact is not achievable without weakening a real lesson the chain teaches, documented honestly in the build script's comments and README -- not left unexplained."
+    ]
+  },
+  "product": {
+    "title": "A viewer that acts on what it shows, not just displays it",
+    "overview": "Closes the gap between the viewer showing a command, a file path, or a runbook and the operator actually being able to act on it -- run it, open it, or read it formatted -- while keeping the viewer's no-framework, no-build-step, read-only-by-default character intact.",
+    "goals": [
+      "The two hand-modelled demonstration assets are part of the committed project, not a personal local-only convenience.",
+      "The start screen is usable at common widths and honest about what its template commands can and cannot do from a served page.",
+      "Every file path and runnable command the viewer already prints is a real control, not text a person has to retype.",
+      "Runbook content is legible prose, not raw Markdown source.",
+      "The vehicle demonstration's glass panes survive the chain, or the chain is honest about why they don't."
+    ],
+    "non_goals": [
+      "Extending the served page's command set to arbitrary shell commands; any addition stays closed and explicit, per adr_007.",
+      "A general Markdown library or a WYSIWYG editor; a small renderer covering this project's own runbook conventions is the target.",
+      "Reworking the viewer's overall layout system beyond fixing the specific overflow found."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Commit the two hand-modelled demo assets as project fixtures",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC1"],
+      "problem": [
+        "logics/external/modeles-3D/ is gitignored, so the two hand-modelled demo assets exist only on this machine; a fresh clone or CI run falls back to the from-primitives generators and never sees them."
+      ],
+      "scope_in": [
+        "Moving both .blend files to a committed path (fixtures/ or equivalent) with author/rights noted wherever the project already records that for committed assets.",
+        "Updating both build scripts' default-asset resolution order to check the committed path first."
+      ],
+      "scope_out": [
+        "Any change to the assets' own geometry -- that is the render-quality and glass-pane items below."
+      ],
+      "acceptance_criteria": [
+        "AC1: Both .blend files are tracked in git at a committed path.",
+        "AC2: `tools/build_demo_chain.sh` and `tools/build_figurine_chain.sh`, run with no argument on a clean checkout, use the committed asset."
+      ]
+    },
+    {
+      "title": "Fix the start screen's layout overflow and decide its command affordance",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC2", "AC3"],
+      "problem": [
+        "The start screen's three-column layout overflows its own modal at at least one common width.",
+        "Its template cards show commands as plain text with no way to run them, even when the page is served."
+      ],
+      "scope_in": [
+        "Fixing the overflow, verified with a rendered screenshot at common desktop widths.",
+        "A recorded decision (ADR amendment, new ADR, or explicit non-goal) on whether these specific commands become served-runnable, and matching UI either way."
+      ],
+      "scope_out": [
+        "Any other viewer layout beyond this modal."
+      ],
+      "acceptance_criteria": [
+        "AC1: No column's content pushes past the modal's right edge at common desktop widths.",
+        "AC2: A decision is recorded and the start screen's template cards match it."
+      ]
+    },
+    {
+      "title": "Make report file paths and commands into real, clickable controls",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC4", "AC6"],
+      "problem": [
+        "The render panel's 'Open in Blender' command, the Artefact section's written-file path, and other file references throughout the viewer are plain text a person has to select and retype or paste into a terminal by hand.",
+        "The File-menu-stays-open-behind-the-splash defect (already fixed inline this session) has no regression coverage."
+      ],
+      "scope_in": [
+        "A consistent pattern for file-path and command controls (button or link) applied everywhere the viewer currently prints one, respecting the file://-vs-served distinction already established.",
+        "A viewer-smoke assertion that opening the splash from the File menu leaves no menu open behind it."
+      ],
+      "scope_out": [
+        "Extending the served command set (covered by the start-screen item above)."
+      ],
+      "acceptance_criteria": [
+        "AC1: The render panel's Blender-open command and the Artefact section's file path are both real controls, not plain text.",
+        "AC2: Every other file path the viewer prints follows the same pattern.",
+        "AC3: `scripts/viewer_smoke.py` (or equivalent) asserts no `details.menu` stays open after the splash opens from it."
+      ]
+    },
+    {
+      "title": "Render runbook Markdown as formatted content",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC5"],
+      "problem": [
+        "The runbook workspace's content pane shows a runbook's raw Markdown source -- headings, lists and code fences all show their literal syntax characters."
+      ],
+      "scope_in": [
+        "A small, dependency-free renderer for this project's own runbook Markdown conventions: headings, bullet lists, code fences, inline code, links, bold.",
+        "Wiring it into the runbook workspace's content pane."
+      ],
+      "scope_out": [
+        "A general-purpose Markdown library.",
+        "Editing runbooks from the viewer."
+      ],
+      "acceptance_criteria": [
+        "AC1: A runbook opened in the runbook workspace shows formatted headings, lists, code blocks and links -- no literal Markdown syntax visible.",
+        "AC2: No new runtime dependency is added."
+      ]
+    },
+    {
+      "title": "Root-cause the vehicle demonstration's disappearing glass panes",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Operator workflow and runtime integration",
+      "request_acs": ["AC7"],
+      "problem": [
+        "The vehicle asset's glass panes (windshield, side and rear windows) appear to be progressively lost across the demo chain's own operations."
+      ],
+      "scope_in": [
+        "Tracing which operation(s) remove or merge the glass panes, using the real chain's own reports.",
+        "Either a fix that keeps them intact through the full chain, or an honest, documented explanation in the build script and README if keeping them intact would weaken a real lesson the chain teaches."
+      ],
+      "scope_out": [
+        "Any change to the asset's other geometry."
+      ],
+      "acceptance_criteria": [
+        "AC1: The specific operation(s) responsible are identified and named, with the real report data that shows it.",
+        "AC2: Either the panes survive the full chain in a fresh run, or the build script and README explain why not."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver the viewer actionability pass",
+    "plan": [
+      "1. Commit the two hand-modelled demo assets as fixtures and repoint both build scripts.",
+      "2. Fix the start screen's overflow and record the runnable-commands decision.",
+      "3. Make report file paths and commands into real controls; add the menu-close regression check.",
+      "4. Render runbook Markdown as formatted content.",
+      "5. Root-cause and resolve (or honestly document) the vehicle's disappearing glass panes.",
+      "6. Re-run make check, fixture_check and viewer_smoke before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/viewer-actionability-pass.json",
+    "mode": "full",
+    "profile": "normal"
+  }
+}
