@@ -12,15 +12,30 @@
     <div class="brand"><span class="mark"></span>meshanvil</div>
     <div class="menubar" aria-label="Main menu" data-i18n-aria-label="ui.main_menu">
       <details class="menu"><summary data-i18n="ui.menu_file">File</summary><div class="dropdown">
-        <span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code>
-        <span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code>
+        <span class="grp" data-i18n="ui.menu_group_project">Project</span>
+        <button type="button" class="cmdrow" data-splash="open"><span data-i18n="ui.command_start">Start screen</span><kbd>Ctrl N</kbd></button>
+        <span class="sep"></span>
+        <span class="cmdrow"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></span>
+        <span class="cmdrow"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></span>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_chain">Chain</summary><div class="dropdown">
-        <span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code>
-        <span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code>
+        <span class="grp" data-i18n="ui.menu_group_view">View</span>
+        <button type="button" class="cmdrow" data-workspace="chain"><span data-i18n="ui.workspace_chain">Chain</span><kbd>1</kbd></button>
+        <button type="button" class="cmdrow" data-workspace="compare"><span data-i18n="ui.workspace_compare">Compare</span><kbd>2</kbd></button>
+        <button type="button" class="cmdrow" data-workspace="runbooks"><span data-i18n="ui.workspace_runbooks">Runbooks</span><kbd>3</kbd></button>
+        <span class="sep"></span>
+        <span class="cmdrow"><span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code></span>
+        <span class="cmdrow"><span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code></span>
+      </div></details>
+      <details class="menu"><summary data-i18n="ui.menu_report">Report</summary><div class="dropdown">
+        <span class="grp" data-i18n="ui.menu_group_sections">Sections</span>
+        <button type="button" class="cmdrow" data-section-goto="input"><span data-i18n="ui.input">Input</span><kbd>I</kbd></button>
+        <button type="button" class="cmdrow" data-section-goto="measurements"><span data-i18n="ui.measurements">Measurements</span><kbd>M</kbd></button>
+        <button type="button" class="cmdrow" data-section-goto="links"><span data-i18n="ui.links">Links</span><kbd>L</kbd></button>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_help">Help</summary><div class="dropdown">
-        <span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code>
+        <span class="grp" data-i18n="ui.menu_group_docs">Docs</span>
+        <span class="cmdrow"><span data-i18n="ui.command_runbook">Create a runbook</span><code>meshanvil runbook &lt;report-id&gt;</code></span>
       </div></details>
     </div>
     <div class="tabs" role="tablist" aria-label="Workspace" data-i18n-aria-label="ui.workspace">
@@ -79,6 +94,22 @@
   <div class="status">
     <span id="status-counts"></span><span class="push"></span>
     <span id="generated"></span>
+  </div>
+</div>
+<div class="scrim hidden" id="splash" role="dialog" aria-modal="true" aria-labelledby="splash-title">
+  <div class="splash">
+    <div class="splashtop">
+      <span class="mark"></span>
+      <div><h1 id="splash-title">meshanvil</h1><span class="ver" data-i18n="ui.splash_subtitle">local report viewer</span></div>
+      <span class="push"></span>
+      <button type="button" class="ghost" data-splash="close" data-i18n="ui.close">Close</button>
+    </div>
+    <div class="splashcols" id="splash-body"></div>
+    <div class="splashfoot">
+      <button type="button" class="ghost" data-workspace="runbooks" data-splash="close" data-i18n="ui.workspace_runbooks">Runbooks</button>
+      <span class="push"></span>
+      <button type="button" class="ghost primary" data-splash="close" data-i18n="ui.splash_continue">Continue with reports</button>
+    </div>
   </div>
 </div>
 <script src="data.js"></script>

@@ -1,14 +1,14 @@
 ## item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list - Build Runbooks as a primary workspace instead of an outliner-only list
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:18:05
+> Indicators reviewed: 2026-08-22 02:21:09
 
 # AI Context
 - Summary: Make Runbooks a central workspace with coverage rows and applied-operation chips, not only an outliner/detail side feature.

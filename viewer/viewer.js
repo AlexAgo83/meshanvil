@@ -110,6 +110,31 @@ function outliner() {
       <span>${esc(t("ui.reports_appear"))}</span></div>`;
 }
 
+function docFromRef(ref) {
+  return (DATA.runbooks || []).find((item) => item.ref === ref) || (DATA.docs || {})[ref] || { ref };
+}
+
+function docPurpose(doc) {
+  const sections = doc.sections || {};
+  const first = (sections.Trigger || sections.Overview || sections.Procedure || [])[0];
+  return String(first || doc.content || t("ui.runbook_no_summary")).replace(/^[-\d. ]+/, "").slice(0, 180);
+}
+
+function runbookRows() {
+  const docs = (DATA.runbooks || []).filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText));
+  return docs.map((doc) => {
+    const full = docFromRef(doc.ref);
+    const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(doc.ref));
+    return `<button type="button" class="rbrow" data-doc="${esc(doc.ref)}" aria-current="${doc.ref === currentDoc}">
+      <span class="rbhead"><span class="kindicon inspection">N</span><span>${esc(shortRef(doc.ref))}</span><b>${esc(doc.title || doc.ref)}</b></span>
+      <span class="rbpurpose">${esc(docPurpose(full))}</span>
+      <span class="rbapplied">${applied.length ? applied.map((report) =>
+        `<span class="docref docref--op"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></span>`).join("")
+        : `<span class="unapplied">${esc(t("ui.not_applied"))}</span>`}</span>
+    </button>`;
+  }).join("") || `<div class="blank"><span class="big">${esc(t("ui.runbooks"))}</span><span>${esc(t("ui.runbook_empty"))}</span></div>`;
+}
+
 /* ---------- node editor ---------- */
 function nodes() {
   if (start) {
@@ -119,6 +144,12 @@ function nodes() {
       <li>${esc(t("ui.start_inspect"))} <code>meshanvil run scan_defects work/out/demo_source.blend</code></li>
       <li>${esc(t("ui.start_prepare"))} <code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></li></ol></div>`;
     const canvas = document.getElementById("canvas"); canvas.style.width = "860px"; canvas.style.height = "420px";
+    document.getElementById("noodles").innerHTML = "";
+    return;
+  }
+  if (workspace === "runbooks") {
+    document.getElementById("nodes").innerHTML = `<div class="rbbody">${runbookRows()}</div>`;
+    const canvas = document.getElementById("canvas"); canvas.style.width = "100%"; canvas.style.height = "100%";
     document.getElementById("noodles").innerHTML = "";
     return;
   }
@@ -239,7 +270,7 @@ function boundingBox(report) {
 function props() {
   const target = document.getElementById("props");
   if (currentDoc) {
-    const doc = (DATA.runbooks || []).find((item) => item.ref === currentDoc) || (DATA.docs || {})[currentDoc];
+    const doc = docFromRef(currentDoc);
     const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(currentDoc));
     target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
       ${block(t("ui.applied_by"), applied.length ? applied.map((report) => `<button type="button" class="docref docref--op" data-id="${esc(report.id)}"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></button>`).join("") : `<div class="note">${esc(t("ui.not_applied"))}</div>`, "links")}`;
@@ -349,8 +380,8 @@ function preview() {
     if (view >= pairs.length) view = 0;
     const pair = pairs[view], delta = report.bbox_delta_mm || {};
     views.innerHTML = pairs.map((item, i) => `<button type="button" role="tab" data-view="${i}" aria-selected="${i === view}">${esc(item.view)}</button>`).join("");
-    stage.innerHTML = `<div class="compare" style="--wipe:${wipe}%"><img class="compare-before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><span class="compare-label before">${esc(t("ui.compare_before"))}</span><span class="compare-label after">${esc(t("ui.compare_after"))}</span><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
-    meta.innerHTML = `<div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
+    stage.innerHTML = `<div class="compare wipe" style="--wipe:${wipe}%"><img class="compare-before before" src="${esc(pair.before_url)}" alt="${esc(t("ui.compare_before"))}"><img class="compare-after after" src="${esc(pair.after_url)}" alt="${esc(t("ui.compare_after"))}"><span class="wipelabel l">${esc(t("ui.compare_before"))}</span><span class="wipelabel r">${esc(t("ui.compare_after"))}</span><span class="handle"></span><input data-wipe type="range" min="0" max="100" value="${wipe}" aria-label="${esc(t("ui.compare_wipe"))}" aria-valuetext="${wipe}%"></div>`;
+    meta.innerHTML = `<div class="filter">${esc(t("ui.workspace_compare"))}</div><div class="provenance">${esc(pair.camera)}</div><div class="note">${esc(t("ui.axes_moved", { axes: (delta.axes_moved || []).join(", ") || "none" }))}</div>`;
     return;
   }
   if (!renders.length) {
@@ -382,12 +413,37 @@ function select(id) {
 }
 
 function selectWorkspace(next) {
+  start = false;
   workspace = next;
   /** @type {HTMLElement} */ (document.querySelector(".app")).dataset.workspace = next;
   for (const tab of document.querySelectorAll('[role="tab"][data-workspace]')) {
     tab.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (tab).dataset.workspace === next));
   }
   outliner(); nodes(); props(); preview();
+}
+
+function renderSplash() {
+  const doctor = /** @type {any} */ (DATA.doctor);
+  const blender = doctor && (doctor.requirements || []).find((item) => item.name === "blender");
+  const check = blender
+    ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br><code>${esc(blender.fix)}</code>` : ""}</span></span>`
+    : `<span class="chk warn"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(t("ui.start_doctor_missing"))}<br><code>meshanvil doctor</code></span></span>`;
+  document.getElementById("splash-body").innerHTML = `<section class="scol"><h2>${esc(t("ui.splash_templates"))}</h2>
+      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_inspect"))}</b><code>meshanvil run scan_defects work/out/demo_source.blend</code></button>
+      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_repair"))}</b><code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></button>
+      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_prepare"))}</b><code>meshanvil view --no-open</code></button>
+    </section><section class="scol"><h2>${esc(t("ui.splash_recent"))}</h2>
+      <p>${esc(DATA.reports.length ? t("ui.splash_recent_found", { count: DATA.reports.length }) : t("ui.splash_recent_empty"))}</p>
+      <code class="command">work/ops</code>
+    </section><section class="scol"><h2>${esc(t("ui.start_environment"))}</h2>
+      ${check}<span class="chk ${DATA.ops_exists ? "ok" : "warn"}"><span><b>${esc(t("ui.start_reports"))}</b><br>${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</span></span>
+      <span class="chk ok"><span><b>${esc(t("ui.start_contributors"))}</b><br>${esc(t("ui.start_contributors_note"))}</span></span>
+    </section>`;
+}
+
+function showSplash(show) {
+  renderSplash();
+  document.getElementById("splash").classList.toggle("hidden", !show);
 }
 
 function jumpReportSection(section) {
@@ -400,9 +456,14 @@ function jumpReportSection(section) {
 
 document.addEventListener("click", (event) => {
   const target = /** @type {Element} */ (event.target);
+  const splash = target.closest("[data-splash]");
+  if (splash) {
+    showSplash(/** @type {HTMLElement} */ (splash).dataset.splash !== "close");
+    if (!/** @type {HTMLElement} */ (splash).dataset.workspace) return;
+  }
   const section = target.closest("[data-section-goto]");
   if (section) { jumpReportSection(/** @type {HTMLElement} */ (section).dataset.sectionGoto || "input"); return; }
-  const workspaceTab = target.closest('[role="tab"][data-workspace]');
+  const workspaceTab = target.closest('button[data-workspace], [role="tab"][data-workspace]');
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const goto = target.closest("[data-goto]");
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
@@ -411,7 +472,10 @@ document.addEventListener("click", (event) => {
   const node = target.closest("[data-id]");
   if (node) { select(/** @type {HTMLElement} */ (node).dataset.id); return; }
   const doc = target.closest("[data-doc]");
-  if (doc) { currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; outliner(); nodes(); props(); preview(); }
+  if (doc) { start = false; currentDoc = /** @type {HTMLElement} */ (doc).dataset.doc; current = null; outliner(); nodes(); props(); preview(); }
+  for (const menu of document.querySelectorAll("details.menu[open]")) {
+    if (!menu.contains(target)) /** @type {HTMLDetailsElement} */ (menu).open = false;
+  }
 });
 document.addEventListener("input", (event) => {
   const input = /** @type {HTMLInputElement} */ (event.target);
@@ -424,7 +488,7 @@ document.addEventListener("input", (event) => {
 });
 
 document.getElementById("start-screen").addEventListener("click", () => {
-  start = true; current = null; outliner(); nodes(); props(); preview();
+  showSplash(true);
 });
 
 place();
@@ -451,5 +515,6 @@ for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
 for (const node of document.querySelectorAll("[data-i18n-title]")) {
   node.setAttribute("title", t(/** @type {HTMLElement} */ (node).dataset.i18nTitle));
 }
+renderSplash();
 if (current) select(current);
-else { outliner(); nodes(); props(); preview(); }
+else { outliner(); nodes(); props(); preview(); showSplash(true); }

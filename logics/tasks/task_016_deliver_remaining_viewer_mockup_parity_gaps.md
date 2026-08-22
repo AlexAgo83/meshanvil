@@ -1,14 +1,15 @@
 ## task_016_deliver_remaining_viewer_mockup_parity_gaps - Deliver remaining viewer mockup parity gaps
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:18:05
+> Indicators reviewed: 2026-08-22 02:21:09
+> Owner: codex
 
 # AI Context
 - Summary: Orchestrates the strict second viewer parity pass for the specific mockup surfaces missed after req_001.

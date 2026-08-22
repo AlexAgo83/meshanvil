@@ -16,6 +16,23 @@ SMOKE = r"""
   };
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   try {
+    const fileMenu = document.querySelector(".menu");
+    fileMenu.open = true;
+    assert(document.querySelector(".dropdown .grp") && document.querySelector(".cmdrow code"), "command menu surface missing");
+    fileMenu.open = false;
+
+    document.querySelector("#start-screen").click();
+    assert(!document.querySelector("#splash").classList.contains("hidden"), "splash did not open");
+    assert(document.querySelectorAll(".splashcols .scol").length === 3, "splash columns missing");
+    assert(document.querySelector(".tpl code") && document.querySelector(".chk"), "splash command/check content missing");
+    document.querySelector('[data-splash="close"]').click();
+    assert(document.querySelector("#splash").classList.contains("hidden"), "splash did not close");
+
+    document.querySelector('[data-workspace="runbooks"]').click();
+    assert(document.querySelector(".app").dataset.workspace === "runbooks", "runbooks workspace did not activate");
+    assert(document.querySelector(".rbbody .rbrow"), "runbooks primary rows missing");
+    assert(document.querySelector(".rbpurpose") && document.querySelector(".rbapplied"), "runbook row details missing");
+
     document.querySelector('[data-workspace="compare"]').click();
     assert(document.querySelector(".app").dataset.workspace === "compare", "compare workspace did not activate");
 
@@ -28,6 +45,7 @@ SMOKE = r"""
     rows[0].click();
     const wipe = document.querySelector("[data-wipe]");
     assert(wipe, "comparison wipe input missing");
+    assert(document.querySelector(".wipe .handle") && document.querySelector(".wipelabel"), "mockup compare split chrome missing");
     wipe.value = "72";
     wipe.dispatchEvent(new Event("input", { bubbles: true }));
     assert(document.querySelector(".compare").style.getPropertyValue("--wipe") === "72%", "wipe value did not update");

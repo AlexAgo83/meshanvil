@@ -1,14 +1,14 @@
 ## item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout - Restore the reviewed first-run splash and Compare split layout
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:18:05
+> Indicators reviewed: 2026-08-22 02:21:09
 
 # AI Context
 - Summary: Restore the reviewed splash surface and Compare split treatment without changing the local read-only viewer boundary.
