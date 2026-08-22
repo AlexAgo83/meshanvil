@@ -96,13 +96,24 @@ belly.from_pydata([
 belly.update()
 new_object("belly_panel", belly)
 
-# --- wheels, one pair built at +Y and mirrored: two cylinders, front and rear, on the ground
+# --- wheels, one pair built at +Y and mirrored: two cylinders, front and rear, on the ground.
+# Offset past the hull's own half-width at each wheel's station (the sill tapers, so the rear
+# station is wider there than the front one) -- flush against it, not sunk into it. A fixed
+# offset sized only to the front station left the rear wheel embedded in the hull's side wall.
 WHEEL_R, WHEEL_W = 0.33 * OVERSIZE, 0.22 * OVERSIZE
+WHEEL_Y = HW * 1.05
 for name, x in (("wheel_front", HL * 0.68), ("wheel_rear", -HL * 0.68)):
     w = solid_primitive(name, bpy.ops.mesh.primitive_cylinder_add,
-                         loc=(x, HW * 0.95, WHEEL_R), rot=(math.radians(90), 0, 0),
+                         loc=(x, WHEEL_Y, WHEEL_R), rot=(math.radians(90), 0, 0),
                          scale=(WHEEL_R, WHEEL_R, WHEEL_W))
     mirror(w)
+    # A second coplanar disc (tried first) never showed: under flat workbench shading, a face
+    # with the same normal as the one behind it renders at the same brightness regardless of
+    # depth, so a concentric hub only reads if the render happens to catch its paper-thin rim.
+    # A bevel on the rim actually works, because it puts a face at a genuinely different angle
+    # there -- the edge that reads as a bare pipe's sharp lip becomes a lit, rounded tyre edge.
+    bevel = w.modifiers.new("bevel", 'BEVEL')
+    bevel.width, bevel.segments = WHEEL_R * 0.14, 3
 
 # --- mostly hidden inside the shell and under the belly panel built above
 engine = solid_primitive("engine_block", bpy.ops.mesh.primitive_cube_add,
