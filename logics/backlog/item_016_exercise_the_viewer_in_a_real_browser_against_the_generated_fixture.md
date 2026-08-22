@@ -1,10 +1,10 @@
 ## item_016_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture - Exercise the viewer in a real browser against the generated fixture
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 52%
+> Progress: 100%
 > Complexity: Low
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -52,3 +52,6 @@
 
 # Tasks
 - `task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture`
+
+# Notes
+- Task `task_013_exercise_the_viewer_in_a_real_browser_against_the_generated_fixture` was finished via `logics-manager flow finish task` on 2026-08-22.
