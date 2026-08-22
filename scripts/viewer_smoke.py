@@ -2,10 +2,41 @@
 """Exercise the generated viewer in Chrome without adding a browser framework."""
 from __future__ import annotations
 
-import argparse, os, shutil, subprocess, sys, tempfile
+import argparse, os, re, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# adr_007: the served page can run a real command and show its real output. `list` needs
+# neither Blender nor a Blender-backed project, so it runs for real here -- no mock, no stub.
+SERVED_SMOKE = r"""
+<script>
+(() => {
+  const fail = (message) => {
+    document.body.dataset.smoke = "fail";
+    document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: message }));
+  };
+  const assert = (condition, message) => { if (!condition) throw new Error(message); };
+  const run = async () => {
+    document.querySelector(".menu").open = true;
+    const button = document.querySelector('[data-run="list"]');
+    assert(button, "the List operations row carries no data-run");
+    const out = document.querySelector('[data-cmdout="list"]');
+    button.click();
+    for (let waited = 0; waited < 5000 && out.classList.contains("hidden"); waited += 100) {
+      await new Promise((done) => setTimeout(done, 100));
+    }
+    await new Promise((done) => setTimeout(done, 400));
+    assert(!out.classList.contains("hidden"), "the output panel never appeared");
+    assert(out.textContent.includes("scan_defects") && out.textContent.includes("exit 0"),
+      `served page did not show real command output: ${out.textContent.slice(0, 200)}`);
+    document.body.dataset.smoke = "ok";
+    document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: "ok" }));
+  };
+  run().catch((error) => fail(error && error.message ? error.message : String(error)));
+})();
+</script>
+"""
 
 SMOKE = r"""
 <script>
@@ -221,6 +252,54 @@ def run(command: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=True)
 
 
+def check_served(chrome: str, project: Path) -> None:
+    """adr_007 over a real socket: a real `--serve` subprocess, a real HTTP request from a
+    real headless Chrome, a real `bin/meshanvil list` run. `--virtual-time-budget` still
+    applies here -- Chrome keeps servicing real sockets while it advances virtual time, it
+    just needs enough budget for a real subprocess round trip, not the 1.5s the offline pass
+    uses."""
+    environment = {**os.environ, "MESHANVIL_PROJECT": str(project), "PYTHONUNBUFFERED": "1"}
+    server = subprocess.Popen(
+        [sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--serve", "--no-open"],
+        cwd=ROOT, env=environment, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        port, deadline = None, time.time() + 15
+        while time.time() < deadline:
+            line = server.stdout.readline() if server.stdout else ""
+            if not line:
+                if server.poll() is not None:
+                    break
+                continue
+            match = re.search(r":(\d+)/", line)
+            if match:
+                port = int(match.group(1))
+                break
+        if port is None:
+            raise SystemExit("served viewer did not report a port in time")
+        served_dir = project / "work" / "viewer"
+        smoke_page = served_dir / "served_smoke.html"
+        smoke_page.write_text((served_dir / "index.html").read_text(encoding="utf-8")
+                              .replace("</body>", SERVED_SMOKE + "\n</body>"), encoding="utf-8")
+        try:
+            url = f"http://127.0.0.1:{port}/served_smoke.html"
+            live = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
+                    "--use-mock-keychain", "--password-store=basic", "--no-first-run",
+                    "--window-size=1200,900", "--virtual-time-budget=5000"]
+            dom = subprocess.run([*live, "--dump-dom", url], text=True, capture_output=True, timeout=30)
+            if dom.returncode:
+                raise SystemExit((dom.stderr or dom.stdout or "Chrome did not load the served smoke page").strip())
+            if 'data-smoke="ok"' not in dom.stdout:
+                raise SystemExit((dom.stdout or "the served page did not confirm real execution").strip())
+        finally:
+            smoke_page.unlink(missing_ok=True)
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            server.kill()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--screenshot", type=Path, default=Path(tempfile.gettempdir()) / "meshanvil-viewer-smoke.png")
@@ -267,6 +346,9 @@ def main() -> int:
             raise SystemExit((shot.stderr or shot.stdout).strip())
     if not args.screenshot.exists() or args.screenshot.stat().st_size == 0:
         raise SystemExit("Chrome did not write a screenshot.")
+
+    check_served(chrome, project)
+
     print(f"viewer-smoke: ok ({args.screenshot})")
     return 0
 

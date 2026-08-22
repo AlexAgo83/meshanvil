@@ -1,4 +1,7 @@
-/* The viewer reads. It starts no process and writes nothing -- adr_003.
+/* The viewer reads. It starts no process and writes nothing -- adr_003. adr_007 carves out
+   one exception: a page opened via --serve may POST to that same server's /run endpoint to
+   execute a closed set of commands (RUNNABLE in meshanvil/viewer.py), never a string this
+   page invents. A file:// page has no server to reach and keeps copying, as before.
    Everything it renders comes from a report, and a report is data written by CAD files,
    so every value is escaped before it reaches the page. */
 // @ts-check
@@ -17,9 +20,13 @@
 
 const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
  *   lang: string, strings: Object<string,string>, catalogs?: Object<string,Object<string,string>>,
- *   version?: string, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
+ *   version?: string, run_token?: string|null, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
+
+/** adr_007: a served page has a token and a real origin to POST to; a file:// page has
+    neither, and location.protocol says so directly rather than by probing a capability. */
+const SERVED = location.protocol !== "file:" && !!DATA.run_token;
 
 /** Same catalogues as the command line, all of them shipped in data.js so Help can switch
     language without a rebuild -- the page reads, adr_003, it does not ask the engine again. */
@@ -663,6 +670,35 @@ function legacyCopy(text, done) {
   area.remove();
 }
 
+/** adr_007: only reachable when SERVED is true, on one of the three rows the server itself
+    also allow-lists (RUNNABLE in meshanvil/viewer.py). The name travels, nothing else does. */
+async function runCommand(button) {
+  const name = button.dataset.run;
+  const code = button.querySelector("code");
+  const out = document.querySelector(`[data-cmdout="${CSS.escape(name)}"]`);
+  const original = code ? code.textContent : "";
+  if (code) code.textContent = t("ui.running");
+  if (out) { out.classList.remove("hidden"); out.textContent = ""; }
+  try {
+    const response = await fetch(`${location.origin}/run`, {
+      method: "POST",
+      headers: { "X-Meshanvil-Token": /** @type {string} */ (DATA.run_token), "Content-Type": "application/json" },
+      body: JSON.stringify({ command: name }),
+    });
+    if (!out) return;
+    if (response.status === 409) { out.textContent = t("ui.run_busy"); return; }
+    if (!response.ok) { out.textContent = t("ui.run_refused", { status: response.status }); return; }
+    const result = await response.json();
+    out.textContent = t("ui.run_result", { code: result.exit_code })
+      + (result.stdout ? "\n" + result.stdout : "")
+      + (result.stderr ? "\n" + result.stderr : "");
+  } catch {
+    if (out) out.textContent = t("ui.run_failed");
+  } finally {
+    if (code) code.textContent = original;
+  }
+}
+
 function renderSplash() {
   const doctor = /** @type {any} */ (DATA.doctor);
   // Where a run will land. The working directory chose it and the operator cannot see that
@@ -723,6 +759,8 @@ document.addEventListener("click", (event) => {
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const langTab = target.closest("[data-lang]");
   if (langTab) { setLanguage(/** @type {HTMLElement} */ (langTab).dataset.lang || "en"); return; }
+  const run = target.closest("[data-run]");
+  if (run && SERVED) { runCommand(/** @type {HTMLElement} */ (run)); return; }
   const copy = target.closest("[data-copy]");
   if (copy) { copyCommand(/** @type {HTMLElement} */ (copy)); return; }
   const goto = target.closest("[data-goto]");

@@ -272,11 +272,15 @@ def check_viewer_comparison_layout():
     assert 'compare.style.setProperty("--wipe", `${wipe}%`)' in script
     assert 'data-workspace="compare"' in page and "function selectWorkspace" in script
     assert 'button[data-workspace]' in script
-    assert 'workspace === "runbooks"' in script and "fetch(" not in script
+    assert 'workspace === "runbooks"' in script
     assert 'data-section-goto="input"' in page and 'function jumpReportSection' in script
     assert 'DATA.runbooks || []).filter' in script
     assert 'class="splashcols"' in page and "function renderSplash" in script
     assert ".rbbody" in css and ".wipelabel" in css
+    # adr_007's one exception: fetch exists only for the run endpoint, gated by SERVED, and
+    # SERVED itself is false whenever the page has no server to reach.
+    assert 'fetch(`${location.origin}/run`' in script, "the run endpoint call is missing"
+    assert "const SERVED = location.protocol" in script and "if (run && SERVED)" in script
 
 
 def check_logics_bridge():

@@ -217,6 +217,11 @@ td.delta.moved{color:var(--active)}
 .note{font-size:11px;color:var(--dim);line-height:1.5}
 .doccontent{font-family:var(--f-mono);font-size:11px;line-height:1.6;color:var(--txt);
   white-space:pre-wrap;overflow-wrap:anywhere;max-height:60vh;overflow-y:auto}
+/* A run's own result, shown where the command used to just be text -- adr_007. Only a
+   served page ever shows one; a file:// page never gets past copy-to-clipboard. */
+.cmdout{margin:0 4px 4px;padding:6px 8px;background:var(--node-bg);border-radius:3px;
+  font-family:var(--f-mono);font-size:10.5px;line-height:1.5;color:var(--dim);
+  white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow-y:auto}
 /* A flex child will not shrink below its content unless told to, and an artefact path
    has no space to break at: the chip and the path pushed the whole panel wider. */
 .artefact{display:flex;align-items:baseline;gap:6px;min-width:0;font-size:11px;color:var(--dim)}

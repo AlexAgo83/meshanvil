@@ -16,8 +16,10 @@
         <span class="grp" data-i18n="ui.menu_group_project">Project</span>
         <button type="button" class="cmdrow" data-splash="open"><span data-i18n="ui.command_start">Start screen</span><kbd>Ctrl N</kbd></button>
         <span class="sep"></span>
-        <button type="button" class="cmdrow" data-copy="meshanvil list"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></button>
-        <button type="button" class="cmdrow" data-copy="meshanvil doctor"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></button>
+        <button type="button" class="cmdrow" data-copy="meshanvil list" data-run="list"><span data-i18n="ui.command_list">List operations</span><code>meshanvil list</code></button>
+        <pre class="cmdout hidden" data-cmdout="list"></pre>
+        <button type="button" class="cmdrow" data-copy="meshanvil doctor" data-run="doctor"><span data-i18n="ui.command_doctor">Check setup</span><code>meshanvil doctor</code></button>
+        <pre class="cmdout hidden" data-cmdout="doctor"></pre>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_view">View</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.workspace">Workspace</span>
@@ -26,7 +28,8 @@
         <button type="button" class="cmdrow" role="tab" aria-selected="false" data-workspace="runbooks"><span data-i18n="ui.workspace_runbooks">Runbooks</span><kbd>3</kbd></button>
         <span class="sep"></span>
         <button type="button" class="cmdrow" data-copy="meshanvil view --serve"><span data-i18n="ui.command_view">Refresh viewer</span><code>meshanvil view --serve</code></button>
-        <button type="button" class="cmdrow" data-copy="meshanvil prune --dry-run"><span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code></button>
+        <button type="button" class="cmdrow" data-copy="meshanvil prune --dry-run" data-run="prune"><span data-i18n="ui.command_prune">Preview pruning</span><code>meshanvil prune --dry-run</code></button>
+        <pre class="cmdout hidden" data-cmdout="prune"></pre>
       </div></details>
       <details class="menu"><summary data-i18n="ui.menu_report">Report</summary><div class="dropdown">
         <span class="grp" data-i18n="ui.menu_group_sections">Sections</span>
