@@ -185,15 +185,15 @@
     "report_sections": "Sections du rapport",
     "close": "Fermer",
     "splash_subtitle": "visualiseur local de rapports",
-    "splash_continue": "Continuer avec le jeu de données démo",
+    "splash_continue": "Continuer",
     "splash_templates": "Modèles",
-    "splash_tpl_demo": "Générer le jeu de données démo",
-    "splash_tpl_inspect": "Inspecter une source",
-    "splash_tpl_repair": "Réparer les défauts d'export",
+    "splash_tpl_demo": "Construire la démonstration véhicule",
+    "splash_tpl_inspect": "Construire la démonstration figurine",
+    "splash_tpl_repair": "Démarrer un projet à soi",
     "splash_recent": "Chaîne récente",
-    "splash_recent_empty": "Aucune chaîne récente n'est encore chargée. Lancez une commande puis reconstruisez le visualiseur.",
+    "splash_recent_empty": "Ce projet ne contient aucun rapport. Lance une des commandes à côté, puis reconstruis la page.",
     "splash_recent_found": "{count} rapports chargés depuis la chaîne actuelle.",
-    "splash_demo_note": "Pas encore de source à vous ? La scène démo construit un petit boîtier synthétique avec des défauts d'export.",
+    "splash_demo_note": "Pas encore de sujet à toi ? Chaque démonstration construit son propre projet et s'ouvre ici.",
     "runbook_empty": "Aucun runbook ne correspond au filtre actuel.",
     "runbook_no_summary": "Ouvrez le runbook pour lire sa procédure.",
     "first_run": "↺ premier lancement",
@@ -216,7 +216,8 @@
     "project": "Projet",
     "project_reports": "{count} rapports",
     "splash_project": "Projet actif",
-    "splash_project_note": "{name} dans {path}, résolu par {rule}. Chaque rapport, rendu et artefact d'un run atterrit ici."
+    "splash_project_note": "{name} dans {path}, résolu par {rule}. Chaque rapport, rendu et artefact d'un run atterrit ici.",
+    "splash_nothing": "Rien vers quoi continuer"
   },
   "operation": {
     "clean_shells": {

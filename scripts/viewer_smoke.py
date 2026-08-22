@@ -30,7 +30,7 @@ SMOKE = r"""
     assert(!document.querySelector("#splash").classList.contains("hidden"), "splash did not open");
     assert(document.querySelectorAll(".splashcols .scol").length === 3, "splash columns missing");
     assert(document.querySelector(".tpl code") && document.querySelector(".chk"), "splash command/check content missing");
-    assert(document.querySelector("#splash").textContent.includes("demo_source.blend") && document.querySelector("#splash").textContent.includes("tools/make_demo_scene.py"), "demo dataset option missing");
+    assert(document.querySelector("#splash").textContent.includes("tools/build_demo_chain.sh") && document.querySelector("#splash").textContent.includes("tools/build_figurine_chain.sh"), "demonstration build commands missing");
     document.querySelector('[data-splash="close"]').click();
     assert(document.querySelector("#splash").classList.contains("hidden"), "splash did not close");
 

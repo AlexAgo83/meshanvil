@@ -73,7 +73,11 @@ def build(root: Path) -> Path:
         known.append({"name": paths.name(project), "path": str(project),
                       "reports": collect(project, target),
                       "ops_exists": (project / OPS).is_dir()})
-    active = known[0]          # projects() puts the active root first, reports or not
+    # projects() puts the active root first, reports or not. The page opens on the first one
+    # that has something to show: a page that opens on an empty project because that is where
+    # the command was typed sends a reader to the splash while the reports sit one click away.
+    # The splash still states where a run would land, which is the question the root answers.
+    active = next((entry for entry in known if entry["reports"]), known[0])
     refs = {ref for entry in known for report in entry["reports"]
             for ref in report.get("links", {}).get("docs", [])}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

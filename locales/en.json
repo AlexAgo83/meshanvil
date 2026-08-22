@@ -185,15 +185,15 @@
     "report_sections": "Report sections",
     "close": "Close",
     "splash_subtitle": "local report viewer",
-    "splash_continue": "Continue with demo data",
+    "splash_continue": "Continue",
     "splash_templates": "Templates",
-    "splash_tpl_demo": "Generate the demo dataset",
-    "splash_tpl_inspect": "Inspect a source",
-    "splash_tpl_repair": "Repair export defects",
+    "splash_tpl_demo": "Build the vehicle demonstration",
+    "splash_tpl_inspect": "Build the figurine demonstration",
+    "splash_tpl_repair": "Start a project of your own",
     "splash_recent": "Recent chain",
-    "splash_recent_empty": "No recent chain is loaded yet. Run a command and rebuild the viewer.",
+    "splash_recent_empty": "This project holds no report yet. Run one of the commands beside this, then rebuild the page.",
     "splash_recent_found": "{count} reports loaded from the current chain.",
-    "splash_demo_note": "No source of your own yet? The demo scene builds a small synthetic housing with export defects.",
+    "splash_demo_note": "No subject of your own yet? Either demonstration builds its own project and opens here.",
     "runbook_empty": "No runbook matches the current filter.",
     "runbook_no_summary": "Open the runbook to read its procedure.",
     "first_run": "↺ first run",
@@ -216,7 +216,8 @@
     "project": "Project",
     "project_reports": "{count} reports",
     "splash_project": "Active project",
-    "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here."
+    "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here.",
+    "splash_nothing": "Nothing to continue to"
   },
   "operation": {
     "clean_shells": {

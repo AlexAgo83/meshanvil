@@ -77,6 +77,15 @@ def projects(root: Path | None = None) -> list[Path]:
                 continue
             if (candidate / MARKER).is_dir() and (candidate / "work" / "ops").is_dir():
                 found.append(candidate.resolve())
+    # And whatever the active root contains. An installation that holds its demonstrations
+    # under work/demo is not a sibling of them, so without this the page opened at the place
+    # everyone knows lists nothing while the reports sit two directories down.
+    for depth in ("*", "*/*", "*/*/*"):     # work/demo/<name> is three down
+        for candidate in sorted(active.glob(depth)):
+            if not candidate.is_dir() or candidate.resolve() in found:
+                continue
+            if (candidate / MARKER).is_dir() and (candidate / "work" / "ops").is_dir():
+                found.append(candidate.resolve())
     return found
 
 

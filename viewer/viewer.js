@@ -598,9 +598,9 @@ function renderSplash() {
     ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br><code>${esc(blender.fix)}</code>` : ""}</span></span>`
     : `<span class="chk warn"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(t("ui.start_doctor_missing"))}<br><code>meshanvil doctor</code></span></span>`;
   document.getElementById("splash-body").innerHTML = `<section class="scol"><h2>${esc(t("ui.splash_templates"))}</h2>
-      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_demo"))}</b><code>blender -b -P tools/make_demo_scene.py</code></button>
-      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_inspect"))}</b><code>meshanvil run scan_defects work/out/demo_source.blend</code></button>
-      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_repair"))}</b><code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></button>
+      <span class="tpl"><b>${esc(t("ui.splash_tpl_demo"))}</b><code>tools/build_demo_chain.sh</code></span>
+      <span class="tpl"><b>${esc(t("ui.splash_tpl_inspect"))}</b><code>tools/build_figurine_chain.sh</code></span>
+      <span class="tpl"><b>${esc(t("ui.splash_tpl_repair"))}</b><code>meshanvil init &lt;directory&gt;</code></span>
     </section><section class="scol"><h2>${esc(t("ui.splash_recent"))}</h2>
       <p>${esc(DATA.reports.length ? t("ui.splash_recent_found", { count: DATA.reports.length }) : t("ui.splash_recent_empty"))}</p>
       <p>${esc(t("ui.splash_demo_note"))}</p>
@@ -614,6 +614,12 @@ function renderSplash() {
 
 function showSplash(show) {
   renderSplash();
+  // Closing the splash on an empty project used to reveal an empty page, after a button that
+  // said "Continue with demo data". It says what it can actually do.
+  const go = /** @type {HTMLButtonElement} */ (document.getElementById("splash-continue"));
+  const empty = !DATA.reports.length;
+  go.textContent = empty ? t("ui.splash_nothing") : t("ui.splash_continue");
+  go.disabled = empty;
   document.getElementById("splash").classList.toggle("hidden", !show);
 }
 
