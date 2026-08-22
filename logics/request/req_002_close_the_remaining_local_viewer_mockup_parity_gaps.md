@@ -7,7 +7,7 @@
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 02:18:05
+> Indicators reviewed: 2026-08-22 02:29:09
 
 # AI Context
 - Summary: Follow-up viewer parity request for the mockup blocks missed by the first pass: command menus, Runbooks, splash and Compare.
@@ -55,3 +55,11 @@
 - `item_018_build_runbooks_as_a_primary_workspace_instead_of_an_outliner_only_list`
 - `item_019_restore_the_reviewed_first_run_splash_and_compare_split_layout`
 - `item_020_make_browser_smoke_fail_on_missing_mockup_surfaces`
+
+# AC Traceability
+- request-AC1 -> This task. Proof: Implemented in `4f93979`; grouped command menus expose rows, separators, shortcuts and selectable CLI text, and `scripts/viewer_smoke.py` asserts the command menu surface.
+- request-AC2 -> This task. Proof: Implemented in `4f93979`; Runbooks renders a central `rbbody`/`rbrow` workspace from existing runbook data, and `scripts/viewer_smoke.py` asserts runbook rows, purpose text and applied-operation cells.
+- request-AC3 -> This task. Proof: Implemented in `4f93979` and refined in `a9f36b2`; Start opens a splash with templates, explicit demo dataset command, recent-chain state, checks, fix guidance and close/primary actions, asserted by `scripts/viewer_smoke.py`.
+- request-AC4 -> This task. Proof: Implemented in `4f93979`; Compare renders a wipe/split layout with labels, handle, metadata and the existing native range control, asserted by `scripts/viewer_smoke.py`.
+- request-AC5 -> This task. Proof: Implemented in `4f93979` and `a9f36b2`; `scripts/viewer_smoke.py` exercises menus, Runbooks, splash, demo dataset option and Compare, writing screenshots to the system temporary directory.
+- request-AC6 -> This task. Proof: Validated in `9f87609` and after `a9f36b2` with `make check` and `python3 scripts/viewer_smoke.py`; the viewer remains static/read-only, i18n passes, and no fetch or execution path was added.
