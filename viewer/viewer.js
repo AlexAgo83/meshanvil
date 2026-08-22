@@ -459,15 +459,17 @@ function compareTable(report) {
   const rows = [["vertices", "vertices"], ["faces", "faces"], ["shells", "shells"],
                 ["volume cm³", "volume_cm3"]];
   const body = rows.map(([label, key]) => {
-    const before = report.before[key], after = report.after[key];
+    let before = report.before[key], after = report.after[key];
     if (before === null || before === undefined || after === null || after === undefined) return "";
+    if (key === "volume_cm3") { before = Math.round(before); after = Math.round(after); }
     const delta = after - before;
     return `<tr><td>${esc(label)}</td><td>${num(before)}</td><td>${num(after)}</td>
       <td class="delta${delta ? " moved" : ""}">${esc(num(delta))}</td></tr>`;
   }).join("");
   if (!body) return "";
-  return `<table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th>
-    <th>${esc(t("ui.after"))}</th><th>${esc(t("ui.delta"))}</th></tr></thead><tbody>${body}</tbody></table>`;
+  // Its own scroller: clipped inside the band, the delta column simply vanished.
+  return `<div class="tablewrap"><table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th>
+    <th>${esc(t("ui.after"))}</th><th>${esc(t("ui.delta"))}</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 function preview() {

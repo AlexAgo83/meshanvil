@@ -15,7 +15,12 @@ SMOKE = r"""
     document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: message }));
   };
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
-  try {
+  const settled = () => Promise.all([...document.images].map((img) =>
+    img.complete ? Promise.resolve() : new Promise((done) => {
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", done, { once: true });
+    })));
+  const run = async () => {
     const fileMenu = document.querySelector(".menu");
     fileMenu.open = true;
     assert(document.querySelector(".dropdown .grp") && document.querySelector(".cmdrow code"), "command menu surface missing");
@@ -56,8 +61,15 @@ SMOKE = r"""
     assert(document.querySelector(".compare").style.getPropertyValue("--wipe") === "72%", "wipe value did not update");
 
     assert(document.querySelector(".pvmeta table"), "compare before/after table missing");
+    const cband = document.querySelector("#pvmeta");
+    assert(cband.scrollWidth <= cband.clientWidth + 1,
+      `compare band overflows: content ${cband.scrollWidth} in ${cband.clientWidth}`);
+    const wrap = document.querySelector("#pvmeta .tablewrap");
+    assert(wrap && wrap.scrollWidth <= wrap.clientWidth + 1,
+      "compare table does not fit its band and would hide the delta column");
     // The handle offset and the clip-path percentage must resolve against the same box, or
     // they drift apart everywhere except the exact middle.
+    await settled();
     const frame = document.querySelector(".compare");
     const shot = document.querySelector(".compare-before");
     const after = document.querySelector(".compare-after");
@@ -73,6 +85,19 @@ SMOKE = r"""
       "the chain workspace shows the comparison instead of the render");
     assert(document.querySelector(".tilehint") && !document.querySelector(".tilehint").textContent.includes("${"),
       "tile hint is missing or unrendered");
+    // The render must fit the panel, not be cropped by it, and the band beside it must hold
+    // its own content: an auto-sized grid track took its height from the image, so the
+    // image's max-height had nothing definite to resolve against and the bottom was cut.
+    await settled();
+    const stage = document.querySelector("#pvstage"), band = document.querySelector("#pvmeta");
+    assert(document.querySelector("#pvstage img").naturalWidth > 0, "the render did not load");
+    assert(stage.scrollHeight <= stage.clientHeight + 1,
+      `render is cropped: stage content ${stage.scrollHeight} in ${stage.clientHeight}`);
+    assert(band.scrollWidth <= band.clientWidth + 1,
+      `provenance band overflows: content ${band.scrollWidth} in ${band.clientWidth}`);
+    const shown = document.querySelector("#pvstage img");
+    assert(Math.abs(shown.width / shown.height - shown.naturalWidth / shown.naturalHeight) < 0.02,
+      "render is not displayed at its own aspect ratio");
     assert(document.querySelector('[data-section="renders"] .renders img'), "renders block missing");
     assert(document.querySelector('[data-section="artefact"] .state'), "artefact block missing");
     assert(document.querySelector(".title-row .note"), "operation summary missing");
@@ -92,9 +117,8 @@ SMOKE = r"""
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");
     document.body.dataset.smoke = "ok";
     document.body.appendChild(Object.assign(document.createElement("pre"), { id: "smoke-result", textContent: "ok" }));
-  } catch (error) {
-    fail(error && error.message ? error.message : String(error));
-  }
+  };
+  run().catch((error) => fail(error && error.message ? error.message : String(error)));
 })();
 </script>
 """
