@@ -143,6 +143,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pvempty code{font-family:var(--f-mono);color:var(--dim)}
 .pvmeta{border-left:1px solid var(--line);padding:8px 9px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;overflow-x:hidden;min-width:0}
 .tablewrap{overflow-x:auto;max-width:100%}
+.findings{margin:0;padding-left:16px;color:var(--dim);font-size:11.5px;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
+.findings b{color:var(--txt);font-weight:500}
 .pvviews{display:flex;gap:2px}
 .pvviews button{padding:2px 8px;border-radius:var(--r);background:var(--widget);color:var(--txt);font-size:10.5px}
 .pvviews button[aria-selected="true"]{background:var(--sel);color:#0f151d}
@@ -211,7 +213,11 @@ td.delta.moved{color:var(--active)}
 .wiki{font-family:var(--f-mono);font-size:11px;color:#8fb4e8;text-decoration:none;border-bottom:1px dotted #3f5b82;align-self:flex-start}
 .wiki:hover{color:#b9d2f5}
 .note{font-size:11px;color:var(--dim);line-height:1.5}
-.artefact{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+/* A flex child will not shrink below its content unless told to, and an artefact path
+   has no space to break at: the chip and the path pushed the whole panel wider. */
+.artefact{display:flex;align-items:baseline;gap:6px;min-width:0;font-size:11px;color:var(--dim)}
+.artefact .state{flex:none}
+.artefact .provenance{min-width:0}
 .state{font-family:var(--f-mono);font-size:10px;padding:1px 6px;border-radius:3px;background:#25301f;color:var(--ok);border:1px solid #33452a}
 .state.pruned{background:#2a2a2a;color:var(--dimmer);border-color:#3a3a3a}
 

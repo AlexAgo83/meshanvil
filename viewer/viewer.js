@@ -289,13 +289,13 @@ function measurements(report) {
                 ["shells", "shells"], ["non-manifold", "non_manifold_edges"],
                 ["volume cm³", "volume_cm3"]];
   if (report.kind === "transform" && report.before && report.after) {
-    return block(t("ui.measurements"), `<table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th><th>${esc(t("ui.after"))}</th>
+    return block(t("ui.measurements"), `<div class="tablewrap"><table><thead><tr><th>&nbsp;</th><th>${esc(t("ui.before"))}</th><th>${esc(t("ui.after"))}</th>
       <th>${esc(t("ui.delta"))}</th></tr></thead><tbody>${rows.map(([label, key]) => {
         const before = report.before[key], after = report.after[key];
         const delta = (before === null || after === null) ? "—" : num(after - before);
         return `<tr><td>${esc(label)}</td><td>${num(before)}</td><td>${num(after)}</td>
           <td class="delta${delta !== "0" && delta !== "—" ? " moved" : ""}">${esc(delta)}</td></tr>`;
-      }).join("")}</tbody></table>`, "measurements");
+      }).join("")}</tbody></table></div>`, "measurements");
   }
   const measured = report.measured || {};
   return block(t("ui.measurements"), `<dl class="kv">${rows.map(([label, key]) =>
@@ -319,7 +319,8 @@ function boundingBox(report) {
     ? `<div class="note">${esc(t("ui.axes_moved", { axes: moved.join(", ") || "none" }))}</div>`
     : "";
   return block(t("ui.bounding_box"),
-    `<table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead><tbody>${rows}</tbody></table>${note}`, "bbox");
+    `<div class="tablewrap"><table><thead><tr><th>${esc(t("ui.axis"))}</th>${heads}</tr></thead>
+     <tbody>${rows}</tbody></table></div>${note}`, "bbox");
 }
 
 function rendersBlock(report) {
@@ -393,9 +394,8 @@ function props() {
   html += measurements(report);
   html += boundingBox(report);
   if (report.findings && report.findings.length) {
-    html += block(t("ui.findings"), `<ul style="margin:0;padding-left:16px;color:var(--dim);
-      font-size:11.5px;display:flex;flex-direction:column;gap:4px">${report.findings.map((f) =>
-      `<li><b style="color:var(--txt);font-weight:500">${esc(f.code)}</b> — ${
+    html += block(t("ui.findings"), `<ul class="findings">${report.findings.map((f) =>
+      `<li><b>${esc(f.code)}</b> — ${
         esc(Object.entries(f).filter(([k]) => k !== "code")
           .map(([k, v]) => `${k}: ${v}`).join(", "))}</li>`).join("")}</ul>`, "findings");
   }
@@ -406,7 +406,7 @@ function props() {
   if (report.output) {
     html += block(t("ui.artefact"), `<div class="artefact">
         <span class="state ${esc(report.output.state)}">${esc(report.output.state)}</span>
-        <span>${esc(short(report.output.path))}</span></div>
+        <span class="provenance">${esc(short(report.output.path))}</span></div>
       <div class="note">${esc(t("ui.artefact_note"))}</div>`, "artefact");
   }
   html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>

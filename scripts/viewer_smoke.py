@@ -113,6 +113,28 @@ SMOKE = r"""
       `outliner shows ${branchGroups} branch groups, the status bar counts ${branchCount}`);
     assert(document.querySelector("#outliner .row.child"), "branch rows are not indented");
 
+    // Every report through every panel: a path or a wide number in one report is enough to
+    // push a panel wider than itself, and only that report shows it.
+    const panels = [".propscroll", "#pvmeta", "#outliner", "#nodes"];
+    const spilled = [];
+    for (const workspace of ["chain", "compare", "runbooks"]) {
+      document.querySelector(`[data-workspace="${workspace}"]`).click();
+      for (const item of DATA.reports) {
+        select(item.id);
+        await settled();
+        for (const sel of panels) {
+          const box = document.querySelector(sel);
+          if (box && box.clientWidth && box.scrollWidth > box.clientWidth + 1) {
+            spilled.push(`${workspace}/${item.id} ${sel} ${box.clientWidth}<${box.scrollWidth}`);
+          }
+        }
+      }
+    }
+    assert(!spilled.length, `panels scroll sideways: ${spilled.slice(0, 4).join("; ")}`);
+    document.querySelector('[data-workspace="chain"]').click();
+    select(DATA.reports[DATA.reports.length - 1].id);
+    await settled();
+
     document.querySelector('[data-section-goto="measurements"]').click();
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");
     document.body.dataset.smoke = "ok";
