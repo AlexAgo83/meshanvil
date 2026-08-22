@@ -429,11 +429,12 @@ function renderSplash() {
     ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br><code>${esc(blender.fix)}</code>` : ""}</span></span>`
     : `<span class="chk warn"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(t("ui.start_doctor_missing"))}<br><code>meshanvil doctor</code></span></span>`;
   document.getElementById("splash-body").innerHTML = `<section class="scol"><h2>${esc(t("ui.splash_templates"))}</h2>
+      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_demo"))}</b><code>blender -b -P tools/make_demo_scene.py</code></button>
       <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_inspect"))}</b><code>meshanvil run scan_defects work/out/demo_source.blend</code></button>
       <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_repair"))}</b><code>meshanvil run voxel_remesh work/out/demo_source.blend --set voxel_mm=6</code></button>
-      <button type="button" class="tpl" data-splash="close"><b>${esc(t("ui.splash_tpl_prepare"))}</b><code>meshanvil view --no-open</code></button>
     </section><section class="scol"><h2>${esc(t("ui.splash_recent"))}</h2>
       <p>${esc(DATA.reports.length ? t("ui.splash_recent_found", { count: DATA.reports.length }) : t("ui.splash_recent_empty"))}</p>
+      <p>${esc(t("ui.splash_demo_note"))}</p>
       <code class="command">work/ops</code>
     </section><section class="scol"><h2>${esc(t("ui.start_environment"))}</h2>
       ${check}<span class="chk ${DATA.ops_exists ? "ok" : "warn"}"><span><b>${esc(t("ui.start_reports"))}</b><br>${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</span></span>
