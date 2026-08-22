@@ -1,14 +1,14 @@
 ## item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction - Split the viewer host module into payload, server and host interaction
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:08:22
+> Indicators reviewed: 2026-08-23 01:27:28
 
 # AI Context
 - Summary: The viewer's three host jobs -- payload, HTTP serving, host interaction -- separate, behind a route convention where a new endpoint never grows the dispatcher.
@@ -56,3 +56,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_024_deliver_the_live_viewer_and_the_module_structure`
+
+# Notes
+- Task `task_024_deliver_the_live_viewer_and_the_module_structure` was finished via `logics-manager flow finish task` on 2026-08-23.

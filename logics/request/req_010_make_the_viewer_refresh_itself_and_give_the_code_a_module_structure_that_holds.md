@@ -1,13 +1,13 @@
 ## req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds - Make the viewer refresh itself and give the code a module structure that holds
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:53:32
+> Indicators reviewed: 2026-08-23 01:27:27
 
 # AI Context
 - Summary: The served page becomes a live view onto the reports directory instead of a build-time snapshot, and both sides of the viewer gain a module structure, a checked size budget and a real test layout.

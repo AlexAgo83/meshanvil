@@ -1,14 +1,14 @@
 ## item_050_reuse_a_running_viewer_and_keep_its_address_stable - Reuse a running viewer and keep its address stable
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:08:22
+> Indicators reviewed: 2026-08-23 01:27:28
 
 # AI Context
 - Summary: One viewer per project, reused when it is alive and reclaimed when it is not, at an address that does not move between launches -- and serving becomes what `meshanvil view` does by default.
@@ -69,3 +69,7 @@
 
 # Notes
 - Follows `logics-manager`'s viewer registry module: one live viewer per root, a cross-process lock, and a liveness probe that reclaims a stale registration instead of believing it.
+- Task `task_024_deliver_the_live_viewer_and_the_module_structure` was finished via `logics-manager flow finish task` on 2026-08-23.
+
+# Tasks
+- `task_024_deliver_the_live_viewer_and_the_module_structure`

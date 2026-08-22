@@ -1,14 +1,14 @@
 ## item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module - Give the host code a test layout with one module per host module
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:08:22
+> Indicators reviewed: 2026-08-23 01:27:28
 
 # AI Context
 - Summary: A test directory and runner with one test module per host module, carrying over what the single selfcheck script asserts today, plus smoke coverage of live refresh.
@@ -58,3 +58,9 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_024_deliver_the_live_viewer_and_the_module_structure`
+
+# Notes
+- Task `task_024_deliver_the_live_viewer_and_the_module_structure` was finished via `logics-manager flow finish task` on 2026-08-23.

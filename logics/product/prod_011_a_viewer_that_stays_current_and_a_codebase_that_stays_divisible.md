@@ -1,12 +1,12 @@
 ## prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible - A viewer that stays current and a codebase that stays divisible
 > Date: 2026-08-23
-> Status: Proposed
+> Status: Settled
 > Related request: `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`
-> Related backlog: `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`, `item_046_push_change_to_the_open_page_over_a_standard_library_event_stream`, `item_047_split_the_viewer_host_module_into_payload_server_and_host_interaction`, `item_048_split_the_client_by_screen_behind_a_committed_checked_bundle`, `item_049_give_the_host_code_a_test_layout_with_one_module_per_host_module`, `item_050_reuse_a_running_viewer_and_keep_its_address_stable`
+> Related backlog: `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`
 > Related task: `task_024_deliver_the_live_viewer_and_the_module_structure`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:42:54
+> Indicators reviewed: 2026-08-23 01:27:28
 
 # Overview
 Turns the served viewer into a live view onto the reports directory instead of a snapshot, and gives both sides of it -- the host code and the page -- a module structure, a size budget and a real test layout, so the next slice edits a small file instead of the only file.
@@ -50,5 +50,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`
+- Product back-reference: `item_045_serve_the_viewer_payload_instead_of_baking_it_into_the_page`
 - Task back-reference: `task_024_deliver_the_live_viewer_and_the_module_structure`

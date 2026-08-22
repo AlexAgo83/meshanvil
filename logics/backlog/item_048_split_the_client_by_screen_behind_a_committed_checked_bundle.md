@@ -1,14 +1,14 @@
 ## item_048_split_the_client_by_screen_behind_a_committed_checked_bundle - Split the client by screen behind a committed, checked bundle
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: High
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:08:22
+> Indicators reviewed: 2026-08-23 01:27:28
 
 # AI Context
 - Summary: Client sources split by screen behind a committed bundle with a staleness check and an enforced per-file line budget, and the ADR that makes the build step legal.
@@ -65,3 +65,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_024_deliver_the_live_viewer_and_the_module_structure`
+
+# Notes
+- Task `task_024_deliver_the_live_viewer_and_the_module_structure` was finished via `logics-manager flow finish task` on 2026-08-23.
