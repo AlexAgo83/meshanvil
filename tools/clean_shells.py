@@ -18,10 +18,25 @@ def _reporter():
     return reporting.open_report(), job
 
 REPORT, JOB = _reporter()
+
+
+def _views():
+    """Rendering lives in the engine module. The job carries the repository root; a standalone
+    run finds it beside this file, so the same script works either way."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 PARAMS = (JOB or {}).get("params", {})
 FLOOR = int(PARAMS.get("min_vertices", 3000))
 TARGET = PARAMS.get("object") or None
+RENDER = bool(PARAMS.get("render", True))
 OUT = Path(bpy.data.filepath).with_name(Path(bpy.data.filepath).stem + "_cleaned.blend")
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 meshes = [o for o in bpy.data.objects if o.type == 'MESH' and o.data.vertices]
 target = bpy.data.objects[TARGET] if TARGET else max(meshes, key=lambda o: len(o.data.vertices))
@@ -56,6 +71,9 @@ if dropped:
 mesh.to_mesh(target.data)
 target.data.update()
 mesh.free()
+
+if RENDER:
+    views.shoot(REPORT, JOB, ROOT, OUT.stem)
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 if REPORT:

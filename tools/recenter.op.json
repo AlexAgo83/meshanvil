@@ -5,6 +5,16 @@
   "script": "tools/recenter.py",
   "summary_key": "operation.recenter.summary",
   "params": [
-    {"name": "scale", "type": "float", "default": 1.0, "unit": "factor"}
+    {
+      "name": "scale",
+      "type": "float",
+      "default": 1.0,
+      "unit": "factor"
+    },
+    {
+      "name": "render",
+      "type": "bool",
+      "default": true
+    }
   ]
 }

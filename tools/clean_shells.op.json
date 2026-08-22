@@ -5,7 +5,21 @@
   "script": "tools/clean_shells.py",
   "summary_key": "operation.clean_shells.summary",
   "params": [
-    {"name": "min_vertices", "type": "int", "default": 3000, "unit": "vertices"},
-    {"name": "object", "type": "str", "default": ""}
+    {
+      "name": "min_vertices",
+      "type": "int",
+      "default": 3000,
+      "unit": "vertices"
+    },
+    {
+      "name": "object",
+      "type": "str",
+      "default": ""
+    },
+    {
+      "name": "render",
+      "type": "bool",
+      "default": true
+    }
   ]
 }

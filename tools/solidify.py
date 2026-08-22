@@ -29,13 +29,28 @@ def _reporter():
 
 
 REPORT, JOB = _reporter()
+
+
+def _views():
+    """Rendering lives in the engine module. The job carries the repository root; a standalone
+    run finds it beside this file, so the same script works either way."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 PARAMS = (JOB or {}).get("params", {})
 THICKNESS = float(PARAMS.get("thickness_mm", 20.0)) / 1000.0
 # Declared, not enforced by this operation: it is the voxel the caller intends to remesh at.
 # A wall thinner than one voxel is erased by that remesh, so it is refused here instead.
 NEXT_VOXEL = float(PARAMS.get("next_voxel_mm", 0.0)) / 1000.0
 SKIP_CLOSED = bool(PARAMS.get("skip_closed", True))
+RENDER = bool(PARAMS.get("render", True))
 OUT = Path(bpy.data.filepath).with_name(Path(bpy.data.filepath).stem + "_solid.blend")
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 
 def log(*parts):
@@ -55,6 +70,9 @@ if not meshes:
 if REPORT:
     from meshanvil_engine import report as reporting
     REPORT.before(reporting.measure_scene())
+
+# No before/after pair either: offset 0 grows the wall both ways, so 20 mm on a four-metre
+# car leaves the silhouette where it was. The closure count is the evidence, not the render.
 
 walled, already_closed = 0, 0
 for index, o in enumerate(meshes):
@@ -86,6 +104,9 @@ for o in meshes:
         closed_after += 1
     bm.free()
 log("closed objects %d / %d" % (closed_after, len(meshes)))
+
+if RENDER:
+    views.shoot(REPORT, JOB, ROOT, OUT.stem)
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 

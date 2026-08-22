@@ -17,11 +17,24 @@ def _reporter():
     job = json.loads(Path(args[args.index("--job") + 1]).read_text(encoding="utf-8"))
     sys.path.insert(0, job["root"])
     from meshanvil_engine import report as reporting
-    return reporting.open_report(), job.get("params", {})
+    return reporting.open_report(), job
 
-REPORT, PARAMS = _reporter()
+REPORT, JOB = _reporter()
+PARAMS = (JOB or {}).get("params", {})
+
+
+def _views():
+    """Rendering lives in the engine module; a standalone run finds it beside this file."""
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 FIX = bool(PARAMS.get("fix")) if REPORT else ("--fix" in sys.argv)
 RATIO = float(PARAMS.get("smear_ratio_threshold", 2.5))
+RENDER = bool(PARAMS.get("render", True))
 MIN_EXTENT = float(PARAMS.get("min_extent_mm", 50.0)) / 1000.0
 obs = [o for o in bpy.data.objects if o.type == 'MESH' and o.data.vertices]
 
@@ -90,6 +103,10 @@ if FIX and dead:
     if REPORT:
         REPORT.output(bpy.data.filepath)
         REPORT.report["kind"] = "transform"
+
+if RENDER and REPORT:
+    from pathlib import Path as _Path
+    views.shoot(REPORT, JOB, _Path(JOB["root"]), _Path(bpy.data.filepath).stem)
 
 if REPORT:
     REPORT.write()

@@ -18,12 +18,25 @@ def _reporter():
 
 
 REPORT, JOB = _reporter()
+
+
+def _views():
+    """Rendering lives in the engine module; a standalone run finds it beside this file."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 PARAMS = (JOB or {}).get("params", {})
 VOXEL = float(PARAMS.get("voxel_mm", 6.0)) / 1000.0
 KEEP_LARGEST = bool(PARAMS.get("keep_largest", False))
 DRIFT = float(PARAMS.get("max_bbox_drift_mm", 0.0)) or float(PARAMS.get("voxel_mm", 6.0))
 OUT = Path(bpy.data.filepath).with_name(
     Path(bpy.data.filepath).stem + "_voxel%g.blend" % (VOXEL * 1000))
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 
 def log(*parts):
@@ -114,50 +127,9 @@ if REPORT:
 
 RENDER = bool(PARAMS.get("render", True))
 if RENDER:
-    from mathutils import Vector
-    if REPORT:
-        REPORT.progress("rendering", 0.9)
-    points = [envelope.matrix_world @ v.co for v in envelope.data.vertices]
-    if before_object:
-        points += [before_object.matrix_world @ v.co for v in before_object.data.vertices]
-    low = Vector([min(p[i] for p in points) for i in range(3)])
-    high = Vector([max(p[i] for p in points) for i in range(3)])
-    centre, radius = (low + high) / 2, (high - low).length / 2
-    scene = bpy.context.scene
-    camera_data = bpy.data.cameras.new("c"); camera_data.type = 'ORTHO'
-    camera_data.ortho_scale = radius * 2.3
-    camera = bpy.data.objects.new("c", camera_data)
-    scene.collection.objects.link(camera); scene.camera = camera
-    sun = bpy.data.objects.new("l", bpy.data.lights.new("l", 'SUN'))
-    scene.collection.objects.link(sun); sun.rotation_euler = (0.9, 0.2, 0.6)
-    scene.render.engine = 'BLENDER_WORKBENCH'
-    scene.display.shading.background_type = 'VIEWPORT'
-    scene.display.shading.background_color = (0.094, 0.094, 0.094)
-    scene.render.resolution_x, scene.render.resolution_y = 1200, 760
-    scene.render.image_settings.file_format = 'PNG'
-    scene.render.film_transparent = False
-    renders = Path(OUT).parent.parent / "renders"
-    renders.mkdir(parents=True, exist_ok=True)
-    for name, direction in (("3q", Vector((-1.1, -1.0, 0.55))), ("front", Vector((-1, 0, 0.1))),
-                            ("side", Vector((0, -1, 0.1))), ("top", Vector((0.01, 0.01, 1)))):
-        unit = direction.normalized()
-        camera.location = centre + unit * radius * 4
-        camera.rotation_euler = (-unit).to_track_quat('-Z', 'Y').to_euler()
-        identity = (JOB or {}).get("id", "standalone")
-        path = renders / f"{identity}_{Path(OUT).stem}_{name}.png"
-        scene.render.filepath = str(path); bpy.ops.render.render(write_still=True)
-        if REPORT:
-            if not path.is_file():
-                raise SystemExit("render was not written where the report says: %s" % path)
-            REPORT.render(name, str(path), "ortho-%s-object" % name, tile=(name == "3q"))
-        if before_object:
-            envelope.hide_render, before_object.hide_render = True, False
-            before_path = renders / f"{identity}_{Path(OUT).stem}_before_{name}.png"
-            scene.render.filepath = str(before_path); bpy.ops.render.render(write_still=True)
-            envelope.hide_render, before_object.hide_render = False, True
-            if REPORT:
-                REPORT.comparison(name, str(before_path), str(path), "ortho-%s-subject" % name)
-    log("rendered 4 views")
+    views.shoot(REPORT, JOB, ROOT, Path(OUT).stem,
+                subjects=[envelope], before=[before_object] if before_object else None)
+    log("rendered %d views" % len(views.DIRECTIONS))
 
 # ENVELOPPE_BEFORE exists only to shoot the "before" half of the comparison. Saved into the
 # artefact it becomes the heaviest object in the file, and the next operation -- clean_shells

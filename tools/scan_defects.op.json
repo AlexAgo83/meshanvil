@@ -5,8 +5,27 @@
   "script": "tools/scan_defects.py",
   "summary_key": "operation.scan_defects.summary",
   "params": [
-    {"name": "smear_ratio_threshold", "type": "float", "default": 2.5, "unit": "ratio"},
-    {"name": "min_extent_mm", "type": "float", "default": 50.0, "unit": "mm"},
-    {"name": "fix", "type": "bool", "default": false}
+    {
+      "name": "smear_ratio_threshold",
+      "type": "float",
+      "default": 2.5,
+      "unit": "ratio"
+    },
+    {
+      "name": "min_extent_mm",
+      "type": "float",
+      "default": 50.0,
+      "unit": "mm"
+    },
+    {
+      "name": "fix",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "name": "render",
+      "type": "bool",
+      "default": true
+    }
   ]
 }

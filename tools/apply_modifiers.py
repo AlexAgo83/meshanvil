@@ -27,12 +27,27 @@ def _reporter():
 
 
 REPORT, JOB = _reporter()
+
+
+def _views():
+    """Rendering lives in the engine module. The job carries the repository root; a standalone
+    run finds it beside this file, so the same script works either way."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 PARAMS = (JOB or {}).get("params", {})
 # A subdivision cage is cheap; its evaluated mesh is not. Capping the level keeps a 7x
 # multiplier from becoming a 30x one on a file nobody sized for printing.
 MAX_SUBSURF = int(PARAMS.get("max_subsurf_level", 2))
 APPLY_SCALE = bool(PARAMS.get("apply_scale", True))
+RENDER = bool(PARAMS.get("render", True))
 OUT = Path(bpy.data.filepath).with_name(Path(bpy.data.filepath).stem + "_baked.blend")
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 
 def log(*parts):
@@ -56,6 +71,11 @@ for o in meshes:
             m.levels = MAX_SUBSURF
             capped += 1
 log("objects %d | modifiers %s | subsurf capped to %d on %d" % (len(meshes), kinds, MAX_SUBSURF, capped))
+
+# No before/after pair here, and the reason is worth keeping: Blender renders the evaluated
+# mesh, so an unapplied Mirror is already in the picture. The two sides would be the same
+# image while the vertex count doubles. This defect is only visible as a number, which is
+# exactly what the docstring above claims.
 
 bpy.ops.object.select_all(action='DESELECT')
 bpy.context.view_layer.objects.active = meshes[0]
@@ -82,6 +102,9 @@ if APPLY_SCALE:
 
 left = sum(len(o.modifiers) for o in meshes)
 log("modifiers left %d | vertices now %d" % (left, sum(len(o.data.vertices) for o in meshes)))
+
+if RENDER:
+    views.shoot(REPORT, JOB, ROOT, OUT.stem)
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 

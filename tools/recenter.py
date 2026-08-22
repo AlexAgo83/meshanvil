@@ -19,9 +19,24 @@ def _reporter():
     return reporting.open_report(), job
 
 REPORT, JOB = _reporter()
+
+
+def _views():
+    """Rendering lives in the engine module. The job carries the repository root; a standalone
+    run finds it beside this file, so the same script works either way."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
 PARAMS = (JOB or {}).get("params", {})
 SCALE = float(PARAMS.get("scale", 1.0))
+RENDER = bool(PARAMS.get("render", True))
 OUT = Path(bpy.data.filepath).with_name(Path(bpy.data.filepath).stem + "_placed.blend")
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 
 def bounds(objects):
@@ -59,6 +74,9 @@ low, high = bounds(meshes)
 size = [(high[i] - low[i]) * 1000 for i in range(3)]
 print("[place] after  %.1f %.1f %.1f -> %.1f %.1f %.1f mm | %.1f x %.1f x %.1f"
       % (*(low * 1000), *(high * 1000), *size))
+
+if RENDER:
+    views.shoot(REPORT, JOB, ROOT, OUT.stem)
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 if REPORT:
