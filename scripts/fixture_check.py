@@ -97,9 +97,62 @@ def check() -> int:
     assert visibility["seen"] == 8, visibility    # the demo has no internal part to hide
     assert visibility["never_seen"] == 0, visibility
 
+    # --- the guards, on a subject whose thinnest feature is known exactly ---
+    subprocess.run([BLENDER, "-b", "-P", str(ROOT / "tools" / "make_guard_fixture.py")],
+                   capture_output=True, text=True, check=True)
+    slab = ROOT / "work" / "out" / "guard_fixture.blend"
+
+    # A 100 x 100 x 2 mm box: one object, so the smallest object extent is the whole subject.
+    # The two measures answering the same number is the bug this asserts against.
+    assert run("run", "voxel_remesh", str(slab), "--set", "voxel_mm=0.5",
+               "--set", "render=false", "--set", "max_bbox_drift_mm=5") == 0
+    fine = report("004")
+    assert fine["params"]["smallest_input_extent_mm"] >= 99.0, fine["params"]
+    thin = fine["params"]["thin_feature_mm"]
+    assert thin is not None and 1.8 <= thin <= 2.2, f"thinnest feature read as {thin} mm, not 2"
+    assert fine["params"]["thin_feature_is_estimate"] is True, fine["params"]
+    assert "thin_feature_below_voxel_floor" not in fine["warnings"], fine["warnings"]
+
+    # Four voxels across the slab keeps it; two thirds of one does not, and only the guard
+    # says so -- the topology checks pass either way.
+    assert run("run", "voxel_remesh", str(slab), "--set", "voxel_mm=3",
+               "--set", "render=false", "--set", "max_bbox_drift_mm=9") == 0
+    coarse = report("005")
+    assert "thin_feature_below_voxel_floor" in coarse["warnings"], coarse["warnings"]
+    erased = finding(coarse, "thin_feature")
+    assert erased["voxels_across"] < 2.0, erased
+
+    # A volume with a pinhole is not an open panel. A zero test walls it and hollows it; the
+    # slab cannot show this, because a perfectly closed body takes the branch that was always
+    # right. Four boundary edges out of 992 is the shape of the defect seen on a sculpt.
+    pinhole = ROOT / "work" / "out" / "guard_pinhole.blend"
+    assert run("run", "solidify", str(pinhole), "--set", "thickness_mm=1",
+               "--set", "render=false") == 0
+    walling = report("006")
+    assert walling["before"]["vertices"] == walling["after"]["vertices"], \
+        f"a body with a pinhole was thickened: {walling['before']['vertices']} -> {walling['after']['vertices']}"
+    decided = finding(walling, "walling_decisions")
+    assert decided["walled"] == 0, decided
+    assert decided["sealed"] == 1, decided
+    # measure_scene leaves what an operation did not measure null, so the closure the
+    # operation did measure is what says the pinhole is gone.
+    closure = finding(walling, "closure")
+    assert closure["closed_after"] == closure["total"] == 1, closure
+
+    # A format the operation cannot read is refused before an engine is launched, so no
+    # identity is claimed and nothing is written.
+    before_refusal = sorted(OPS.glob("*.json"))
+    assert run("run", "import_mesh", str(ROOT / "README.md")) == 2
+    assert sorted(OPS.glob("*.json")) == before_refusal, "a refusal claimed an identity"
+
     identities = [json.loads(p.read_text(encoding="utf-8"))["id"] for p in OPS.glob("*.json")]
     assert len(identities) == len(set(identities)), f"identities collided: {identities}"
 
+    slab.unlink(missing_ok=True)
+    pinhole.unlink(missing_ok=True)
+    for pattern in ("guard_fixture_*.blend", "guard_pinhole_*.blend"):
+        for leftover in (ROOT / "work" / "out").glob(pattern):
+            leftover.unlink(missing_ok=True)
     target.unlink(missing_ok=True)
     print(f"fixture: ok ({len(identities)} reports, defects found unaided)")
     return 0
