@@ -226,6 +226,12 @@
     },
     "import_step": {
       "summary": "Read a STEP source in FreeCAD and tessellate it into an STL mesh."
+    },
+    "apply_modifiers": {
+      "summary": "Bake every modifier into the mesh, so a Mirror is geometry before anything joins it."
+    },
+    "solidify": {
+      "summary": "Give every open surface a wall, so the remesh that follows has a volume to work on."
     }
   }
 }

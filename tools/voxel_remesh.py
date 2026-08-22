@@ -134,6 +134,8 @@ if RENDER:
     scene.display.shading.background_type = 'VIEWPORT'
     scene.display.shading.background_color = (0.094, 0.094, 0.094)
     scene.render.resolution_x, scene.render.resolution_y = 1200, 760
+    scene.render.image_settings.file_format = 'PNG'
+    scene.render.film_transparent = False
     renders = Path(OUT).parent.parent / "renders"
     renders.mkdir(parents=True, exist_ok=True)
     for name, direction in (("3q", Vector((-1.1, -1.0, 0.55))), ("front", Vector((-1, 0, 0.1))),
@@ -145,6 +147,8 @@ if RENDER:
         path = renders / f"{identity}_{Path(OUT).stem}_{name}.png"
         scene.render.filepath = str(path); bpy.ops.render.render(write_still=True)
         if REPORT:
+            if not path.is_file():
+                raise SystemExit("render was not written where the report says: %s" % path)
             REPORT.render(name, str(path), "ortho-%s-object" % name, tile=(name == "3q"))
         if before_object:
             envelope.hide_render, before_object.hide_render = True, False
@@ -155,8 +159,20 @@ if RENDER:
                 REPORT.comparison(name, str(before_path), str(path), "ortho-%s-subject" % name)
     log("rendered 4 views")
 
+# ENVELOPPE_BEFORE exists only to shoot the "before" half of the comparison. Saved into the
+# artefact it becomes the heaviest object in the file, and the next operation -- clean_shells
+# picks by size -- silently works on the copy instead of the remesh. Every check stays green.
+if before_object is not None:
+    bpy.data.objects.remove(before_object, do_unlink=True)
+    log("dropped the before copy from the artefact")
+
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT), compress=True)
 log("wrote", OUT.name)
 if REPORT:
+    # What the artefact holds, not what the operation measured: the demo chain hid this bug
+    # for a run where the remesh grew the mesh, so the next step picked the right object by
+    # size. On a mesh that shrinks it picked the wrong one and every check stayed green.
+    REPORT.report["params"]["artefact_objects"] = len(
+        [o for o in bpy.data.objects if o.type == 'MESH'])
     REPORT.output(str(OUT))
     REPORT.write()

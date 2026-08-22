@@ -226,6 +226,12 @@
     },
     "import_step": {
       "summary": "Lit une source STEP dans FreeCAD et la tesselle en maillage STL."
+    },
+    "apply_modifiers": {
+      "summary": "Applique tous les modificateurs au maillage, pour qu'un Mirror soit de la géométrie avant toute fusion."
+    },
+    "solidify": {
+      "summary": "Donne une épaisseur à chaque surface ouverte, pour que le remesh qui suit ait un volume."
     }
   }
 }

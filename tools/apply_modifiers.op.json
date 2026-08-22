@@ -1,0 +1,11 @@
+{
+  "operation": "apply_modifiers",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/apply_modifiers.py",
+  "summary_key": "operation.apply_modifiers.summary",
+  "params": [
+    {"name": "max_subsurf_level", "type": "int", "default": 2, "unit": "level"},
+    {"name": "apply_scale", "type": "bool", "default": true}
+  ]
+}

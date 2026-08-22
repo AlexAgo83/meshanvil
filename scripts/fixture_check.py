@@ -87,6 +87,9 @@ def check() -> int:
     assert all(pair["camera"].endswith("-subject") for pair in coarse["comparisons"])
     assert all(Path(pair["before"]).is_file() and Path(pair["after"]).is_file()
                for pair in coarse["comparisons"])
+    # The before copy exists to shoot the comparison, not to travel in the artefact: left in,
+    # it is the heaviest object in the file and the next operation works on it by mistake.
+    assert coarse["params"]["artefact_objects"] == 1, coarse["params"]
 
     assert run("run", "ray_visibility", str(target), "--set", "grid=40") == 0
     rays = report("003a")                         # a sibling of the same parent takes a letter

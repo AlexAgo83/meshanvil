@@ -1,0 +1,12 @@
+{
+  "operation": "solidify",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/solidify.py",
+  "summary_key": "operation.solidify.summary",
+  "params": [
+    {"name": "thickness_mm", "type": "float", "default": 20.0, "unit": "mm"},
+    {"name": "next_voxel_mm", "type": "float", "default": 0.0, "unit": "mm"},
+    {"name": "skip_closed", "type": "bool", "default": true}
+  ]
+}
