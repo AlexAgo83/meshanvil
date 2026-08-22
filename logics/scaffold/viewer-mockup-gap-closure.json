@@ -1,0 +1,165 @@
+{
+  "title": "Close the remaining local viewer mockup parity gaps",
+  "references": [
+    "logics/external/viewer-mockup.html",
+    "viewer/index.html",
+    "viewer/viewer.js",
+    "viewer/viewer.css",
+    "scripts/viewer_smoke.py"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Viewer parity",
+    "needs": [
+      "The previous viewer parity pass made the page usable but did not lock down all visible surfaces from the reviewed mockup.",
+      "Operators must see the same major interaction areas as the mockup: command menus, a real Runbooks workspace, first-run splash guidance and the comparison split surface.",
+      "The browser smoke test must assert those surfaces directly so future parity claims fail when a major mockup block is missing."
+    ],
+    "context": [
+      "The existing viewer remains a local, read-only HTML/CSS/JavaScript page over generated report data.",
+      "The reviewed mockup is the source of truth for the required menu, runbook, splash and compare structures.",
+      "This is a follow-up to the closed viewer parity request; the gap is specification coverage, not engine behavior."
+    ],
+    "acceptance_criteria": [
+      "AC1: The top bar exposes mockup-style command menus with grouped rows, separators, shortcuts or hints, and selectable CLI text; the menus never execute commands, fetch data or write files.",
+      "AC2: Selecting Runbooks replaces the central review area with a primary runbook coverage surface matching the mockup structure; rows show title, purpose, status and applied-operation chips, with unapplied runbooks visible.",
+      "AC3: Start opens the reviewed first-run splash surface with template command cards, recent-chain empty state, environment or doctor checks, fix commands and close or primary actions; no panel is blank.",
+      "AC4: Compare uses the mockup split layout with visible handle, before/after labels and metadata while preserving pointer drag and keyboard adjustment through a native control.",
+      "AC5: A real-browser smoke check opens the fixture page, exercises command menus, Runbooks, splash and Compare, and fails when required mockup selectors or states are absent; screenshots remain outside the repository.",
+      "AC6: The viewer keeps its safety boundary: no build step, no server, no engine execution, no privileged browser API, escaped report data and updated i18n strings for all new visible labels."
+    ]
+  },
+  "product": {
+    "title": "Strict local viewer mockup parity closure",
+    "overview": "Tightens the viewer parity scope after the first pass by requiring the specific reviewed mockup surfaces that remain visibly different from the current implementation.",
+    "goals": [
+      "Make menus, Runbooks, splash and Compare match the reviewed mockup at the structural interaction level.",
+      "Keep the viewer read-only and local while making command guidance discoverable.",
+      "Add browser smoke coverage that catches missing top-level mockup surfaces."
+    ],
+    "non_goals": [
+      "Pixel-perfect rendering for every color, font metric or platform scrollbar.",
+      "A browser execution bridge, local daemon, job queue or engine control surface.",
+      "A framework, bundler, new dependency or hosted UI.",
+      "Geometry editing, report schema changes or operation behavior changes."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Replace minimal menus with the reviewed command menu surface",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Viewer parity",
+      "request_acs": ["AC1", "AC6"],
+      "problem": [
+        "The current viewer uses minimal native details menus and only a few command rows.",
+        "The mockup expects richer grouped command menus with shortcuts, separators and command-style rows."
+      ],
+      "scope_in": [
+        "Reuse the existing static top bar and CSS.",
+        "Render grouped command rows, separators, shortcuts or hints and selectable CLI text.",
+        "Keep all menu actions informational or navigational inside the page."
+      ],
+      "scope_out": [
+        "Clipboard permissions, shell execution, fetch calls or any write path.",
+        "Adding a menu framework or shared command registry before more than this viewer needs it."
+      ],
+      "acceptance_criteria": [
+        "AC1: Opening each menu shows grouped rows with visible shortcuts or hints and selectable CLI text.",
+        "AC2: Menu rows do not call fetch, spawn a process, mutate report files or require a server.",
+        "AC3: New visible menu labels are present in the i18n catalogue."
+      ]
+    },
+    {
+      "title": "Build Runbooks as a primary workspace instead of an outliner-only list",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Viewer parity",
+      "request_acs": ["AC2", "AC6"],
+      "problem": [
+        "Runbooks currently appear mainly as outliner entries and detail-panel metadata.",
+        "The mockup shows a dedicated Runbooks screen with coverage rows and applied-operation relationships."
+      ],
+      "scope_in": [
+        "Switching to Runbooks replaces the central review area with a runbook coverage body.",
+        "Rows show title, purpose, status and applied-operation chips using existing report and runbook data.",
+        "Unapplied or unavailable runbooks have explicit visible states."
+      ],
+      "scope_out": [
+        "Executing runbook commands from the browser.",
+        "Persisted workflow state, external document fetching or schema changes."
+      ],
+      "acceptance_criteria": [
+        "AC1: The Runbooks workspace has a central list or table with one row per available runbook.",
+        "AC2: Applied operation chips are visible and selecting them focuses the linked report when data exists.",
+        "AC3: Unapplied runbooks remain visible with an explicit unapplied state instead of disappearing."
+      ]
+    },
+    {
+      "title": "Restore the reviewed first-run splash and Compare split layout",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Viewer parity",
+      "request_acs": ["AC3", "AC4", "AC6"],
+      "problem": [
+        "The current Start flow is a simpler panel rather than the reviewed splash surface.",
+        "The comparison image editor works but does not fully match the mockup split layout and metadata treatment."
+      ],
+      "scope_in": [
+        "Start opens a splash-style surface with template command cards, recent-chain empty state, checks and fix commands.",
+        "Compare uses a split body with handle, labels, metadata and the existing native range interaction.",
+        "No-report and no-comparison states are explicit."
+      ],
+      "scope_out": [
+        "Persisting first-run dismissal.",
+        "Pixel-perfect screenshots as committed golden files."
+      ],
+      "acceptance_criteria": [
+        "AC1: The Start control opens and closes a splash surface with no blank columns or panels.",
+        "AC2: The splash lists starter template commands, recent-chain absence and environment or doctor state with fix guidance.",
+        "AC3: The Compare surface exposes before/after labels, a visible handle and a native control that remains draggable and keyboard-adjustable."
+      ]
+    },
+    {
+      "title": "Make browser smoke fail on missing mockup surfaces",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Viewer parity",
+      "request_acs": ["AC5", "AC6"],
+      "problem": [
+        "The current smoke coverage can pass while major mockup surfaces are absent.",
+        "Screenshots help manual review, but the automated check must assert the required states directly."
+      ],
+      "scope_in": [
+        "Exercise menu opening, Runbooks workspace, Start splash and Compare wipe in the existing Chrome smoke path.",
+        "Assert stable selectors or visible state for each required surface.",
+        "Write screenshots only to a temporary path outside the repository."
+      ],
+      "scope_out": [
+        "A broad pixel-diff framework.",
+        "New browser test dependencies when the existing smoke path is enough."
+      ],
+      "acceptance_criteria": [
+        "AC1: One smoke command fails if menus, Runbooks, splash or Compare are missing.",
+        "AC2: The smoke changes the comparison wipe value and verifies the visible state changed.",
+        "AC3: No smoke screenshot or generated browser artifact is tracked by Git."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver remaining viewer mockup parity gaps",
+    "plan": [
+      "Diff the mockup selectors against the current viewer and keep the required surface checklist in the task notes.",
+      "Implement command menus with the existing static page patterns.",
+      "Implement the Runbooks workspace as the primary center surface for that tab.",
+      "Implement the splash surface and Compare split layout without adding dependencies.",
+      "Extend the browser smoke to assert menus, Runbooks, splash and Compare.",
+      "Run make check, browser smoke and Logics validation before closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/viewer-mockup-gap-closure.json",
+    "mode": "summary-only",
+    "profile": "deep"
+  }
+}
