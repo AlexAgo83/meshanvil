@@ -165,29 +165,50 @@ that share nothing.
 
 ## Demonstration data
 
-`tools/build_demo_chain.sh` runs the demonstration: `fixtures/demo_car.blend`, a roadster
-modelled for rendering, taken through the pipeline until it is one printable solid. Nothing in
-it was planted. It carries what a render asset carries -- half the body held in Mirror
-modifiers, panels with no thickness, three parts never visible from outside, a uniform 1.6x
-oversize, a coincident duplicate -- and each step is where one of those surfaces.
+Two demonstrations, sibling projects under `work/demo/`, so the viewer can offer both:
 
-The branch is the part worth reading. Two siblings, same parent, same voxel, one step apart:
-one remeshes a walled body and returns a single closed shell; the other remeshes the bare
-panels and returns 714 fragments with the body gone. The one that destroyed the car reports
-`ok`. The one that worked reports `failed`, on a bounding box that moved 1.5 voxels. That is
-the whole argument for reading reports instead of trusting exit codes.
+```
+tools/build_demo_chain.sh          # the vehicle
+tools/build_figurine_chain.sh      # the figurine
+```
 
-`tools/strip_asset.py` is how the fixture was reduced to 0.75 MB: it drops materials, node
-trees, UV layers, images, cameras and lamps, none of which any operation reads, and removes
-any object whose geometry spells a brand. See `fixtures/PROVENANCE.md` for where the model
-comes from and what is known about its licence.
+`fixtures/demo_car.blend` is a roadster modelled for rendering. Nothing in it was planted: it
+carries half a body held in Mirror modifiers, panels with no thickness, three parts never
+visible from outside, a uniform 1.6x oversize and a coincident duplicate, and each step of its
+chain is where one of those surfaces. Its branch is the part worth reading. Two siblings, same
+parent, same voxel, one step apart: one remeshes a walled body into a single closed shell, the
+other remeshes the bare panels into 714 fragments with the body gone. The one that destroyed
+the car reports `ok`.
 
-`tools/make_demo_scene.py` stays for a different job. It generates a synthetic housing with
-two defects planted deliberately -- one island smeared along a line, objects duplicated at
-identical coordinates -- so `scripts/fixture_check.py` can assert that `tools/scan_defects.py`
-finds exactly what was built in, unaided: a ratio of 2.9 on the smear, four duplicates at 37%
-of the vertices. Ground truth and demonstration are different jobs, and the fixture restores
-the demonstration chain when it is done.
+`fixtures/demo_figure.blend` is a sculpting base mesh, and its job is to be sound. The defect
+sweep reports nothing on it, which is the only way to show that the sweeps discriminate rather
+than firing on everything. It is authored at 20 741 mm tall -- an interchange file declares no
+unit, so the size is a decision, and `recenter` is where that decision is recorded. At 180 mm
+it is a figurine.
+
+Its branch carries the lesson the vehicle cannot. The vehicle is remeshed at its real size,
+four metres long, where a voxel in millimetres and a voxel as a fraction of the subject feel
+like the same number. On a 180 mm figurine they do not. Its fingers measure 1.5 mm, so:
+
+| voxel | across a finger | shells | non-manifold | volume lost | status |
+|---|---|---|---|---|---|
+| 0.5 mm | 3.0 | 1 | 0 | 0.1% | ok |
+| 1.5 mm | 1.0 | 1 | 0 | 1.3% | ok |
+
+Both pass every topology and volume check. One keeps the fingers and the other fuses them into
+mittens, and the only thing that says so before you look at the render is the thin-feature
+guard, which warns below two voxels across. A voxel size is a fraction of the subject, and the
+checks that pass do not measure feature loss.
+
+`tools/make_demo_scene.py` and `tools/make_guard_fixture.py` are a different job. They generate
+subjects whose defects are planted deliberately -- an island smeared along a line, objects
+duplicated at identical coordinates, a slab exactly 2 mm thick, a sphere with a single face
+removed -- so `scripts/fixture_check.py` can assert that a sweep finds what was built in and
+that a guard reads a thickness it already knows. Ground truth and demonstration are different
+jobs.
+
+See `fixtures/PROVENANCE.md` for where the two subjects come from and what is known about
+their licence.
 
 ## Working rules that earned their place
 

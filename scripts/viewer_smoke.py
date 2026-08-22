@@ -2,7 +2,7 @@
 """Exercise the generated viewer in Chrome without adding a browser framework."""
 from __future__ import annotations
 
-import argparse, shutil, subprocess, sys, tempfile
+import argparse, os, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -214,12 +214,22 @@ def main() -> int:
       raise SystemExit("Chrome/Chromium not found; set PATH or install Google Chrome.")
 
     run([sys.executable, str(ROOT / "scripts" / "fixture_check.py")])
-    run([sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--no-open"])
+
+    # The demonstrations are projects now, so the page under test is one of theirs. Building
+    # it here would put a Blender chain inside a browser check; requiring it keeps the two
+    # apart and names the command when it is missing.
+    project = ROOT / "work" / "demo" / "vehicle"
+    if not sorted((project / "work" / "ops").glob("*.json")):
+        raise SystemExit(f"no demonstration to smoke: run tools/build_demo_chain.sh "
+                         f"(expected reports under {project}/work/ops)")
+    environment = {**os.environ, "MESHANVIL_PROJECT": str(project)}
+    subprocess.run([sys.executable, str(ROOT / "bin" / "meshanvil"), "view", "--no-open"],
+                   cwd=ROOT, env=environment, text=True, capture_output=True, check=True)
 
     with tempfile.TemporaryDirectory(prefix="meshanvil-viewer-smoke-") as tmp:
         tmp_root = Path(tmp)
-        shutil.copytree(ROOT / "work" / "viewer", tmp_root / "viewer")
-        renders = ROOT / "work" / "renders"
+        shutil.copytree(project / "work" / "viewer", tmp_root / "viewer")
+        renders = project / "work" / "renders"
         if renders.exists():
             shutil.copytree(renders, tmp_root / "renders")
         page = tmp_root / "viewer" / "smoke.html"

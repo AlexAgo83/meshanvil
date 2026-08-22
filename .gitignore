@@ -5,3 +5,4 @@ __pycache__/
 logics/external/*
 !logics/external/.gitkeep
 node_modules/
+*.blend1

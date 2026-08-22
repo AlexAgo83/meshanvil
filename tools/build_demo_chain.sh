@@ -10,17 +10,21 @@
 #
 # Any .blend works in its place; no operation in the chain is specific to this one.
 #
-# ponytail: destructive on work/ops and the demo blends, nothing else. Run it by hand.
+# The demonstrations are sibling projects under work/demo/. That is what lets the viewer
+# offer both: the neighbourhood a page may switch between is the active project's siblings.
+# The repository root keeps no marker, so an ad-hoc command there behaves as it always did.
+#
+# ponytail: destructive on this demonstration's project, nothing else. Run it by hand.
 set -uo pipefail
-cd "$(dirname "$0")/.."
+INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
+M="$INSTALL/bin/meshanvil"
+ASSET="${1:-$INSTALL/fixtures/demo_car.blend}"
+PROJECT="$INSTALL/work/demo/vehicle"
 
-M="bin/meshanvil"
-ASSET="${1:-fixtures/demo_car.blend}"
-
-echo "== reset"
-rm -rf work/ops
-rm -f work/out/demo_car*.blend work/renders/0*_demo_car*.png
-mkdir -p work/out
+echo "== project"
+rm -rf "$PROJECT"
+$M init "$PROJECT"
+cd "$PROJECT"
 
 cp "$ASSET" work/out/demo_car.blend
 # scan_defects --fix saves in place, so the pristine source is kept and the repair happens on

@@ -1,13 +1,15 @@
 ## task_018_deliver_the_figurine_demonstration_project - Deliver the figurine demonstration project
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: Claude
+> Indicators reviewed: 2026-08-22 15:01:05
 
 # AI Context
 - Summary: Orchestrates the second demonstration: reducing and recording the subject, giving it a project, running a chain where the sweeps stay silent, and branching the remesh at two fractions of the subject.
