@@ -202,7 +202,7 @@
     "open_in_blender": "Ouvrir dans Blender",
     "branches": "{count} branches",
     "vertices_total": "{count} sommets",
-    "schema_ops": "schéma {version} · work/ops/",
+    "schema_ops": "schéma {version} · {project}",
     "rb_col_doc": "document",
     "rb_col_settles": "ce qu'il tranche",
     "rb_col_applied": "appliqué par",
@@ -214,7 +214,9 @@
     "no_comparison": "Cette opération n'a écrit aucune paire avant/après. La comparaison exige deux rendus pris avec la même caméra.",
     "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier.",
     "project": "Projet",
-    "project_reports": "{count} rapports"
+    "project_reports": "{count} rapports",
+    "splash_project": "Projet actif",
+    "splash_project_note": "{name} dans {path}, résolu par {rule}. Chaque rapport, rendu et artefact d'un run atterrit ici."
   },
   "operation": {
     "clean_shells": {

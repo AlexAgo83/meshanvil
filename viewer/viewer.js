@@ -586,6 +586,13 @@ function selectWorkspace(next) {
 
 function renderSplash() {
   const doctor = /** @type {any} */ (DATA.doctor);
+  // Where a run will land. The working directory chose it and the operator cannot see that
+  // from the page, so the page says it.
+  const where = doctor && doctor.project;
+  const project = where
+    ? `<span class="chk ok"><span><b>${esc(t("ui.splash_project"))}</b><br>${esc(t("ui.splash_project_note", {
+        name: where.name, path: where.path, rule: where.resolved_by }))}</span></span>`
+    : "";
   const blender = doctor && (doctor.requirements || []).find((item) => item.name === "blender");
   const check = blender
     ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br><code>${esc(blender.fix)}</code>` : ""}</span></span>`
@@ -599,6 +606,7 @@ function renderSplash() {
       <p>${esc(t("ui.splash_demo_note"))}</p>
       <code class="command">work/ops</code>
     </section><section class="scol"><h2>${esc(t("ui.start_environment"))}</h2>
+      ${project}
       ${check}<span class="chk ${DATA.ops_exists ? "ok" : "warn"}"><span><b>${esc(t("ui.start_reports"))}</b><br>${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</span></span>
       <span class="chk ok"><span><b>${esc(t("ui.start_contributors"))}</b><br>${esc(t("ui.start_contributors_note"))}</span></span>
     </section>`;
@@ -680,7 +688,8 @@ function paintTotals() {
   document.getElementById("status-vertices").textContent = leaf
     ? t("ui.vertices_total", { count: num((leaf.after || leaf.measured).vertices) }) : "";
   document.getElementById("status-schema").textContent = DATA.reports.length
-    ? t("ui.schema_ops", { version: DATA.reports[0].schema_version }) : "";
+    ? t("ui.schema_ops", { version: DATA.reports[0].schema_version,
+                           project: /** @type {any} */ (DATA).active || "" }) : "";
 }
 
 place();

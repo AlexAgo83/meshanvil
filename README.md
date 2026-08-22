@@ -133,6 +133,36 @@ this repository. Run the scripts on your own file and read the numbers.
 The runbooks are written from one delivery. They are specific on purpose -- a procedure
 without its numbers is a blog post -- but a second assembly will bend some of them.
 
+## Projects
+
+One installation serves several subjects. A project is a directory holding its own reports,
+sources, renders and viewer page:
+
+```
+meshanvil init ~/projects/cobra
+cd ~/projects/cobra
+meshanvil run scan_defects work/in/cobra.blend
+meshanvil view
+```
+
+The active project is found by walking up from the working directory for a `.meshanvil`
+marker, the way a version control tool finds its own. That keeps the choice visible: the
+working directory is on screen and it decides where a run lands. `MESHANVIL_PROJECT` overrides
+it for a caller that has no working directory to speak of, and `meshanvil doctor` states which
+project it resolved and which rule chose it.
+
+Identity numbering, parentage by fingerprint and prune retention are each scoped to one
+project: the first operation of a new project is `001`, and two projects opened from the same
+source file are never linked to each other.
+
+With no marker anywhere above, the installation is the project. That is what this repository
+has always been, so nothing that worked before needs a migration.
+
+The viewer reads every project in the neighbourhood at build time and shows one, with a
+chooser in the top bar when there is more than one. It selects rather than combines: two
+unrelated chains in one graph would merge their outliner groups and sum totals across subjects
+that share nothing.
+
 ## Demonstration data
 
 `tools/build_demo_chain.sh` runs the demonstration: `fixtures/demo_car.blend`, a roadster

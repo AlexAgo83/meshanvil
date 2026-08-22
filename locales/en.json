@@ -202,7 +202,7 @@
     "open_in_blender": "Open in Blender",
     "branches": "{count} branches",
     "vertices_total": "{count} vertices",
-    "schema_ops": "schema {version} · work/ops/",
+    "schema_ops": "schema {version} · {project}",
     "rb_col_doc": "document",
     "rb_col_settles": "what it settles",
     "rb_col_applied": "applied by",
@@ -214,7 +214,9 @@
     "no_comparison": "This operation wrote no before/after pair. Comparison needs two renders shot with the same camera.",
     "artefact_note": "The file the operation wrote. Pruning drops it and keeps the report; the report is the record, not the file.",
     "project": "Project",
-    "project_reports": "{count} reports"
+    "project_reports": "{count} reports",
+    "splash_project": "Active project",
+    "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here."
   },
   "operation": {
     "clean_shells": {
