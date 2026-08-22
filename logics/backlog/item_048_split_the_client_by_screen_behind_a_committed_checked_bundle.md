@@ -8,7 +8,7 @@
 > Complexity: High
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:37:30
+> Indicators reviewed: 2026-08-23 00:53:33
 
 # AI Context
 - Summary: Client sources split by screen behind a committed bundle with a staleness check and an enforced per-file line budget, and the ADR that makes the build step legal.
@@ -45,7 +45,7 @@
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: Needed: `adr_004_target_technology_and_process_model` rules out a build step and promises an auto-refresh that was never built; both have to be reopened, together with the served page becoming the default mode.
 
 # Links
 - Product brief(s): `prod_011_a_viewer_that_stays_current_and_a_codebase_that_stays_divisible`

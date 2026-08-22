@@ -1,13 +1,13 @@
 ## req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls - Turn the viewer's file references and command rows into direct, translated controls
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Ready
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:18:45
+> Indicators reviewed: 2026-08-23 00:53:32
 
 # AI Context
 - Summary: A file the viewer names becomes something to open or locate rather than a string to copy, and a command's result becomes a translated panel instead of raw stdout -- both without a new dependency or an open execution surface.
@@ -27,6 +27,8 @@
 - `meshanvil doctor` already emits a machine-readable object and the viewer already reads a cached copy of it from `work/doctor.json` for the start screen; `meshanvil list` prints formatted text only. A modal that translates a result should read structured data, not scrape a subprocess's stdout -- which likely means `list` gains a machine-readable form rather than the page learning to parse its columns.
 - Icon-only controls are an accessibility surface, not just a smaller button: each needs an accessible name from the catalogue (adr on i18n applies -- no inline English), and the icon set has to stay dependency-free like the rest of the viewer, so inline SVG or text glyphs, not an icon font.
 
+- This request should land after `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`, which splits `viewer/viewer.js` into modules and introduces a built client bundle. Implementing this one first would rewrite the same code twice.
+
 # Acceptance criteria
 - AC1: Every place the viewer labels a file reference calls it `file`, not `path`, in both catalogues, and no label reads `path` where a file is meant.
 - AC2: Every file reference the viewer shows (report Input, report Output/Artefact, render provenance, and any other) offers the same three controls -- Open, Copy path, Reveal -- rendered as icons with no visible text label, each carrying an accessible name resolved from the string catalogue.
@@ -37,6 +39,7 @@
 - AC7: `List operations` and `Check setup`, run from a served page, present their result in a modal built from structured data, with every operator-facing string resolved from the catalogue and available in both languages -- no raw process stdout and no JSON shown to the operator.
 - AC8: Opening either modal closes the menu it was launched from, and the modal is dismissible by the same means as the start screen modal.
 - AC9: `List operations` and `Check setup` are both reached from the Help menu and appear in no other menu.
+- AC11: The Help menu's `Create a runbook <report-id>` row -- left copy-only by `adr_007` because its id is a placeholder with no report behind it -- either carries a real report id or states in the row why it does not; no row shows a placeholder that reads as a value.
 - AC10: `scripts/viewer_smoke.py` covers the new controls and modals so the behaviour cannot silently regress: the three-control group's presence and accessible names, the opened-from-disk degradation, and both modals rendering translated content rather than raw output.
 
 # Definition of Ready (DoR)

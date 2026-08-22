@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 00:53:33
 
 # AI Context
 - Summary: The ADR superseding `No publication yet`, plus build, verify and release as commands with a dry run, a measured-platform statement, and a README that leads with the engine requirement.
@@ -44,7 +44,7 @@
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: Needed: `adr_004_target_technology_and_process_model`'s `No publication yet` has to be superseded with the channel chosen, the channels rejected, and the scope of an install.
 
 # Links
 - Product brief(s): `prod_012_a_tool_you_install_not_a_repository_you_clone`

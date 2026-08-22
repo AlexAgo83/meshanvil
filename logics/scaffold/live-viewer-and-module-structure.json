@@ -50,6 +50,7 @@
       "AC14: With a viewer already running for this project, the command opens that one instead of starting a second process, and says which of the two it did.",
       "AC15: A project's viewer address is stable across launches, so a tab left open or a bookmark keeps working; an address already taken by something else is reported rather than silently reassigned.",
       "AC16: A registration left behind by a viewer that died is reclaimed rather than believed, and two projects can each have a viewer at once without colliding.",
+      "AC17: The View menu's `Refresh viewer` row -- left copy-only by `adr_007` pending a slice that gives it a real target -- is gone or does something real; no row tells the operator to re-run a command the page now performs for itself.",
       "AC12: Nothing in this request changes what the viewer shows or what an operation reports; a report rendered before and after is identical."
     ]
   },
@@ -108,7 +109,8 @@
         "AC2",
         "AC3",
         "AC4",
-        "AC5"
+        "AC5",
+        "AC17"
       ],
       "problem": [
         "`adr_004` promised auto-refresh and nothing implements it, so watching a chain run means restarting the server and reopening the page for every report."
@@ -117,7 +119,8 @@
         "One event-stream route whose change detection is a standard-library signature poll over the report directory, the cached setup result and the runbooks.",
         "Emitting which component changed rather than the changed data, with the client refetching only that.",
         "A bounded, measured detection cost with an adaptive interval, and a self-throttling fallback where the event stream is unavailable.",
-        "Clean shutdown: no timer and no connection outliving the page."
+        "Clean shutdown: no timer and no connection outliving the page.",
+        "Retiring or repurposing the View menu's `Refresh viewer` row, which `adr_007` left copy-only pending a slice that gives it a real target: once the page refreshes itself, a row telling the operator to re-run the command is stale advice."
       ],
       "scope_out": [
         "A file-watching dependency, and a websocket where one direction suffices.",
@@ -129,7 +132,8 @@
         "AC3: Detection uses the standard library only and its idle cost is measured and stated against a bound.",
         "AC4: The stream carries component names, not data, and no client path reloads the page on a data change.",
         "AC5: With the event stream unavailable, the fallback still converges and throttles itself against its own last refresh cost.",
-        "AC6: Closing the page leaves no live timer and no live connection."
+        "AC6: Closing the page leaves no live timer and no live connection.",
+        "AC7: The `Refresh viewer` row is gone or does something real; no row tells the operator to re-run a command the page now does for itself."
       ]
     },
     {

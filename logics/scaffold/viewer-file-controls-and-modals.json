@@ -27,7 +27,8 @@
       "adr_007 closed the set of commands a served page may run to three fixed argument lists and stated the rule that makes it safe: `no operator-supplied value ever reaches the subprocess`. Opening or revealing a file is by nature parameterised by a file, so it cannot join that set as-is. The shape that preserves the rule is an allow-list the *server* owns: the build already knows every file the page can name (report inputs, outputs, renders), so the page can send an identifier into that set and never a path -- surfaced here as the decision to record, not pre-decided.",
       "A `file://` page has no server to reach. Under adr_007 that is not a degraded case to work around but the baseline: the Open and Reveal controls have nothing to call there and must be absent or visibly unavailable, with Copy path still working exactly as it does today.",
       "`meshanvil doctor` already emits a machine-readable object and the viewer already reads a cached copy of it from `work/doctor.json` for the start screen; `meshanvil list` prints formatted text only. A modal that translates a result should read structured data, not scrape a subprocess's stdout -- which likely means `list` gains a machine-readable form rather than the page learning to parse its columns.",
-      "Icon-only controls are an accessibility surface, not just a smaller button: each needs an accessible name from the catalogue (adr on i18n applies -- no inline English), and the icon set has to stay dependency-free like the rest of the viewer, so inline SVG or text glyphs, not an icon font."
+      "Icon-only controls are an accessibility surface, not just a smaller button: each needs an accessible name from the catalogue (adr on i18n applies -- no inline English), and the icon set has to stay dependency-free like the rest of the viewer, so inline SVG or text glyphs, not an icon font.",
+      "This request should land after `req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds`, which splits `viewer/viewer.js` into modules and introduces a built client bundle. Implementing this one first would rewrite the same code twice."
     ],
     "acceptance_criteria": [
       "AC1: Every place the viewer labels a file reference calls it `file`, not `path`, in both catalogues, and no label reads `path` where a file is meant.",
@@ -39,6 +40,7 @@
       "AC7: `List operations` and `Check setup`, run from a served page, present their result in a modal built from structured data, with every operator-facing string resolved from the catalogue and available in both languages -- no raw process stdout and no JSON shown to the operator.",
       "AC8: Opening either modal closes the menu it was launched from, and the modal is dismissible by the same means as the start screen modal.",
       "AC9: `List operations` and `Check setup` are both reached from the Help menu and appear in no other menu.",
+      "AC11: The Help menu's `Create a runbook <report-id>` row -- left copy-only by `adr_007` because its id is a placeholder with no report behind it -- either carries a real report id or states in the row why it does not; no row shows a placeholder that reads as a value.",
       "AC10: `scripts/viewer_smoke.py` covers the new controls and modals so the behaviour cannot silently regress: the three-control group's presence and accessible names, the `file://` degradation, and both modals rendering translated content rather than raw output."
     ]
   },
@@ -128,7 +130,8 @@
       "request_acs": [
         "AC7",
         "AC8",
-        "AC9"
+        "AC9",
+        "AC11"
       ],
       "problem": [
         "`List operations` and `Check setup` dump raw, untranslated process stdout -- a JSON object in the case of setup -- into a `<pre>` inside the menu dropdown that launched them, which stays open behind it.",
@@ -138,7 +141,8 @@
         "A machine-readable form of the operations list, so the modal renders structured data rather than parsing formatted output.",
         "A modal for each result, built from the catalogue in both languages, dismissible like the start screen modal.",
         "Closing the launching menu when a modal opens.",
-        "Moving both rows into the Help menu."
+        "Moving both rows into the Help menu.",
+        "The Help menu's `Create a runbook <report-id>` row, which `adr_007` left copy-only because its id is a placeholder with no report behind it: either give it the selected report as a real target, or state in the row why it stays a command to copy."
       ],
       "scope_out": [
         "Changing what either command does or what it reports.",
@@ -148,7 +152,8 @@
         "AC1: The operations list is available in a machine-readable form and the modal renders from it.",
         "AC2: Both modals show catalogue-resolved strings in both languages, with no raw stdout and no JSON visible to the operator.",
         "AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.",
-        "AC4: Both rows are in Help and in no other menu."
+        "AC4: Both rows are in Help and in no other menu.",
+        "AC5: The `Create a runbook` row either carries a real report id or says why it does not; no row shows a placeholder that looks like a value."
       ]
     },
     {

@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 00:53:33
 
 # AI Context
 - Summary: Settles what the runbook workspace shows when the installation is not this repository: shipped content, the project's own, or an explained empty state.
@@ -36,7 +36,7 @@
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: Needed: what an installed tool offers in place of this repository's corpus -- runbooks shipped, read from the project, or absent with an explanation. Touches `adr_006_bridges_between_meshanvil_and_logics`.
 
 # Links
 - Product brief(s): `prod_012_a_tool_you_install_not_a_repository_you_clone`

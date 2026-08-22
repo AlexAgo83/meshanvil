@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:19:03
+> Indicators reviewed: 2026-08-23 00:53:32
 
 # AI Context
 - Summary: List operations and Check setup render as translated modals built from structured data instead of raw stdout in a menu dropdown, and both move to the Help menu.
@@ -26,6 +26,7 @@
   - A modal for each result, built from the catalogue in both languages, dismissible like the start screen modal.
   - Closing the launching menu when a modal opens.
   - Moving both rows into the Help menu.
+  - The Help menu's `Create a runbook <report-id>` row, which `adr_007` left copy-only because its id is a placeholder with no report behind it: either give it the selected report as a real target, or state in the row why it stays a command to copy.
 - Out:
   - Changing what either command does or what it reports.
   - `Preview pruning`, which keeps its current presentation in this slice.
@@ -35,11 +36,14 @@
 - AC2: Both modals show catalogue-resolved strings in both languages, with no raw stdout and no JSON visible to the operator.
 - AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.
 - AC4: Both rows are in Help and in no other menu.
+- AC5: The `Create a runbook` row either carries a real report id or says why it does not; no row shows a placeholder that looks like a value.
 
 # AC Traceability
 - request-AC7 -> This backlog slice. Proof: AC1: The operations list is available in a machine-readable form and the modal renders from it.
 - request-AC8 -> This backlog slice. Proof: AC2: Both modals show catalogue-resolved strings in both languages, with no raw stdout and no JSON visible to the operator.
 - request-AC9 -> This backlog slice. Proof: AC3: Opening either modal leaves no menu open behind it, and it is dismissible like the start screen modal.
+
+- request-AC11 -> This backlog slice. Proof: AC5: The `Create a runbook` row either carries a real report id or says why it does not; no row shows a placeholder that looks like a value.
 
 # Decision framing
 - Product framing: Not needed

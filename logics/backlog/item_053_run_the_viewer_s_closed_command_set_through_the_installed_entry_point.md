@@ -8,7 +8,7 @@
 > Complexity: Low
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 00:53:33
 
 # AI Context
 - Summary: The served viewer's closed command set runs through the installed entry point instead of a file inside a checkout, with adr_007's guarantees untouched.
@@ -23,6 +23,7 @@
 - In:
   - Invoking the installed entry point instead of the checkout file, working identically from a clone.
   - Confirming `adr_007`'s guarantees are untouched by the change.
+  - Covering the open and reveal actions of `item_042_let_the_served_page_open_and_reveal_a_file_the_build_already_knows` if that slice has already shipped: they launch host processes from the same surface.
 - Out:
   - Widening the closed command set, or changing any of its members.
 

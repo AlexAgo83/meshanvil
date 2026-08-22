@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:19:03
+> Indicators reviewed: 2026-08-23 00:53:32
 
 # AI Context
 - Summary: The server side of open and reveal: a reference the build already owns resolves to a real file, so no page-supplied path ever becomes a subprocess argument, with the rule recorded as an ADR.
@@ -41,13 +41,16 @@
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: Needed: how a file reaches the server without a page-supplied path becoming a subprocess argument -- an amendment to `adr_004_target_technology_and_process_model`'s successor `adr_007_let_the_served_viewer_execute_a_closed_command_set`, or a new decision beside it.
 
 # Links
 - Product brief(s): `prod_010_direct_controls_over_the_files_and_results_the_viewer_already_names`
 - Architecture decision(s): (none yet)
 - Request: `req_009_turn_the_viewer_s_file_references_and_command_rows_into_direct_translated_controls`
 - Primary task(s): `task_023_deliver_the_viewer_s_direct_file_controls_and_translated_result_modals`
+
+# Notes
+- The open and reveal actions launch host processes, so they land on the same surface `item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point` repoints at the installed entry point. Whichever ships second inherits the other's shape.
 
 # Priority
 - Priority: High

@@ -1,7 +1,7 @@
 ## req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone - Make meshanvil an installable tool instead of a repository you clone
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Ready
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High

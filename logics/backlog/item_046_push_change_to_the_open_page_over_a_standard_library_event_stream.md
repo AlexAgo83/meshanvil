@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:37:30
+> Indicators reviewed: 2026-08-23 00:53:33
 
 # AI Context
 - Summary: A standard-library event stream tells the open page which component changed, detected by a bounded signature poll, with a self-throttling fallback where the stream is unavailable.
@@ -25,6 +25,7 @@
   - Emitting which component changed rather than the changed data, with the client refetching only that.
   - A bounded, measured detection cost with an adaptive interval, and a self-throttling fallback where the event stream is unavailable.
   - Clean shutdown: no timer and no connection outliving the page.
+  - Retiring or repurposing the View menu's `Refresh viewer` row, which `adr_007` left copy-only pending a slice that gives it a real target: once the page refreshes itself, a row telling the operator to re-run the command is stale advice.
 - Out:
   - A file-watching dependency, and a websocket where one direction suffices.
   - Pushing anything other than change notices -- no data travels on the stream.
@@ -36,12 +37,15 @@
 - AC4: The stream carries component names, not data, and no client path reloads the page on a data change.
 - AC5: With the event stream unavailable, the fallback still converges and throttles itself against its own last refresh cost.
 - AC6: Closing the page leaves no live timer and no live connection.
+- AC7: The `Refresh viewer` row is gone or does something real; no row tells the operator to re-run a command the page now does for itself.
 
 # AC Traceability
 - request-AC2 -> This backlog slice. Proof: AC1: A report written while the page is open appears without a restart or a reload, within a few seconds.
 - request-AC3 -> This backlog slice. Proof: AC2: A removed or modified report is reflected the same way.
 - request-AC4 -> This backlog slice. Proof: AC3: Detection uses the standard library only and its idle cost is measured and stated against a bound.
 - request-AC5 -> This backlog slice. Proof: AC4: The stream carries component names, not data, and no client path reloads the page on a data change.
+
+- request-AC17 -> This backlog slice. Proof: AC7: The `Refresh viewer` row is gone or does something real; no row tells the operator to re-run a command the page now does for itself.
 
 # Decision framing
 - Product framing: Not needed

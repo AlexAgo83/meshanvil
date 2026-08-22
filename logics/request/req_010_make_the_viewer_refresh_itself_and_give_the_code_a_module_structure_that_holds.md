@@ -1,13 +1,13 @@
 ## req_010_make_the_viewer_refresh_itself_and_give_the_code_a_module_structure_that_holds - Make the viewer refresh itself and give the code a module structure that holds
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Ready
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Runtime architecture and code structure
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:43:13
+> Indicators reviewed: 2026-08-23 00:53:32
 
 # AI Context
 - Summary: The served page becomes a live view onto the reports directory instead of a build-time snapshot, and both sides of the viewer gain a module structure, a checked size budget and a real test layout.
@@ -48,6 +48,7 @@
 - AC14: With a viewer already running for this project, the command opens that one instead of starting a second process, and says which of the two it did.
 - AC15: A project's viewer address is stable across launches, so a tab left open or a bookmark keeps working; an address already taken by something else is reported rather than silently reassigned.
 - AC16: A registration left behind by a viewer that died is reclaimed rather than believed, and two projects can each have a viewer at once without colliding.
+- AC17: The View menu's `Refresh viewer` row -- left copy-only by `adr_007` pending a slice that gives it a real target -- is gone or does something real; no row tells the operator to re-run a command the page now performs for itself.
 - AC12: Nothing in this request changes what the viewer shows or what an operation reports; a report rendered before and after is identical.
 
 # Definition of Ready (DoR)
