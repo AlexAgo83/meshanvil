@@ -1,11 +1,12 @@
 ## prod_007_a_served_viewer_that_can_run_what_it_already_shows - A served viewer that can run what it already shows
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
-> Related backlog: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`, `item_033_show_a_command_s_own_output_where_its_text_used_to_sit`
+> Related backlog: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`
 > Related task: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
 > Related architecture: `adr_007_let_the_served_viewer_execute_a_closed_command_set` (supersedes `adr_003_the_viewer_reads_the_command_acts` in part)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 17:28:28
 
 # Overview
 Reverses adr_003's refusal to execute, on the terms adr_003 itself priced: a local server, a per-launch token, and one command at a time, limited to the closed set of commands the menu already prints.
@@ -45,5 +46,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
+- Product back-reference: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`
 - Task back-reference: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`

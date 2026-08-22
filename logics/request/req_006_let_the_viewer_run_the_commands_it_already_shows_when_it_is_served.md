@@ -1,12 +1,13 @@
 ## req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served - Let the viewer run the commands it already shows, when it is served
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 17:28:44
 
 # AI Context
 - Summary: adr_003 refused to let the viewer execute anything and priced the reversal; this request pays that price for a closed set of three argument-free commands, served locally with a per-launch token and one command running at a time, while a plain file:// page stays copy-only.
@@ -42,7 +43,7 @@
 
 # Companion docs
 - Product brief(s): `prod_007_a_served_viewer_that_can_run_what_it_already_shows`
-- Architecture decision(s): (none yet)
+- Architecture decision(s): `adr_007_let_the_served_viewer_execute_a_closed_command_set` (supersedes `adr_003_the_viewer_reads_the_command_acts` in part)
 
 # References
 - meshanvil/viewer.py
