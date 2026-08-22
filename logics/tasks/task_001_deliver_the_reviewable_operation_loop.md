@@ -1,14 +1,14 @@
 ## task_001_deliver_the_reviewable_operation_loop - Deliver the reviewable operation loop
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
-> Understanding: 95%
-> Confidence: 90%
-> Progress: 95%
+> Status: Done
+> Understanding: 98%
+> Confidence: 92%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:18:07
+> Indicators reviewed: 2026-08-22 02:10:15
 > Owner: codex
 
 # AI Context
@@ -78,40 +78,44 @@
 - [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # AC Traceability
-- request-AC1 -> `item_001_define_the_operation_report_and_write_one_from_every_operation`. Proof deferred to slice closeout.
-- request-AC2 -> `item_001_define_the_operation_report_and_write_one_from_every_operation`. Proof deferred to slice closeout.
-- request-AC3 -> `item_001_define_the_operation_report_and_write_one_from_every_operation`. Proof deferred to slice closeout.
-- request-AC7 -> `item_001_define_the_operation_report_and_write_one_from_every_operation`. Proof deferred to slice closeout.
-- request-AC4 -> `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`. Proof deferred to slice closeout.
-- request-AC8 -> `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`. Proof deferred to slice closeout.
-- request-AC5 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
-- request-AC6 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
-- request-AC8 -> `item_003_read_the_chain_of_operations_in_a_local_viewer`. Proof deferred to slice closeout.
-- request-AC9 -> This task. Proof deferred to linked slice closeout.
-- request-AC10 -> This task. Proof deferred to linked slice closeout.
-- request-AC11 -> This task. Proof deferred to linked slice closeout.
-- request-AC12 -> This task. Proof deferred to linked slice closeout.
-- request-AC13 -> This task. Proof deferred to linked slice closeout.
-- request-AC14 -> This task. Proof deferred to linked slice closeout.
-- request-AC15 -> This task. Proof deferred to linked slice closeout.
-- request-AC16 -> This task. Proof deferred to linked slice closeout.
-- request-AC17 -> This task. Proof deferred to linked slice closeout.
-- request-AC18 -> This task. Proof deferred to linked slice closeout.
-- request-AC19 -> This task. Proof deferred to linked slice closeout.
-- request-AC20 -> This task. Proof deferred to linked slice closeout.
-- request-AC21 -> This task. Proof deferred to linked slice closeout.
-- request-AC22 -> This task. Proof deferred to linked slice closeout.
-- request-AC25 -> This task. Proof deferred to linked slice closeout.
-- request-AC24 -> This task. Proof deferred to linked slice closeout.
-- request-AC23 -> This task. Proof deferred to linked slice closeout.
+- request-AC1 -> This task. Proof: `make fixture` wrote one report per generated operation under `work/ops`, and `item_001` records the shared report writer contract.
+- request-AC2 -> This task. Proof: `make fixture` passed with per-axis bounding-box deltas in transform reports, including the retained coarse voxel failure.
+- request-AC3 -> This task. Proof: `item_001` records the shared helper path for the supported manifest operations; the historical `pipeline/` scripts are deliberately retained as delivery records, not competing report writers.
+- request-AC4 -> This task. Proof: `item_002` delivered `meshanvil run <operation> <target>` and `make check` covers command discovery, refusal and runner behavior.
+- request-AC5 -> This task. Proof: `item_003` delivered `meshanvil view`; Chrome screenshots and `make viewer-smoke` verified operation selection, measurements, deltas and renders in the local viewer.
+- request-AC6 -> This task. Proof: `viewer/index.html` loads plain `data.js`/`viewer.js`, `make check` verifies no `fetch(` path, and `meshanvil view --no-open` opens without Blender or network.
+- request-AC7 -> This task. Proof: `make fixture` retained the failed coarse voxel branch as a failed report with measured drift and error context.
+- request-AC8 -> This task. Proof: Reports and renders are generated under ignored `work/`; `make check` hygiene passed with generated reports present.
+- request-AC9 -> This task. Proof: `make fixture` produced parent-linked sibling branches, and the viewer rendered the failed attempt as a kept branch.
+- request-AC10 -> This task. Proof: `task_008` added prune dry-run/apply self-checks; `make check` verified pruned reports keep their measurements.
+- request-AC11 -> This task. Proof: `task_007` and `task_015` verified declared same-camera comparisons, numeric deltas and a native before/after wipe with `make fixture`, `make check` and Chrome screenshots.
+- request-AC12 -> This task. Proof: `task_004` and `task_015` verified the empty/start view reads doctor data, explains every state and shows first commands.
+- request-AC13 -> This task. Proof: `task_011` and `make fixture` regenerate the demo scene from repository scripts and find its built-in defects unaided.
+- request-AC14 -> This task. Proof: `adr_003` and viewer self-checks keep the page read-only: actions are rendered as commands and no operation is executed from the viewer.
+- request-AC15 -> This task. Proof: `task_006` and `task_005` verified report-to-runbook chips and reverse runbook coverage derived from report `links.docs` and Logics metadata.
+- request-AC16 -> This task. Proof: `task_010` imported the generated STEP fixture through FreeCAD 1.0.2, wrote a normal report, and refused missing engines with exit code 2.
+- request-AC17 -> This task. Proof: `task_002` routed operator copy through English/French catalogues; `make check` and `logics-manager i18n validate` passed.
+- request-AC18 -> This task. Proof: Reports record parameters plus tool and engine versions; `make fixture` produced reports with these fields and version-drift UI validation passed.
+- request-AC19 -> This task. Proof: `task_002`, `task_003`, `task_009` and `task_010` verified distinct refusal/failure/no-report exit paths and last-line report behavior in self-checks.
+- request-AC20 -> This task. Proof: `18456f9` added exclusive source-fingerprint locking, and `make check` covers identity/locking self-checks.
+- request-AC21 -> This task. Proof: `item_002` implemented progress heartbeat semantics and `make check` covers stale-heartbeat reporting.
+- request-AC22 -> This task. Proof: Viewer rendering escapes report values before insertion; `make check` covers the no-markup and no-fetch viewer invariants.
+- request-AC23 -> This task. Proof: `task_009` records the macOS/Windows/WSL platform matrix and `make check` covers WSL path conversion and viewer opener behavior.
+- request-AC24 -> This task. Proof: `task_003` and `task_004` verify `meshanvil doctor`, cached machine-readable setup state, platform fixes and first-run rendering.
+- request-AC25 -> This task. Proof: `task_005` verified `--evidence <task>:<AC>` writes Logics proof only on successful operation runs and degrades when Logics is unavailable.
 
 # Validation
 - `make check` passed: compile, JSDoc type check, host self-check, i18n and hygiene.
 - `make fixture` passed: four reports and defects found unaided.
 - `logics-manager flow validate` passed with 0 findings; `lint --require-status` passed and `audit --group-by-doc` has no blocking issue.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - The review loop is delivered for the seven explicit CLI operations. The source pipeline is intentionally retained as the historical hardcoded chain, per `item_001`, not an unfinished conversion backlog. Task closeout remains separate because global request-AC traceability must be reconciled without inventing proof.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_001_define_the_operation_report_and_write_one_from_every_operation`, `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`, `item_003_read_the_chain_of_operations_in_a_local_viewer`
+- Related request(s): `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 
 # Links
 - Request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`

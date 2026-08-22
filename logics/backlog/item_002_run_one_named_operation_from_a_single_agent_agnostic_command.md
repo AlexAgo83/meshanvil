@@ -1,10 +1,10 @@
 ## item_002_run_one_named_operation_from_a_single_agent_agnostic_command - Run one named operation from a single agent-agnostic command
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 95%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -70,3 +70,6 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Notes
+- Task `task_001_deliver_the_reviewable_operation_loop` was finished via `logics-manager flow finish task` on 2026-08-22.
