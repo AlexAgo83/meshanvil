@@ -12,7 +12,9 @@ SOURCE = "en"
 
 
 def root() -> Path:
-    return Path(__file__).resolve().parent.parent
+    """Locales ship with the tool, never with a project."""
+    from .paths import code_root
+    return code_root()
 
 
 def language() -> str:

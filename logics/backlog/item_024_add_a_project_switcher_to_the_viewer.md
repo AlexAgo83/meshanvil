@@ -1,13 +1,14 @@
 ## item_024_add_a_project_switcher_to_the_viewer - Add a project switcher to the viewer
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: The page is built for one report directory and names a fixed path. It has to list the projects that hold reports, let the operator select one, and scope every count and total to the one shown -- without a rebuild, a request or a write.

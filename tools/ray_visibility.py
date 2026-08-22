@@ -14,7 +14,8 @@ def _reporter():
         return None, {}
     args = sys.argv[sys.argv.index("--") + 1:]
     job = json.loads(Path(args[args.index("--job") + 1]).read_text(encoding="utf-8"))
-    sys.path.insert(0, job["root"])
+    # The package ships with the tool; the project only holds work.
+    sys.path.insert(0, job.get("install") or job["root"])
     from meshanvil_engine import report as reporting
     return reporting.open_report(), job
 

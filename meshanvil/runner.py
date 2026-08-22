@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 
-from . import SCHEMA_VERSION, VERSION, doctor, engines, logics_bridge, manifests
+from . import SCHEMA_VERSION, VERSION, doctor, engines, logics_bridge, manifests, paths
 from .i18n import t
 
 OPS = "work/ops"
@@ -130,7 +130,8 @@ def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
 def run(operation: str, target: str, params: dict[str, str], parent: str | None = None,
         evidence: str | None = None) -> int:
     declared_parent = parent
-    root = manifests.root()
+    root = paths.work_root()          # reports, sources, renders, locks
+    install = paths.code_root()       # the operation script and the engine package
     known = manifests.discover()
     if operation not in known:
         raise Refused(t("run.unknown_operation", name=operation))
@@ -166,7 +167,8 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         job = {
             "schema_version": SCHEMA_VERSION,
             "id": identity,
-            "root": str(root),
+            "root": str(root),          # the project: reports, sources, renders
+            "install": str(install),    # the installation: the engine package to import
             "operation": operation,
             "kind": manifest["kind"],
             "engine": manifest["engine"],
@@ -185,17 +187,17 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         job_path.write_text(json.dumps(job, indent=1) + "\n", encoding="utf-8")
 
         if manifest["engine"] == "freecad":
-            command = [str(binary), "-c", engines.for_engine(root / manifest["script"], binary),
+            command = [str(binary), "-c", engines.for_engine(install / manifest["script"], binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         elif not opens_target:
             # The engine cannot open an interchange file as a scene; the script imports it
             # into an empty one and the job carries the path.
             command = [str(binary), "-b",
-                       "-P", engines.for_engine(root / manifest["script"], binary),
+                       "-P", engines.for_engine(install / manifest["script"], binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         else:
             command = [str(binary), "-b", engines.for_engine(source, binary),
-                       "-P", engines.for_engine(root / manifest["script"], binary),
+                       "-P", engines.for_engine(install / manifest["script"], binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         started = time.time()
         try:

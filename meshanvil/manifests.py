@@ -3,13 +3,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from . import paths
 from .i18n import t
 
 SEARCH = ("tools", "pipeline")
 
 
 def root() -> Path:
-    return Path(__file__).resolve().parent.parent
+    """Where the operations live. A project holds work, never operations."""
+    return paths.code_root()
 
 
 def discover() -> dict[str, dict]:

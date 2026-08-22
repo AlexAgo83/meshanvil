@@ -1,13 +1,14 @@
 ## item_023_scope_identity_parentage_and_retention_to_one_project - Scope identity, parentage and retention to one project
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: Three namespaces scan the whole report directory: identity allocation, parent resolution by input fingerprint, and prune's retention window. Each has to look at one project only, without weakening the exclusive-create arbitration that keeps two runners in one project apart.

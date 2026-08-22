@@ -1,13 +1,14 @@
 ## item_022_resolve_the_active_project_without_an_invisible_setting - Resolve the active project without an invisible setting
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: Nothing today depends on the working directory, so a project has to be chosen somehow. A marker walked up from the current directory keeps that choice visible; an environment variable alone would hide where a destructive run lands.

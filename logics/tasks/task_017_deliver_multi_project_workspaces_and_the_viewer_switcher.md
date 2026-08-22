@@ -1,13 +1,15 @@
 ## task_017_deliver_multi_project_workspaces_and_the_viewer_switcher - Deliver multi-project workspaces and the viewer switcher
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: Claude
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: Orchestrates the split of code location from work location, per-project identity, parentage and retention, the project switcher in the viewer, and the coverage that keeps the current single-directory setup working.

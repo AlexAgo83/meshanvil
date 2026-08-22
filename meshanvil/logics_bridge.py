@@ -73,7 +73,8 @@ def purpose(root: Path | None, relative: str | None) -> str:
     return ""
 
 
-def runbook(root: Path, chain: str) -> tuple[str | None, str | None]:
+def runbook(root: Path, install: Path, chain: str) -> tuple[str | None, str | None]:
+    """Reports come from the project; the document is written into the Logics corpus."""
     reports = []
     for path in sorted((root / "work" / "ops").glob("*.json")):
         try:
@@ -87,7 +88,7 @@ def runbook(root: Path, chain: str) -> tuple[str | None, str | None]:
     result, error = call("flow", "companion", "runbook", "--title", f"Chain {chain}")
     if error:
         return None, error
-    path = root / result["path"]
+    path = install / result["path"]
     facts = "\n".join(f"- `{report['id']}` `{report['operation']}` ({report['status']}): "
                       f"params `{json.dumps(report.get('params', {}), sort_keys=True)}`; "
                       f"measurements `{json.dumps(report.get('measured') or report.get('after') or {}, sort_keys=True)}`"
@@ -105,4 +106,4 @@ def runbook(root: Path, chain: str) -> tuple[str | None, str | None]:
     for old, new in replacements.items():
         text = text.replace(old, new)
     path.write_text(text + "\n## Report facts\n" + facts + "\n", encoding="utf-8")
-    return str(path.relative_to(root)), None
+    return str(path.relative_to(install)), None

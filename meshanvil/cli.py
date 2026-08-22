@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, json, sys
 
-from . import VERSION, doctor, engines, logics_bridge, manifests, prune, runner, viewer
+from . import VERSION, doctor, engines, logics_bridge, manifests, paths, prune, runner, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -59,13 +59,13 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.command == "list":
         return show_list()
     if arguments.command == "doctor":
-        result = doctor.check(manifests.root())
+        result = doctor.check(paths.work_root())
         print(json.dumps(result, indent=1))
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":
         return viewer.view(serve_it=arguments.serve, open_it=not arguments.no_open)
     if arguments.command == "runbook":
-        path, error = logics_bridge.runbook(manifests.root(), arguments.chain)
+        path, error = logics_bridge.runbook(paths.work_root(), paths.code_root(), arguments.chain)
         if error:
             message = (t("bridge.runbook_unavailable") if error == "unavailable"
                        else t("bridge.runbook_error", reason=error))
@@ -74,11 +74,12 @@ def main(argv: list[str] | None = None) -> int:
         print(path)
         return runner.EXIT_OK
     if arguments.command == "prune":
-        paths, freed = prune.run(manifests.root(), max(0, arguments.keep), arguments.dry_run)
-        for path, size in paths:
+        project = paths.work_root()
+        dropped, freed = prune.run(project, max(0, arguments.keep), arguments.dry_run)
+        for path, size in dropped:
             verb = t("cli.prune.would") if arguments.dry_run else t("cli.prune.deleted")
-            print(t("cli.prune.item", path=path.relative_to(manifests.root()), bytes=size, verb=verb))
-        print(t("cli.prune.total", count=len(paths), bytes=freed))
+            print(t("cli.prune.item", path=path.relative_to(project), bytes=size, verb=verb))
+        print(t("cli.prune.total", count=len(dropped), bytes=freed))
         return runner.EXIT_OK
     given = {}
     for pair in arguments.set:

@@ -1,13 +1,14 @@
 ## item_025_prove_the_isolation_and_keep_the_current_setup_working - Prove the isolation and keep the current setup working
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: Isolation that is not asserted is lost the first time a path constant moves. Two projects must be run against each other in the self-check, and the browser smoke must fail when the switcher is gone, while the demo chain keeps running unchanged against the installation.

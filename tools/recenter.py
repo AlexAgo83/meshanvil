@@ -14,7 +14,8 @@ def _reporter():
         return None, {}
     args = sys.argv[sys.argv.index("--") + 1:]
     job = json.loads(Path(args[args.index("--job") + 1]).read_text(encoding="utf-8"))
-    sys.path.insert(0, job["root"])
+    # The package ships with the tool; the project only holds work.
+    sys.path.insert(0, job.get("install") or job["root"])
     from meshanvil_engine import report as reporting
     return reporting.open_report(), job
 
@@ -26,7 +27,8 @@ def _views():
     run finds it beside this file, so the same script works either way."""
     import sys
     from pathlib import Path
-    sys.path.insert(0, (JOB or {}).get("root") or str(Path(__file__).resolve().parent.parent))
+    sys.path.insert(0, (JOB or {}).get("install") or (JOB or {}).get("root")
+                    or str(Path(__file__).resolve().parent.parent))
     from meshanvil_engine import views
     return views
 

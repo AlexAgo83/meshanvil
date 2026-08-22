@@ -1,13 +1,14 @@
 ## item_021_split_the_code_root_from_the_work_root - Split the code root from the work root
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:34:51
 
 # AI Context
 - Summary: One value answers two questions today: `manifests.root()` locates both the installed code and the operator's work. This separates them and moves every call site to the one it meant, including the job file the engine reads to import its package and place renders.
