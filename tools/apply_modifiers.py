@@ -89,9 +89,13 @@ for index, o in enumerate(meshes):
         try:
             bpy.ops.object.modifier_apply(modifier=m.name)
         except RuntimeError as error:      # a disabled or invalid modifier, not a crash
-            failed.append(f"{o.name}:{m.name}")
+            # The name has to be read before the modifier is dropped: reading it afterwards
+            # raises ReferenceError on the removed StructRNA, which escapes, kills Blender
+            # and leaves the runner reporting that the engine wrote no report at all.
+            name = m.name
+            failed.append(f"{o.name}:{name}")
             o.modifiers.remove(m)
-            log("could not apply %s on %s (%s)" % (m.name, o.name, error))
+            log("could not apply %s on %s (%s)" % (name, o.name, error))
 
 if APPLY_SCALE:
     bpy.ops.object.select_all(action='DESELECT')
