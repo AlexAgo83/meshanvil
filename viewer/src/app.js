@@ -7,6 +7,9 @@
 // @ts-check
 "use strict";
 
+import { startLiveRefresh } from "./live.js";
+import { esc, mdToHtml } from "./markdown.js";
+
 /** The report contract, as adr_001 defines it. Named OperationReport rather than Report:
  * the DOM already has a Report interface, and the collision silently made every property
  * resolve against it.
@@ -54,63 +57,8 @@ let wipe = 50;
 let start = !DATA.reports.length;
 let workspace = "chain";
 let filterText = "";
-let liveTimer = 0;
 
-/** Report text is data from CAD files, never markup. */
-function esc(value) {
-  return String(value === null || value === undefined ? "" : value)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
 const num = (v) => (v === null || v === undefined ? "—" : Number(v).toLocaleString("en-US"));
-
-/** A runbook's own Markdown conventions only -- headings, bullet/numbered lists, fenced and
-    inline code, bold, blockquoted frontmatter lines -- rendered without a Markdown dependency,
-    matching the rest of this file's no-framework stance. Not a general Markdown parser: it
-    covers what logics/runbook/*.md actually uses, nothing more.
-    Escaped first (esc() touches none of *, `, #, -, >, so the markdown syntax below still
-    matches after escaping), so inline() only ever operates on already-safe text. */
-function inline(escaped) {
-  return escaped
-    .replace(/`([^`]+)`/g, (_, code) => `<code>${code}</code>`)
-    .replace(/\*\*([^*]+)\*\*/g, (_, bold) => `<strong>${bold}</strong>`);
-}
-function mdToHtml(source) {
-  const lines = String(source || "").split("\n");
-  const out = [];
-  let list = null;       // "ul" | "ol" | null -- the list currently open, if any
-  let quote = [];         // buffered consecutive "> " lines
-  let para = [];          // buffered consecutive plain-text lines
-  let fence = null;        // language of the fenced block currently open, if any
-  const closeList = () => { if (list) { out.push(`</${list}>`); list = null; } };
-  const closeQuote = () => { if (quote.length) { out.push(`<blockquote>${quote.join("<br>")}</blockquote>`); quote = []; } };
-  const closePara = () => { if (para.length) { out.push(`<p>${para.join(" ")}</p>`); para = []; } };
-  const closeAll = () => { closeList(); closeQuote(); closePara(); };
-  for (const raw of lines) {
-    if (fence !== null) {
-      if (raw.trimEnd() === "```") { out.push("</code></pre>"); fence = null; }
-      else out.push(esc(raw) + "\n");
-      continue;
-    }
-    const fenceStart = raw.match(/^```/);
-    const heading = raw.match(/^(#{1,6})\s+(.*)$/);
-    const quoted = raw.match(/^>\s?(.*)$/);
-    // Nesting (a sub-bullet under a numbered step) renders flat rather than indented -- this
-    // is not a general Markdown parser, and a flattened list beats leaking a literal "- ".
-    const bullet = raw.match(/^\s*[-*]\s+(.*)$/);
-    const numbered = raw.match(/^\s*\d+\.\s+(.*)$/);
-    if (fenceStart) { closeAll(); out.push("<pre><code>"); fence = true; }
-    else if (heading) { closeAll(); out.push(`<h${heading[1].length + 1}>${inline(esc(heading[2]))}</h${heading[1].length + 1}>`); }
-    else if (quoted) { closeList(); closePara(); quote.push(inline(esc(quoted[1]))); }
-    else if (bullet) { closeQuote(); closePara(); if (list !== "ul") { closeList(); out.push("<ul>"); list = "ul"; } out.push(`<li>${inline(esc(bullet[1]))}</li>`); }
-    else if (numbered) { closeQuote(); closePara(); if (list !== "ol") { closeList(); out.push("<ol>"); list = "ol"; } out.push(`<li>${inline(esc(numbered[1]))}</li>`); }
-    else if (raw.trim() === "") { closeAll(); }
-    else { closeList(); closeQuote(); para.push(inline(esc(raw.trim()))); }
-  }
-  if (fence !== null) out.push("</code></pre>");   // an unterminated fence still renders, not silently drops its content
-  closeAll();
-  return out.join("\n");
-}
 
 /** What the operation is for, from the manifest catalogue. Absent is normal, not an error. */
 function summaryOf(operation) {
@@ -177,24 +125,6 @@ async function refreshLive() {
   try { await fetchData(); }
   catch { /* the next event or timer gets another chance */ }
   return performance.now() - started;
-}
-
-function startLiveRefresh() {
-  if (!SERVED) return;
-  if ("EventSource" in window) {
-    const stream = new EventSource(`${location.origin}/api/events`);
-    stream.addEventListener("changed", () => { refreshLive(); });
-    /** @type {any} */ (window).__meshanvilStopLive = () => stream.close();
-    window.addEventListener("beforeunload", () => stream.close(), { once: true });
-    return;
-  }
-  const tick = async () => {
-    const cost = await refreshLive();
-    liveTimer = window.setTimeout(tick, Math.max(1000, cost * 20));
-  };
-  liveTimer = setTimeout(tick, 1000);
-  /** @type {any} */ (window).__meshanvilStopLive = () => clearTimeout(liveTimer);
-  addEventListener("beforeunload", () => clearTimeout(liveTimer), { once: true });
 }
 
 function paintProjects() {
@@ -955,7 +885,7 @@ async function init() {
   });
   if (current) select(current);
   else { outliner(); nodes(); props(); preview(); showSplash(true); }
-  startLiveRefresh();
+  startLiveRefresh(SERVED, refreshLive);
 }
 
 Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects });

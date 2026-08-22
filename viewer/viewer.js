@@ -1,41 +1,31 @@
 "use strict";
 (() => {
-  // viewer/src/app.js
-  var DATA = (
-    /** @type {{reports: OperationReport[], generated_at: string, root: string,
-    *   lang: string, strings: Object<string,string>, catalogs?: Object<string,Object<string,string>>,
-    *   version?: string, run_token?: string|null, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */
-    /** @type {any} */
-    window.MESHANVIL || { reports: [], generated_at: "", root: "", lang: "en", strings: {} }
-  );
-  window.DATA = DATA;
-  var SERVED = location.protocol !== "file:";
-  var lang = DATA.lang || "en";
-  var strings = mergedCatalog(lang);
-  function mergedCatalog(code) {
-    const books = DATA.catalogs;
-    return books ? { ...books.en || {}, ...books[code] || {} } : DATA.strings || {};
-  }
-  function t(key, values) {
-    let text = strings[key] || key;
-    for (const [name, value] of Object.entries(values || {})) {
-      text = text.split(`{${name}}`).join(String(value));
+  // viewer/src/live.js
+  function startLiveRefresh(served, refreshLive2) {
+    if (!served) return;
+    if ("EventSource" in window) {
+      const stream = new EventSource(`${location.origin}/api/events`);
+      stream.addEventListener("changed", () => {
+        refreshLive2();
+      });
+      window.__meshanvilStopLive = () => stream.close();
+      window.addEventListener("beforeunload", () => stream.close(), { once: true });
+      return;
     }
-    return text;
+    let liveTimer = 0;
+    const tick = async () => {
+      const cost = await refreshLive2();
+      liveTimer = setTimeout(tick, Math.max(1e3, cost * 20));
+    };
+    liveTimer = setTimeout(tick, 1e3);
+    globalThis.__meshanvilStopLive = () => clearTimeout(liveTimer);
+    addEventListener("beforeunload", () => clearTimeout(liveTimer), { once: true });
   }
-  var BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
-  var current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
-  var currentDoc = null;
-  var view = 0;
-  var wipe = 50;
-  var start = !DATA.reports.length;
-  var workspace = "chain";
-  var filterText = "";
-  var liveTimer = 0;
+
+  // viewer/src/markdown.js
   function esc(value) {
     return String(value === null || value === void 0 ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
-  var num = (v) => v === null || v === void 0 ? "\u2014" : Number(v).toLocaleString("en-US");
   function inline(escaped) {
     return escaped.replace(/`([^`]+)`/g, (_, code) => `<code>${code}</code>`).replace(/\*\*([^*]+)\*\*/g, (_, bold) => `<strong>${bold}</strong>`);
   }
@@ -123,6 +113,39 @@
     closeAll();
     return out.join("\n");
   }
+
+  // viewer/src/app.js
+  var DATA = (
+    /** @type {{reports: OperationReport[], generated_at: string, root: string,
+    *   lang: string, strings: Object<string,string>, catalogs?: Object<string,Object<string,string>>,
+    *   version?: string, run_token?: string|null, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */
+    /** @type {any} */
+    window.MESHANVIL || { reports: [], generated_at: "", root: "", lang: "en", strings: {} }
+  );
+  window.DATA = DATA;
+  var SERVED = location.protocol !== "file:";
+  var lang = DATA.lang || "en";
+  var strings = mergedCatalog(lang);
+  function mergedCatalog(code) {
+    const books = DATA.catalogs;
+    return books ? { ...books.en || {}, ...books[code] || {} } : DATA.strings || {};
+  }
+  function t(key, values) {
+    let text = strings[key] || key;
+    for (const [name, value] of Object.entries(values || {})) {
+      text = text.split(`{${name}}`).join(String(value));
+    }
+    return text;
+  }
+  var BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+  var current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
+  var currentDoc = null;
+  var view = 0;
+  var wipe = 50;
+  var start = !DATA.reports.length;
+  var workspace = "chain";
+  var filterText = "";
+  var num = (v) => v === null || v === void 0 ? "\u2014" : Number(v).toLocaleString("en-US");
   function summaryOf(operation) {
     const key = `operation.${operation}.summary`;
     const text = t(key);
@@ -189,25 +212,6 @@
     } catch {
     }
     return performance.now() - started;
-  }
-  function startLiveRefresh() {
-    if (!SERVED) return;
-    if ("EventSource" in window) {
-      const stream = new EventSource(`${location.origin}/api/events`);
-      stream.addEventListener("changed", () => {
-        refreshLive();
-      });
-      window.__meshanvilStopLive = () => stream.close();
-      window.addEventListener("beforeunload", () => stream.close(), { once: true });
-      return;
-    }
-    const tick = async () => {
-      const cost = await refreshLive();
-      liveTimer = window.setTimeout(tick, Math.max(1e3, cost * 20));
-    };
-    liveTimer = setTimeout(tick, 1e3);
-    window.__meshanvilStopLive = () => clearTimeout(liveTimer);
-    addEventListener("beforeunload", () => clearTimeout(liveTimer), { once: true });
   }
   function paintProjects() {
     const entries = projectEntries();
@@ -1030,7 +1034,7 @@
       preview();
       showSplash(true);
     }
-    startLiveRefresh();
+    startLiveRefresh(SERVED, refreshLive);
   }
   Object.assign(
     /** @type {any} */
