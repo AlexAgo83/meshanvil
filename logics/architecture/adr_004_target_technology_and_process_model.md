@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:22:48
+> Indicators reviewed: 2026-08-23 01:55:34
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -47,7 +47,7 @@ flowchart TD
 - **The viewer is a plain page: HTML, CSS and JavaScript, no framework and no build.** `meshanvil view` writes `work/viewer/data.js` -- the reports as one assignment -- next to a static `index.html`, then opens it. It works from `file://`, offline, with no process left running.
 - **A server is opt-in.** `meshanvil view --serve` starts `http.server` bound to `127.0.0.1` on port 0 for auto-refresh while a chain is running. It serves `work/` read-only. That is the only mode that keeps a process alive.
 - **The graph is drawn with our own SVG.** Bezier links between absolutely positioned nodes, as the mockup already demonstrates. Mermaid stays for `Export chain as Mermaid`, which produces diagram text for a Logics document and renders nothing here.
-- **No publication yet.** No PyPI package, no npm package, no installer. The repository is cloned and run. The npm devDependency remains for the corpus tooling only, as `adr_002` decided.
+- **Publication decision superseded by `adr_008_python_package_distribution_and_runtime_assets`.** This ADR originally chose no PyPI package, no npm package and no installer; `adr_008` now chooses a Python package while keeping the npm devDependency for contributor tooling only.
 - **Cross-platform, on a measured matrix.** macOS: Blender 5.2 with Python 3.13.13, host Python 3.11.15, FreeCAD 1.0 on 3.11.13. Windows: Blender 5.2 installed but not on PATH, host Python 3.10.4. WSL Ubuntu: host Python 3.14.4, no Linux Blender, the Windows binary reachable through /mnt/c. Linux: unverified, no machine with Blender available to check it.
 - **The Python floor is 3.10, not 3.11.** It was declared before the platforms were measured; Windows carries 3.10.4 and nothing the host needs -- `json`, `subprocess`, `hashlib`, `argparse`, `http.server` -- requires more. The floor follows the machines rather than the machines following the floor.
 - **Engines are located, then overridden.** The macOS bundle, the Windows install directory, a binary on PATH, each superseded by `MESHANVIL_BLENDER` or `MESHANVIL_FREECAD`. A missing engine is exit code 2 with a message naming the override.

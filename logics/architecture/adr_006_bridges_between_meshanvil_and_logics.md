@@ -6,6 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: a measurement that proves an acceptance criterion, one registry of documents instead of two, and two products that must stay separately publishable
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
+> Indicators reviewed: 2026-08-23 01:55:34
 
 # Overview
 - meshanvil produces measurements; Logics needs proof. The bridge is the CLI, it runs one way, and it carries three things: a report as evidence on an acceptance criterion, document references resolved through Logics rather than through a table of our own, and a runbook scaffolded from a chain that established a procedure.
@@ -42,6 +43,7 @@ flowchart LR
 - **A runbook can be scaffolded from a chain.** `meshanvil runbook <chain>` calls `flow companion runbook` and prefills what the chain measured: the operations, their parameters, what failed and the numbers that showed it. The procedure and its limits are written by a person; the evidence is not retyped by one.
 - **Logics is optional at runtime.** An operation runs, reports and is reviewed with no `logics-manager` installed. Only the bridges need it, and each states that it does when it is unavailable rather than failing an operation.
 - **The viewer links out rather than embedding.** When a Logics viewer is running, a chip carries its URL; there is no rendering of Logics documents inside meshanvil, as `adr_002` decided and this decision keeps.
+- **Amendment, 2026-08-23: installed meshanvil reads runbooks from the active project.** The package does not ship this repository's corpus as runtime content. If the active project has no Logics corpus or no `logics-manager`, the viewer and `runbook` command degrade through the same unavailable or empty states instead of pointing at packaged history.
 
 # Consequences
 - A task closeout can carry machine-produced proof: the command, the report, the numbers. That is a better closeout than a sentence, and it is the reason this bridge is worth building at all.
@@ -49,6 +51,7 @@ flowchart LR
 - `adr_002` is amended, not reversed: the coupling is no longer bounded to the corpus checks, but it stays a CLI boundary, one-way, and optional at runtime.
 - Every bridge is a subprocess call, which costs a process start. It happens on demand -- an evidence flag, a viewer refresh, a runbook scaffold -- never in the path of an operation.
 - If Logics changes its CLI, the bridges break loudly at a boundary we own, rather than silently through a shared import.
+- A wheel can be useful without Logics installed. Runbooks and document chips are project-local enrichment, not part of the core operation loop.
 - The reverse bridge -- Logics showing an operation chain in its own viewer -- stays out of scope here. If it is ever wanted it is a request in that repository, with this decision as the record of the direction chosen.
 
 # References

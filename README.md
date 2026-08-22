@@ -34,7 +34,7 @@ Verified on macOS (Blender 5.2), Windows (Blender 5.2, not on `PATH`) and WSL Ub
 Blender; the Windows binary is called through `/mnt/c` with paths translated). Linux is
 untested. `MESHANVIL_BLENDER` and `MESHANVIL_FREECAD` override the discovered paths.
 
-Before the first operation, run `./bin/meshanvil doctor`. It writes `work/doctor.json` with
+After installation, run `meshanvil doctor`. It writes `work/doctor.json` with
 the discovered engines, their versions, the exact platform-specific override command, and the
 writability and free space of `work/`.
 
@@ -137,13 +137,25 @@ out "never seen" only because they fall through the ray grid.
 
 ## Engineering honesty
 
-Pre-1.0, and no package on an index yet -- clone it, run `./bin/meshanvil`. `make check`
-compiles the scripts, type-checks the viewer, runs `scripts/selfcheck.py` (host logic, no
-Blender needed) and the hygiene gate. It does not run Blender: every check that means
-anything needs a real 3D source, and sources are never in this repository. `scripts/
-fixture_check.py` and `scripts/viewer_smoke.py` do need it -- they run against a generated
-fixture, not against your data, so they stay out of `make check` and out of CI. Run the
-scripts on your own file and read the numbers.
+Install the tool after Blender is available:
+
+```bash
+python -m pip install meshanvil
+meshanvil doctor
+```
+
+The package installs the `meshanvil` command and the runtime assets it reads: operation
+manifests, scripts, catalogues, viewer files and the engine-side report package. It does not
+install Blender, FreeCAD, Node or this repository's Logics corpus. Pre-1.0 releases state which
+platforms were measured; Linux is unverified until a Blender-equipped Linux machine checks it.
+
+Contributors can still clone and run `./bin/meshanvil` directly. `make check` compiles the
+scripts, type-checks the viewer, runs `scripts/selfcheck.py` (host logic, no Blender needed)
+and the hygiene gate. It does not run Blender: every check that means anything needs a real 3D
+source, and sources are never in this repository. `scripts/fixture_check.py` and
+`scripts/viewer_smoke.py` do need it -- they run against a generated fixture, not against your
+data, so they stay out of `make check` and out of CI. Run the scripts on your own file and read
+the numbers.
 
 The runbooks are written from one delivery. They are specific on purpose -- a procedure
 without its numbers is a blog post -- but a second assembly will bend some of them.
@@ -170,8 +182,8 @@ Identity numbering, parentage by fingerprint and prune retention are each scoped
 project: the first operation of a new project is `001`, and two projects opened from the same
 source file are never linked to each other.
 
-With no marker anywhere above, the installation is the project. That is what this repository
-has always been, so nothing that worked before needs a migration.
+With no marker anywhere above, the current directory is the project. That is what an installed
+command needs when it is run outside a checkout.
 
 The viewer reads every project in the neighbourhood at build time and shows one, with a
 chooser in the top bar when there is more than one. It selects rather than combines: two

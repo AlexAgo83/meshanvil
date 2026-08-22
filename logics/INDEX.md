@@ -11,6 +11,7 @@
 | [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Accepted |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
 | [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Accepted |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
 | [adr_007_let_the_served_viewer_execute_a_closed_command_set](architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md) | Let the served viewer execute a closed command set | Accepted |  |  | architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md |
+| [adr_008_python_package_distribution_and_runtime_assets](architecture/adr_008_python_package_distribution_and_runtime_assets.md) | Python package distribution and runtime assets | Accepted |  |  | architecture/adr_008_python_package_distribution_and_runtime_assets.md |
 
 ## Product briefs
 
