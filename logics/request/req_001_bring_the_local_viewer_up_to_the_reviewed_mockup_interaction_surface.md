@@ -1,7 +1,7 @@
 ## req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface - Bring the local viewer up to the reviewed mockup interaction surface
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium

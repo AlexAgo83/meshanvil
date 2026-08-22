@@ -1,15 +1,15 @@
 ## task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary - Complete the mockup review controls without weakening the local page boundary
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 95%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:02:07
+> Indicators reviewed: 2026-08-22 02:04:01
 
 # AI Context
 - Summary: Add filter, labelled native comparison and no-data guidance without persisting state or expanding viewer authority.
@@ -40,10 +40,15 @@
 - `make fixture` passed on 2026-08-22: real Blender fixture regenerated four reports.
 - `./bin/meshanvil view --no-open` built `work/viewer/index.html` from the generated reports.
 - Chrome headless wrote `/tmp/meshanvil-viewer-task015.png`; the rendered page shows the Properties rail and no static black strip below the Image Editor.
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Implemented the remaining review controls in `1d888c3`: the runbook workspace now obeys the local outliner filter, Properties has a section rail for Input, Measurements and Links, and the first-run/state explanations remain driven by existing doctor and report data.
-- The task remains `In progress` only because the current Logics topology still links the orchestration task and promoted leaf tasks to the same backlog items, which makes automatic closeout unreliable. No acceptance evidence is intentionally missing for this task.
+- `flow finish task` marked the task Done; `flow close backlog` then closed the linked backlog item after finish verification left it open.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary`
+- Related request(s): `req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface`
 
 # Links
 - Request: `req_001_bring_the_local_viewer_up_to_the_reviewed_mockup_interaction_surface`

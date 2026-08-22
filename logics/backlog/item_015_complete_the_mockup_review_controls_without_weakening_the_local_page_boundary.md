@@ -1,10 +1,10 @@
 ## item_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary - Complete the mockup review controls without weakening the local page boundary
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 52%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -55,3 +55,6 @@
 
 # Tasks
 - `task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary`
+
+# Notes
+- Task `task_015_complete_the_mockup_review_controls_without_weakening_the_local_page_boundary` was finished via `logics-manager flow finish task` on 2026-08-22.
