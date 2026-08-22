@@ -1,12 +1,13 @@
 ## req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones - Replace the removed demonstration assets with procedurally generated ones
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 19:03:55
 
 # AI Context
 - Summary: The two demonstration assets were removed with every trace of them, over an unverified licence; this request rebuilds both from primitives instead, so no future demonstration subject ever needs a licence check again.

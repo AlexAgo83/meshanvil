@@ -1,11 +1,12 @@
 ## prod_008_demonstrations_that_own_every_asset_they_run_on - Demonstrations that own every asset they run on
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones`
-> Related backlog: `item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects`, `item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature`
+> Related backlog: `item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects`
 > Related task: `task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 19:03:56
 
 # Overview
 Rebuilds both demonstration subjects from primitives instead of a downloaded donor file, so the two chains that teach the project's central lessons carry no licence to verify and no trace to remove.
@@ -43,5 +44,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones`
+- Product back-reference: `item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects`
 - Task back-reference: `task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones`

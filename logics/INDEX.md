@@ -23,7 +23,7 @@
 | [prod_005_demonstrations_that_show_the_checks_discriminating](product/prod_005_demonstrations_that_show_the_checks_discriminating.md) | Demonstrations that show the checks discriminating | Settled |  |  | product/prod_005_demonstrations_that_show_the_checks_discriminating.md |
 | [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Settled |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
 | [prod_007_a_served_viewer_that_can_run_what_it_already_shows](product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md) | A served viewer that can run what it already shows | Settled |  |  | product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md |
-| [prod_008_demonstrations_that_own_every_asset_they_run_on](product/prod_008_demonstrations_that_own_every_asset_they_run_on.md) | Demonstrations that own every asset they run on | Proposed |  |  | product/prod_008_demonstrations_that_own_every_asset_they_run_on.md |
+| [prod_008_demonstrations_that_own_every_asset_they_run_on](product/prod_008_demonstrations_that_own_every_asset_they_run_on.md) | Demonstrations that own every asset they run on | Settled |  |  | product/prod_008_demonstrations_that_own_every_asset_they_run_on.md |
 
 ## Roadmaps
 
@@ -40,7 +40,7 @@ _None_
 | [req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show](request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md) | Demonstrate on a clean organic subject what the vehicle chain cannot show | Done |  |  | request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md |
 | [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done |  |  | request/req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
-| [req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Draft |  |  | request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
+| [req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done |  |  | request/req_007_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 
 ## Backlog
 
@@ -79,8 +79,8 @@ _None_
 | [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Done |  | 100% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
 | [item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server](backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md) | Run a closed set of commands from the served viewer's own server | Done |  | 100% | backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md |
 | [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | Done |  | 100% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
-| [item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects](backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md) | Generate a vehicle-scale subject that carries the same defects | Ready |  | 0% | backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md |
-| [item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature](backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md) | Generate a figurine-scale subject with a real thin feature | Ready |  | 0% | backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md |
+| [item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects](backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md) | Generate a vehicle-scale subject that carries the same defects | Done |  | 100% | backlog/item_034_generate_a_vehicle_scale_subject_that_carries_the_same_defects.md |
+| [item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature](backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md) | Generate a figurine-scale subject with a real thin feature | Done |  | 100% | backlog/item_035_generate_a_figurine_scale_subject_with_a_real_thin_feature.md |
 
 ## Tasks
 
@@ -106,7 +106,7 @@ _None_
 | [task_018_deliver_the_figurine_demonstration_project](tasks/task_018_deliver_the_figurine_demonstration_project.md) | Deliver the figurine demonstration project | Done | Claude | 100% | tasks/task_018_deliver_the_figurine_demonstration_project.md |
 | [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 | [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Done | Claude | 100% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
-| [task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Ready |  | 0% | tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
+| [task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones](tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md) | Replace the removed demonstration assets with procedurally generated ones | Done | Claude | 100% | tasks/task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones.md |
 
 ## Runbooks
 
