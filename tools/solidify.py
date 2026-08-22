@@ -48,6 +48,13 @@ THICKNESS = float(PARAMS.get("thickness_mm", 20.0)) / 1000.0
 # A wall thinner than one voxel is erased by that remesh, so it is refused here instead.
 NEXT_VOXEL = float(PARAMS.get("next_voxel_mm", 0.0)) / 1000.0
 SKIP_CLOSED = bool(PARAMS.get("skip_closed", True))
+# Even thickness divides by the angle at each vertex, so a near-degenerate corner sends the
+# offset to infinity: on this asset a 20 mm wall grew spikes 1.4 m long and put geometry
+# 913 mm under the print bed. The clamp caps the offset against local edge length.
+CLAMP = float(PARAMS.get("thickness_clamp", 1.0))
+# A wall grown both ways moves each face of the box by about half its thickness. Anything
+# past this is a spike, not a wall.
+DRIFT = float(PARAMS.get("max_bbox_drift_mm", 0.0)) or 2.0 * float(PARAMS.get("thickness_mm", 20.0))
 RENDER = bool(PARAMS.get("render", True))
 OUT = Path(bpy.data.filepath).with_name(Path(bpy.data.filepath).stem + "_solid.blend")
 ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
@@ -88,9 +95,15 @@ for index, o in enumerate(meshes):
     modifier = o.modifiers.new("wall", 'SOLIDIFY')
     modifier.thickness = THICKNESS
     modifier.offset = 0.0              # grow both ways, so the outer silhouette barely moves
-    modifier.use_even_offset = True
+    # Even thickness is the cause, not a setting to tune: it scales the offset by 1/cos of
+    # the vertex angle, which is unbounded at a near-degenerate corner. Off, the extrusion is
+    # exactly `thickness` along the normal, so the box can grow by at most that much per face.
+    # The wall thins slightly on a sharp fold; a needle 400 mm long is the alternative.
+    modifier.use_even_offset = False
     modifier.use_rim = True
     modifier.use_rim_only = False
+    if CLAMP and hasattr(modifier, "thickness_clamp"):
+        modifier.thickness_clamp = CLAMP
     bpy.context.view_layer.objects.active = o
     bpy.ops.object.modifier_apply(modifier=modifier.name)
     walled += 1
@@ -121,6 +134,17 @@ if REPORT:
         # Solidify cannot close a surface that self-intersects or has a non-manifold seam.
         # Saying so is the point: the remesh that follows will shred exactly these.
         REPORT.warn("some_objects_are_still_open")
+    # The bounding box is the check that catches this. Every topology count stayed green
+    # while the wall was throwing 1.4 m needles off the bodywork; only the box said so.
+    box_before = REPORT.report["before"]["bbox_mm"]
+    box_after = REPORT.report["after"]["bbox_mm"]
+    moved = max(max(abs(box_after["min"][i] - box_before["min"][i]),
+                    abs(box_after["max"][i] - box_before["max"][i])) for i in range(3))
+    REPORT.report["params"]["bbox_drift_mm"] = round(moved, 3)
+    if moved > DRIFT:
+        REPORT.warn("wall_grew_spikes")
+        REPORT.failed("the wall moved the bounding box by %.1f mm, tolerance is %.1f mm"
+                      % (moved, DRIFT))
     REPORT.cites("run_006_turn_a_cad_assembly_into_a_printable_solid")
     REPORT.output(str(OUT))
     REPORT.write()

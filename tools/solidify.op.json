@@ -23,6 +23,18 @@
       "default": true
     },
     {
+      "name": "thickness_clamp",
+      "type": "float",
+      "default": 1.0,
+      "unit": "factor"
+    },
+    {
+      "name": "max_bbox_drift_mm",
+      "type": "float",
+      "default": 0.0,
+      "unit": "mm"
+    },
+    {
       "name": "render",
       "type": "bool",
       "default": true

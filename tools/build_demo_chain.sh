@@ -51,6 +51,12 @@ $M run voxel_remesh work/out/demo_car_fixed_baked_placed_solid.blend --set voxel
 echo "== 005a the same remesh without the wall -- the trap"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed.blend --set voxel_mm=12
 
+# A coarse voxel is what someone reaches for to cut the triangle count. The tolerance is the
+# honest part: printing at 1:10, 40 mm of drift on the model is 4 mm on the part, so 12 mm is
+# declared and the operation enforces it. It fails, and the report keeps the reason.
+echo "== 006a a coarser voxel against a real tolerance -- fails, kept"
+$M run voxel_remesh work/out/demo_car_fixed_baked_placed_solid.blend --set voxel_mm=40 --set max_bbox_drift_mm=12
+
 echo "== 007 drop what is too small to print"
 $M run clean_shells work/out/demo_car_fixed_baked_placed_solid_voxel12.blend
 echo "== 008 inventory of what is left"
