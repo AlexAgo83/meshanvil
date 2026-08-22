@@ -6,7 +6,7 @@
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: two Python interpreters that cannot share imports, a viewer that must open with no server, an install cost near zero for someone who came for the 3D
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-21 22:51:20
+> Indicators reviewed: 2026-08-22 17:08:53
 
 # Overview
 - Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.
@@ -85,6 +85,7 @@ work/                    everything generated, never versioned
 - Two codebases in one repository with a hard rule between them: `tools/` and `pipeline/` import `bpy`, `bin/` and the host module never do. A host module importing `bpy` is a defect, and it is cheap to check.
 - The report writer cannot use anything Blender does not ship. No `pydantic`, no schema library: validation is a function.
 - The serverless viewer duplicates the report data into `data.js`. For a chain of tens of operations that is kilobytes; renders stay referenced by path, not inlined, so the page stays small. If a chain ever makes that file heavy, `--serve` already exists as the answer.
+- `--serve` is no longer only that answer: `adr_007_let_the_served_viewer_execute_a_closed_command_set` adds one endpoint to this same server, so a served page can run a closed set of commands a `file://` page can only copy. The bind address, the opt-in nature, and the read-only file serving this ADR decided are unchanged; the new endpoint is additional surface on the same process, not a second one.
 - Correction to `adr_002`: the vendored Mermaid bundle is no longer what draws the chain, since the graph is our own SVG. The dependency stands on the pinned CLI and the viewer conventions; Mermaid is now only an export format.
 - Type checking runs in `make check` once the viewer exists, on the same footing as the Python compile step. The configuration lands with the code it checks, not before: a `tsconfig.json` checking nothing is a file that only ever gets stale.
 - The report contract is authored in Python and typed again in JSDoc. That duplication is deliberate and small; if the two drift, the fixture catches it, because the viewer reads reports the fixture produced.

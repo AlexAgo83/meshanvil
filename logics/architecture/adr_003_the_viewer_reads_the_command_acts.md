@@ -1,12 +1,14 @@
 ## adr_003_the_viewer_reads_the_command_acts - The viewer reads, the command acts
 > Date: 2026-08-21
-> Status: Accepted
+> Status: Superseded
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: `item_003_read_the_chain_of_operations_in_a_local_viewer`
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
 > Drivers: one way in for every agent, a viewer that cannot damage anything, menus that teach the command rather than hide it
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
-> Indicators reviewed: 2026-08-22 01:17:52
+> Indicators reviewed: 2026-08-22 17:08:34
+
+> Superseded by `adr_007_let_the_served_viewer_execute_a_closed_command_set` for three commands only -- List operations, Check setup, Preview pruning -- on a page opened via `--serve`. The refusal below stands unchanged for every other command, and for the plain `file://` viewer, which adr_007 does not touch.
 
 # Overview
 - The viewer never runs an operation. Every action it offers -- run, re-run, branch, prune, re-render, open in Blender -- is presented as the exact command that does it, ready to copy, and the operator or the agent runs it themselves.
@@ -39,10 +41,12 @@ flowchart LR
 - The menus become the discoverable surface of the CLI: someone learning the tool reads the commands while clicking around, which is the opposite of a GUI hiding them.
 - Actions that would need a round trip -- run, then refresh -- rely on the interval refresh already adopted in `adr_002`. The operator runs the command in a terminal and the page catches up on its own.
 - One provenance for every report: the command wrote it, whoever typed the command.
+- Superseded in part: `adr_007_let_the_served_viewer_execute_a_closed_command_set` pays the exact price named above for three argument-free commands on a served page. The `file://` viewer keeps every consequence listed here unchanged.
 
 # References
 - The command this decision points to: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`
 - The viewer it constrains: `item_003_read_the_chain_of_operations_in_a_local_viewer`
+- Superseded in part by: `adr_007_let_the_served_viewer_execute_a_closed_command_set`
 - Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 - Related backlog: `item_003_read_the_chain_of_operations_in_a_local_viewer`
 - Related task: `task_001_deliver_the_reviewable_operation_loop`

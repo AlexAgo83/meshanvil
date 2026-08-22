@@ -1,13 +1,14 @@
 ## item_033_show_a_command_s_own_output_where_its_text_used_to_sit - Show a command's own output where its text used to sit
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Viewer parity
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 17:07:13
 
 # AI Context
 - Summary: Wires the three in-scope menu rows to the run endpoint when the page detects it was opened via --serve, showing real stdout/stderr/exit code in place of the copy flash; a file:// page and the two out-of-scope rows keep copying exactly as shipped this session.

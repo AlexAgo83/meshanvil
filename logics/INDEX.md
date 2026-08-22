@@ -6,10 +6,11 @@
 |---|---|---|---|---|---|
 | [adr_001_operation_report_format](architecture/adr_001_operation_report_format.md) | Operation report format | Accepted |  |  | architecture/adr_001_operation_report_format.md |
 | [adr_002_depend_on_logics_manager_and_reuse_its_structure](architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md) | Depend on logics-manager and reuse its structure | Accepted |  |  | architecture/adr_002_depend_on_logics_manager_and_reuse_its_structure.md |
-| [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Accepted |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
+| [adr_003_the_viewer_reads_the_command_acts](architecture/adr_003_the_viewer_reads_the_command_acts.md) | The viewer reads, the command acts | Superseded |  |  | architecture/adr_003_the_viewer_reads_the_command_acts.md |
 | [adr_004_target_technology_and_process_model](architecture/adr_004_target_technology_and_process_model.md) | Target technology and process model | Accepted |  |  | architecture/adr_004_target_technology_and_process_model.md |
 | [adr_005_execution_contract_identity_concurrency_and_exit_codes](architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md) | Execution contract: identity, concurrency and exit codes | Accepted |  |  | architecture/adr_005_execution_contract_identity_concurrency_and_exit_codes.md |
 | [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Accepted |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
+| [adr_007_let_the_served_viewer_execute_a_closed_command_set](architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md) | Let the served viewer execute a closed command set | Accepted |  |  | architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md |
 
 ## Product briefs
 
@@ -74,8 +75,8 @@ _None_
 | [item_029_measure_the_thinnest_feature_not_the_smallest_object](backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md) | Measure the thinnest feature, not the smallest object | Done |  | 100% | backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md |
 | [item_030_decide_walling_on_how_open_a_body_is](backlog/item_030_decide_walling_on_how_open_a_body_is.md) | Decide walling on how open a body is | Done |  | 100% | backlog/item_030_decide_walling_on_how_open_a_body_is.md |
 | [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Done |  | 100% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
-| [item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server](backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md) | Run a closed set of commands from the served viewer's own server | Ready |  | 0% | backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md |
-| [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | Ready |  | 0% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
+| [item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server](backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md) | Run a closed set of commands from the served viewer's own server | In progress |  | 10% | backlog/item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server.md |
+| [item_033_show_a_command_s_own_output_where_its_text_used_to_sit](backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md) | Show a command's own output where its text used to sit | In progress |  | 10% | backlog/item_033_show_a_command_s_own_output_where_its_text_used_to_sit.md |
 
 ## Tasks
 
@@ -100,7 +101,7 @@ _None_
 | [task_017_deliver_multi_project_workspaces_and_the_viewer_switcher](tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md) | Deliver multi-project workspaces and the viewer switcher | Done | Claude | 100% | tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md |
 | [task_018_deliver_the_figurine_demonstration_project](tasks/task_018_deliver_the_figurine_demonstration_project.md) | Deliver the figurine demonstration project | Done | Claude | 100% | tasks/task_018_deliver_the_figurine_demonstration_project.md |
 | [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
-| [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | Ready |  | 0% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
+| [task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served](tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md) | Let the viewer run the commands it already shows, when it is served | In progress | Claude | 0% | tasks/task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served.md |
 
 ## Runbooks
 
@@ -115,5 +116,5 @@ _None_
 | [run_007_hollow_a_printable_body_for_electronics](runbook/run_007_hollow_a_printable_body_for_electronics.md) | Hollow a printable body for electronics | Active | other | 2026-08-21 (open-bottom shell cut from a 1/10 body; three earlier approaches failed first) | runbook/run_007_hollow_a_printable_body_for_electronics.md |
 | [run_008_weld_and_clean_disconnected_shells_in_a_printable_model](runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md) | Weld and clean disconnected shells in a printable model | Active | other | 2026-08-21 (two loose appendages welded to a body, 3 shells reduced to 1, 0 non-manifold edges) | runbook/run_008_weld_and_clean_disconnected_shells_in_a_printable_model.md |
 | [run_009_repair_export_defects_in_a_cad_derived_mesh](runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md) | Repair export defects in a CAD-derived mesh file | Active | other | 2026-08-21 (one smeared patch repaired and 186 coincident duplicates removed in a 2109-object donor, 5.59 M vertices) | runbook/run_009_repair_export_defects_in_a_cad_derived_mesh.md |
-| [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output) | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
+| [run_010_verify_that_a_command_did_what_it_appeared_to_do](runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md) | Verify that a command did what it appeared to do | Active | other | 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh, from a headless-browser smoke rather than a shell | runbook/run_010_verify_that_a_command_did_what_it_appeared_to_do.md |
 | [run_011_chain_002](runbook/run_011_chain_002.md) | Chain 002 | Draft | other | Report facts captured; human procedure not yet verified | runbook/run_011_chain_002.md |

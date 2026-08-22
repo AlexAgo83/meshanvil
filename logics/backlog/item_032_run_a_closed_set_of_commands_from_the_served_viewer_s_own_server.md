@@ -1,13 +1,14 @@
 ## item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server - Run a closed set of commands from the served viewer's own server
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 17:07:13
 
 # AI Context
 - Summary: The --serve server only serves files; this adds one POST endpoint that runs one of three fixed commands as a bin/meshanvil subprocess, gated by a per-launch token and a single-flight lock, and supersedes adr_003 with the ADR that records this exact boundary.

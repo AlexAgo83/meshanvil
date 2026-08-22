@@ -4,7 +4,7 @@
 > Related request: `req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
 > Related backlog: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`, `item_033_show_a_command_s_own_output_where_its_text_used_to_sit`
 > Related task: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
-> Related architecture: (none yet)
+> Related architecture: `adr_007_let_the_served_viewer_execute_a_closed_command_set` (supersedes `adr_003_the_viewer_reads_the_command_acts` in part)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
 
 # Overview
