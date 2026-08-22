@@ -1,4 +1,8 @@
+<img src="docs/img/icon.png" alt="MeshAnvil icon" width="64" align="left" />
+
 # meshanvil
+
+<br clear="left"/>
 
 [![CI](https://github.com/AlexAgo83/meshanvil/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexAgo83/meshanvil/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)

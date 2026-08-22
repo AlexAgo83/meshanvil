@@ -8,7 +8,7 @@ from __future__ import annotations
 import functools, http.server, json, os, shutil, socketserver, subprocess, sys, time, webbrowser
 from pathlib import Path
 
-from . import logics_bridge, manifests, paths
+from . import VERSION, logics_bridge, manifests, paths
 from .engines import in_wsl
 from .i18n import SOURCE, catalogue, language, t
 
@@ -63,9 +63,12 @@ def collect_doctor(root: Path) -> dict | None:
 def build(root: Path) -> Path:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)
-    for name in ("index.html", "viewer.css", "viewer.js"):
+    for name in ("index.html", "viewer.css", "viewer.js", "icon.png"):
         shutil.copyfile(paths.code_root() / "viewer" / name, target / name)
     strings = {**catalogue(SOURCE), **catalogue(language())}   # English is the fallback
+    # Every catalogue, so Help can switch language in the page without a rebuild -- the same
+    # reason every project is read at build time instead of one at a time.
+    catalogs = {code.stem: catalogue(code.stem) for code in sorted((paths.code_root() / "locales").glob("*.json"))}
     # Every project is read at build time. The page can then switch between them without a
     # request, a rebuild or a write, which is the only way it stays what adr_003 says it is.
     known = []
@@ -86,8 +89,8 @@ def build(root: Path) -> Path:
             for ref in report.get("links", {}).get("docs", [])}
     refs |= {doc["ref"] for doc in runbooks}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-               "root": str(root), "lang": language(), "strings": strings,
-               "projects": known, "active": active["name"],
+               "root": str(root), "lang": language(), "strings": strings, "catalogs": catalogs,
+               "version": VERSION, "projects": known, "active": active["name"],
                "reports": active["reports"], "docs": logics_bridge.documents(refs),
                "runbooks": runbooks, "doctor": collect_doctor(root),
                "ops_exists": active["ops_exists"]}

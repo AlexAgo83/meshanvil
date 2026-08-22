@@ -19,8 +19,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .app{display:flex;flex-direction:column;height:100vh;min-height:640px;gap:2px;padding:2px;background:var(--line)}
 /* ---------- topbar ---------- */
 .topbar{background:var(--head);display:flex;align-items:center;gap:14px;padding:0 10px;height:34px;flex:none}
-.brand{display:flex;align-items:center;gap:7px;font-weight:600;letter-spacing:.2px}
-.brand .mark{width:15px;height:15px;border-radius:3px;background:linear-gradient(150deg,var(--active),#c4713a);display:block}
+.brand{display:flex;align-items:center;gap:7px}
+.brand .mark{width:20px;height:20px;display:block}
+.brand .wordmark{font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.6px;
+  background:linear-gradient(150deg,var(--active),#c4713a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .menubar{display:flex;gap:2px;color:var(--dim)}
 .menu{position:relative}.menu summary{list-style:none;padding:3px 8px;border-radius:var(--r);cursor:pointer}
 .menu summary::-webkit-details-marker{display:none}.menu[open] summary,.menu summary:hover{background:var(--widget);color:var(--txt)}
@@ -227,7 +229,7 @@ td.delta.moved{color:var(--active)}
 .scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.58);display:grid;place-items:center;padding:20px}
 .splash{width:min(880px,100%);max-height:100%;overflow-y:auto;background:var(--panel);border:1px solid var(--line);box-shadow:0 20px 70px rgba(0,0,0,.65)}
 .splashtop{display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(90deg,#2d2d2d,var(--region));border-bottom:1px solid var(--line)}
-.splashtop .mark{width:34px;height:34px;border-radius:7px;background:linear-gradient(150deg,var(--active),#b8632f)}
+.splashtop .mark{width:34px;height:34px;display:block}
 .splashtop h1{font-size:17px}.splashtop .ver{font-family:var(--f-mono);font-size:11px;color:var(--dimmer)}.splashtop .push,.splashfoot .push{margin-left:auto}
 .splashcols{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
 .scol{background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:9px;min-width:0}

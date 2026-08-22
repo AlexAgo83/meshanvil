@@ -44,6 +44,16 @@ SMOKE = r"""
     document.querySelector(".rbbody .rbrow").click();
     assert(document.querySelector("#props .doccontent"), "runbook row did not open its content");
 
+    assert(/^v\d+\.\d+\.\d+$/.test(document.querySelector("#app-version").textContent), "app version missing from Help");
+    const reportMenu = document.querySelectorAll(".menubar summary")[2];
+    const beforeText = reportMenu.textContent;
+    document.querySelector('[data-lang="fr"]').click();
+    assert(reportMenu.textContent !== beforeText, "language switch did not repaint the menu bar");
+    assert(document.querySelector('[data-lang="fr"]').getAttribute("aria-selected") === "true",
+      "the chosen language does not stay marked selected");
+    document.querySelector('[data-lang="en"]').click();
+    assert(reportMenu.textContent === beforeText, "switching back to English did not restore the menu bar");
+
     document.querySelector('[data-workspace="compare"]').click();
     assert(document.querySelector(".app").dataset.workspace === "compare", "compare workspace did not activate");
 

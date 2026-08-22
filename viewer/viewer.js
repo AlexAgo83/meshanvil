@@ -16,13 +16,21 @@
  *   _x?:number, _y?:number}} OperationReport */
 
 const DATA = /** @type {{reports: OperationReport[], generated_at: string, root: string,
- *   lang: string, strings: Object<string,string>, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
+ *   lang: string, strings: Object<string,string>, catalogs?: Object<string,Object<string,string>>,
+ *   version?: string, docs?: Object<string,Object>, runbooks?: Object[], doctor?: Object, ops_exists?: boolean}} */ (
   /** @type {any} */ (window).MESHANVIL
   || { reports: [], generated_at: "", root: "", lang: "en", strings: {} });
 
-/** Same catalogue as the command line, shipped in data.js. English is the fallback. */
+/** Same catalogues as the command line, all of them shipped in data.js so Help can switch
+    language without a rebuild -- the page reads, adr_003, it does not ask the engine again. */
+let lang = DATA.lang || "en";
+let strings = mergedCatalog(lang);
+function mergedCatalog(code) {
+  const books = DATA.catalogs;
+  return books ? { ...(books.en || {}), ...(books[code] || {}) } : (DATA.strings || {});
+}
 function t(key, values) {
-  let text = (DATA.strings || {})[key] || key;
+  let text = strings[key] || key;
   for (const [name, value] of Object.entries(values || {})) {
     text = text.split(`{${name}}`).join(String(value));
   }
@@ -590,6 +598,39 @@ function selectWorkspace(next) {
   outliner(); nodes(); props(); preview();
 }
 
+/** Every static label the markup carries via data-i18n*, plus the generated-at line: the parts
+    t() renders once at load and language switching has to redo the same way. */
+function applyStaticStrings() {
+  document.documentElement.lang = lang;
+  document.getElementById("generated").textContent = DATA.generated_at
+    ? t("ui.read_at", { at: DATA.generated_at }) : t("ui.no_report");
+  for (const node of document.querySelectorAll("[data-i18n]")) {
+    node.textContent = t(/** @type {HTMLElement} */ (node).dataset.i18n);
+  }
+  for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
+    node.setAttribute("aria-label", t(/** @type {HTMLElement} */ (node).dataset.i18nAriaLabel));
+  }
+  for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
+    node.setAttribute("placeholder", t(/** @type {HTMLElement} */ (node).dataset.i18nPlaceholder));
+  }
+  for (const node of document.querySelectorAll("[data-i18n-title]")) {
+    node.setAttribute("title", t(/** @type {HTMLElement} */ (node).dataset.i18nTitle));
+  }
+}
+
+function setLanguage(code) {
+  if (code === lang || !(DATA.catalogs && DATA.catalogs[code])) return;
+  lang = code;
+  strings = mergedCatalog(lang);
+  for (const button of document.querySelectorAll("[data-lang]")) {
+    button.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (button).dataset.lang === lang));
+  }
+  applyStaticStrings();
+  paintTotals(); paintProjects();
+  outliner(); nodes(); props(); preview();
+  renderSplash();
+}
+
 function renderSplash() {
   const doctor = /** @type {any} */ (DATA.doctor);
   // Where a run will land. The working directory chose it and the operator cannot see that
@@ -648,6 +689,8 @@ document.addEventListener("click", (event) => {
   if (section) { jumpReportSection(/** @type {HTMLElement} */ (section).dataset.sectionGoto || "input"); return; }
   const workspaceTab = target.closest('button[data-workspace], [role="tab"][data-workspace]');
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
+  const langTab = target.closest("[data-lang]");
+  if (langTab) { setLanguage(/** @type {HTMLElement} */ (langTab).dataset.lang || "en"); return; }
   const goto = target.closest("[data-goto]");
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
   const viewTab = target.closest("[data-view]");
@@ -706,20 +749,10 @@ function paintTotals() {
 
 place();
 paintTotals();
-document.getElementById("generated").textContent = DATA.generated_at
-  ? t("ui.read_at", { at: DATA.generated_at }) : t("ui.no_report");
-document.documentElement.lang = DATA.lang || "en";
-for (const node of document.querySelectorAll("[data-i18n]")) {
-  node.textContent = t(/** @type {HTMLElement} */ (node).dataset.i18n);
-}
-for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
-  node.setAttribute("aria-label", t(/** @type {HTMLElement} */ (node).dataset.i18nAriaLabel));
-}
-for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
-  node.setAttribute("placeholder", t(/** @type {HTMLElement} */ (node).dataset.i18nPlaceholder));
-}
-for (const node of document.querySelectorAll("[data-i18n-title]")) {
-  node.setAttribute("title", t(/** @type {HTMLElement} */ (node).dataset.i18nTitle));
+applyStaticStrings();
+document.getElementById("app-version").textContent = DATA.version ? `v${DATA.version}` : "";
+for (const button of document.querySelectorAll("[data-lang]")) {
+  button.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (button).dataset.lang === lang));
 }
 renderSplash();
 paintProjects();

@@ -170,6 +170,8 @@
     "menu_group_project": "Project",
     "menu_group_sections": "Sections",
     "menu_group_docs": "Docs",
+    "menu_group_language": "Language",
+    "menu_version": "Version",
     "command_start": "Start screen",
     "command_list": "List operations",
     "command_doctor": "Check setup",
