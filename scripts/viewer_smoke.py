@@ -82,8 +82,18 @@ SMOKE = r"""
     assert(document.querySelectorAll(".splashcols .scol").length === 3, "splash columns missing");
     assert(document.querySelector(".tpl code") && document.querySelector(".chk"), "splash command/check content missing");
     assert(document.querySelector("#splash").textContent.includes("tools/build_demo_chain.sh") && document.querySelector("#splash").textContent.includes("tools/build_figurine_chain.sh"), "demonstration build commands missing");
+    assert(document.querySelector(".tpl").tagName === "BUTTON", "a splash template is not a clickable button");
     document.querySelector('[data-splash="close"]').click();
     assert(document.querySelector("#splash").classList.contains("hidden"), "splash did not close");
+
+    // The regression this guards: opening the splash from the File menu's own "Start screen"
+    // row is a click *inside* that open <details>, so the generic "click outside a menu closes
+    // it" check never ran for it -- the dropdown used to stay open, visible on top of the modal.
+    fileMenu.open = true;
+    document.querySelector('[data-splash="open"]').click();
+    assert(!document.querySelector("#splash").classList.contains("hidden"), "splash did not open from the File menu");
+    assert(!fileMenu.open, "the File menu stayed open behind the splash it just opened");
+    document.querySelector('[data-splash="close"]').click();
 
     document.querySelector('[data-workspace="runbooks"]').click();
     assert(document.querySelector(".app").dataset.workspace === "runbooks", "runbooks workspace did not activate");

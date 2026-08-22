@@ -232,9 +232,14 @@ td.delta.moved{color:var(--active)}
    has no space to break at: the chip and the path pushed the whole panel wider. */
 .artefact{display:flex;align-items:baseline;gap:6px;min-width:0;font-size:11px;color:var(--dim)}
 .artefact .state{flex:none}
-.artefact .provenance{min-width:0}
+.artefact .pathcopy{min-width:0}
 .state{font-family:var(--f-mono);font-size:10px;padding:1px 6px;border-radius:3px;background:#25301f;color:var(--ok);border:1px solid #33452a}
 .state.pruned{background:#2a2a2a;color:var(--dimmer);border-color:#3a3a3a}
+/* A file path shown as a copy-to-clipboard button: reads like plain provenance text until
+   hovered, so it does not look like every path suddenly became a UI chrome element. */
+.pathcopy{display:inline;text-align:left;min-width:0;border-radius:2px}
+.pathcopy:hover{background:var(--sel)}
+.pathcopy .provenance{display:inline}
 
 /* ---------- first run splash ---------- */
 .scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.58);display:grid;place-items:center;padding:20px}

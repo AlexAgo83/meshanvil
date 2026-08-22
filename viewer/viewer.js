@@ -411,8 +411,8 @@ function props() {
     const setup = blender
       ? `<dl class="kv"><dt>${esc(t("ui.start_blender"))}</dt><dd>${esc(blender.path || t("ui.start_missing"))}</dd>
            <dt>${esc(t("ui.start_version"))}</dt><dd>${esc(blender.version || "—")}</dd></dl>
-         <div class="note">${esc(blender.reason || "")}</div>${blender.fix ? `<code class="command">${esc(blender.fix)}</code>` : ""}`
-      : `<div class="note">${esc(t("ui.start_doctor_missing"))}</div><code class="command">meshanvil doctor</code>`;
+         <div class="note">${esc(blender.reason || "")}</div>${blender.fix ? cmdButton(esc(blender.fix)) : ""}`
+      : `<div class="note">${esc(t("ui.start_doctor_missing"))}</div>${cmdButton("meshanvil doctor")}`;
     target.innerHTML = `<div class="title-row"><h2>${esc(t("ui.start_environment"))}</h2>
       <p class="note">${esc(t("ui.start_environment_note"))}</p></div>${block(t("ui.start_doctor"), setup, "input")}
       ${block(t("ui.start_reports"), `<div class="note">${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</div>`, "measurements")}
@@ -440,12 +440,14 @@ function props() {
 
   html += driftNotice(report);
   html += block(t("ui.input"), `<dl class="kv">
-      <dt>path</dt><dd>${esc(short(report.input.path))}</dd>
+      <dt>path</dt><dd><button type="button" class="pathcopy" data-copy="${esc(report.input.path)}"
+        title="${esc(t("ui.copy_path"))}">${esc(short(report.input.path))}</button></dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
       <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`, "input");
   if (report.output) {
     html += block(t("ui.output"), `<dl class="kv">
-      <dt>path</dt><dd>${esc(short(report.output.path))}</dd>
+      <dt>path</dt><dd><button type="button" class="pathcopy" data-copy="${esc(report.output.path)}"
+        title="${esc(t("ui.copy_path"))}">${esc(short(report.output.path))}</button></dd>
       <dt>sha-256</dt><dd>${esc((report.output.sha256 || "").slice(0, 16))}…</dd>
       <dt>state</dt><dd>${esc(report.output.state)}</dd></dl>`, "output");
   }
@@ -466,7 +468,8 @@ function props() {
   if (report.output) {
     html += block(t("ui.artefact"), `<div class="artefact">
         <span class="state ${esc(report.output.state)}">${esc(report.output.state)}</span>
-        <span class="provenance">${esc(short(report.output.path))}</span></div>
+        <button type="button" class="pathcopy" data-copy="${esc(report.output.path)}"
+          title="${esc(t("ui.copy_path"))}"><code class="provenance">${esc(short(report.output.path))}</code></button></div>
       <div class="note">${esc(t("ui.artefact_note"))}</div>`, "artefact");
   }
   html += block(t("ui.tool"), `<dl class="kv">${Object.entries(report.tool || {}).map(([key, value]) =>
@@ -575,12 +578,14 @@ function preview() {
        ${esc(r.view)}</button>`).join("");
   stage.innerHTML = `<img src="${esc(render.url)}" alt="${esc(t("ui.render_alt", {
     view: render.view, operation: report.operation }))}">`;
-  meta.innerHTML = `<div><div class="provenance">${esc(short(render.path))}</div>
+  meta.innerHTML = `<div><button type="button" class="pathcopy" data-copy="${esc(render.path)}"
+        title="${esc(t("ui.copy_path"))}"><code class="provenance">${esc(short(render.path))}</code></button>
       <div class="provenance" style="color:var(--dim);padding-top:3px">${esc(render.camera)}</div></div>
     ${render.tile ? `<div class="tilehint">▲ ${esc(t("ui.tile_hint"))}</div>` : ""}
     ${report.output ? `<div class="act">
       <span class="hint">${esc(t("ui.open_in_blender"))}</span>
-      <code class="command">blender ${esc(short(report.output.path))}</code>
+      <button type="button" data-copy="blender ${esc(report.output.path)}">
+        <code class="command">blender ${esc(short(report.output.path))}</code></button>
     </div>` : ""}
     <p class="provenance">${esc(t("ui.render_provenance"))}</p>`;
 }
@@ -638,16 +643,25 @@ function setLanguage(code) {
   renderSplash();
 }
 
+/** A command or file path shown as a real, clickable copy-to-clipboard control, everywhere
+    the viewer used to print one as plain `<code>` text with nothing wired to it. `label`
+    (already escaped HTML, e.g. a shortened path) is what shows; `full` (raw text) is what
+    gets copied, only different from `label` when the display was shortened for space. */
+function cmdButton(label, full) {
+  return `<button type="button" data-copy="${esc(full === undefined ? label : full)}">
+    <code class="command">${label}</code></button>`;
+}
+
 /** The viewer reads and starts no process -- adr_003. A menu command cannot run itself, but
     it can put its exact text where a terminal is one paste away. */
 function copyCommand(button) {
   const code = button.querySelector("code");
-  const text = button.dataset.copy || (code ? code.textContent : "");
-  const original = code ? code.textContent : "";
+  const target = code || button;   // a bare-text path button (no nested <code>) still flashes
+  const text = button.dataset.copy || target.textContent;
+  const original = target.textContent;
   const flash = () => {
-    if (!code) return;
-    code.textContent = t("ui.copied");
-    setTimeout(() => { code.textContent = original; }, 900);
+    target.textContent = t("ui.copied");
+    setTimeout(() => { target.textContent = original; }, 900);
   };
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(flash, () => legacyCopy(text, flash));
@@ -710,8 +724,8 @@ function renderSplash() {
     : "";
   const blender = doctor && (doctor.requirements || []).find((item) => item.name === "blender");
   const check = blender
-    ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br><code>${esc(blender.fix)}</code>` : ""}</span></span>`
-    : `<span class="chk warn"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(t("ui.start_doctor_missing"))}<br><code>meshanvil doctor</code></span></span>`;
+    ? `<span class="chk ${blender.path ? "ok" : "warn"}"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(blender.path || t("ui.start_missing"))}${blender.fix ? `<br>${cmdButton(esc(blender.fix))}` : ""}</span></span>`
+    : `<span class="chk warn"><span><b>${esc(t("ui.start_doctor"))}</b><br>${esc(t("ui.start_doctor_missing"))}<br>${cmdButton("meshanvil doctor")}</span></span>`;
   // Each template is a real button, using the same copy-to-clipboard mechanism as the File
   // menu's command rows (copyCommand, wired below through the shared [data-copy] handler).
   // These three scripts are destructive by their own design (they rebuild a whole sibling
@@ -724,7 +738,7 @@ function renderSplash() {
     </section><section class="scol"><h2>${esc(t("ui.splash_recent"))}</h2>
       <p>${esc(DATA.reports.length ? t("ui.splash_recent_found", { count: DATA.reports.length }) : t("ui.splash_recent_empty"))}</p>
       <p>${esc(t("ui.splash_demo_note"))}</p>
-      <code class="command">work/ops</code>
+      ${cmdButton("work/ops")}
     </section><section class="scol"><h2>${esc(t("ui.start_environment"))}</h2>
       ${project}
       ${check}<span class="chk ${DATA.ops_exists ? "ok" : "warn"}"><span><b>${esc(t("ui.start_reports"))}</b><br>${esc(DATA.ops_exists ? t("ui.start_ops_ready") : t("ui.start_ops_missing"))}</span></span>

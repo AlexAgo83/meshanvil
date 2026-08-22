@@ -179,6 +179,7 @@
     "command_prune": "Preview pruning",
     "command_runbook": "Create a runbook",
     "copied": "copied ✓",
+    "copy_path": "Copy this path",
     "running": "running…",
     "run_busy": "a command is already running; try again once it finishes",
     "run_refused": "refused ({status})",

@@ -179,6 +179,7 @@
     "command_prune": "Prévisualiser la purge",
     "command_runbook": "Créer un runbook",
     "copied": "copié ✓",
+    "copy_path": "Copier ce chemin",
     "running": "en cours…",
     "run_busy": "une commande tourne déjà ; réessaie une fois terminée",
     "run_refused": "refusé ({status})",
