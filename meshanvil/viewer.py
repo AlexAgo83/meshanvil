@@ -5,7 +5,7 @@ cross-origin request -- but it can load a classic script. That is why the report
 as an assignment rather than served. `--serve` exists for auto-refresh; see adr_004.
 """
 from __future__ import annotations
-import functools, http.server, json, os, shutil, socketserver, subprocess, sys, time, webbrowser
+import functools, http.server, json, os, secrets, shutil, subprocess, sys, threading, time, webbrowser
 from pathlib import Path
 
 from . import VERSION, logics_bridge, manifests, paths
@@ -14,6 +14,10 @@ from .i18n import SOURCE, catalogue, language, t
 
 OPS = "work/ops"
 OUT = "work/viewer"
+
+# adr_007: the closed command set a served page may run. A name from the page selects one of
+# these argument lists; nothing the page sends ever becomes part of the command line itself.
+RUNNABLE = {"list": ["list"], "doctor": ["doctor"], "prune": ["prune", "--dry-run"]}
 
 
 def collect(root: Path, page: Path) -> list[dict]:
@@ -60,7 +64,7 @@ def collect_doctor(root: Path) -> dict | None:
     return value if isinstance(value, dict) else None
 
 
-def build(root: Path) -> Path:
+def build(root: Path, run_token: str | None = None) -> Path:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)
     for name in ("index.html", "viewer.css", "viewer.js", "icon.png"):
@@ -90,7 +94,7 @@ def build(root: Path) -> Path:
     refs |= {doc["ref"] for doc in runbooks}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings, "catalogs": catalogs,
-               "version": VERSION, "projects": known, "active": active["name"],
+               "version": VERSION, "run_token": run_token, "projects": known, "active": active["name"],
                "reports": active["reports"], "docs": logics_bridge.documents(refs),
                "runbooks": runbooks, "doctor": collect_doctor(root),
                "ops_exists": active["ops_exists"]}
@@ -109,9 +113,61 @@ def open_in_browser(page: Path) -> None:
     webbrowser.open(page.as_uri())
 
 
-def serve(directory: Path) -> None:
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(directory))
-    with socketserver.TCPServer(("127.0.0.1", 0), handler) as server:
+def run_command(root: Path, name: str) -> dict:
+    """adr_007: the same entry point a person would type, on the fixed argument list `name`
+    names -- never on anything else the request carries."""
+    args = RUNNABLE[name]
+    completed = subprocess.run(
+        [sys.executable, str(paths.code_root() / "bin" / "meshanvil"), *args],
+        cwd=str(root), capture_output=True, text=True, timeout=120)
+    return {"stdout": completed.stdout, "stderr": completed.stderr, "exit_code": completed.returncode}
+
+
+def make_server(directory: Path, root: Path, token: str) -> http.server.ThreadingHTTPServer:
+    """Split from `serve()` so a test can start it, hit it, and shut it down without living
+    inside `serve_forever()`. ThreadingHTTPServer, not the single-threaded TCPServer file
+    serving used before: the single-flight lock below only refuses a genuinely concurrent
+    request. A server that handled one connection at a time would just queue the second
+    click behind the first, which is not what adr_007 decided."""
+    lock = threading.Lock()
+
+    class RunHandler(http.server.SimpleHTTPRequestHandler):
+        def do_POST(self):
+            if self.path != "/run":
+                self.send_error(404, "not found")
+                return
+            if self.headers.get("X-Meshanvil-Token") != token:
+                self.send_error(401, "bad or missing token")
+                return
+            length = int(self.headers.get("Content-Length") or 0)
+            try:
+                body = json.loads(self.rfile.read(length) or b"{}")
+            except json.JSONDecodeError:
+                self.send_error(400, "malformed request body")
+                return
+            if body.get("command") not in RUNNABLE:
+                self.send_error(400, "unknown command")
+                return
+            if not lock.acquire(blocking=False):
+                self.send_error(409, "a command is already running")
+                return
+            try:
+                result = run_command(root, body["command"])
+            finally:
+                lock.release()
+            payload = json.dumps(result).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+
+    handler = functools.partial(RunHandler, directory=str(directory))
+    return http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+
+
+def serve(directory: Path, root: Path, token: str) -> None:
+    with make_server(directory, root, token) as server:
         port = server.server_address[1]
         print(t("view.serving", port=port))
         try:
@@ -122,7 +178,8 @@ def serve(directory: Path) -> None:
 
 def view(serve_it: bool = False, open_it: bool = True) -> int:
     root = paths.work_root()
-    page = build(root)
+    token = secrets.token_urlsafe(24) if serve_it else None
+    page = build(root, run_token=token)
     count = len(json.loads(
         (page.parent / "data.js").read_text(encoding="utf-8").split("= ", 1)[1].rstrip(";\n")
     )["reports"])
@@ -130,7 +187,7 @@ def view(serve_it: bool = False, open_it: bool = True) -> int:
     if serve_it:
         if open_it:
             print(t("view.open_address"))
-        serve(page.parent)
+        serve(page.parent, root, token)
         return 0
     if open_it:
         open_in_browser(page)

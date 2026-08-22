@@ -4,7 +4,7 @@
 Covers what is easy to get quietly wrong: identity allocation under collision, parameter
 resolution, the bounding-box delta, and the refusals that must leave work/ops untouched.
 """
-import json, os, shutil, sys, tempfile
+import http.client, json, os, shutil, sys, tempfile, threading, time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -208,6 +208,61 @@ def check_viewer_start(tmp: Path):
     assert payload["reports"] == [] and payload["doctor"]["ok"] is False and not payload["ops_exists"]
 
 
+def check_run_endpoint(tmp: Path):
+    """adr_007: token, closed command set, single-flight -- exercised over a real socket
+    against the real handler, with subprocess.run patched so no Blender and no bin/meshanvil
+    process is needed."""
+    root = tmp / "run-endpoint"
+    (root / "work" / "ops").mkdir(parents=True)
+    token = "selfcheck-token"
+    server = viewer.make_server(root, root, token)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+
+    def post(headers, body):
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+        conn.request("POST", "/run", body=json.dumps(body), headers=headers)
+        response = conn.getresponse()
+        status = response.status
+        response.read()
+        conn.close()
+        return status
+
+    original_run = viewer.subprocess.run
+    try:
+        assert post({"X-Meshanvil-Token": "wrong"}, {"command": "list"}) == 401, "a bad token was accepted"
+        assert post({}, {"command": "list"}) == 401, "a missing token was accepted"
+        assert post({"X-Meshanvil-Token": token}, {"command": "rm -rf /"}) == 400, "a command outside the closed set was accepted"
+
+        viewer.subprocess.run = lambda *a, **k: SimpleNamespace(stdout="ok", stderr="", returncode=0)
+        assert post({"X-Meshanvil-Token": token}, {"command": "list"}) == 200, "a valid request was refused"
+
+        released = threading.Event()
+
+        def slow_run(*a, **k):
+            released.wait(timeout=2)
+            return SimpleNamespace(stdout="ok", stderr="", returncode=0)
+        viewer.subprocess.run = slow_run
+
+        statuses = []
+
+        def call():
+            statuses.append(post({"X-Meshanvil-Token": token}, {"command": "doctor"}))
+        first = threading.Thread(target=call)
+        first.start()
+        time.sleep(0.2)   # let the first request take the lock before the second arrives
+        second_status = post({"X-Meshanvil-Token": token}, {"command": "doctor"})
+        released.set()
+        first.join(timeout=2)
+        assert second_status == 409, "a concurrent request was queued instead of refused"
+        assert statuses == [200], "the in-flight request did not complete normally"
+    finally:
+        viewer.subprocess.run = original_run
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+
 def check_viewer_comparison_layout():
     css = (ROOT / "viewer" / "viewer.css").read_text(encoding="utf-8")
     script = (ROOT / "viewer" / "viewer.js").read_text(encoding="utf-8")
@@ -279,6 +334,7 @@ def main() -> int:
         check_wsl_boundary(tmp)
         check_doctor_exit_code()
         check_viewer_start(tmp)
+        check_run_endpoint(tmp)
         check_viewer_comparison_layout()
         check_logics_bridge()
         check_prune(tmp)
