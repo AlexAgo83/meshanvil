@@ -1,13 +1,15 @@
 ## task_021_replace_the_removed_demonstration_assets_with_procedurally_generated_ones - Replace the removed demonstration assets with procedurally generated ones
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: Claude
+> Indicators reviewed: 2026-08-22 19:01:53
 
 # AI Context
 - Summary: Orchestrates building both procedural generators, wiring them as the no-argument default into the two build scripts, and re-verifying the same branch lessons hold on the generated subjects.

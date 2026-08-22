@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Rebuild the demonstration dataset: the shipped asset, then the real operations run through
+# Rebuild the demonstration dataset: a generated asset, then the real operations run through
 # the real CLI. Nothing here fabricates a report -- every number in work/ops/ comes out of
 # Blender, which is the whole point of the viewer.
 #
-# fixtures/demo_car.blend is a render asset, not a CAD model, and that is the scenario: it
-# carries every failure a printing pipeline runs into, none of them planted. Each step below
-# is where one of them surfaces, and the branch is where skipping a step destroys the model
-# with every topology check still green.
+# No donor file is shipped or downloaded: tools/make_demo_vehicle.py builds the asset from
+# primitives, on the fly, with the same class of defects a real render asset carries, planted
+# on purpose -- unapplied Mirror modifiers, panels with no thickness, a part sealed inside the
+# shell, a coincident duplicate. Each step below is where one of them surfaces, and the branch
+# is where skipping a step destroys the model with every topology check still green.
 #
 # Any .blend works in its place; no operation in the chain is specific to this one.
 #
@@ -18,8 +19,15 @@
 set -uo pipefail
 INSTALL="$(cd "$(dirname "$0")/.." && pwd)"
 M="$INSTALL/bin/meshanvil"
-ASSET="${1:-$INSTALL/fixtures/demo_car.blend}"
+BLENDER="${MESHANVIL_BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}"
 PROJECT="$INSTALL/work/demo/vehicle"
+
+ASSET="${1:-}"
+if [ -z "$ASSET" ]; then
+  echo "== generating a vehicle-scale asset (no asset given)"
+  ASSET="$INSTALL/work/out/generated_vehicle.blend"
+  "$BLENDER" -b -P "$INSTALL/tools/make_demo_vehicle.py" -- "$ASSET"
+fi
 
 echo "== project"
 rm -rf "$PROJECT"
@@ -36,23 +44,24 @@ $M run scan_defects work/out/demo_car.blend
 echo "== 002 drop the coincident duplicates"
 $M run scan_defects work/out/demo_car_fixed.blend --set fix=true --from 001
 
-echo "== 003 bake the stack: fifteen Mirror hold half the car"
+echo "== 003 bake the stack: Mirror holds the side panel and both wheel pairs"
 $M run apply_modifiers work/out/demo_car_fixed.blend --set max_subsurf_level=1
 
-echo "== 004 what is never visible from outside"
+echo "== 004 what is visible from outside, and how much"
 $M run ray_visibility work/out/demo_car_fixed_baked.blend --set grid=48
 echo "== 004a back to real size, on the print bed"
-$M run recenter work/out/demo_car_fixed_baked.blend --set scale=0.62
+$M run recenter work/out/demo_car_fixed_baked.blend --set scale=0.625
 
 echo "== 005 wall every open panel, above the voxel that follows"
 $M run solidify work/out/demo_car_fixed_baked_placed.blend --set thickness_mm=20 --set next_voxel_mm=12
 
 # The branch worth reading. Same parent, same voxel, one step apart: the walled body remeshes
-# into a solid, the bare panels remesh into shreds and the prune throws the car away. Both
-# report every topology check green; only the shell count and the render disagree.
+# into a single closed shell and reports ok. The bare panels, with no wall to hold a volume,
+# shred into dozens of fragments and the bounding box itself collapses -- the operation
+# catches that on its own and refuses it, kept as evidence rather than silently reported.
 echo "== 006 one closed solid at 12 mm"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed_solid.blend --set voxel_mm=12
-echo "== 005a the same remesh without the wall -- the trap"
+echo "== 005a the same remesh without the wall -- refused, kept as evidence"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed.blend --set voxel_mm=12
 
 # A coarse voxel is what someone reaches for to cut the triangle count. The tolerance is the

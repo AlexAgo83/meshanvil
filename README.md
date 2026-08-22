@@ -183,19 +183,22 @@ that share nothing.
 Two demonstrations, sibling projects under `work/demo/`, so the viewer can offer both:
 
 ```
-tools/build_demo_chain.sh <asset.blend>        # a render-scale subject
-tools/build_figurine_chain.sh <asset.blend>    # a small, sound subject
+tools/build_demo_chain.sh [asset.blend]        # a render-scale subject
+tools/build_figurine_chain.sh [asset.blend]    # a small, sound subject
 ```
 
-Neither script ships a bundled example: point either at a `.blend` of your own. No operation
-in either chain is specific to one subject.
+Neither ships a bundled example: given no argument, each generates its own subject from
+primitives (`tools/make_demo_vehicle.py`, `tools/make_demo_figure.py`) -- nothing to license,
+nothing to verify, everything regenerates. Point either at a `.blend` of your own instead; no
+operation in either chain is specific to one subject.
 
 The vehicle-scale chain is built to expose defects a render asset typically carries and a
-printing pipeline cannot ignore: unapplied modifiers, panels with no thickness, geometry never
-visible from any exterior angle. Its branch is the part worth reading -- two siblings off the
-same parent, at the same voxel, one step apart: one remeshes a walled body into a single closed
-shell, the other remeshes the bare panels into fragments with the body gone, and both report
-`ok`.
+printing pipeline cannot ignore: unapplied modifiers, panels with no thickness, most of an
+interior part staying out of sight behind them. Its branch is the part worth reading -- two
+siblings off the same parent, at the same voxel, one step apart: one remeshes a walled body
+into a single closed shell and reports `ok`; the other remeshes the bare panels into
+fragments with the body gone, and the bounding box collapse that follows is what catches it
+and keeps it as evidence, refused rather than silently reported.
 
 The figurine-scale chain is built around a sound, closed, single-object subject reduced to a
 small print size. The defect sweep reporting nothing on it is the point: a demonstration where
