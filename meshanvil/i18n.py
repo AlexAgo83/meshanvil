@@ -13,8 +13,8 @@ SOURCE = "en"
 
 def root() -> Path:
     """Locales ship with the tool, never with a project."""
-    from .paths import code_root
-    return code_root()
+    from .paths import asset_root
+    return asset_root("locales")
 
 
 def language() -> str:
@@ -26,12 +26,12 @@ def language() -> str:
         except (ValueError, TypeError):
             chosen = ""
     chosen = (chosen or SOURCE).split("_")[0].lower()
-    return chosen if (root() / "locales" / f"{chosen}.json").exists() else SOURCE
+    return chosen if (root() / f"{chosen}.json").exists() else SOURCE
 
 
 @lru_cache(maxsize=None)
 def catalogue(lang: str) -> dict:
-    path = root() / "locales" / f"{lang}.json"
+    path = root() / f"{lang}.json"
     try:
         def flatten(values: dict, prefix: str = "") -> dict:
             result = {}

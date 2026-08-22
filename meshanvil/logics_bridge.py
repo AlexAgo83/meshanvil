@@ -4,13 +4,14 @@ import json, shutil, subprocess
 from pathlib import Path
 
 
-def call(*args: str) -> tuple[dict | None, str | None]:
+def call(*args: str, cwd: Path | None = None) -> tuple[dict | None, str | None]:
     command = shutil.which("logics-manager")
     if not command:
         return None, "unavailable"
     try:
         done = subprocess.run([command, *args, "--format", "json"], text=True,
-                              capture_output=True, check=False, timeout=15)
+                              capture_output=True, check=False, timeout=15,
+                              cwd=str(cwd) if cwd else None)
         if done.returncode:
             return None, done.stderr.strip() or done.stdout.strip() or "failed"
         return json.loads(done.stdout), None
@@ -28,21 +29,21 @@ def evidence(ref: str, report_path: Path, report: dict, command: str) -> str | N
                       and value is not None)
     summary = f"{report.get('operation')} succeeded" + (f" ({facts})" if facts else "")
     _, error = call("flow", "evidence", "add", task, "--ac", ac, "--summary", summary,
-                    "--command", command, "--result", str(report_path))
+                    "--command", command, "--result", str(report_path), cwd=report_path.parents[2])
     return error
 
 
-def documents(refs: set[str]) -> dict[str, dict]:
+def documents(refs: set[str], root: Path | None = None) -> dict[str, dict]:
     result = {}
     for ref in refs:
-        value, error = call("sync", "read-doc", ref)
+        value, error = call("sync", "read-doc", ref, cwd=root)
         result[ref] = value if value else {"ref": ref, "missing": True, "error": error}
     return result
 
 
 def runbooks(root: Path | None = None) -> list[dict]:
     """All runbook metadata, so a dormant method is still visible in the viewer."""
-    value, error = call("sync", "list-docs", "--kind", "runbook")
+    value, error = call("sync", "list-docs", "--kind", "runbook", cwd=root)
     items = value.get("items", []) if value and not error else []
     for item in items:
         item["purpose"] = purpose(root, item.get("path"))
@@ -85,7 +86,7 @@ def runbook(root: Path, install: Path, chain: str) -> tuple[str | None, str | No
             reports.append(report)
     if not reports:
         return None, "chain_missing"
-    result, error = call("flow", "companion", "runbook", "--title", f"Chain {chain}")
+    result, error = call("flow", "companion", "runbook", "--title", f"Chain {chain}", cwd=root)
     if error:
         return None, error
     path = install / result["path"]

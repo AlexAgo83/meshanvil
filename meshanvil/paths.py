@@ -18,6 +18,7 @@ itself has always been, so nothing that worked before needs a migration.
 """
 from __future__ import annotations
 
+from importlib import resources
 import os
 from pathlib import Path
 
@@ -34,6 +35,14 @@ def code_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
+def asset_root(name: str) -> Path:
+    """Runtime assets come from the checkout when present, otherwise from the installed wheel."""
+    found = code_root() / name
+    if found.exists():
+        return found
+    return Path(resources.files(name))
+
+
 def resolve(start: Path | None = None) -> tuple[Path, str]:
     """The active project and the rule that chose it, so a caller can say which applied."""
     override = os.environ.get(OVERRIDE)
@@ -43,7 +52,7 @@ def resolve(start: Path | None = None) -> tuple[Path, str]:
     for candidate in (here, *here.parents):
         if (candidate / MARKER).is_dir():
             return candidate, BY_MARKER
-    return code_root(), BY_INSTALLATION
+    return Path.cwd().resolve(), BY_INSTALLATION
 
 
 def work_root(start: Path | None = None) -> Path:
@@ -52,8 +61,7 @@ def work_root(start: Path | None = None) -> Path:
 
 def name(root: Path) -> str:
     """What to call a project on screen. The installation is not one, and says so."""
-    root = Path(root).resolve()
-    return "installation" if root == code_root() else root.name
+    return Path(root).resolve().name or "project"
 
 
 def projects(root: Path | None = None) -> list[Path]:

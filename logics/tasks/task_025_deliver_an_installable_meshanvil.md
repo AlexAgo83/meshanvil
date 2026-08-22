@@ -1,14 +1,15 @@
 ## task_025_deliver_an_installable_meshanvil - Deliver an installable meshanvil
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 35%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:27
+> Indicators reviewed: 2026-08-23 01:49:59
+> Owner: codex
 
 # AI Context
 - Summary: Sequences the packaging: declare the package, unify asset resolution, verify the built package, repoint the viewer's subprocess, settle the runbook question, then the release ADR and procedure.

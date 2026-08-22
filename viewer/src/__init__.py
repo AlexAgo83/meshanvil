@@ -1,0 +1,1 @@
+"""Packaged viewer source assets."""

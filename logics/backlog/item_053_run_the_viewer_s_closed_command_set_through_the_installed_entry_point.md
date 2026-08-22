@@ -1,14 +1,14 @@
 ## item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point - Run the viewer's closed command set through the installed entry point
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 35%
 > Complexity: Low
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:02:26
+> Indicators reviewed: 2026-08-23 01:49:59
 
 # AI Context
 - Summary: The served viewer's closed command set runs through the installed entry point instead of a file inside a checkout, with adr_007's guarantees untouched.

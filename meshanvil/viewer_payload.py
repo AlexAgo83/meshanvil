@@ -49,20 +49,20 @@ def collect_doctor(root: Path) -> dict | None:
 
 def payload(root: Path, target: Path, run_token: str | None = None) -> dict:
     strings = {**catalogue(SOURCE), **catalogue(language())}
-    catalogs = {code.stem: catalogue(code.stem) for code in sorted((paths.code_root() / "locales").glob("*.json"))}
+    catalogs = {code.stem: catalogue(code.stem) for code in sorted(paths.asset_root("locales").glob("*.json"))}
     known = [{"name": paths.name(project), "path": str(project),
               "reports": collect(project, target),
               "ops_exists": (project / OPS).is_dir()}
              for project in paths.projects(root)]
     active = next((entry for entry in known if entry["reports"]), known[0])
-    runbooks = logics_bridge.runbooks(paths.code_root())
+    runbooks = logics_bridge.runbooks(root)
     refs = {ref for entry in known for report in entry["reports"]
             for ref in report.get("links", {}).get("docs", [])}
     refs |= {doc["ref"] for doc in runbooks}
     return {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "root": str(root), "lang": language(), "strings": strings, "catalogs": catalogs,
             "version": VERSION, "run_token": run_token, "projects": known, "active": active["name"],
-            "reports": active["reports"], "docs": logics_bridge.documents(refs),
+            "reports": active["reports"], "docs": logics_bridge.documents(refs, root),
             "runbooks": runbooks, "doctor": collect_doctor(root), "files": file_references(known),
             "ops_exists": active["ops_exists"]}
 
@@ -101,7 +101,7 @@ def build(root: Path, run_token: str | None = None) -> tuple[Path, dict]:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)
     for name in ("index.html", "viewer.css", "viewer.js", "icon.png"):
-        shutil.copyfile(paths.code_root() / "viewer" / name, target / name)
+        shutil.copyfile(paths.asset_root("viewer") / name, target / name)
     data = payload(root, target, run_token)
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(data, indent=1) + ";\n", encoding="utf-8")

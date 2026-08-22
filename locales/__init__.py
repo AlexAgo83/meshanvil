@@ -1,0 +1,1 @@
+"""Packaged string catalogues."""

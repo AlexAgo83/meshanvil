@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json, subprocess, sys
+import shutil
 from urllib.parse import urlparse
 
 from .. import doctor, manifests, paths
@@ -17,8 +18,10 @@ def run_command(root, name: str) -> dict:
     if name == "doctor":
         return {"stdout": "", "stderr": "", "exit_code": 0, "data": doctor.check(root)}
     args = RUNNABLE[name]
+    command = shutil.which("meshanvil") or sys.executable
+    prefix = [command] if command != sys.executable else [sys.executable, "-m", "meshanvil.cli"]
     completed = subprocess.run(
-        [sys.executable, str(paths.code_root() / "bin" / "meshanvil"), *args],
+        [*prefix, *args],
         cwd=str(root), capture_output=True, text=True, timeout=120)
     return {"stdout": completed.stdout, "stderr": completed.stderr, "exit_code": completed.returncode}
 

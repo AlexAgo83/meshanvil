@@ -20,7 +20,7 @@ def _stamp(paths: list[Path]) -> tuple:
 
 def signatures(root: Path) -> dict[str, tuple]:
     reports = sorted((root / viewer_payload.OPS).glob("*.json"))
-    runbooks = [Path(doc["path"]) for doc in logics_bridge.runbooks(paths.code_root()) if doc.get("path")]
+    runbooks = [root / doc["path"] for doc in logics_bridge.runbooks(root) if doc.get("path")]
     return {
         "reports": _stamp(reports),
         "doctor": _stamp([root / "work" / "doctor.json"]),

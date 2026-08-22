@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meshanvil"
+dynamic = ["version"]
+description = "Reviewable 3D operations driven from a small stdlib CLI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = []
+
+[project.scripts]
+meshanvil = "meshanvil.cli:main"
+
+[tool.setuptools]
+packages = ["meshanvil", "meshanvil.viewer_routes", "meshanvil_engine", "tools", "pipeline", "viewer", "viewer.src", "locales"]
+
+[tool.setuptools.dynamic]
+version = {attr = "meshanvil.VERSION"}
+
+[tool.setuptools.package-data]
+locales = ["*.json"]
+tools = ["*.op.json", "*.sh"]
+viewer = ["*.html", "*.css", "*.js", "*.png"]
+"viewer.src" = ["*.js"]

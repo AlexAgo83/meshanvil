@@ -11,16 +11,16 @@ SEARCH = ("tools", "pipeline")
 
 def root() -> Path:
     """Where the operations live. A project holds work, never operations."""
-    return paths.code_root()
+    return paths.asset_root(".")
 
 
 def discover() -> dict[str, dict]:
     """Every manifest found, keyed by operation name. Adding a script adds an operation."""
     found: dict[str, dict] = {}
     for directory in SEARCH:
-        for path in sorted((root() / directory).glob("*.op.json")):
+        for path in sorted(paths.asset_root(directory).glob("*.op.json")):
             manifest = json.loads(path.read_text(encoding="utf-8"))
-            manifest["manifest_path"] = str(path.relative_to(root()))
+            manifest["manifest_path"] = f"{directory}/{path.name}"
             found[manifest["operation"]] = manifest
     return found
 

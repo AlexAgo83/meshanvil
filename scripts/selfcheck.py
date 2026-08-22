@@ -239,7 +239,8 @@ def check_run_endpoint(tmp: Path):
 
         released = threading.Event()
 
-        def slow_run(*a, **k):
+        def slow_run(command, *a, **k):
+            assert "bin/meshanvil" not in " ".join(map(str, command)), command
             released.wait(timeout=2)
             return SimpleNamespace(stdout="ok", stderr="", returncode=0)
 

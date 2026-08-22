@@ -79,7 +79,8 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.command == "view":
         return viewer.view(serve_it=True, open_it=not arguments.no_open, file_it=arguments.file)
     if arguments.command == "runbook":
-        path, error = logics_bridge.runbook(paths.work_root(), paths.code_root(), arguments.chain)
+        root = paths.work_root()
+        path, error = logics_bridge.runbook(root, root, arguments.chain)
         if error:
             message = (t("bridge.runbook_unavailable") if error == "unavailable"
                        else t("bridge.runbook_error", reason=error))
@@ -107,3 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     except (runner.Refused, engines.EngineMissing, KeyError) as refusal:
         print(str(refusal).strip("'"), file=sys.stderr)
         return runner.EXIT_REFUSED
+
+
+if __name__ == "__main__":
+    sys.exit(main())

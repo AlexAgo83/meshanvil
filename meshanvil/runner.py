@@ -131,7 +131,7 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         evidence: str | None = None) -> int:
     declared_parent = parent
     root = paths.work_root()          # reports, sources, renders, locks
-    install = paths.code_root()       # the operation script and the engine package
+    install = paths.asset_root(".")   # operation scripts and the engine package
     known = manifests.discover()
     if operation not in known:
         raise Refused(t("run.unknown_operation", name=operation))
@@ -172,7 +172,7 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
             "operation": operation,
             "kind": manifest["kind"],
             "engine": manifest["engine"],
-            "script": manifest["script"],
+            "script": str(paths.asset_root(Path(manifest["script"]).parts[0]) / Path(manifest["script"]).name),
             "target": str(source),
             "params": values,
             "input_sha256": digest,
@@ -187,17 +187,17 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         job_path.write_text(json.dumps(job, indent=1) + "\n", encoding="utf-8")
 
         if manifest["engine"] == "freecad":
-            command = [str(binary), "-c", engines.for_engine(install / manifest["script"], binary),
+            command = [str(binary), "-c", engines.for_engine(Path(job["script"]), binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         elif not opens_target:
             # The engine cannot open an interchange file as a scene; the script imports it
             # into an empty one and the job carries the path.
             command = [str(binary), "-b",
-                       "-P", engines.for_engine(install / manifest["script"], binary),
+                       "-P", engines.for_engine(Path(job["script"]), binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         else:
             command = [str(binary), "-b", engines.for_engine(source, binary),
-                       "-P", engines.for_engine(install / manifest["script"], binary),
+                       "-P", engines.for_engine(Path(job["script"]), binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         started = time.time()
         try:
