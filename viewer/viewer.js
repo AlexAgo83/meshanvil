@@ -30,7 +30,7 @@ function t(key, values) {
 }
 
 /** @type {Map<string, OperationReport>} */
-const BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+let BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
 let current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
 let currentDoc = null;
 let view = 0;
@@ -60,6 +60,45 @@ function artefactState(report) {
   if (!output) return report.status;
   if (output.pinned) return "pinned";
   return output.state === "pruned" ? "pruned" : report.status;
+}
+
+/* ---------- projects ----------
+   The page holds them all and shows one. Drawing two unrelated chains in one graph would
+   merge their outliner groups and sum totals across subjects that share nothing, so the
+   switcher selects rather than combines. */
+function projectEntries() {
+  return /** @type {any[]} */ (/** @type {any} */ (DATA).projects || []);
+}
+
+function selectProject(name) {
+  const entry = projectEntries().find((p) => p.name === name);
+  if (!entry) return;
+  /** @type {any} */ (DATA).active = entry.name;
+  DATA.reports = entry.reports;
+  DATA.ops_exists = entry.ops_exists;
+  BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+  current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
+  currentDoc = null;
+  view = 0;
+  start = !DATA.reports.length;
+  place();
+  paintProjects();
+  paintTotals();
+  outliner(); nodes(); props(); preview();
+}
+
+function paintProjects() {
+  const entries = projectEntries();
+  const pick = document.getElementById("project-pick");
+  const select = /** @type {HTMLSelectElement} */ (document.getElementById("project-select"));
+  const active = /** @type {any} */ (DATA).active;
+  document.getElementById("project-name").textContent = active || "—";
+  // One project needs no chooser, and an empty one would only be furniture.
+  pick.classList.toggle("hidden", entries.length < 2);
+  if (entries.length < 2) return;
+  select.innerHTML = entries.map((entry) =>
+    `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)} · ${
+      esc(t("ui.project_reports", { count: entry.reports.length }))}</option>`).join("");
 }
 
 /* ---------- layout: depth from the parent chain, siblings stacked ---------- */
@@ -615,31 +654,37 @@ document.getElementById("start-screen").addEventListener("click", () => {
   showSplash(true);
 });
 
-place();
-document.getElementById("chain-name").textContent =
-  DATA.reports.length ? chainName(DATA.reports) : "—";
-document.getElementById("op-count").textContent = t("ui.operations", { count: DATA.reports.length });
-document.getElementById("schema").textContent =
-  DATA.reports.length ? `schema ${DATA.reports[0].schema_version}` : "";
-document.getElementById("status-counts").textContent =
-  t("ui.operations", { count: DATA.reports.length }) + " · "
-  + t("ui.failed_kept", { count: DATA.reports.filter((r) => r.status === "failed").length });
-// A branch is a report with more than one child: that is where a chain forked and where a
-// reviewer has to choose. Counting parents would count the trunk as a branch too.
-const children = new Map();
-for (const report of DATA.reports) {
-  const parent = report.links && report.links.parent;
-  if (parent) children.set(parent, (children.get(parent) || 0) + 1);
+/** Everything that counts the chain. Re-run on a project switch: totals summed across two
+    unrelated subjects describe neither of them. */
+function paintTotals() {
+  document.getElementById("chain-name").textContent =
+    DATA.reports.length ? chainName(DATA.reports) : "—";
+  document.getElementById("op-count").textContent = t("ui.operations", { count: DATA.reports.length });
+  document.getElementById("schema").textContent =
+    DATA.reports.length ? `schema ${DATA.reports[0].schema_version}` : "";
+  document.getElementById("status-counts").textContent =
+    t("ui.operations", { count: DATA.reports.length }) + " · "
+    + t("ui.failed_kept", { count: DATA.reports.filter((r) => r.status === "failed").length });
+  // A branch is a report with more than one child: that is where a chain forked and where a
+  // reviewer has to choose. Counting parents would count the trunk as a branch too.
+  const children = new Map();
+  for (const report of DATA.reports) {
+    const parent = report.links && report.links.parent;
+    if (parent) children.set(parent, (children.get(parent) || 0) + 1);
+  }
+  document.getElementById("status-branches").textContent =
+    t("ui.branches", { count: [...children.values()].filter((n) => n > 1).length });
+  const leaf = [...DATA.reports].reverse().find((r) =>
+    (r.after && r.after.vertices !== null && r.after.vertices !== undefined)
+    || (r.measured && r.measured.vertices !== null && r.measured.vertices !== undefined));
+  document.getElementById("status-vertices").textContent = leaf
+    ? t("ui.vertices_total", { count: num((leaf.after || leaf.measured).vertices) }) : "";
+  document.getElementById("status-schema").textContent = DATA.reports.length
+    ? t("ui.schema_ops", { version: DATA.reports[0].schema_version }) : "";
 }
-document.getElementById("status-branches").textContent =
-  t("ui.branches", { count: [...children.values()].filter((n) => n > 1).length });
-const leaf = [...DATA.reports].reverse().find((r) =>
-  (r.after && r.after.vertices !== null && r.after.vertices !== undefined)
-  || (r.measured && r.measured.vertices !== null && r.measured.vertices !== undefined));
-document.getElementById("status-vertices").textContent = leaf
-  ? t("ui.vertices_total", { count: num((leaf.after || leaf.measured).vertices) }) : "";
-document.getElementById("status-schema").textContent = DATA.reports.length
-  ? t("ui.schema_ops", { version: DATA.reports[0].schema_version }) : "";
+
+place();
+paintTotals();
 document.getElementById("generated").textContent = DATA.generated_at
   ? t("ui.read_at", { at: DATA.generated_at }) : t("ui.no_report");
 document.documentElement.lang = DATA.lang || "en";
@@ -656,5 +701,9 @@ for (const node of document.querySelectorAll("[data-i18n-title]")) {
   node.setAttribute("title", t(/** @type {HTMLElement} */ (node).dataset.i18nTitle));
 }
 renderSplash();
+paintProjects();
+document.getElementById("project-select").addEventListener("change", (event) => {
+  selectProject(/** @type {HTMLSelectElement} */ (event.target).value);
+});
 if (current) select(current);
 else { outliner(); nodes(); props(); preview(); showSplash(true); }

@@ -16,8 +16,13 @@ OPS = "work/ops"
 OUT = "work/viewer"
 
 
-def collect(root: Path) -> list[dict]:
-    """Every readable report, in identity order. An unreadable one is skipped, not fatal."""
+def collect(root: Path, page: Path) -> list[dict]:
+    """Every readable report of one project, in identity order.
+
+    `page` is where the built page will sit, which is not always inside `root`: a render of
+    another project is reached from the active project's page, so the relative path is
+    computed against the page and never against the project it came from.
+    """
     reports = []
     for path in sorted((root / OPS).glob("*.json")):
         try:
@@ -25,22 +30,22 @@ def collect(root: Path) -> list[dict]:
         except (json.JSONDecodeError, OSError):
             continue
         if report.get("id"):
-            reports.append(with_render_urls(root, report))
+            reports.append(with_render_urls(page, report))
     reports.sort(key=lambda r: (r["id"].rstrip("abcdefghijklmnopqrstuvwxyz"), r["id"]))
     return reports
 
 
-def with_render_urls(root: Path, report: dict) -> dict:
-    """The page lives in work/viewer/, so a render is reached relative to it."""
+def with_render_urls(page: Path, report: dict) -> dict:
+    """A render is reached relative to the page that shows it, wherever it was written."""
     for render in report.get("renders", []):
         try:
-            render["url"] = os.path.relpath(render["path"], root / OUT)
+            render["url"] = os.path.relpath(render["path"], page)
         except ValueError:
             render["url"] = render["path"]
     for pair in report.get("comparisons", []):
         for state in ("before", "after"):
             try:
-                pair[f"{state}_url"] = os.path.relpath(pair[state], root / OUT)
+                pair[f"{state}_url"] = os.path.relpath(pair[state], page)
             except ValueError:
                 pair[f"{state}_url"] = pair[state]
     return report
@@ -61,13 +66,22 @@ def build(root: Path) -> Path:
     for name in ("index.html", "viewer.css", "viewer.js"):
         shutil.copyfile(paths.code_root() / "viewer" / name, target / name)
     strings = {**catalogue(SOURCE), **catalogue(language())}   # English is the fallback
-    reports = collect(root)
-    refs = {ref for report in reports for ref in report.get("links", {}).get("docs", [])}
+    # Every project is read at build time. The page can then switch between them without a
+    # request, a rebuild or a write, which is the only way it stays what adr_003 says it is.
+    known = []
+    for project in paths.projects(root):
+        known.append({"name": paths.name(project), "path": str(project),
+                      "reports": collect(project, target),
+                      "ops_exists": (project / OPS).is_dir()})
+    active = known[0]          # projects() puts the active root first, reports or not
+    refs = {ref for entry in known for report in entry["reports"]
+            for ref in report.get("links", {}).get("docs", [])}
     payload = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                "root": str(root), "lang": language(), "strings": strings,
-               "reports": reports, "docs": logics_bridge.documents(refs),
+               "projects": known, "active": active["name"],
+               "reports": active["reports"], "docs": logics_bridge.documents(refs),
                "runbooks": logics_bridge.runbooks(paths.code_root()), "doctor": collect_doctor(root),
-               "ops_exists": (root / OPS).is_dir()}
+               "ops_exists": active["ops_exists"]}
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(payload, indent=1) + ";\n", encoding="utf-8")
     return target / "index.html"

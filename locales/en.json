@@ -212,7 +212,9 @@
     "compare_note": "Identical camera on both states. What the numbers understate, the wipe shows.",
     "node_tile": "node tile",
     "no_comparison": "This operation wrote no before/after pair. Comparison needs two renders shot with the same camera.",
-    "artefact_note": "The file the operation wrote. Pruning drops it and keeps the report; the report is the record, not the file."
+    "artefact_note": "The file the operation wrote. Pruning drops it and keeps the report; the report is the record, not the file.",
+    "project": "Project",
+    "project_reports": "{count} reports"
   },
   "operation": {
     "clean_shells": {

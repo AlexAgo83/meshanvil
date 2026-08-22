@@ -64,10 +64,15 @@ def projects(root: Path | None = None) -> list[Path]:
     between runs -- there is no registry to go stale.
     """
     active = Path(root).resolve() if root else work_root()
-    found = [active] if (active / "work" / "ops").is_dir() else []
+    # The active root is always first, reports or not: it is where a run would land, and a
+    # page that omitted it would name a project the operator is not in.
+    found = [active]
+    # Siblings are only a neighbourhood when the active root is itself a project. Offering
+    # them from an unmarked directory would show someone else's reports as if they were the
+    # ones about to be written to.
     parent = active.parent
-    if parent != active:
-        for candidate in sorted(parent.iterdir() if parent.is_dir() else []):
+    if (active / MARKER).is_dir() and parent != active and parent.is_dir():
+        for candidate in sorted(parent.iterdir()):
             if candidate == active or not candidate.is_dir():
                 continue
             if (candidate / MARKER).is_dir() and (candidate / "work" / "ops").is_dir():

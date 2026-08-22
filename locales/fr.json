@@ -212,7 +212,9 @@
     "compare_note": "Même caméra des deux côtés. Ce que les chiffres minimisent, le volet le montre.",
     "node_tile": "vignette du nœud",
     "no_comparison": "Cette opération n'a écrit aucune paire avant/après. La comparaison exige deux rendus pris avec la même caméra.",
-    "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier."
+    "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier.",
+    "project": "Projet",
+    "project_reports": "{count} rapports"
   },
   "operation": {
     "clean_shells": {

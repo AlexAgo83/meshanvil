@@ -135,6 +135,47 @@ SMOKE = r"""
     select(DATA.reports[DATA.reports.length - 1].id);
     await settled();
 
+    // The switcher, on a page built with one project. The furniture must not show, and the
+    // machinery must still work -- a second project is fabricated here rather than required
+    // on disk, because what is under test is the page, not the operator's directories.
+    // The filter set earlier is still on; it would hide the rows this block counts.
+    const box = document.querySelector("#outliner-filter");
+    box.value = "";
+    box.dispatchEvent(new Event("input", { bubbles: true }));
+
+    const pick = document.getElementById("project-pick");
+    const chooser = document.getElementById("project-select");
+    assert(pick && chooser, "project switcher missing from the page");
+    assert(DATA.projects && DATA.projects.length >= 1, "no project in the viewer data");
+    assert(document.getElementById("project-name").textContent.trim() === DATA.active,
+      "the top bar does not name the active project");
+    if (DATA.projects.length === 1) {
+      assert(pick.classList.contains("hidden"),
+        "a single project should not show an empty chooser");
+    }
+
+    const only = DATA.projects[0];
+    const counted = document.querySelector("#status-counts").textContent;
+    DATA.projects.push({ name: "__smoke__", path: "/tmp/__smoke__", ops_exists: true,
+                         reports: [only.reports[0]] });
+    paintProjects();
+    assert(!pick.classList.contains("hidden"), "two projects did not reveal the chooser");
+    assert(chooser.options.length === DATA.projects.length, "the chooser lists the wrong count");
+
+    selectProject("__smoke__");
+    assert(DATA.active === "__smoke__", "selecting a project did not activate it");
+    assert(document.querySelectorAll("#outliner .row").length === 1,
+      "the outliner still shows the other project's chain");
+    assert(document.querySelector("#status-counts").textContent !== counted,
+      "the totals still describe the project that is not shown");
+
+    selectProject(only.name);
+    DATA.projects.pop();
+    paintProjects();
+    assert(DATA.active === only.name && document.querySelector("#status-counts").textContent === counted,
+      "switching back did not restore the page");
+    await settled();
+
     document.querySelector('[data-section-goto="measurements"]').click();
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");
     document.body.dataset.smoke = "ok";

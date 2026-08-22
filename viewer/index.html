@@ -45,7 +45,9 @@
       <button type="button" role="tab" aria-selected="false" data-workspace="runbooks" data-i18n="ui.workspace_runbooks">Runbooks</button>
     </div>
     <span class="spacer"></span>
-    <div class="scene"><span>work/ops</span><b id="chain-name">—</b><span id="op-count"></span></div>
+    <label class="projects hidden" id="project-pick"><span data-i18n="ui.project">Project</span>
+      <select id="project-select" aria-label="Project" data-i18n-aria-label="ui.project"></select></label>
+    <div class="scene"><b id="project-name">—</b><b id="chain-name">—</b><span id="op-count"></span></div>
   </div>
 
   <div class="editors">

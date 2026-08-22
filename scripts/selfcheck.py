@@ -100,6 +100,15 @@ def check_projects(tmp: Path):
     code = paths.code_root()
     assert code != alpha.resolve() and (code / "meshanvil" / "paths.py").is_file(), code
 
+    # The neighbourhood a page may offer. The active root is always in it, reports or not,
+    # because that is where a run would land. An unmarked directory sitting next to projects
+    # offers none of them: it would show reports nobody is about to write to.
+    assert paths.projects(alpha)[0] == alpha.resolve(), paths.projects(alpha)
+    assert beta.resolve() in paths.projects(alpha), paths.projects(alpha)
+    stranger = tmp / "stranger"
+    stranger.mkdir()
+    assert paths.projects(stranger) == [stranger.resolve()], paths.projects(stranger)
+
 
 def check_bbox_delta():
     before = {"bbox_mm": {"min": [-268.0, -247.2, 52.5], "max": [4.4, 127.5, 194.8]}}
