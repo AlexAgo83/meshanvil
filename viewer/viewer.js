@@ -384,7 +384,7 @@ function select(id) {
 function selectWorkspace(next) {
   workspace = next;
   /** @type {HTMLElement} */ (document.querySelector(".app")).dataset.workspace = next;
-  for (const tab of document.querySelectorAll("[data-workspace]")) {
+  for (const tab of document.querySelectorAll('[role="tab"][data-workspace]')) {
     tab.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (tab).dataset.workspace === next));
   }
   outliner(); nodes(); props(); preview();
@@ -402,7 +402,7 @@ document.addEventListener("click", (event) => {
   const target = /** @type {Element} */ (event.target);
   const section = target.closest("[data-section-goto]");
   if (section) { jumpReportSection(/** @type {HTMLElement} */ (section).dataset.sectionGoto || "input"); return; }
-  const workspaceTab = target.closest("[data-workspace]");
+  const workspaceTab = target.closest('[role="tab"][data-workspace]');
   if (workspaceTab) { selectWorkspace(/** @type {HTMLElement} */ (workspaceTab).dataset.workspace || "chain"); return; }
   const goto = target.closest("[data-goto]");
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }

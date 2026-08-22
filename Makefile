@@ -7,7 +7,7 @@
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile types selfcheck i18n hygiene fixture logics
+.PHONY: check compile types selfcheck i18n hygiene fixture viewer-smoke logics
 
 check: compile types selfcheck i18n hygiene
 
@@ -32,6 +32,9 @@ hygiene:
 # fixture's own defects are still found unaided, which is the ground truth the tools rely on.
 fixture:
 	@$(PYTHON) scripts/fixture_check.py
+
+viewer-smoke:
+	@$(PYTHON) scripts/viewer_smoke.py
 
 # logics-manager is a devDependency: npm ci, then this runs the pinned version.
 logics:
