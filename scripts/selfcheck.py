@@ -98,8 +98,8 @@ def check_projects(tmp: Path):
     dropped, _ = prune.run(beta, 0, dry_run=True)
     assert all(alpha not in path.parents for path, _ in dropped), dropped
 
-    code = paths.code_root()
-    assert code != alpha.resolve() and (code / "meshanvil" / "paths.py").is_file(), code
+    assets = paths.asset_root(".")
+    assert assets != alpha.resolve() and (assets / "meshanvil" / "paths.py").is_file(), assets
 
     # The neighbourhood a page may offer. The active root is always in it, reports or not,
     # because that is where a run would land. An unmarked directory sitting next to projects
