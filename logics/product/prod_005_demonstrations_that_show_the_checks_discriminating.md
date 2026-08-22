@@ -1,11 +1,12 @@
 ## prod_005_demonstrations_that_show_the_checks_discriminating - Demonstrations that show the checks discriminating
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show`
-> Related backlog: `item_026_ship_the_figurine_subject_as_its_own_demonstration_project`, `item_027_build_the_figurine_chain_around_a_sound_subject_and_a_size_decision`, `item_028_branch_the_remesh_at_two_fractions_of_the_subject`
+> Related backlog: `item_026_ship_the_figurine_subject_as_its_own_demonstration_project`
 > Related task: `task_018_deliver_the_figurine_demonstration_project`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 15:13:22
 
 # Overview
 Adds a second demonstration subject whose properties are the opposite of the first, so the chain shows sweeps staying silent on a sound model and shows that a passing check is not a guarantee the geometry survived.
@@ -46,5 +47,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show`
+- Product back-reference: `item_026_ship_the_figurine_subject_as_its_own_demonstration_project`
 - Task back-reference: `task_018_deliver_the_figurine_demonstration_project`

@@ -1,14 +1,14 @@
 ## item_026_ship_the_figurine_subject_as_its_own_demonstration_project - Ship the figurine subject as its own demonstration project
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 15:01:05
+> Indicators reviewed: 2026-08-22 15:13:22
 
 # AI Context
 - Summary: The demonstration asset is one file at a fixed path, assumed to be the only one. A second subject needs the same reduction and provenance record, and its own project so it does not take the vehicle's identity numbering or outliner group.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_018_deliver_the_figurine_demonstration_project`
+
+# Notes
+- Task `task_018_deliver_the_figurine_demonstration_project` was finished via `logics-manager flow finish task` on 2026-08-22.

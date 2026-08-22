@@ -1,13 +1,13 @@
 ## req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show - Demonstrate on a clean organic subject what the vehicle chain cannot show
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 13:56:31
+> Indicators reviewed: 2026-08-22 15:13:21
 
 # AI Context
 - Summary: The demonstration has one subject and every report in it is a defect being found, at a scale where an absolute voxel and a relative one feel identical. A sound organic subject reduced to a 180 mm figurine shows sweeps staying silent, and shows two voxel sizes both passing every check while only one keeps the fingers.

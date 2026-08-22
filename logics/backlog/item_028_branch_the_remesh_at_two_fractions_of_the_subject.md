@@ -1,14 +1,14 @@
 ## item_028_branch_the_remesh_at_two_fractions_of_the_subject - Branch the remesh at two fractions of the subject
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 15:01:05
+> Indicators reviewed: 2026-08-22 15:13:22
 
 # AI Context
 - Summary: Measured: 1.5 mm and 0.5 mm on a 180 mm figurine both report ok, one shell, no non-manifold edge, at most 1.3% volume lost -- and one fuses the fingers into mittens. The branch keeps both and states that a voxel is a fraction of the subject.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_018_deliver_the_figurine_demonstration_project`
+
+# Notes
+- Task `task_018_deliver_the_figurine_demonstration_project` was finished via `logics-manager flow finish task` on 2026-08-22.

@@ -1,14 +1,14 @@
 ## item_027_build_the_figurine_chain_around_a_sound_subject_and_a_size_decision - Build the figurine chain around a sound subject and a size decision
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 15:01:05
+> Indicators reviewed: 2026-08-22 15:13:22
 
 # AI Context
 - Summary: Every report in the current demonstration is a defect being found. This chain shows the opposite: a sweep reporting nothing, a size chosen explicitly rather than inherited, and a visibility pass that says nothing is hidden instead of looking blank.
@@ -52,3 +52,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_018_deliver_the_figurine_demonstration_project`
+
+# Notes
+- Task `task_018_deliver_the_figurine_demonstration_project` was finished via `logics-manager flow finish task` on 2026-08-22.
