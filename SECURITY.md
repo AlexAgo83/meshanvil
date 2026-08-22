@@ -23,14 +23,26 @@ reproduction you have.
 ## What this repository is, in security terms
 
 The scripts here run inside Blender, on 3D files you supply. They read and write only
-under `work/`, which is not versioned. They open no socket, contact no service, and send
-nothing anywhere.
+under `work/`, which is not versioned. By default they open no socket, contact no
+service, and send nothing anywhere. Two opt-in exceptions deserve attention.
 
-One exception deserves attention: `run_001` describes a bridge that executes
-`~/bl_cmd.py` inside a running Blender session on a half-second poll. Anything that can
-write that file can run Python in that session with your user's rights. It is armed by
-hand, per launch, by pasting one line into the Python Console — it is not a background
-service, and it should stay off when you are not using it.
+**`meshanvil view --serve`** starts an HTTP server bound to `127.0.0.1` on a random port,
+opt-in and off unless you pass the flag. It serves `work/` read-only, and it exposes one
+`POST /run` endpoint that can execute exactly three fixed, argument-free commands (`list`,
+`doctor`, `prune --dry-run`) as a subprocess of `bin/meshanvil` -- never a string the page
+supplies. Every request must carry a random token generated fresh for that server process
+and embedded only in that process's own generated page; a missing or mismatched token is
+refused before any subprocess starts, and only one command runs at a time. See
+`adr_007_let_the_served_viewer_execute_a_closed_command_set` for the full boundary and why
+it supersedes `adr_003`'s original refusal to execute anything. `--serve` is meant for one
+operator on their own machine; it is not designed to be exposed beyond `127.0.0.1`, and
+nothing about port 0 or the per-launch token is a substitute for keeping it that way.
+
+`run_001` describes a second, unrelated bridge: executing `~/bl_cmd.py` inside a running
+Blender session on a half-second poll. Anything that can write that file can run Python in
+that session with your user's rights. It is armed by hand, per launch, by pasting one line
+into the Python Console — it is not a background service, and it should stay off when you
+are not using it.
 
 ## What a report contains
 
