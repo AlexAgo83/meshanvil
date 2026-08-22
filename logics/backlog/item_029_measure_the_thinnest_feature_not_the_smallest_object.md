@@ -1,14 +1,14 @@
 ## item_029_measure_the_thinnest_feature_not_the_smallest_object - Measure the thinnest feature, not the smallest object
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:02:34
+> Indicators reviewed: 2026-08-22 14:31:42
 
 # AI Context
 - Summary: `smallest_input_extent_mm` is the smallest object's bounding extent, so a one-object figurine reported 180 mm while a 1.5 mm voxel erased its fingers. The guard has to measure geometry, warn against the voxel about to be used, and say it is an estimate.
@@ -53,3 +53,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong`
+
+# Notes
+- Task `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong` was finished via `logics-manager flow finish task` on 2026-08-22.

@@ -20,7 +20,7 @@
 | [prod_003_strict_local_viewer_mockup_parity_closure](product/prod_003_strict_local_viewer_mockup_parity_closure.md) | Strict local viewer mockup parity closure | Settled |  |  | product/prod_003_strict_local_viewer_mockup_parity_closure.md |
 | [prod_004_multi_project_operator_workspaces](product/prod_004_multi_project_operator_workspaces.md) | Multi-project operator workspaces | Proposed |  |  | product/prod_004_multi_project_operator_workspaces.md |
 | [prod_005_demonstrations_that_show_the_checks_discriminating](product/prod_005_demonstrations_that_show_the_checks_discriminating.md) | Demonstrations that show the checks discriminating | Proposed |  |  | product/prod_005_demonstrations_that_show_the_checks_discriminating.md |
-| [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Proposed |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
+| [prod_006_guards_that_measure_what_they_claim](product/prod_006_guards_that_measure_what_they_claim.md) | Guards that measure what they claim | Settled |  |  | product/prod_006_guards_that_measure_what_they_claim.md |
 
 ## Roadmaps
 
@@ -35,7 +35,7 @@ _None_
 | [req_002_close_the_remaining_local_viewer_mockup_parity_gaps](request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md) | Close the remaining local viewer mockup parity gaps | Done |  |  | request/req_002_close_the_remaining_local_viewer_mockup_parity_gaps.md |
 | [req_003_hold_several_model_projects_side_by_side_and_switch_between_them](request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md) | Hold several model projects side by side and switch between them | Draft |  |  | request/req_003_hold_several_model_projects_side_by_side_and_switch_between_them.md |
 | [req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show](request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md) | Demonstrate on a clean organic subject what the vehicle chain cannot show | Draft |  |  | request/req_004_demonstrate_on_a_clean_organic_subject_what_the_vehicle_chain_cannot_show.md |
-| [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Draft |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
+| [req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong](request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done |  |  | request/req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 
 ## Backlog
 
@@ -69,9 +69,9 @@ _None_
 | [item_026_ship_the_figurine_subject_as_its_own_demonstration_project](backlog/item_026_ship_the_figurine_subject_as_its_own_demonstration_project.md) | Ship the figurine subject as its own demonstration project | Ready |  | 0% | backlog/item_026_ship_the_figurine_subject_as_its_own_demonstration_project.md |
 | [item_027_build_the_figurine_chain_around_a_sound_subject_and_a_size_decision](backlog/item_027_build_the_figurine_chain_around_a_sound_subject_and_a_size_decision.md) | Build the figurine chain around a sound subject and a size decision | Ready |  | 0% | backlog/item_027_build_the_figurine_chain_around_a_sound_subject_and_a_size_decision.md |
 | [item_028_branch_the_remesh_at_two_fractions_of_the_subject](backlog/item_028_branch_the_remesh_at_two_fractions_of_the_subject.md) | Branch the remesh at two fractions of the subject | Ready |  | 0% | backlog/item_028_branch_the_remesh_at_two_fractions_of_the_subject.md |
-| [item_029_measure_the_thinnest_feature_not_the_smallest_object](backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md) | Measure the thinnest feature, not the smallest object | Ready |  | 0% | backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md |
-| [item_030_decide_walling_on_how_open_a_body_is](backlog/item_030_decide_walling_on_how_open_a_body_is.md) | Decide walling on how open a body is | Ready |  | 0% | backlog/item_030_decide_walling_on_how_open_a_body_is.md |
-| [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Ready |  | 0% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
+| [item_029_measure_the_thinnest_feature_not_the_smallest_object](backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md) | Measure the thinnest feature, not the smallest object | Done |  | 100% | backlog/item_029_measure_the_thinnest_feature_not_the_smallest_object.md |
+| [item_030_decide_walling_on_how_open_a_body_is](backlog/item_030_decide_walling_on_how_open_a_body_is.md) | Decide walling on how open a body is | Done |  | 100% | backlog/item_030_decide_walling_on_how_open_a_body_is.md |
+| [item_031_let_a_mesh_source_enter_the_pipeline](backlog/item_031_let_a_mesh_source_enter_the_pipeline.md) | Let a mesh source enter the pipeline | Done |  | 100% | backlog/item_031_let_a_mesh_source_enter_the_pipeline.md |
 
 ## Tasks
 
@@ -95,7 +95,7 @@ _None_
 | [task_016_deliver_remaining_viewer_mockup_parity_gaps](tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md) | Deliver remaining viewer mockup parity gaps | Done | codex | 100% | tasks/task_016_deliver_remaining_viewer_mockup_parity_gaps.md |
 | [task_017_deliver_multi_project_workspaces_and_the_viewer_switcher](tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md) | Deliver multi-project workspaces and the viewer switcher | Ready |  | 0% | tasks/task_017_deliver_multi_project_workspaces_and_the_viewer_switcher.md |
 | [task_018_deliver_the_figurine_demonstration_project](tasks/task_018_deliver_the_figurine_demonstration_project.md) | Deliver the figurine demonstration project | Ready |  | 0% | tasks/task_018_deliver_the_figurine_demonstration_project.md |
-| [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Ready |  | 0% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
+| [task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong](tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md) | Fix the guards that pass while the geometry is wrong | Done | Claude | 100% | tasks/task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong.md |
 
 ## Runbooks
 

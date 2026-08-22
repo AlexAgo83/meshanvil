@@ -1,11 +1,12 @@
 ## prod_006_guards_that_measure_what_they_claim - Guards that measure what they claim
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong`
-> Related backlog: `item_029_measure_the_thinnest_feature_not_the_smallest_object`, `item_030_decide_walling_on_how_open_a_body_is`, `item_031_let_a_mesh_source_enter_the_pipeline`
+> Related backlog: `item_029_measure_the_thinnest_feature_not_the_smallest_object`
 > Related task: `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 14:31:42
 
 # Overview
 Corrects three checks that report a number answering a different question than the one asked, all found by running the existing operations on asset classes the demonstration does not cover.
@@ -44,5 +45,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong`
+- Product back-reference: `item_029_measure_the_thinnest_feature_not_the_smallest_object`
 - Task back-reference: `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong`

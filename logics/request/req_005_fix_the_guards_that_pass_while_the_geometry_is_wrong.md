@@ -1,13 +1,13 @@
 ## req_005_fix_the_guards_that_pass_while_the_geometry_is_wrong - Fix the guards that pass while the geometry is wrong
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 13:56:32
+> Indicators reviewed: 2026-08-22 14:31:41
 
 # AI Context
 - Summary: Three guards report a number that answers a different question than the one asked, all found by running existing operations on sculpting base meshes: the thin-feature measure reads object bounds, walling decides on a zero test, and a mesh-only source cannot enter the chain at all.

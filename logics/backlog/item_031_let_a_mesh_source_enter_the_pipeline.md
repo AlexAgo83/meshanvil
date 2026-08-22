@@ -1,14 +1,14 @@
 ## item_031_let_a_mesh_source_enter_the_pipeline - Let a mesh source enter the pipeline
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Low
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:02:34
+> Indicators reviewed: 2026-08-22 14:31:42
 
 # AI Context
 - Summary: The only import operation reads STEP through FreeCAD, so a subject delivered as a mesh file has to be converted by a hand-run script that leaves no report and no fingerprint. The chain then starts with no recorded input.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong`
+
+# Notes
+- Task `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong` was finished via `logics-manager flow finish task` on 2026-08-22.

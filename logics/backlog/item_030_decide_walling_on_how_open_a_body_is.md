@@ -1,14 +1,14 @@
 ## item_030_decide_walling_on_how_open_a_body_is - Decide walling on how open a body is
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Low
 > Theme: Operation review loop
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 14:02:34
+> Indicators reviewed: 2026-08-22 14:31:42
 
 # AI Context
 - Summary: Walling skips a body only at exactly zero open edges. A sculpt with 4 open edges out of 14 803 faces was walled, doubling its vertices and hollowing a solid body, and the report said `walled 1` without saying that was wrong.
@@ -53,3 +53,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong`
+
+# Notes
+- Task `task_019_fix_the_guards_that_pass_while_the_geometry_is_wrong` was finished via `logics-manager flow finish task` on 2026-08-22.
