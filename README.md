@@ -19,6 +19,8 @@ what failed, and how each claim was checked.
 The working assumption throughout: an agent driving a 3D application is only as good as the
 measurements it takes. Renders are how you get fooled.
 
+![The viewer: a chain graph, a render, and the findings a defect sweep found unaided.](docs/img/viewer-vehicle-defect.png)
+
 ## What it needs
 
 Blender 4.2 or later. That is the only requirement to run an operation -- the floor comes from
@@ -50,38 +52,48 @@ pasting one line into the Python Console; after that, writing `~/bl_cmd.py` exec
 within half a second and `~/bl_out.txt` carries the output back. Heavy work stays headless so
 their interface never freezes.
 
-## What is being built
+## What it does
 
-The method exists; the tooling around it does not yet. What is specified, and ready to be
-implemented, is a loop that makes each operation reviewable:
+Every operation follows the same loop, whether typed by a person or run by an agent:
 
-- one JSON report per operation, carrying its parameters, its measurements before and after, the
-  per-axis bounding-box delta, what it did **not** check, and the renders it produced;
-- one command that runs a named operation, callable identically by a person, Claude or Codex,
-  with exit codes an agent can branch on;
-- one local viewer -- a plain page, no framework, no build -- showing the chain as a graph, the
-  renders beside the numbers, and two states of the same geometry wiped against each other.
+- **`meshanvil run <operation> <source>`** writes one JSON report -- parameters, measurements
+  before and after, the per-axis bounding-box delta, what the operation did **not** check, and
+  the renders it produced -- with exit codes an agent can branch on.
+- **`meshanvil view`** builds a local viewer over those reports -- a plain page, no framework, no
+  build step. The outliner groups the chain by fork, not by parent, so a branch reads as a
+  branch. The node graph places each report by its parent depth. Selecting one shows its render
+  beside its numbers, and the Compare workspace wipes its before and after against each other.
+  A runbook is readable straight from its list, applied or not.
+- **`meshanvil list`**, **`doctor`**, **`init`**, **`runbook`** and **`prune`** round out the
+  command: what an operation takes, whether the engines are found, turning a directory into a
+  project, writing a runbook from a chain, and dropping heavy artefacts a report still points to.
 
-The whole specification lives in `logics/`: `req_000` states the problem, `prod_001` the product,
-`adr_001` to `adr_006` the decisions, and `task_001` sequences thirteen slices. Start there, not
-here.
+The method behind the loop -- what to measure, what a render cannot tell you, how a claim gets
+checked -- lives in `logics/runbook/`; the code above is its residue. `req_000` through `req_005`
+in `logics/request/` record why each decision was made, all closed. Read the runbooks first, not
+this file, if you're about to repeat the work.
 
 ## Layout
 
 ```
 logics/           the corpus: request, product, decisions, backlog, tasks
-  runbook/        the method: ten runbooks, read these first
+  runbook/        the method: read these first
   architecture/   the decisions and why they were taken
   context-packs/  the handoff an implementation agent reads
 pipeline/         the chain that produced the delivery, kept as its record
+meshanvil/        the command: run, view, doctor, init, runbook, prune
 tools/            the operations: parameterised scripts, each with a manifest beside it
+viewer/           the page source, copied into a project's work/viewer/ at build time
 scripts/          repository gates, run by make
-work/             everything generated -- git-ignored
+fixtures/         the two demonstration subjects and their provenance
+work/             everything generated -- git-ignored, one tree per project
   in/             source files (STEP, donor blends)
   out/            blend and stl outputs
-  ops/            operation reports        (once item_001 exists)
+  ops/            operation reports
   renders/        verification renders
   cache/          ray-visibility results, part lists
+  viewer/         the built page for this project
+  demo/           the two demonstrations, as sibling projects (see below)
 ```
 
 `work/` is ignored deliberately. Committing a 27 MB blend and a 73 MB stl once took the repo
@@ -124,11 +136,13 @@ out "never seen" only because they fall through the ray grid.
 
 ## Engineering honesty
 
-Pre-1.0. There is no package, no test suite and no CLI yet: what exists is a method, the
-scripts that produced one delivery, and the measurements that verify them. `make check`
-compiles the scripts and runs the publication-hygiene gate; it does not run Blender,
-because every check that means anything needs a real 3D source and sources are never in
-this repository. Run the scripts on your own file and read the numbers.
+Pre-1.0, and no package on an index yet -- clone it, run `./bin/meshanvil`. `make check`
+compiles the scripts, type-checks the viewer, runs `scripts/selfcheck.py` (host logic, no
+Blender needed) and the hygiene gate. It does not run Blender: every check that means
+anything needs a real 3D source, and sources are never in this repository. `scripts/
+fixture_check.py` and `scripts/viewer_smoke.py` do need it -- they run against a generated
+fixture, not against your data, so they stay out of `make check` and out of CI. Run the
+scripts on your own file and read the numbers.
 
 The runbooks are written from one delivery. They are specific on purpose -- a procedure
 without its numbers is a blog post -- but a second assembly will bend some of them.
@@ -180,6 +194,8 @@ parent, same voxel, one step apart: one remeshes a walled body into a single clo
 other remeshes the bare panels into 714 fragments with the body gone. The one that destroyed
 the car reports `ok`.
 
+![A 12 mm voxel remesh that ate the bodywork down to the chassis skeleton -- status `ok`, and the measurements panel shows the volume collapsing.](docs/img/viewer-vehicle-destroyed.png)
+
 `fixtures/demo_figure.blend` is a sculpting base mesh, and its job is to be sound. The defect
 sweep reports nothing on it, which is the only way to show that the sweeps discriminate rather
 than firing on everything. It is authored at 20 741 mm tall -- an interchange file declares no
@@ -199,6 +215,8 @@ Both pass every topology and volume check. One keeps the fingers and the other f
 mittens, and the only thing that says so before you look at the render is the thin-feature
 guard, which warns below two voxels across. A voxel size is a fraction of the subject, and the
 checks that pass do not measure feature loss.
+
+![The 1.5 mm branch: status `ok`, `thin_feature_voxels: 1` in the parameters panel -- one voxel across a finger, below the two-voxel floor.](docs/img/viewer-figurine-thin-feature.png)
 
 `tools/make_demo_scene.py` and `tools/make_guard_fixture.py` are a different job. They generate
 subjects whose defects are planted deliberately -- an island smeared along a line, objects
