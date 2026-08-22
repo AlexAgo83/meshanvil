@@ -1,14 +1,24 @@
 ## prod_009_a_viewer_that_acts_on_what_it_shows_not_just_displays_it - A viewer that acts on what it shows, not just displays it
 > Date: 2026-08-22
-> Status: Proposed
+> Status: Settled
 > Related request: `req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable`
-> Related backlog: `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`, `item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance`, `item_038_make_report_file_paths_and_commands_into_real_clickable_controls`, `item_039_render_runbook_markdown_as_formatted_content`, `item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes`
+> Related backlog: `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`
 > Related task: `task_022_deliver_the_viewer_actionability_pass`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-22 23:56:52
 
 # Overview
 Closes the gap between the viewer showing a command, a file path, or a runbook and the operator actually being able to act on it -- run it, open it, or read it formatted -- while keeping the viewer's no-framework, no-build-step, read-only-by-default character intact.
+
+```mermaid
+flowchart LR
+  fixtures[Hand-modelled assets] -->|committed| chains[Both build chains]
+  start[Start screen] -->|copy buttons, overflow fixed| clip[Terminal]
+  reports[Report file paths<br/>and commands] -->|cmdButton / .pathcopy| clip
+  runbooks[Runbook Markdown] -->|mdToHtml| formatted[Formatted content pane]
+  glass[Vehicle glass panes] -->|root-caused| honest[Documented in build script + README]
+```
 
 # Goals
 - The two hand-modelled demonstration assets are part of the committed project, not a personal local-only convenience.
@@ -35,5 +45,5 @@ Closes the gap between the viewer showing a command, a file path, or a runbook a
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable`
+- Product back-reference: `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`
 - Task back-reference: `task_022_deliver_the_viewer_actionability_pass`

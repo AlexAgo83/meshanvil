@@ -1,12 +1,13 @@
 ## req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable - Make the viewer's start screen, runbooks and file references actionable
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
+> Indicators reviewed: 2026-08-22 23:56:24
 
 # AI Context
 - Summary: (unfilled: replace before this doc is used)

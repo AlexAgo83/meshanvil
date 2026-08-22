@@ -1,14 +1,14 @@
 ## item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance - Fix the start screen's layout overflow and decide its command affordance
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-22 23:15:12
+> Indicators reviewed: 2026-08-22 23:56:25
 
 # AI Context
 - Summary: (unfilled: replace before this doc is used)
@@ -48,3 +48,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_022_deliver_the_viewer_actionability_pass`
+
+# Notes
+- Task `task_022_deliver_the_viewer_actionability_pass` was finished via `logics-manager flow finish task` on 2026-08-22.

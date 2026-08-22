@@ -1,15 +1,15 @@
 ## task_022_deliver_the_viewer_actionability_pass - Deliver the viewer actionability pass
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: Claude
-> Indicators reviewed: 2026-08-22 23:15:12
+> Indicators reviewed: 2026-08-22 23:56:25
 
 # AI Context
 - Summary: (unfilled: replace before this doc is used)
@@ -21,15 +21,15 @@
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
 
 # Plan
-- [ ] 1. 1. Commit the two hand-modelled demo assets as fixtures and repoint both build scripts.
-- [ ] 2. 2. Fix the start screen's overflow and record the runnable-commands decision.
-- [ ] 3. 3. Make report file paths and commands into real controls; add the menu-close regression check.
-- [ ] 4. 4. Render runbook Markdown as formatted content.
-- [ ] 5. 5. Root-cause and resolve (or honestly document) the vehicle's disappearing glass panes.
-- [ ] 6. 6. Re-run make check, fixture_check and viewer_smoke before closeout.
-- [ ] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
-- [ ] Keep commit creation under operator control; do not force one commit per micro-step.
-- [ ] GATE: do not close until lint, audit, and scaffold validation pass.
+- [x] 1. 1. Commit the two hand-modelled demo assets as fixtures and repoint both build scripts.
+- [x] 2. 2. Fix the start screen's overflow and record the runnable-commands decision.
+- [x] 3. 3. Make report file paths and commands into real controls; add the menu-close regression check.
+- [x] 4. 4. Render runbook Markdown as formatted content.
+- [x] 5. 5. Root-cause and resolve (or honestly document) the vehicle's disappearing glass panes.
+- [x] 6. 6. Re-run make check, fixture_check and viewer_smoke before closeout.
+- [x] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
+- [x] Keep commit creation under operator control; do not force one commit per micro-step.
+- [x] GATE: do not close until lint, audit, and scaffold validation pass.
 
 # Backlog
 - `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`
@@ -39,25 +39,31 @@
 - `item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes`
 
 # Definition of Done (DoD)
-- [ ] Generated request, product, backlog, and task docs are present.
-- [ ] Context-pack handoff is available when requested.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] Generated request, product, backlog, and task docs are present.
+- [x] Context-pack handoff is available when requested.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # AC Traceability
-- request-AC1 -> `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`. Proof deferred to slice closeout.
-- request-AC2 -> `item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance`. Proof deferred to slice closeout.
-- request-AC3 -> `item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance`. Proof deferred to slice closeout.
-- request-AC4 -> `item_038_make_report_file_paths_and_commands_into_real_clickable_controls`. Proof deferred to slice closeout.
-- request-AC6 -> `item_038_make_report_file_paths_and_commands_into_real_clickable_controls`. Proof deferred to slice closeout.
-- request-AC5 -> `item_039_render_runbook_markdown_as_formatted_content`. Proof deferred to slice closeout.
-- request-AC7 -> `item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes`. Proof deferred to slice closeout.
+- request-AC1 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC2 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC3 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC4 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC6 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC5 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
+- request-AC7 -> This task. Proof: AC1 (fixtures): f9ae494 moves both hand-modelled assets to fixtures/, tracked in git; both build scripts default to them, verified by sha256 match on a real chain run. AC2/AC3 (start screen): 661f6b2 fixes .tpl/.chk overflow-wrap (verified by rendered screenshot at 1024px/1400px with a synthetic long path) and converts the three template cards to real data-copy buttons; the runnable-vs-copy decision for these two destructive scripts is recorded in adr_007. AC4/AC6 (file paths + menu regression): a4a1f93 adds cmdButton()/.pathcopy to the render panel's Open-in-Blender line, the Artefact section, Input/Output paths, and every doctor-fix suggestion; a new viewer_smoke.py assertion opens the splash from the File menu row and asserts the menu closes. AC5 (runbook markdown): 90eee7c adds a dependency-free mdToHtml()/inline() renderer for headings/lists/code/bold/blockquotes, wired into the runbook content pane; viewer_smoke.py asserts real heading/list elements and no literal Markdown syntax. AC7 (glass panes): d5ca1d4 root-causes the loss to voxel_remesh's own documented join-everything-into-one-solid behaviour (all 8 window Plane objects verified intact through solidify by inspecting object counts in every intermediate .blend; count only collapses at voxel_remesh), and documents it honestly in the build script and README rather than fixing it away. Validated throughout with make check, fixture_check.py, viewer_smoke.py, and full re-runs of both build_demo_chain.sh and build_figurine_chain.sh. Source: `d5ca1d4`
 
 # Validation
 - (no validation recorded yet)
+- command: `make check && python3 scripts/fixture_check.py && python3 scripts/viewer_smoke.py && tools/build_demo_chain.sh && tools/build_figurine_chain.sh` | result: passed | date: 2026-08-22
+- Finish workflow executed on 2026-08-22.
+- Linked backlog/request close verification passed.
 
 # Report
 - Not started.
+- Finished on 2026-08-22.
+- Linked backlog item(s): `item_036_commit_the_two_hand_modelled_demo_assets_as_project_fixtures`, `item_037_fix_the_start_screen_s_layout_overflow_and_decide_its_command_affordance`, `item_038_make_report_file_paths_and_commands_into_real_clickable_controls`, `item_039_render_runbook_markdown_as_formatted_content`, `item_040_root_cause_the_vehicle_demonstration_s_disappearing_glass_panes`
+- Related request(s): `req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable`
 
 # Links
 - Request: `req_008_make_the_viewer_s_start_screen_runbooks_and_file_references_actionable`
