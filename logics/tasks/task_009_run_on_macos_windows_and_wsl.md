@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:11:06
+> Indicators reviewed: 2026-08-23 00:01:15
 
 # AI Context
 - Summary: Keep discovery and WSL conversion at the engine boundary; platform claims remain limited to the documented measured matrix.
@@ -58,3 +58,6 @@
 
 # Evidence
 - AC3 | date: 2026-08-22 | command: `make check` | result: passed | WSL engine-path translation is covered by the host self-check.
+
+# AC Traceability
+- request-AC23 -> This task. Proof: `make check` passed; the host self-check covers WSL engine-path translation and viewer opener behavior, and the platform matrix records macOS, Windows and WSL with what was not verified stated as unverified.

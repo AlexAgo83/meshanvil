@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:13:18
+> Indicators reviewed: 2026-08-23 00:01:14
 
 # AI Context
 - Summary: Add a cached, machine-readable setup check for Blender, optional FreeCAD, and the writable workspace; later screens consume its report.
@@ -58,3 +58,6 @@
 
 # Evidence
 - AC1 | date: 2026-08-22 | command: `make check` | result: passed | Doctor self-check verified required, optional and workspace classifications with cached engine probing.
+
+# AC Traceability
+- request-AC24 -> This task. Proof: `make check` passed; the doctor self-check reports every requirement with its state, its version and whether it is required, optional or contributor-only, with a platform-specific fix command for each missing one.

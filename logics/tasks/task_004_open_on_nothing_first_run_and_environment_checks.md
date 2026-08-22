@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:13:19
+> Indicators reviewed: 2026-08-23 00:01:14
 
 # AI Context
 - Summary: The viewer reads `work/doctor.json` and `work/ops` only; it never starts checks or operations.
@@ -59,3 +59,7 @@
 
 # Evidence
 - AC1 | date: 2026-08-22 | command: `make check` | result: passed | Viewer start payload self-check and French viewer build passed without running a setup check.
+
+# AC Traceability
+- request-AC12 -> This task. Proof: `make check` passed; the viewer start payload self-check verified that with no report present the page states what the tool can do, what the environment check found, and the command that produces the first report, leaving no area unexplained.
+- request-AC14 -> This task. Proof: `make check` passed; the start screen renders every action as the command that performs it and starts no process, verified by the viewer read-only self-check.

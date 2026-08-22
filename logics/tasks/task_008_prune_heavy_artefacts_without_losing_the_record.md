@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:13:19
+> Indicators reviewed: 2026-08-23 00:01:15
 
 # AI Context
 - Summary: Select only report-owned outputs; a dry run is read-only, while apply removes the file and changes only its lifecycle fields.
@@ -58,3 +58,7 @@
 # Evidence
 - AC1 | date: 2026-08-22 | command: `make check` | result: passed | The prune self-check listed an old artefact and left it intact during dry-run.
 - AC2 | date: 2026-08-22 | command: `make check` | result: passed | The prune self-check deleted the selected file and changed only output lifecycle fields to pruned.
+
+# AC Traceability
+- request-AC9 -> This task. Proof: `make check` passed; the chain still renders after a prune, with the pruned node kept as a node of the tree and its measurements still readable.
+- request-AC10 -> This task. Proof: `make check` passed; the prune self-check deleted the selected artefact and changed only the output lifecycle fields to pruned with its date, leaving the rest of the report intact.

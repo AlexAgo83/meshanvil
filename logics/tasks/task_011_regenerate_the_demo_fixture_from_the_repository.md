@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:13:19
+> Indicators reviewed: 2026-08-23 00:01:15
 
 # AI Context
 - Summary: The checked-in fixture scripts generate only ignored `work/` data and verify the known defect findings and preserved failed branch.
@@ -57,3 +57,6 @@
 # Evidence
 - AC2 | date: 2026-08-22 | command: `make fixture` | result: passed | Generated fixture exposed its smear and duplicate defects without hints.
 - AC4 | date: 2026-08-22 | command: `make fixture` | result: passed | Generated fixture retained the coarse voxel failure with its measured drift.
+
+# AC Traceability
+- request-AC13 -> This task. Proof: `make fixture` regenerated the demonstration scene from repository scripts and the sweep found its built-in smear and duplicate defects unaided, with no third-party or committed binary file.

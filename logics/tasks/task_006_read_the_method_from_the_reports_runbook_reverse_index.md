@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 02:13:19
+> Indicators reviewed: 2026-08-23 00:01:15
 
 # AI Context
 - Summary: Derive runbook coverage at view time from report `links.docs`; preserve full slugs and use the existing Logics metadata bridge.
@@ -55,3 +55,6 @@
 
 # Evidence
 - AC1 | date: 2026-08-22 | command: `meshanvil view --no-open` | result: passed | Viewer build derives runbook coverage from report links and keeps unreferenced runbooks in the payload.
+
+# AC Traceability
+- request-AC15 -> This task. Proof: `meshanvil view --no-open` passed; runbook coverage is derived from report `links.docs` alone, and unreferenced runbooks stay in the payload marked as uncited.

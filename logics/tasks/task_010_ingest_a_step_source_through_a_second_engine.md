@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-22 01:09:49
+> Indicators reviewed: 2026-08-23 00:01:15
 
 # AI Context
 - Summary: FreeCAD receives the normal job file, writes an STL and report directly, and owns its import heartbeat without a Blender-side import.
@@ -60,3 +60,6 @@
 # Evidence
 - AC1 | date: 2026-08-22 | command: `meshanvil run import_step work/in/fixture_box.step` | result: passed | FreeCAD 1.0.2 imported the generated STEP box headlessly and wrote work/out/fixture_box_step.stl.
 - AC3 | date: 2026-08-22 | command: `meshanvil run import_step work/in/fixture_box.step` | result: passed | The import report recorded one solid and a 40×30×20 mm source/result bounding box.
+
+# AC Traceability
+- request-AC16 -> This task. Proof: `meshanvil run import_step work/in/fixture_box.step` imported the generated STEP box headlessly through FreeCAD 1.0.2 and wrote a normal report; a missing engine is refused with exit code 2 without affecting other operations.
