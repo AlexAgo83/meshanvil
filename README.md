@@ -200,7 +200,10 @@ already closed, per its own report). The clearest branch is the coarse-voxel one
 (006a): a tolerance-based refusal, kept as evidence rather than silently reported. The
 walled-vs-unwalled remesh just above it (006 vs 005a) is the same voxel with and without the
 wall; whether the unwalled side collapses far enough to be refused too depends on how much
-other closed geometry the rest of the subject carries nearby.
+other closed geometry the rest of the subject carries nearby. The windows visibly disappear at
+this same step -- `voxel_remesh` joins everything into one solid at a real print voxel, and a
+pane of glass has no volume of its own to survive that; not a defect, an incidental second look
+at the same thin-feature lesson the figurine chain demonstrates on purpose.
 
 The figurine-scale chain is built around a sound, closed, single-object subject reduced to a
 small print size. The defect sweep reporting nothing on it is the point: a demonstration where

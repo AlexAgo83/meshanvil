@@ -66,6 +66,15 @@ $M run solidify work/out/demo_car_fixed_baked_placed.blend --set thickness_mm=20
 # enough other volume nearby that the bounding box does not always drift past a zero tolerance.
 # What is guaranteed and always worth reading: 006 vs 005a is the same voxel with and without
 # the wall, and 006a below still shows a real, tolerance-based refusal on the coarse voxel.
+#
+# The windows visibly disappear here, and that is voxel_remesh doing exactly its documented
+# job, not a defect: it joins every object into one solid at a real print voxel (12 mm), and
+# a pane of glass is a near-zero-thickness surface with nothing to give it volume at that
+# resolution -- it either drops or fuses into the surrounding body, the same class of loss the
+# figurine's finger demonstrates deliberately. Keeping the panes intact through this step would
+# mean not joining everything into one printable solid, which is the one thing this operation
+# exists to do -- so this is left as an incidental second illustration of the same lesson, not
+# fixed away.
 echo "== 006 one closed solid at 12 mm"
 $M run voxel_remesh work/out/demo_car_fixed_baked_placed_solid.blend --set voxel_mm=12
 echo "== 005a the same remesh without the wall -- compare against 006"
