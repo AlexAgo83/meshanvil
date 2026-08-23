@@ -82,7 +82,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .dot.ok{background:var(--ok)} .dot.failed{background:var(--err)} .dot.pruned{background:var(--dimmer)}
 .dot.pinned{background:var(--active)}
 .state.pinned{background:#33280f;color:var(--active);border-color:#4b3a18}
-.outgroup{padding:7px 8px 3px;color:var(--dimmer);font-size:10.5px;letter-spacing:.6px;text-transform:uppercase}
+.outgroup{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;
+  padding:7px 8px 3px;color:var(--dimmer);font-size:10.5px;letter-spacing:.6px;text-transform:uppercase}
+button.outgroup:hover{color:var(--dim);background:#343434}
+.ogtri{font-size:9px;letter-spacing:0;flex:none}
 /* A rule between groups, never above the first one: the list starts at the panel edge. */
 .outgroup~.outgroup{margin-top:6px;border-top:1px solid var(--line-soft);padding-top:9px}
 

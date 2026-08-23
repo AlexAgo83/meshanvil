@@ -114,6 +114,24 @@ SMOKE = r"""
     // to, and the layout that positions it runs inside the draw. Placing once at load left
     // every other chain at left:undefined -- nine nodes stacked in the corner, one visible.
     // Two starts are needed to see it at all, which is why the smoke fixture carries a second.
+    // Folding a group hides its rows and nothing else: the header stays, and the chevron
+    // and aria-expanded agree with what is actually rendered.
+    const firstHead = document.querySelector("#outliner .outgroup");
+    const rowsBefore = document.querySelectorAll("#outliner .row").length;
+    const headsBefore = document.querySelectorAll("#outliner .outgroup").length;
+    firstHead.click();
+    const folded = document.querySelector("#outliner .outgroup");
+    assert(folded.getAttribute("aria-expanded") === "false", "a folded group still reads as expanded");
+    assert(document.querySelectorAll("#outliner .outgroup").length === headsBefore,
+      "folding a group removed a group header");
+    const rowsFolded = document.querySelectorAll("#outliner .row").length;
+    assert(rowsFolded < rowsBefore, "folding a group hid none of its rows");
+    folded.click();
+    assert(document.querySelectorAll("#outliner .row").length === rowsBefore,
+      "unfolding a group did not bring its rows back");
+    assert(document.querySelector("#outliner .outgroup").getAttribute("aria-expanded") === "true",
+      "an unfolded group still reads as collapsed");
+
     const startRows = [...document.querySelectorAll("#outliner .outgroup")]
       .filter((group) => /^(Chain|Orphan)/.test(group.textContent.trim()));
     assert(startRows.length >= 2, "the smoke fixture must carry two starts to exercise the canvas");

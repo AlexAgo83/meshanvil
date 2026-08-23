@@ -194,7 +194,10 @@ function outliner() {
     else if (root) label = t("ui.chain_named", { name: chainName(reports) });
     const indent = root ? "" : " child";
     first = false;
-    html += `<div class="outgroup">${esc(label)}</div>`;
+    const shut = folded.has(fork);
+    html += `<button type="button" class="outgroup" data-fold="${esc(fork)}" aria-expanded="${!shut}">
+      <span>${esc(label)}</span><span class="ogtri">${shut ? "▸" : "▾"}</span></button>`;
+    if (shut) continue;
     for (const report of reports) {
       if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
       const kind = report.status === "failed" ? "failed" : report.kind;
@@ -268,6 +271,10 @@ function fileControls(path, label) {
     <button type="button" class="iconbtn" data-file-reveal="${esc(id)}"${disabled} aria-label="${esc(t("ui.reveal_file"))}" title="${esc(t("ui.reveal_file"))}">⌖</button>
   </span>`;
 }
+
+/** Groups the operator folded away. Keyed by group, so it survives a re-render and a live
+    refresh; a group that disappears simply stops being consulted. */
+const folded = new Set();
 
 /** A runbook applied by a dozen operations turned one table row into a column of pills and
     pushed the rest of the table off screen. Two name the runbook's use; the count carries
@@ -909,6 +916,13 @@ document.addEventListener("click", (event) => {
   if (goto) { event.preventDefault(); select(/** @type {HTMLElement} */ (goto).dataset.goto); return; }
   const viewTab = target.closest("[data-view]");
   if (viewTab) { view = Number(/** @type {HTMLElement} */ (viewTab).dataset.view); preview(); return; }
+  const fold = target.closest("[data-fold]");
+  if (fold) {
+    const key = /** @type {HTMLElement} */ (fold).dataset.fold || "";
+    if (!folded.delete(key)) folded.add(key);
+    outliner();
+    return;
+  }
   const node = target.closest("[data-id]");
   if (node) { select(/** @type {HTMLElement} */ (node).dataset.id); return; }
   const doc = target.closest("[data-doc]");

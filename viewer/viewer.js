@@ -291,7 +291,10 @@
       else if (root) label = t("ui.chain_named", { name: chainName(reports) });
       const indent = root ? "" : " child";
       first = false;
-      html += `<div class="outgroup">${esc(label)}</div>`;
+      const shut = folded.has(fork);
+      html += `<button type="button" class="outgroup" data-fold="${esc(fork)}" aria-expanded="${!shut}">
+      <span>${esc(label)}</span><span class="ogtri">${shut ? "\u25B8" : "\u25BE"}</span></button>`;
+      if (shut) continue;
       for (const report of reports) {
         if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
         const kind = report.status === "failed" ? "failed" : report.kind;
@@ -352,6 +355,7 @@
     <button type="button" class="iconbtn" data-file-reveal="${esc(id)}"${disabled} aria-label="${esc(t("ui.reveal_file"))}" title="${esc(t("ui.reveal_file"))}">\u2316</button>
   </span>`;
   }
+  var folded = /* @__PURE__ */ new Set();
   var APPLIED_SHOWN = 2;
   var shown = (applied) => applied.slice(0, APPLIED_SHOWN);
   function runbookRows() {
@@ -1056,6 +1060,16 @@
         viewTab.dataset.view
       );
       preview();
+      return;
+    }
+    const fold = target.closest("[data-fold]");
+    if (fold) {
+      const key = (
+        /** @type {HTMLElement} */
+        fold.dataset.fold || ""
+      );
+      if (!folded.delete(key)) folded.add(key);
+      outliner();
       return;
     }
     const node = target.closest("[data-id]");
