@@ -2,18 +2,18 @@
 > Date: 2026-08-23
 > Status: Proposed
 > Related request: `req_014_make_the_cli_a_dependable_surface_for_ai_operators`
-> Related backlog: `item_060_expose_report_operation_and_cli_schemas_from_the_tool`, `item_061_add_one_status_json_command_for_agent_preflight`, `item_062_let_agents_list_and_read_reports_through_the_cli`, `item_063_standardize_json_success_and_error_envelopes`, `item_064_give_actionable_refusals_stable_error_codes`, `item_065_add_a_next_action_command_that_advises_without_acting`, `item_066_document_the_agent_operating_contract`
+> Related backlog: `item_060_expose_report_operation_and_cli_schemas_from_the_tool`, `item_061_add_one_status_json_command_for_agent_preflight`, `item_062_let_agents_list_and_read_reports_through_the_cli`, `item_063_standardize_json_success_and_error_envelopes`, `item_064_give_actionable_refusals_stable_error_codes`, `item_066_document_the_agent_operating_contract`
 > Related task: `task_027_deliver_the_agent_ready_cli_contract`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:21:41
+> Indicators reviewed: 2026-08-23 11:43:10
 
 # Overview
-Makes meshanvil usable by AI operators through explicit schemas, a single status view, report access commands, stable JSON errors, next-action advice and a short agent playbook, without adding an agent runtime.
+Makes meshanvil usable by AI operators through an explicit schema command, a single status view that also advises the next safe command, report access commands, stable JSON errors and a short agent playbook in `AGENTS.md`, without adding an agent runtime.
 
 ```mermaid
 flowchart LR
-  agent[AI operator] --> status[status and next]
+  agent[AI operator] --> status[status with next hints]
   agent --> schema[schema]
   agent --> reports[reports]
   status --> cli[CLI JSON envelope]
@@ -37,13 +37,13 @@ flowchart LR
 - No localization of machine identifiers or error codes.
 
 # Scope and guardrails
-- In: schema, status, reports, stable JSON envelopes, stable refusal codes, next-action advice, and a short AI operator guide.
+- In: schema, status with next-action hints, reports, stable JSON envelopes, stable refusal codes, and a short AI operator guide in `AGENTS.md`.
 - Out: an agent framework, MCP server, background daemon, report semantic changes, operation execution changes, and versioned `work/` sample data.
 
 # Key product decisions
 - Keep this as CLI plus JSON. Agents get a dependable command surface, not a new runtime.
 - Machine identifiers and error codes are stable and untranslated; human messages can stay localized.
-- Advice commands report safe next steps and never perform them.
+- Advice is a read-only field of `status`, not its own command: it reports safe next steps and never performs them.
 
 # Success signals
 - An AI can run one status command and know the project, setup, reports and next safe actions.

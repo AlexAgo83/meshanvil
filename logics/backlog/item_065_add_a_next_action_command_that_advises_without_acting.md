@@ -1,14 +1,14 @@
 ## item_065_add_a_next_action_command_that_advises_without_acting - Add a next action command that advises without acting
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Obsolete
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:22:01
+> Indicators reviewed: 2026-08-23 11:42:18
 
 # AI Context
 - Summary: Add a pure advisory `next --json` command that suggests safe commands from current project state without mutating anything.
@@ -48,6 +48,7 @@
 - Architecture decision(s): (none yet)
 - Request: `req_014_make_the_cli_a_dependable_surface_for_ai_operators`
 - Primary task(s): `task_027_deliver_the_agent_ready_cli_contract`
+- Superseded by: `item_061_add_one_status_json_command_for_agent_preflight`
 
 # Priority
 - Priority: Medium

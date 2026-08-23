@@ -2,8 +2,8 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Agent-facing CLI contract
@@ -15,6 +15,7 @@
 - Keywords: status json, preflight, project state, report summary
 - Use when: implementing `meshanvil status --json` or shared status collection.
 - Skip when: adding operation execution, report mutation or viewer startup behavior.
+- Supersedes: `item_065_add_a_next_action_command_that_advises_without_acting` (withdrawn; its advice lives here).
 
 # Problem
 - A first-time agent must call several commands and inspect files to know whether it is in a project, whether setup passes, what operations exist, and whether reports already exist.
@@ -23,7 +24,7 @@
 - In:
   - `meshanvil status --json` combining project resolution, `doctor.check`, `manifests.discover`, report counts and latest report metadata.
   - A viewer hint that says whether `meshanvil view` is a useful next action without starting it.
-  - A small list of next-action hints, each with a stable reason code and a command string.
+  - A small list of next-action hints, each with a stable reason code and a command string, covering no project marker, failed setup, no operations found, no reports yet, reports present and viewer useful. This replaces the withdrawn `next` command: advice belongs to the state that produced it.
 - Out:
   - Starting the viewer or running setup checks beyond what `doctor.check` already does.
   - A planner that chooses operation parameters.
@@ -33,11 +34,13 @@
 - AC1: `status --json` prints one parseable object with `ok`, `project`, `doctor`, `operations`, `reports`, `viewer` and `next` keys.
 - AC2: The command exits with the same refused status as `doctor` when required setup is missing, while still printing the JSON object.
 - AC3: Report summary includes count and latest report id/path when present, but does not read every large artefact.
-- AC4: Next-action hints are ordered and include stable reason codes.
-- AC5: Selfcheck covers both a healthy and an unhealthy project.
+- AC4: Next-action hints are ordered, deterministic for the same project state, and include stable reason codes.
+- AC5: `status --json` is read-only: it never writes under `work/`, starts a server, launches an engine or writes a report.
+- AC6: Selfcheck covers a healthy project, an unhealthy project, and a project with no reports.
 
 # AC Traceability
 - request-AC2 -> This backlog slice. Proof: AC1: `status --json` prints one parseable object with `ok`, `project`, `doctor`, `operations`, `reports`, `viewer` and `next` keys.
+- request-AC6 -> This backlog slice. Proof: AC5: `status --json` is read-only: it never writes under `work/`, starts a server, launches an engine or writes a report.
 - request-AC8 -> This backlog slice. Proof: AC2: The command exits with the same refused status as `doctor` when required setup is missing, while still printing the JSON object.
 
 # Decision framing

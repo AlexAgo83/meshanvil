@@ -2,16 +2,16 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Draft
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Complexity: High
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
 > Indicators reviewed: 2026-08-23 11:22:28
 
 # AI Context
-- Summary: Define meshanvil's AI-facing CLI contract: schema discovery, status, report access, stable JSON errors, next-action advice and a short agent playbook.
-- Keywords: agent CLI, JSON contract, schemas, status, reports, stable errors, next action
+- Summary: Define meshanvil's AI-facing CLI contract: schema discovery, status, report access, stable JSON errors and a short agent playbook.
+- Keywords: agent CLI, JSON contract, schemas, status, reports, stable errors
 - Use when: making meshanvil safer or easier for AI tools to operate through the command line.
 - Skip when: changing viewer presentation, geometry operations, packaging, or human-only CLI text.
 
@@ -20,7 +20,7 @@
 - `doctor --json`, `list --json`, `prune --json` and `run --json` do not yet share one error envelope. Refusals still expose translated human text as the only stable value in some paths, which makes an agent parse prose instead of identifiers.
 - Reports are deliberately JSON files under the runtime reports directory, but there is no CLI for listing, selecting or reading them. Agents can read the filesystem, but that makes the workflow depend on filename conventions rather than a product contract.
 - The report and operation formats are mostly discoverable by reading code, manifests and examples. That is workable for a human contributor and brittle for an AI operator, which should be able to ask the tool for the schema it is expected to obey.
-- There is no single `status` or `next` command that answers whether the active directory is a project, whether setup passes, whether reports exist, which operations are available, and what the next safe command is.
+- There is no single `status` command that answers whether the active directory is a project, whether setup passes, whether reports exist, which operations are available, and what the next safe command is.
 - There is no short agent-oriented document that states the canonical commands, the `--json` preference, the report-first workflow, the `work/in` immutability rule, and how to attach Logics evidence.
 
 # Context
@@ -29,17 +29,16 @@
 - The existing `scripts/selfcheck.py` plus thin pytest wrappers are the right test shape for this project. Each new machine contract needs one small check that fails if stdout stops being parseable JSON or a stable field disappears.
 - The CLI's existing exit codes are part of the contract and should not change. JSON reports the exit code; the process still returns it.
 - The tool already has the ingredients for `status`: `paths.resolve`, `doctor.check`, `manifests.discover`, and the reports under the runtime reports directory. The request is to expose them consistently, not to build a planner.
-- `next` should be advice, not automation. It names safe next commands and reasons; it does not run them.
 - Generated or runtime data under `work/` is not versioned. Docs and schemas must describe it without committing sample client paths.
 
 # Acceptance criteria
-- AC1: `meshanvil schema report --json`, `meshanvil schema operation --json`, and `meshanvil schema cli --json` print JSON schemas or schema-like contracts that are complete enough for an AI to validate reports, operation manifests and supported JSON CLI envelopes without reading Python source.
-- AC2: `meshanvil status --json` prints one JSON object containing project identity, setup state, operation summary, report summary, viewer hint, and next-action hints; stdout contains no human preamble.
+- AC1: `meshanvil schema --json` prints one object keyed `report`, `operation` and `cli`, describing the report shape, the operation manifest shape and the JSON envelopes well enough for an AI to validate them without reading Python source. One command, not three subcommands.
+- AC2: `meshanvil status --json` prints one JSON object containing project identity, setup state, operation summary, report summary, viewer hint, and ordered next-action hints (reason code + command, advice only); stdout contains no human preamble.
 - AC3: `meshanvil reports --json`, `meshanvil reports --latest --json`, and `meshanvil reports <id> --json` let an agent list reports, find the latest report, and read one report without walking the runtime reports directory itself.
 - AC4: Every command that accepts `--json` returns the same top-level success and error envelope: success includes `ok: true`; failures include `ok: false`, `exit_code`, and a stable `error.code` plus a human `error.message`.
 - AC5: Refusals that an agent can act on have stable error codes, at least for unknown operation, missing source file, engine missing, target busy, invalid parameter, malformed `--set`, unreadable input format, and unavailable work directory.
-- AC6: `meshanvil next --json` returns ordered, safe next actions with reason codes and commands; it never starts a viewer, runs an operation, writes a report, or modifies a source file.
-- AC7: An agent-facing doc exists and states the canonical automation workflow: prefer `--json`, never write to `work/in`, discover before run, read reports rather than stdout, use `--evidence TASK:AC` when Logics is active, and keep client/source names out of committed docs.
+- AC6: `run --json` returns the report as machine data, not a stdout blob: at least `report_path`, `id` and the report `status`. Every `--json` command writes the envelope and nothing else to stdout; human and diagnostic text goes to stderr.
+- AC7: `AGENTS.md` carries the agent operating contract (today it is a one-line pointer to `LOGICS.md`, which is the contributor workflow, not the tool contract). It states the exit-code table and the canonical automation workflow: prefer `--json`, never write to `work/in`, discover before run, read reports rather than stdout, use `--evidence TASK:AC` when Logics is active, and keep client/source names out of committed docs.
 - AC8: Each new command and envelope rule has a selfcheck plus a thin pytest wrapper, and `make check`, `logics-manager lint --require-status`, and `logics-manager audit --group-by-doc` pass.
 
 # Definition of Ready (DoR)
@@ -74,5 +73,4 @@
 - `item_062_let_agents_list_and_read_reports_through_the_cli`
 - `item_063_standardize_json_success_and_error_envelopes`
 - `item_064_give_actionable_refusals_stable_error_codes`
-- `item_065_add_a_next_action_command_that_advises_without_acting`
 - `item_066_document_the_agent_operating_contract`

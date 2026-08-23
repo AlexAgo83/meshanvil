@@ -124,7 +124,7 @@ _None_
 | [item_062_let_agents_list_and_read_reports_through_the_cli](backlog/item_062_let_agents_list_and_read_reports_through_the_cli.md) | Let agents list and read reports through the CLI | Ready |  | 0% | backlog/item_062_let_agents_list_and_read_reports_through_the_cli.md |
 | [item_063_standardize_json_success_and_error_envelopes](backlog/item_063_standardize_json_success_and_error_envelopes.md) | Standardize JSON success and error envelopes | Ready |  | 0% | backlog/item_063_standardize_json_success_and_error_envelopes.md |
 | [item_064_give_actionable_refusals_stable_error_codes](backlog/item_064_give_actionable_refusals_stable_error_codes.md) | Give actionable refusals stable error codes | Ready |  | 0% | backlog/item_064_give_actionable_refusals_stable_error_codes.md |
-| [item_065_add_a_next_action_command_that_advises_without_acting](backlog/item_065_add_a_next_action_command_that_advises_without_acting.md) | Add a next action command that advises without acting | Ready |  | 0% | backlog/item_065_add_a_next_action_command_that_advises_without_acting.md |
+| [item_065_add_a_next_action_command_that_advises_without_acting](backlog/item_065_add_a_next_action_command_that_advises_without_acting.md) | Add a next action command that advises without acting | Obsolete |  | 0% | backlog/item_065_add_a_next_action_command_that_advises_without_acting.md |
 | [item_066_document_the_agent_operating_contract](backlog/item_066_document_the_agent_operating_contract.md) | Document the agent operating contract | Ready |  | 0% | backlog/item_066_document_the_agent_operating_contract.md |
 
 ## Tasks
