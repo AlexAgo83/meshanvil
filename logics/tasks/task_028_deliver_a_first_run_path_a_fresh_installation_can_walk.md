@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-23 12:38:21
+> Indicators reviewed: 2026-08-23 12:58:15
 
 # AI Context
 - Summary: Implementation plan for the first-run request, ordered so the check that catches installation defects lands before the slices that could introduce them.
@@ -67,6 +67,7 @@
 - Implemented in 6dca55f, dc4fd86, 2b3cbf4 and 94b9d16. Passed: pytest doctor/runner, pytest cli/i18n, scripts/selfcheck.py, make check, make package, make install-check, real meshanvil demo from a fresh temp directory, make release-dry-run, logics lint, audit and flow validate.
 - Finish workflow executed on 2026-08-23.
 - Linked backlog/request close verification passed.
+- Post-closeout verification from a clean venv: pip install of the wheel, then meshanvil demo produced work/ops/001_scan_defects.json in about seven seconds with no 3D file supplied and nothing written into site-packages. status, reports, schema and list in --json each returned one JSON object with clean stderr. demo refuses with exit 2 when Blender is missing. One defect found in the shared report index and fixed in 44e6e6c: status reported the lexicographically last report as latest.
 
 # Report
 - Added `scripts/install_check.py`, `make install-check`, and wired it into `release-dry-run`.

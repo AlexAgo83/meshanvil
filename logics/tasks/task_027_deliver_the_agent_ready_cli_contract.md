@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 12:45:05
+> Indicators reviewed: 2026-08-23 12:58:15
 > Owner: codex
 
 # AI Context
@@ -64,10 +64,10 @@
 - request-AC8 -> This task. Proof: Implemented in f41a6ed; validated with make check, logics-manager lint --require-status, logics-manager audit --group-by-doc, and logics-manager flow validate task_027_deliver_the_agent_ready_cli_contract. Source: `f41a6ed`
 
 # Validation
-- (no validation recorded yet)
 - make check passed on 2026-08-23: 31 tests passed; i18n ok; hygiene clean. logics-manager lint --require-status passed. logics-manager audit --group-by-doc passed with deferred warnings only. logics-manager flow validate task_027_deliver_the_agent_ready_cli_contract passed with 0 findings.
 - Finish workflow executed on 2026-08-23.
 - Linked backlog/request close verification passed.
+- Post-closeout review of the delivered CLI contract found four defects, all fixed in 44e6e6c: doctor --json and status --json emitted different codes for the same failure (engine_missing vs blender_missing); four reachable codes were missing from the list schema --json publishes; reports --latest returned the last name in the chain rather than the newest report, so a --from branch answered the wrong one; and the selfcheck meant to catch the code drift compared ERROR_CODES to itself. doctor.blocker_code is now the single derivation, reports.latest sorts by mtime, and check_error_codes drives the refusals and was verified to fail on both contract defects.
 
 # Report
 - Not started.
