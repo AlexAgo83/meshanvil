@@ -55,6 +55,7 @@ _None_
 | [req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution](request/req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution.md) | Review findings: served viewer boundary, prune safety and project resolution | Obsolete |  |  | request/req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution.md |
 | [req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented](request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md) | Make the served viewer, prune and project resolution behave the way they are documented | Done |  |  | request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md |
 | [req_014_make_the_cli_a_dependable_surface_for_ai_operators](request/req_014_make_the_cli_a_dependable_surface_for_ai_operators.md) | Make the CLI a dependable surface for AI operators | Draft |  |  | request/req_014_make_the_cli_a_dependable_surface_for_ai_operators.md |
+| [req_015_make_a_fresh_installation_reach_its_first_report](request/req_015_make_a_fresh_installation_reach_its_first_report.md) | Make a fresh installation reach its first report | Draft |  |  | request/req_015_make_a_fresh_installation_reach_its_first_report.md |
 
 ## Backlog
 
