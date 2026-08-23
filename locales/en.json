@@ -1,6 +1,15 @@
 {
   "cli": {
     "description": "meshanvil <command>. One way in, whoever is typing.",
+    "welcome": {
+      "tagline": "Local report viewer and operation runner.",
+      "next": "Start here:",
+      "view": "open the live report viewer",
+      "init": "make this folder a project",
+      "doctor": "check Blender and project setup",
+      "list": "show available operations",
+      "help": "Run meshanvil --help for every command."
+    },
     "list": {
       "help": "the operations found, and what each one takes"
     },

@@ -4,7 +4,7 @@
 Covers what is easy to get quietly wrong: identity allocation under collision, parameter
 resolution, the bounding-box delta, and the refusals that must leave work/ops untouched.
 """
-import http.client, json, os, shutil, sys, tempfile, threading, time
+import contextlib, http.client, io, json, os, shutil, sys, tempfile, threading, time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -127,6 +127,16 @@ def check_refusals():
                       ["run", "scan_defects", "does-not-exist.blend"]):
         from meshanvil import cli
         assert cli.main(arguments) == runner.EXIT_REFUSED, arguments
+
+
+def check_cli_welcome():
+    from meshanvil import cli
+    stream = io.StringIO()
+    with contextlib.redirect_stdout(stream):
+        assert cli.main([]) == runner.EXIT_OK
+    text = stream.getvalue()
+    assert "meshanvil" in text and "meshanvil view" in text and "--help" in text, text
+    assert "error:" not in text.lower(), text
 
 
 def check_i18n():
@@ -489,6 +499,7 @@ def main() -> int:
         check_projects(tmp)
         check_bbox_delta()
         check_refusals()
+        check_cli_welcome()
         check_i18n()
         check_doctor(tmp)
         check_engine_floor()

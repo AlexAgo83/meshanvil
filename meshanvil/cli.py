@@ -14,6 +14,27 @@ ARGPARSE = {
 }
 
 
+def colour(text: str, code: str) -> str:
+    return f"\033[{code}m{text}\033[0m" if sys.stdout.isatty() else text
+
+
+def welcome() -> str:
+    name = colour("meshanvil", "1;38;5;214")
+    command = colour("meshanvil view", "38;5;75")
+    return "\n".join((
+        f"{name} {VERSION}",
+        t("cli.welcome.tagline"),
+        "",
+        t("cli.welcome.next"),
+        f"  {command:<24} {t('cli.welcome.view')}",
+        f"  {'meshanvil init .':<24} {t('cli.welcome.init')}",
+        f"  {'meshanvil doctor':<24} {t('cli.welcome.doctor')}",
+        f"  {'meshanvil list':<24} {t('cli.welcome.list')}",
+        "",
+        t("cli.welcome.help"),
+    ))
+
+
 def build_parser() -> argparse.ArgumentParser:
     argparse._ = lambda text: ARGPARSE.get(text, text)
     parser = argparse.ArgumentParser(prog="meshanvil", description=t("cli.description"))
@@ -58,6 +79,10 @@ def show_list() -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if not argv:
+        print(welcome())
+        return runner.EXIT_OK
     arguments = build_parser().parse_args(argv)
     if arguments.command == "list":
         return show_list()

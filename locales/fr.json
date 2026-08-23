@@ -1,6 +1,15 @@
 {
   "cli": {
     "description": "meshanvil <commande>. Une seule entrée, quel que soit celui qui tape.",
+    "welcome": {
+      "tagline": "Visualiseur local de rapports et lanceur d'opérations.",
+      "next": "Commence ici :",
+      "view": "ouvrir le visualiseur live",
+      "init": "faire de ce dossier un projet",
+      "doctor": "vérifier Blender et le projet",
+      "list": "afficher les opérations disponibles",
+      "help": "Lance meshanvil --help pour toutes les commandes."
+    },
     "list": {
       "help": "les opérations trouvées, et ce que chacune attend"
     },
