@@ -219,6 +219,11 @@ td.delta.moved{color:var(--active)}
 .docref--product{--ref:#7c3aed} .docref--roadmap{--ref:#0e7490} .docref--architecture{--ref:#be123c}
 .docref--spec{--ref:#15803d} .docref--runbook{--ref:#4ea1ff} .docref--op{--ref:#ed9e5c}
 .docref--missing{--ref:#cc4b4b}
+/* The overflow count is a count, not a reference: no chevron, nothing to click. */
+.docref--more{--ref:var(--dimmer);color:var(--dim);font-family:var(--f-mono);font-size:10.5px}
+.docref--more::after{display:none}
+.docref--more:hover{background:color-mix(in srgb,var(--dimmer) 18%,transparent);
+  border-color:color-mix(in srgb,var(--dimmer) 55%,transparent)}
 .wikilinks{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .wiki{font-family:var(--f-mono);font-size:11px;color:#8fb4e8;text-decoration:none;border-bottom:1px dotted #3f5b82;align-self:flex-start}
 .wiki:hover{color:#b9d2f5}
@@ -274,7 +279,9 @@ td.delta.moved{color:var(--active)}
 .copycmd:hover{background:#2b271e;border-color:var(--warn)}
 .copycmd .command{min-width:0;font-family:var(--f-mono);font-size:10.5px;color:var(--warn);overflow-wrap:anywhere}
 .copycmd span{font-size:9.5px;color:var(--dimmer);text-transform:uppercase;letter-spacing:.5px}
-.chk{min-width:0}.chk>span{min-width:0}
+/* A check line carries absolute paths: unbreakable words that run past the column
+   unless they are allowed to break anywhere. */
+.chk{min-width:0}.chk>span{min-width:0;overflow-wrap:anywhere}
 .chk.ok::before{content:"●";color:var(--ok)}.chk.warn::before{content:"●";color:var(--warn)}
 .splashfoot{display:flex;align-items:center;gap:10px;padding:11px 20px;border-top:1px solid var(--line);background:var(--region)}
 .ghost{padding:5px 10px;border-radius:var(--r);background:var(--widget);color:var(--txt);font-size:11.5px}.ghost:hover{background:var(--widget-hi)}.ghost.primary{background:var(--sel)}
