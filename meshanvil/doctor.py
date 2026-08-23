@@ -68,8 +68,18 @@ def _engine_signature() -> list[dict]:
     return items
 
 
-def check(root: Path) -> dict:
-    """Write one machine-readable setup result when work/ exists; otherwise report only."""
+def blocker_code(name: str | None) -> str:
+    """The stable error code for a failing requirement.
+
+    One place, because `doctor --json` and `status --json` answer the same question and an
+    agent branches on the identifier: two spellings of one condition is two conditions.
+    """
+    return {"blender": "engine_missing", "freecad": "engine_missing",
+            "work": "work_unavailable"}.get(name, "setup_refused")
+
+
+def inspect(root: Path, write: bool = True) -> dict:
+    """Collect the setup result. `write` is what separates a check from a report."""
     signature = _engine_signature()
     cache_path = root / CACHE
     try:
@@ -80,8 +90,9 @@ def check(root: Path) -> dict:
         current = cached["engines"]
     else:
         current = [_engine("blender", True), _engine("freecad", False)]
-        _write_if_work_exists(cache_path, {"schema_version": CACHE_VERSION, "signature": signature,
-                                           "engines": current})
+        if write:
+            _write_if_work_exists(cache_path, {"schema_version": CACHE_VERSION,
+                                               "signature": signature, "engines": current})
     for item in current:
         item["reason"] = _reason(item["name"])
     requirements = [*current, work(root)]
@@ -91,5 +102,11 @@ def check(root: Path) -> dict:
     # directory only tells them that if the tool says what it made of it.
     result = {"ok": blocker is None, "next": blocker, "requirements": requirements,
               "project": {"name": paths.name(active), "path": str(active), "resolved_by": rule}}
-    _write_if_work_exists(root / REPORT, result)
+    if write:
+        _write_if_work_exists(root / REPORT, result)
     return result
+
+
+def check(root: Path) -> dict:
+    """Write one machine-readable setup result when work/ exists; otherwise report only."""
+    return inspect(root, write=True)

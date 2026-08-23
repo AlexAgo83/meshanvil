@@ -135,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
         if data["ok"]:
             json_ok(**payload)
             return runner.EXIT_OK
-        json_error(f"{data['doctor']['next']}_missing",
+        json_error(doctor.blocker_code(data["doctor"]["next"]),
                    next(item["reason"] for item in data["doctor"]["requirements"]
                         if item["name"] == data["doctor"]["next"]),
                    runner.EXIT_REFUSED, **payload)
@@ -145,19 +145,24 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.latest:
             report_path = reports.latest(project)
             if not report_path:
-                json_error("report_not_found", "no report found")
+                json_error("report_not_found", t("reports.none_yet"))
                 return runner.EXIT_REFUSED
         elif arguments.id:
             report_path, problem = reports.find(project, arguments.id)
             if problem:
-                json_error(problem, problem.replace("_", " "))
+                # Literal keys: the i18n check reads the source and cannot see a key built
+                # from a variable, which reads as unused right up until a locale drops it.
+                message = (t("reports.ambiguous_report_id", id=arguments.id)
+                           if problem == "ambiguous_report_id"
+                           else t("reports.report_not_found", id=arguments.id))
+                json_error(problem, message)
                 return runner.EXIT_REFUSED
         else:
             json_ok(reports=reports.list_reports(project))
             return runner.EXIT_OK
         report, warning = reports.load(report_path)
         if warning:
-            json_error("malformed_report", warning)
+            json_error("malformed_report", t("reports.malformed_report", reason=warning))
             return runner.EXIT_REFUSED
         json_ok(report_path=str(report_path.relative_to(project)), report=report)
         return runner.EXIT_OK
@@ -179,9 +184,9 @@ def main(argv: list[str] | None = None) -> int:
             if result["ok"]:
                 json_ok(**data)
             else:
-                code = "engine_missing" if result.get("next") == "blender" else f"{result.get('next')}_missing"
-                json_error(code, next((item["reason"] for item in result.get("requirements", [])
-                                       if item["name"] == result.get("next")), "setup refused"),
+                json_error(doctor.blocker_code(result.get("next")),
+                           next((item["reason"] for item in result.get("requirements", [])
+                                 if item["name"] == result.get("next")), t("doctor.refused")),
                            runner.EXIT_REFUSED, **data)
             return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
         print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
@@ -247,7 +252,8 @@ def main(argv: list[str] | None = None) -> int:
                 json_ok(**data)
             else:
                 json_error("no_report" if code == runner.EXIT_NO_REPORT else "operation_failed",
-                           "operation did not complete successfully", code,
+                           t("run.no_report_json") if code == runner.EXIT_NO_REPORT
+                           else t("run.operation_failed"), code,
                            **{key: value for key, value in data.items() if key != "exit_code"})
             return code
         return runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)

@@ -1,306 +1,315 @@
 {
-  "cli": {
-    "description": "meshanvil <commande>. Une seule entrée, quel que soit celui qui tape.",
-    "welcome": {
-      "tagline": "Visualiseur local de rapports et lanceur d'opérations.",
-      "next": "Commence ici :",
-      "view": "ouvrir le visualiseur live",
-      "demo": "générer une démo et un premier rapport",
-      "init": "faire de ce dossier un projet",
-      "doctor": "vérifier Blender et le projet",
-      "list": "afficher les opérations disponibles",
-      "help": "Lance meshanvil --help pour toutes les commandes."
-    },
-    "list": {
-      "help": "les opérations trouvées, et ce que chacune attend"
-    },
-    "schema": {
-      "help": "afficher les contrats JSON de rapport, opération et CLI"
-    },
-    "status": {
-      "help": "afficher l'état projet et les prochaines actions en JSON"
-    },
-    "reports": {
-      "help": "lister les rapports ou lire un rapport en JSON",
-      "latest": "lire le dernier rapport"
-    },
-    "doctor": {
-      "help": "vérifier la configuration et écrire work/doctor.json"
-    },
-    "demo": {
-      "help": "générer un sujet de démonstration et écrire le premier rapport",
-      "failed": "la génération du sujet de démonstration a échoué",
-      "ready": "sujet de démonstration prêt dans {source}",
-      "report": "rapport {report}",
-      "next": "suite : meshanvil view"
-    },
-    "run": {
-      "help": "lancer une opération et écrire son rapport",
-      "set": "un paramètre de l'opération ; répétable",
-      "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte",
-      "evidence": "ajouter ce rapport réussi comme preuve d'une tâche Logics (TÂCHE:AC)"
-    },
-    "view": {
-      "help": "construire le visualiseur sur les rapports et l'ouvrir",
-      "serve": "accepté pour compatibilité ; le service est désormais le défaut",
-      "file": "construire un instantané file:// au lieu du visualiseur live",
-      "no_open": "le construire sans ouvrir de navigateur"
-    },
-    "runbook": {
-      "help": "créer un brouillon de runbook Logics depuis une chaîne de rapports"
-    },
-    "prune": {
-      "help": "purger les anciens artefacts détenus par les rapports",
-      "would": "supprimerait",
-      "deleted": "supprimé",
-      "item": "{verb} {path} ({bytes} octets)",
-      "total": "{count} artefact(s), {bytes} octets"
-    },
-    "usage": "utilisation : ",
-    "positional_arguments": "arguments positionnels",
-    "options": "options",
-    "help": "afficher cette aide et quitter",
-    "json": "écrire du JSON exploitable par machine sur stdout",
-    "version_help": "afficher le numéro de version du programme et quitter",
-    "set": {
-      "malformed": "--set attend NOM=VALEUR, reçu {pair}"
-    },
-    "init": {
-      "help": "faire de ce répertoire un projet et créer ses dossiers de travail"
-    },
-    "project": {
-      "made": "projet {name} prêt dans {path}",
-      "already": "{path} est déjà un projet",
-      "where": "projet {name} ({path}), résolu par {rule}"
-    }
+ "cli": {
+  "description": "meshanvil <commande>. Une seule entrée, quel que soit celui qui tape.",
+  "welcome": {
+   "tagline": "Visualiseur local de rapports et lanceur d'opérations.",
+   "next": "Commence ici :",
+   "view": "ouvrir le visualiseur live",
+   "demo": "générer une démo et un premier rapport",
+   "init": "faire de ce dossier un projet",
+   "doctor": "vérifier Blender et le projet",
+   "list": "afficher les opérations disponibles",
+   "help": "Lance meshanvil --help pour toutes les commandes."
   },
   "list": {
-    "empty": "aucune opération trouvée. Une opération est un script accompagné d'un <script>.op.json."
+   "help": "les opérations trouvées, et ce que chacune attend"
   },
-  "run": {
-    "unknown_operation": "opération inconnue : {name}. Essayez : meshanvil list",
-    "no_such_file": "fichier introuvable : {path}",
-    "source_is_read_only": "{path} est une source. Une opération n'écrit jamais dans work/in/ -- copiez-la dans work/out/ et travaillez sur la copie.",
-    "unknown_parameters": "paramètre(s) inconnu(s) : {names}",
-    "invalid_parameter": "valeur invalide pour {name} : {value}",
-    "work_unavailable": "{path} n'est pas inscriptible ; corrigez-le avant de lancer une opération",
-    "target_busy": "une autre opération travaille déjà sur cette source ; attendez sa fin",
-    "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
-    "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours",
-    "unreadable_format": "{operation} ne sait pas lire {suffix} ; formats acceptés : {accepts}"
+  "schema": {
+   "help": "afficher les contrats JSON de rapport, opération et CLI"
   },
-  "engine": {
-    "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
-    "override_missing": "{variable} pointe sur {path}, qui n'existe pas",
-    "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis par {reason} ; définissez {variable} pour choisir un autre binaire"
+  "status": {
+   "help": "afficher l'état projet et les prochaines actions en JSON"
+  },
+  "reports": {
+   "help": "lister les rapports ou lire un rapport en JSON",
+   "latest": "lire le dernier rapport"
   },
   "doctor": {
-    "blender": {
-      "reason": "Requis pour lancer les opérations de maillage."
-    },
-    "freecad": {
-      "reason": "Optionnel ; nécessaire uniquement pour importer une source STEP."
-    },
-    "work": {
-      "reason": "Requis pour les rapports, sorties et rendus."
-    }
+   "help": "vérifier la configuration et écrire work/doctor.json"
+  },
+  "demo": {
+   "help": "générer un sujet de démonstration et écrire le premier rapport",
+   "failed": "la génération du sujet de démonstration a échoué",
+   "ready": "sujet de démonstration prêt dans {source}",
+   "report": "rapport {report}",
+   "next": "suite : meshanvil view"
+  },
+  "run": {
+   "help": "lancer une opération et écrire son rapport",
+   "set": "un paramètre de l'opération ; répétable",
+   "from": "déclarer le rapport parent au lieu de le déduire de l'empreinte",
+   "evidence": "ajouter ce rapport réussi comme preuve d'une tâche Logics (TÂCHE:AC)"
   },
   "view": {
-    "built": "{path}  ({count} rapports)",
-    "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c pour arrêter)",
-    "open_address": "ouvrez l'adresse ci-dessous dans un navigateur",
-    "reusing": "visualiseur réutilisé sur http://127.0.0.1:{port}/viewer/index.html",
-    "port_busy": "le port {port} du visualiseur est déjà utilisé par un autre processus"
+   "help": "construire le visualiseur sur les rapports et l'ouvrir",
+   "serve": "accepté pour compatibilité ; le service est désormais le défaut",
+   "file": "construire un instantané file:// au lieu du visualiseur live",
+   "no_open": "le construire sans ouvrir de navigateur"
   },
-  "bridge": {
-    "evidence_failed": "aucune preuve Logics n'a été écrite car l'opération a échoué",
-    "evidence_unavailable": "la preuve Logics n'a pas été écrite : logics-manager est indisponible",
-    "evidence_error": "la preuve Logics n'a pas été écrite : {reason}",
-    "runbook_unavailable": "le runbook Logics n'a pas été créé : logics-manager est indisponible",
-    "runbook_error": "le runbook Logics n'a pas été créé : {reason}"
+  "runbook": {
+   "help": "créer un brouillon de runbook Logics depuis une chaîne de rapports"
   },
-  "ui": {
-    "outliner": "Arborescence",
-    "node_editor": "Éditeur de nœuds",
-    "image_editor": "Éditeur d'image",
-    "properties": "Propriétés",
-    "report": "rapport",
-    "operations": "{count} opérations",
-    "failed_kept": "{count} en échec, conservées",
-    "read_at": "lu {at}",
-    "no_report": "aucun rapport",
-    "no_operation_yet": "Aucune opération",
-    "reports_appear": "Les rapports apparaissent ici dès qu'une opération en a écrit un dans work/ops/.",
-    "nothing_selected": "Rien de sélectionné",
-    "report_shows": "Un rapport montre son entrée, ce qui a changé, ce qui n'a pas été vérifié, et ses rendus.",
-    "no_render": "Cette opération n'a produit aucun rendu.",
-    "no_render_hint": "Relancez-la avec le rendu activé, ou ouvrez le fichier dans Blender pour regarder la géométrie.",
-    "input": "Entrée",
-    "output": "Sortie",
-    "parameters": "Paramètres",
-    "measurements": "Mesures",
-    "bounding_box": "Boîte englobante, mm",
-    "findings": "Constats",
-    "not_checked": "Non vérifié",
-    "tool": "Outil",
-    "links": "Liens",
-    "before": "avant",
-    "after": "après",
-    "delta": "écart",
-    "measured": "mesuré",
-    "axis": "axe",
-    "axes_moved": "Axes déplacés : {axes}. Calculé par l'écrivain de rapport, pas par l'opération.",
-    "warning_codes_note": "Des codes, pas des phrases : un agent peut agir sur un code.",
-    "nothing_declared": "rien de déclaré",
-    "no_parent": "Aucun parent -- début de la chaîne.",
-    "parent_resolved": "parent résolu par {source}",
-    "render_provenance": "Écrit par l'opération et listé dans renders[]. Le visualiseur ne rend rien : il montre ce que le moteur a déjà produit.",
-    "tile_hint": "c'est celui-ci la vignette du nœud",
-    "version_drift": "Ce rapport vient du moteur {mine} ; d'autres dans cette chaîne utilisaient {others}. Des nombres issus de versions différentes ne sont pas comparables.",
-    "status": "statut {status}",
-    "artefact": "Artefact",
-    "no_output": "aucune sortie",
-    "failed_kept_node": "échec - conservé",
-    "chain_outliner": "Arborescence de la chaîne",
-    "operation_graph": "Graphe des opérations",
-    "render_preview": "Aperçu du rendu",
-    "operation_report": "Rapport d'opération",
-    "view": "Vue",
-    "render_alt": "vue {view} de {operation}",
-    "document_missing": "document introuvable",
-    "runbooks": "Runbooks",
-    "applied_by": "Appliqué par les rapports",
-    "not_applied": "Pas encore appliqué par une opération.",
-    "compare_before": "avant l'opération",
-    "compare_after": "après l'opération",
-    "compare_wipe": "Position du balayage de comparaison",
-    "start_title": "Démarrer une chaîne de revue",
-    "start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne.",
-    "start_intro": "Meshanvil consigne les opérations au lieu de modifier la source. Construisez une démonstration, ou démarrez votre propre projet et lancez-y une opération.",
-    "start_demo": "Construire une démonstration :",
-    "start_inspect": "Ou démarrer votre propre projet :",
-    "start_prepare": "Puis lancer une opération sur votre source :",
-    "start_environment": "Environnement",
-    "start_environment_note": "Cette page lit seulement le dernier rapport de configuration ; elle ne lance aucun contrôle et n'installe rien.",
-    "start_doctor": "Contrôle de configuration",
-    "start_doctor_missing": "Pas encore de rapport de configuration. Lancez cette commande pour voir le binaire Blender et la version que Meshanvil utilisera.",
-    "start_blender": "Binaire Blender",
-    "start_version": "version",
-    "start_missing": "introuvable",
-    "start_reports": "Rapports",
-    "start_ops_ready": "work/ops existe et recevra les rapports d'opération.",
-    "start_ops_missing": "work/ops n'a pas encore été créé ; il apparaîtra avec le premier rapport.",
-    "start_contributors": "Outils contributeur",
-    "start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération.",
-    "start_preview": "Une démonstration, ou votre première opération, donnera à cette zone son premier aperçu géométrique.",
-    "main_menu": "Menu principal",
-    "menu_file": "Fichier",
-    "menu_view": "Vue",
-    "menu_report": "Rapport",
-    "menu_help": "Aide",
-    "menu_group_project": "Projet",
-    "menu_group_sections": "Sections",
-    "menu_group_docs": "Docs",
-    "menu_group_language": "Langue",
-    "menu_version": "Version",
-    "command_start": "Écran de démarrage",
-    "command_list": "Lister les opérations",
-    "command_doctor": "Vérifier la configuration",
-    "command_prune": "Prévisualiser la purge",
-    "command_runbook": "Créer un runbook",
-    "copied": "copié ✓",
-    "copy": "Copier",
-    "copy_path": "Copier ce chemin",
-    "file": "fichier",
-    "open_file": "Ouvrir le fichier",
-    "reveal_file": "Révéler le fichier",
-    "operation": "opération",
-    "engine": "moteur",
-    "kind": "type",
-    "summary": "résumé",
-    "requirement": "prérequis",
-    "status_label": "statut",
-    "detail": "détail",
-    "setup_found": "trouvé",
-    "setup_missing": "manquant",
-    "runbook_select_report": "sélectionnez d'abord un rapport",
-    "running": "en cours…",
-    "run_busy": "une commande tourne déjà ; réessaie une fois terminée",
-    "run_refused": "refusé ({status})",
-    "run_result": "code de sortie {code}",
-    "run_failed": "serveur injoignable",
-    "workspace": "Espace de travail",
-    "workspace_chain": "Chaîne",
-    "workspace_compare": "Comparer",
-    "workspace_runbooks": "Runbooks",
-    "filter": "filtrer…",
-    "report_sections": "Sections du rapport",
-    "close": "Fermer",
-    "splash_subtitle": "visualiseur local de rapports",
-    "splash_continue": "Continuer",
-    "splash_templates": "Modèles",
-    "splash_tpl_demo": "Construire la démonstration véhicule",
-    "splash_tpl_inspect": "Construire la démonstration figurine",
-    "splash_tpl_repair": "Démarrer un projet à soi",
-    "splash_recent": "Chaîne récente",
-    "splash_recent_empty": "Ce projet ne contient aucun rapport. Lance une des commandes à côté, puis reconstruis la page.",
-    "splash_recent_found": "{count} rapports chargés depuis la chaîne actuelle.",
-    "splash_demo_note": "Pas encore de sujet à toi ? Chaque démonstration construit son propre projet et s'ouvre ici.",
-    "runbook_empty": "Aucun runbook ne correspond au filtre actuel.",
-    "runbook_no_summary": "Ouvrez le runbook pour lire sa procédure.",
-    "runbook_content": "Runbook",
-    "first_run": "↺ premier lancement",
-    "renders": "Rendus",
-    "artefact_badge": "artefact {state}",
-    "branches": "{count} branches",
-    "vertices_total": "{count} sommets",
-    "schema_ops": "schéma {version} · {project}",
-    "rb_col_doc": "document",
-    "rb_col_settles": "ce qu'il tranche",
-    "rb_col_applied": "appliqué par",
-    "chain_named": "Chaîne — {name}",
-    "branch_named": "Branche — {name}",
-    "no_renders": "Cette opération n'a produit aucun rendu.",
-    "compare_note": "Même caméra des deux côtés. Ce que les chiffres minimisent, le volet le montre.",
-    "node_tile": "vignette du nœud",
-    "no_comparison": "Cette opération n'a écrit aucune paire avant/après. La comparaison exige deux rendus pris avec la même caméra.",
-    "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier.",
-    "project": "Projet",
-    "project_reports": "{count} rapports",
-    "splash_project": "Projet actif",
-    "splash_project_note": "{name} dans {path}, résolu par {rule}. Chaque rapport, rendu et artefact d'un run atterrit ici.",
-    "splash_nothing": "Rien vers quoi continuer"
+  "prune": {
+   "help": "purger les anciens artefacts détenus par les rapports",
+   "would": "supprimerait",
+   "deleted": "supprimé",
+   "item": "{verb} {path} ({bytes} octets)",
+   "total": "{count} artefact(s), {bytes} octets"
   },
-  "operation": {
-    "clean_shells": {
-      "summary": "Supprime chaque coque sous un seuil de sommets, selon sa taille et jamais son rang."
-    },
-    "list_shells": {
-      "summary": "Énumère les coques d'un objet avec leur taille et leur boîte englobante."
-    },
-    "ray_visibility": {
-      "summary": "Classe les objets par visibilité extérieure en tirant des rayons parallèles depuis une sphère."
-    },
-    "recenter": {
-      "summary": "Centre la géométrie sur X et Y, la pose sur z = 0, avec une échelle facultative."
-    },
-    "scan_defects": {
-      "summary": "Balaye une scène pour trouver les zones étirées et les objets dupliqués coïncidents."
-    },
-    "voxel_remesh": {
-      "summary": "Joint tous les maillages et les remaille à une taille de voxel pour produire un solide fermé."
-    },
-    "import_step": {
-      "summary": "Lit une source STEP dans FreeCAD et la tesselle en maillage STL."
-    },
-    "apply_modifiers": {
-      "summary": "Applique tous les modificateurs au maillage, pour qu'un Mirror soit de la géométrie avant toute fusion."
-    },
-    "solidify": {
-      "summary": "Donne une épaisseur à chaque surface ouverte, pour que le remesh qui suit ait un volume."
-    },
-    "import_mesh": {
-      "summary": "Lit une source OBJ, STL ou PLY dans la chaîne, en enregistrant ce qui est entré."
-    }
+  "usage": "utilisation : ",
+  "positional_arguments": "arguments positionnels",
+  "options": "options",
+  "help": "afficher cette aide et quitter",
+  "json": "écrire du JSON exploitable par machine sur stdout",
+  "version_help": "afficher le numéro de version du programme et quitter",
+  "set": {
+   "malformed": "--set attend NOM=VALEUR, reçu {pair}"
+  },
+  "init": {
+   "help": "faire de ce répertoire un projet et créer ses dossiers de travail"
+  },
+  "project": {
+   "made": "projet {name} prêt dans {path}",
+   "already": "{path} est déjà un projet",
+   "where": "projet {name} ({path}), résolu par {rule}"
   }
+ },
+ "list": {
+  "empty": "aucune opération trouvée. Une opération est un script accompagné d'un <script>.op.json."
+ },
+ "run": {
+  "unknown_operation": "opération inconnue : {name}. Essayez : meshanvil list",
+  "no_such_file": "fichier introuvable : {path}",
+  "source_is_read_only": "{path} est une source. Une opération n'écrit jamais dans work/in/ -- copiez-la dans work/out/ et travaillez sur la copie.",
+  "unknown_parameters": "paramètre(s) inconnu(s) : {names}",
+  "invalid_parameter": "valeur invalide pour {name} : {value}",
+  "work_unavailable": "{path} n'est pas inscriptible ; corrigez-le avant de lancer une opération",
+  "target_busy": "une autre opération travaille déjà sur cette source ; attendez sa fin",
+  "no_report": "le moteur n'a écrit aucun rapport après {seconds}s ; job conservé dans {job}",
+  "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours",
+  "unreadable_format": "{operation} ne sait pas lire {suffix} ; formats acceptés : {accepts}",
+  "operation_failed": "l'operation s'est executee sans succes ; lisez le rapport",
+  "no_report_json": "le moteur n'a ecrit aucun rapport ; le fichier de job est conserve pour diagnostic"
+ },
+ "engine": {
+  "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
+  "override_missing": "{variable} pointe sur {path}, qui n'existe pas",
+  "too_old": "{engine} {found} est trop ancien : {needed} ou plus récent est requis par {reason} ; définissez {variable} pour choisir un autre binaire"
+ },
+ "doctor": {
+  "blender": {
+   "reason": "Requis pour lancer les opérations de maillage."
+  },
+  "freecad": {
+   "reason": "Optionnel ; nécessaire uniquement pour importer une source STEP."
+  },
+  "work": {
+   "reason": "Requis pour les rapports, sorties et rendus."
+  },
+  "refused": "la configuration est incomplete"
+ },
+ "view": {
+  "built": "{path}  ({count} rapports)",
+  "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c pour arrêter)",
+  "open_address": "ouvrez l'adresse ci-dessous dans un navigateur",
+  "reusing": "visualiseur réutilisé sur http://127.0.0.1:{port}/viewer/index.html",
+  "port_busy": "le port {port} du visualiseur est déjà utilisé par un autre processus"
+ },
+ "bridge": {
+  "evidence_failed": "aucune preuve Logics n'a été écrite car l'opération a échoué",
+  "evidence_unavailable": "la preuve Logics n'a pas été écrite : logics-manager est indisponible",
+  "evidence_error": "la preuve Logics n'a pas été écrite : {reason}",
+  "runbook_unavailable": "le runbook Logics n'a pas été créé : logics-manager est indisponible",
+  "runbook_error": "le runbook Logics n'a pas été créé : {reason}"
+ },
+ "ui": {
+  "outliner": "Arborescence",
+  "node_editor": "Éditeur de nœuds",
+  "image_editor": "Éditeur d'image",
+  "properties": "Propriétés",
+  "report": "rapport",
+  "operations": "{count} opérations",
+  "failed_kept": "{count} en échec, conservées",
+  "read_at": "lu {at}",
+  "no_report": "aucun rapport",
+  "no_operation_yet": "Aucune opération",
+  "reports_appear": "Les rapports apparaissent ici dès qu'une opération en a écrit un dans work/ops/.",
+  "nothing_selected": "Rien de sélectionné",
+  "report_shows": "Un rapport montre son entrée, ce qui a changé, ce qui n'a pas été vérifié, et ses rendus.",
+  "no_render": "Cette opération n'a produit aucun rendu.",
+  "no_render_hint": "Relancez-la avec le rendu activé, ou ouvrez le fichier dans Blender pour regarder la géométrie.",
+  "input": "Entrée",
+  "output": "Sortie",
+  "parameters": "Paramètres",
+  "measurements": "Mesures",
+  "bounding_box": "Boîte englobante, mm",
+  "findings": "Constats",
+  "not_checked": "Non vérifié",
+  "tool": "Outil",
+  "links": "Liens",
+  "before": "avant",
+  "after": "après",
+  "delta": "écart",
+  "measured": "mesuré",
+  "axis": "axe",
+  "axes_moved": "Axes déplacés : {axes}. Calculé par l'écrivain de rapport, pas par l'opération.",
+  "warning_codes_note": "Des codes, pas des phrases : un agent peut agir sur un code.",
+  "nothing_declared": "rien de déclaré",
+  "no_parent": "Aucun parent -- début de la chaîne.",
+  "parent_resolved": "parent résolu par {source}",
+  "render_provenance": "Écrit par l'opération et listé dans renders[]. Le visualiseur ne rend rien : il montre ce que le moteur a déjà produit.",
+  "tile_hint": "c'est celui-ci la vignette du nœud",
+  "version_drift": "Ce rapport vient du moteur {mine} ; d'autres dans cette chaîne utilisaient {others}. Des nombres issus de versions différentes ne sont pas comparables.",
+  "status": "statut {status}",
+  "artefact": "Artefact",
+  "no_output": "aucune sortie",
+  "failed_kept_node": "échec - conservé",
+  "chain_outliner": "Arborescence de la chaîne",
+  "operation_graph": "Graphe des opérations",
+  "render_preview": "Aperçu du rendu",
+  "operation_report": "Rapport d'opération",
+  "view": "Vue",
+  "render_alt": "vue {view} de {operation}",
+  "document_missing": "document introuvable",
+  "runbooks": "Runbooks",
+  "applied_by": "Appliqué par les rapports",
+  "not_applied": "Pas encore appliqué par une opération.",
+  "compare_before": "avant l'opération",
+  "compare_after": "après l'opération",
+  "compare_wipe": "Position du balayage de comparaison",
+  "start_title": "Démarrer une chaîne de revue",
+  "start_outliner": "Lancez une commande ci-dessous ; son rapport deviendra la première entrée de la chaîne.",
+  "start_intro": "Meshanvil consigne les opérations au lieu de modifier la source. Construisez une démonstration, ou démarrez votre propre projet et lancez-y une opération.",
+  "start_demo": "Construire une démonstration :",
+  "start_inspect": "Ou démarrer votre propre projet :",
+  "start_prepare": "Puis lancer une opération sur votre source :",
+  "start_environment": "Environnement",
+  "start_environment_note": "Cette page lit seulement le dernier rapport de configuration ; elle ne lance aucun contrôle et n'installe rien.",
+  "start_doctor": "Contrôle de configuration",
+  "start_doctor_missing": "Pas encore de rapport de configuration. Lancez cette commande pour voir le binaire Blender et la version que Meshanvil utilisera.",
+  "start_blender": "Binaire Blender",
+  "start_version": "version",
+  "start_missing": "introuvable",
+  "start_reports": "Rapports",
+  "start_ops_ready": "work/ops existe et recevra les rapports d'opération.",
+  "start_ops_missing": "work/ops n'a pas encore été créé ; il apparaîtra avec le premier rapport.",
+  "start_contributors": "Outils contributeur",
+  "start_contributors_note": "L'outillage Logics épinglé et son support Mermaid hors ligne servent au corpus, pas à lancer une opération.",
+  "start_preview": "Une démonstration, ou votre première opération, donnera à cette zone son premier aperçu géométrique.",
+  "main_menu": "Menu principal",
+  "menu_file": "Fichier",
+  "menu_view": "Vue",
+  "menu_report": "Rapport",
+  "menu_help": "Aide",
+  "menu_group_project": "Projet",
+  "menu_group_sections": "Sections",
+  "menu_group_docs": "Docs",
+  "menu_group_language": "Langue",
+  "menu_version": "Version",
+  "command_start": "Écran de démarrage",
+  "command_list": "Lister les opérations",
+  "command_doctor": "Vérifier la configuration",
+  "command_prune": "Prévisualiser la purge",
+  "command_runbook": "Créer un runbook",
+  "copied": "copié ✓",
+  "copy": "Copier",
+  "copy_path": "Copier ce chemin",
+  "file": "fichier",
+  "open_file": "Ouvrir le fichier",
+  "reveal_file": "Révéler le fichier",
+  "operation": "opération",
+  "engine": "moteur",
+  "kind": "type",
+  "summary": "résumé",
+  "requirement": "prérequis",
+  "status_label": "statut",
+  "detail": "détail",
+  "setup_found": "trouvé",
+  "setup_missing": "manquant",
+  "runbook_select_report": "sélectionnez d'abord un rapport",
+  "running": "en cours…",
+  "run_busy": "une commande tourne déjà ; réessaie une fois terminée",
+  "run_refused": "refusé ({status})",
+  "run_result": "code de sortie {code}",
+  "run_failed": "serveur injoignable",
+  "workspace": "Espace de travail",
+  "workspace_chain": "Chaîne",
+  "workspace_compare": "Comparer",
+  "workspace_runbooks": "Runbooks",
+  "filter": "filtrer…",
+  "report_sections": "Sections du rapport",
+  "close": "Fermer",
+  "splash_subtitle": "visualiseur local de rapports",
+  "splash_continue": "Continuer",
+  "splash_templates": "Modèles",
+  "splash_tpl_demo": "Construire la démonstration véhicule",
+  "splash_tpl_inspect": "Construire la démonstration figurine",
+  "splash_tpl_repair": "Démarrer un projet à soi",
+  "splash_recent": "Chaîne récente",
+  "splash_recent_empty": "Ce projet ne contient aucun rapport. Lance une des commandes à côté, puis reconstruis la page.",
+  "splash_recent_found": "{count} rapports chargés depuis la chaîne actuelle.",
+  "splash_demo_note": "Pas encore de sujet à toi ? Chaque démonstration construit son propre projet et s'ouvre ici.",
+  "runbook_empty": "Aucun runbook ne correspond au filtre actuel.",
+  "runbook_no_summary": "Ouvrez le runbook pour lire sa procédure.",
+  "runbook_content": "Runbook",
+  "first_run": "↺ premier lancement",
+  "renders": "Rendus",
+  "artefact_badge": "artefact {state}",
+  "branches": "{count} branches",
+  "vertices_total": "{count} sommets",
+  "schema_ops": "schéma {version} · {project}",
+  "rb_col_doc": "document",
+  "rb_col_settles": "ce qu'il tranche",
+  "rb_col_applied": "appliqué par",
+  "chain_named": "Chaîne — {name}",
+  "branch_named": "Branche — {name}",
+  "no_renders": "Cette opération n'a produit aucun rendu.",
+  "compare_note": "Même caméra des deux côtés. Ce que les chiffres minimisent, le volet le montre.",
+  "node_tile": "vignette du nœud",
+  "no_comparison": "Cette opération n'a écrit aucune paire avant/après. La comparaison exige deux rendus pris avec la même caméra.",
+  "artefact_note": "Le fichier écrit par l'opération. L'élagage le supprime et garde le rapport ; le rapport est la trace, pas le fichier.",
+  "project": "Projet",
+  "project_reports": "{count} rapports",
+  "splash_project": "Projet actif",
+  "splash_project_note": "{name} dans {path}, résolu par {rule}. Chaque rapport, rendu et artefact d'un run atterrit ici.",
+  "splash_nothing": "Rien vers quoi continuer"
+ },
+ "operation": {
+  "clean_shells": {
+   "summary": "Supprime chaque coque sous un seuil de sommets, selon sa taille et jamais son rang."
+  },
+  "list_shells": {
+   "summary": "Énumère les coques d'un objet avec leur taille et leur boîte englobante."
+  },
+  "ray_visibility": {
+   "summary": "Classe les objets par visibilité extérieure en tirant des rayons parallèles depuis une sphère."
+  },
+  "recenter": {
+   "summary": "Centre la géométrie sur X et Y, la pose sur z = 0, avec une échelle facultative."
+  },
+  "scan_defects": {
+   "summary": "Balaye une scène pour trouver les zones étirées et les objets dupliqués coïncidents."
+  },
+  "voxel_remesh": {
+   "summary": "Joint tous les maillages et les remaille à une taille de voxel pour produire un solide fermé."
+  },
+  "import_step": {
+   "summary": "Lit une source STEP dans FreeCAD et la tesselle en maillage STL."
+  },
+  "apply_modifiers": {
+   "summary": "Applique tous les modificateurs au maillage, pour qu'un Mirror soit de la géométrie avant toute fusion."
+  },
+  "solidify": {
+   "summary": "Donne une épaisseur à chaque surface ouverte, pour que le remesh qui suit ait un volume."
+  },
+  "import_mesh": {
+   "summary": "Lit une source OBJ, STL ou PLY dans la chaîne, en enregistrant ce qui est entré."
+  }
+ },
+ "reports": {
+  "none_yet": "aucun rapport pour l'instant : lancez une operation, ou `meshanvil demo`",
+  "report_not_found": "aucun rapport ne correspond a {id}",
+  "ambiguous_report_id": "{id} correspond a plusieurs rapports",
+  "malformed_report": "le rapport n'a pas pu etre lu : {reason}"
+ }
 }

@@ -1,49 +1,30 @@
 """Read-only project state for agents."""
 from __future__ import annotations
-import os, shutil
-from pathlib import Path
 
-from . import engines, manifests, paths, reports, runner
-from .i18n import t
-
-
-def _engine(name: str, required: bool) -> dict:
-    item = {"name": name, "class": "required" if required else "optional", "required": required,
-            "override": engines.OVERRIDE[name],
-            "minimum_version": ".".join(map(str, engines.MIN_VERSION[name]))}
-    try:
-        found = engines.find(name)
-    except engines.EngineMissing:
-        item.update(state="missing", path=None, version=None)
-    else:
-        item.update(state="found", path=str(found), version=None)
-    item["reason"] = t(f"doctor.{name}.reason")
-    item["fix"] = engines.fix_command(name)
-    return item
-
-
-def _work(root: Path) -> dict:
-    path = root / "work"
-    state = "found" if path.is_dir() and os.access(path, os.W_OK) else "missing"
-    return {"name": "work", "class": "required", "required": True, "state": state,
-            "path": str(path), "free_bytes": shutil.disk_usage(path).free if path.is_dir() else 0,
-            "reason": t("doctor.work.reason"), "fix": "mkdir work" if os.name == "nt" else "mkdir -p work"}
+from . import doctor, manifests, paths, reports
 
 
 def collect() -> dict:
+    """One preflight answer, built from the same setup inspection `doctor` reports.
+
+    Read-only: `inspect(write=False)` is the whole reason this does not simply call `check`,
+    which writes work/doctor.json. Reusing it is also what keeps the engine versions here --
+    a requirement that states a minimum and no actual version cannot be checked against it.
+    """
     root, rule = paths.resolve()
-    requirements = [_engine("blender", True), _engine("freecad", False), _work(root)]
-    blocker = next((item["name"] for item in requirements if item["required"] and item["state"] != "found"), None)
+    setup = doctor.inspect(root, write=False)
     ops = manifests.discover()
     summaries = reports.list_reports(root)
-    latest = summaries[-1] if summaries else None
+    newest = reports.latest(root)                 # by time, not by name: see reports.latest
     data = {
-        "ok": blocker is None,
+        "ok": setup["ok"],
         "project": {"name": paths.name(root), "path": str(root), "resolved_by": rule,
                     "marker": (root / paths.MARKER).is_dir()},
-        "doctor": {"ok": blocker is None, "next": blocker, "requirements": requirements},
+        "doctor": {"ok": setup["ok"], "next": setup["next"],
+                   "requirements": setup["requirements"]},
         "operations": {"count": len(ops), "names": sorted(ops)},
-        "reports": {"count": len(summaries), "latest": latest},
+        "reports": {"count": len(summaries),
+                    "latest": reports.summary(root, newest) if newest else None},
         "viewer": {"useful": bool(summaries), "command": "meshanvil view"},
     }
     data["next"] = next_actions(data)
@@ -57,7 +38,7 @@ def next_actions(data: dict) -> list[dict]:
     if not data["doctor"]["ok"]:
         blocker = data["doctor"]["next"]
         requirement = next(item for item in data["doctor"]["requirements"] if item["name"] == blocker)
-        actions.append({"reason": f"{blocker}_missing", "command": requirement["fix"]})
+        actions.append({"reason": doctor.blocker_code(blocker), "command": requirement["fix"]})
     if data["operations"]["count"] == 0:
         actions.append({"reason": "no_operations_found", "command": "meshanvil list --json"})
     if data["reports"]["count"] == 0:

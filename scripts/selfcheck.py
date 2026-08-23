@@ -235,12 +235,12 @@ def check_cli_status(tmp: Path):
     from meshanvil import cli, paths
     root = tmp / "status-cli"; (root / paths.MARKER).mkdir(parents=True); (root / "work").mkdir()
     binary = tmp / "blender"; binary.write_text("", encoding="utf-8")
-    original = (status.paths.resolve, status.engines.find, cli.status.paths.resolve, cli.status.engines.find)
+    original = (status.paths.resolve, status.doctor.engines.find, status.doctor.engines.version)
     try:
         status.paths.resolve = lambda: (root, paths.BY_MARKER)
-        cli.status.paths.resolve = status.paths.resolve
-        status.engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing("missing"))
-        cli.status.engines.find = status.engines.find
+        # status reads the setup through doctor.inspect now, so the stub belongs at that seam.
+        status.doctor.engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing("missing"))
+        status.doctor.engines.version = lambda path: ("5.2.0", "")
         before = sorted(path.relative_to(root) for path in root.rglob("*"))
         stream = io.StringIO()
         with contextlib.redirect_stdout(stream):
@@ -256,9 +256,13 @@ def check_cli_status(tmp: Path):
         with contextlib.redirect_stdout(stream):
             assert cli.main(["status", "--json"]) == runner.EXIT_REFUSED
         refused = json.loads(stream.getvalue())
-        assert refused["ok"] is False and refused["error"]["code"] == "work_missing"
+        assert refused["ok"] is False and refused["error"]["code"] == "work_unavailable"
+        # A found engine must carry the version it was measured at: a requirement that names a
+        # floor and no actual version cannot be checked against it.
+        found = next(item for item in refused["doctor"]["requirements"] if item["name"] == "blender")
+        assert found["state"] == "found" and found["version"] == "5.2.0", found
     finally:
-        (status.paths.resolve, status.engines.find, cli.status.paths.resolve, cli.status.engines.find) = original
+        (status.paths.resolve, status.doctor.engines.find, status.doctor.engines.version) = original
 
 
 def check_cli_schema():
@@ -268,7 +272,66 @@ def check_cli_schema():
         assert cli.main(["schema", "--json"]) == runner.EXIT_OK
     data = json.loads(stream.getvalue())
     assert {"report", "operation", "cli"} <= data.keys(), data
-    assert set(schemas.ERROR_CODES) <= set(data["cli"]["error_codes"])
+    assert set(schemas.ERROR_CODES) == set(data["cli"]["error_codes"])
+
+
+def check_error_codes(tmp: Path):
+    """Drive the refusals and hold every code they emit against the declared list.
+
+    Comparing the module constant to itself after a round trip through `schema --json` proves
+    only that the command prints it. What an agent needs is the other direction: a code that
+    reaches `error.code` from outside the list is a contract the tool published and broke.
+    """
+    from meshanvil import cli, paths
+
+    declared = set(schemas.ERROR_CODES)
+    project = tmp / "codes"
+    (project / "work").mkdir(parents=True)
+    source = project / "subject.blend"
+    source.write_bytes(b"not really a blend")
+    original = (cli.paths.resolve, cli.paths.work_root, cli.runner.paths.work_root,
+                cli.engines.find, cli.doctor.inspect)
+    seen = {}
+    try:
+        cli.paths.resolve = lambda *args: (project, paths.BY_CWD)
+        cli.paths.work_root = lambda: project
+        cli.runner.paths.work_root = lambda: project
+        cases = {
+            "unknown_operation": ["run", "no_such_operation", str(source), "--json"],
+            "missing_source_file": ["run", "scan_defects", str(project / "gone.blend"), "--json"],
+            "malformed_set": ["run", "scan_defects", str(source), "--set", "bare", "--json"],
+            "report_not_found": ["reports", "--latest", "--json"],
+        }
+        for expected, argv in cases.items():
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                cli.main(argv)
+            payload = json.loads(stream.getvalue())
+            assert payload["ok"] is False, (expected, payload)
+            seen[expected] = payload["error"]["code"]
+
+        # The one an agent is most likely to branch on: the same missing engine, asked two ways.
+        cli.engines.find = lambda name: (_ for _ in ()).throw(engines.EngineMissing("gone"))
+        cli.doctor.inspect = lambda root, write=True: {
+            "ok": False, "next": "blender", "requirements": [
+                {"name": "blender", "required": True, "state": "missing",
+                 "reason": "needed", "fix": "export MESHANVIL_BLENDER=..."}],
+            "project": {"name": "codes", "path": str(project), "resolved_by": paths.BY_CWD}}
+        for argv in (["status", "--json"], ["doctor", "--json"]):
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                cli.main(argv)
+            seen[argv[0]] = json.loads(stream.getvalue())["error"]["code"]
+        assert seen["status"] == seen["doctor"] == "engine_missing", seen
+    finally:
+        (cli.paths.resolve, cli.paths.work_root, cli.runner.paths.work_root,
+         cli.engines.find, cli.doctor.inspect) = original
+
+    undeclared = {name: code for name, code in seen.items() if code not in declared}
+    assert not undeclared, f"emitted but not in schemas.ERROR_CODES: {undeclared}"
+    for expected, code in seen.items():
+        if expected in declared:
+            assert code == expected, f"{expected} refusal reported {code}"
 
 
 def check_demo_command(tmp: Path):
@@ -746,6 +809,7 @@ def main() -> int:
         check_cli_reports(tmp)
         check_cli_status(tmp)
         check_cli_schema()
+        check_error_codes(tmp)
         check_demo_command(tmp)
         check_i18n()
         check_doctor(tmp)

@@ -1,306 +1,315 @@
 {
-  "cli": {
-    "description": "meshanvil <command>. One way in, whoever is typing.",
-    "welcome": {
-      "tagline": "Local report viewer and operation runner.",
-      "next": "Start here:",
-      "view": "open the live report viewer",
-      "demo": "generate a demo subject and first report",
-      "init": "make this folder a project",
-      "doctor": "check Blender and project setup",
-      "list": "show available operations",
-      "help": "Run meshanvil --help for every command."
-    },
-    "list": {
-      "help": "the operations found, and what each one takes"
-    },
-    "schema": {
-      "help": "print the report, operation and CLI JSON contracts"
-    },
-    "status": {
-      "help": "print project state and next-action hints as JSON"
-    },
-    "reports": {
-      "help": "list reports or read one report as JSON",
-      "latest": "read the latest report"
-    },
-    "doctor": {
-      "help": "check setup and write work/doctor.json"
-    },
-    "demo": {
-      "help": "generate a demo subject and write the first report",
-      "failed": "demo source generation failed",
-      "ready": "demo source ready at {source}",
-      "report": "report {report}",
-      "next": "next: meshanvil view"
-    },
-    "run": {
-      "help": "run one operation and write its report",
-      "set": "a parameter of the operation; repeatable",
-      "from": "declare the parent report instead of deriving it from the fingerprint",
-      "evidence": "append this successful report as Logics task evidence (TASK:AC)"
-    },
-    "view": {
-      "help": "build the viewer over the reports and open it",
-      "serve": "accepted for compatibility; serving is now the default",
-      "file": "build a file:// snapshot instead of serving the live viewer",
-      "no_open": "build it without opening a browser"
-    },
-    "runbook": {
-      "help": "scaffold a Logics runbook from one report chain"
-    },
-    "prune": {
-      "help": "prune old report-owned artefacts",
-      "would": "would delete",
-      "deleted": "deleted",
-      "item": "{verb} {path} ({bytes} bytes)",
-      "total": "{count} artefact(s), {bytes} bytes"
-    },
-    "usage": "usage: ",
-    "positional_arguments": "positional arguments",
-    "options": "options",
-    "help": "show this help message and exit",
-    "json": "write machine-readable JSON to stdout",
-    "version_help": "show program's version number and exit",
-    "set": {
-      "malformed": "--set expects NAME=VALUE, got {pair}"
-    },
-    "init": {
-      "help": "make this directory a project and create its work directories"
-    },
-    "project": {
-      "made": "project {name} ready at {path}",
-      "already": "{path} is already a project",
-      "where": "project {name} ({path}), resolved by {rule}"
-    }
+ "cli": {
+  "description": "meshanvil <command>. One way in, whoever is typing.",
+  "welcome": {
+   "tagline": "Local report viewer and operation runner.",
+   "next": "Start here:",
+   "view": "open the live report viewer",
+   "demo": "generate a demo subject and first report",
+   "init": "make this folder a project",
+   "doctor": "check Blender and project setup",
+   "list": "show available operations",
+   "help": "Run meshanvil --help for every command."
   },
   "list": {
-    "empty": "no operation found. An operation is a script plus a <script>.op.json beside it."
+   "help": "the operations found, and what each one takes"
   },
-  "run": {
-    "unknown_operation": "unknown operation: {name}. Try: meshanvil list",
-    "no_such_file": "no such file: {path}",
-    "source_is_read_only": "{path} is a source. Operations never write to work/in/ -- copy it into work/out/ and run on the copy.",
-    "unknown_parameters": "unknown parameter(s): {names}",
-    "invalid_parameter": "invalid value for {name}: {value}",
-    "work_unavailable": "{path} is not writable; fix it before running an operation",
-    "target_busy": "another operation is already running on this source; wait for it to finish",
-    "no_report": "the engine wrote no report after {seconds}s; job kept at {job}",
-    "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running",
-    "unreadable_format": "{operation} cannot read {suffix}; it accepts {accepts}"
+  "schema": {
+   "help": "print the report, operation and CLI JSON contracts"
   },
-  "engine": {
-    "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
-    "override_missing": "{variable} points at {path}, which does not exist",
-    "too_old": "{engine} {found} is too old: {needed} or later is required by {reason}; set {variable} to another binary"
+  "status": {
+   "help": "print project state and next-action hints as JSON"
+  },
+  "reports": {
+   "help": "list reports or read one report as JSON",
+   "latest": "read the latest report"
   },
   "doctor": {
-    "blender": {
-      "reason": "Required to run mesh operations."
-    },
-    "freecad": {
-      "reason": "Optional; only needed to ingest a STEP source."
-    },
-    "work": {
-      "reason": "Required for reports, outputs, and renders."
-    }
+   "help": "check setup and write work/doctor.json"
+  },
+  "demo": {
+   "help": "generate a demo subject and write the first report",
+   "failed": "demo source generation failed",
+   "ready": "demo source ready at {source}",
+   "report": "report {report}",
+   "next": "next: meshanvil view"
+  },
+  "run": {
+   "help": "run one operation and write its report",
+   "set": "a parameter of the operation; repeatable",
+   "from": "declare the parent report instead of deriving it from the fingerprint",
+   "evidence": "append this successful report as Logics task evidence (TASK:AC)"
   },
   "view": {
-    "built": "{path}  ({count} reports)",
-    "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c to stop)",
-    "open_address": "open the address below in a browser",
-    "reusing": "reusing viewer on http://127.0.0.1:{port}/viewer/index.html",
-    "port_busy": "viewer port {port} is already in use by another process"
+   "help": "build the viewer over the reports and open it",
+   "serve": "accepted for compatibility; serving is now the default",
+   "file": "build a file:// snapshot instead of serving the live viewer",
+   "no_open": "build it without opening a browser"
   },
-  "bridge": {
-    "evidence_failed": "no Logics evidence was written because the operation failed",
-    "evidence_unavailable": "Logics evidence was not written: logics-manager is unavailable",
-    "evidence_error": "Logics evidence was not written: {reason}",
-    "runbook_unavailable": "Logics runbook was not created: logics-manager is unavailable",
-    "runbook_error": "Logics runbook was not created: {reason}"
+  "runbook": {
+   "help": "scaffold a Logics runbook from one report chain"
   },
-  "ui": {
-    "outliner": "Outliner",
-    "node_editor": "Node Editor",
-    "image_editor": "Image Editor",
-    "properties": "Properties",
-    "report": "report",
-    "operations": "{count} operations",
-    "failed_kept": "{count} failed, kept",
-    "read_at": "read {at}",
-    "no_report": "no report",
-    "no_operation_yet": "No operation yet",
-    "reports_appear": "Reports appear here once one has been written under work/ops/.",
-    "nothing_selected": "Nothing selected",
-    "report_shows": "A report shows its input, what changed, what was not checked, and its renders.",
-    "no_render": "This operation left no render.",
-    "no_render_hint": "Run it with rendering enabled, or open the file in Blender to look at the geometry.",
-    "input": "Input",
-    "output": "Output",
-    "parameters": "Parameters",
-    "measurements": "Measurements",
-    "bounding_box": "Bounding box, mm",
-    "findings": "Findings",
-    "not_checked": "Not checked",
-    "tool": "Tool",
-    "links": "Links",
-    "before": "before",
-    "after": "after",
-    "delta": "delta",
-    "measured": "measured",
-    "axis": "axis",
-    "axes_moved": "Axes moved: {axes}. Computed by the report writer, not by the operation.",
-    "warning_codes_note": "Warning codes, not sentences: an agent can act on a code.",
-    "nothing_declared": "nothing declared",
-    "no_parent": "No parent -- start of the chain.",
-    "parent_resolved": "parent resolved by {source}",
-    "render_provenance": "Written by the operation and listed in renders[]. The viewer renders nothing: it shows what the engine already produced.",
-    "tile_hint": "this one is the node tile",
-    "version_drift": "This report was produced by engine {mine}; others in this chain used {others}. Numbers from different engine versions are not comparable.",
-    "status": "status {status}",
-    "artefact": "Artefact",
-    "no_output": "no output",
-    "failed_kept_node": "failed - kept",
-    "chain_outliner": "Chain outliner",
-    "operation_graph": "Operation graph",
-    "render_preview": "Render preview",
-    "operation_report": "Operation report",
-    "view": "View",
-    "render_alt": "{view} view of {operation}",
-    "document_missing": "document missing",
-    "runbooks": "Runbooks",
-    "applied_by": "Applied by reports",
-    "not_applied": "Not yet applied by an operation.",
-    "compare_before": "before operation",
-    "compare_after": "after operation",
-    "compare_wipe": "Comparison wipe position",
-    "start_title": "Start a review chain",
-    "start_outliner": "Run one command below; its report will become the first chain entry.",
-    "start_intro": "Meshanvil records operations instead of changing the source. Build a demonstration, or start a project of your own and run an operation on it.",
-    "start_demo": "Build a demonstration:",
-    "start_inspect": "Or start your own project:",
-    "start_prepare": "Then run an operation on your source:",
-    "start_environment": "Environment",
-    "start_environment_note": "This page only reads the last setup report; it does not run checks or install anything.",
-    "start_doctor": "Setup check",
-    "start_doctor_missing": "No setup report yet. Run this command to see the Blender binary and version that Meshanvil will use.",
-    "start_blender": "Blender binary",
-    "start_version": "version",
-    "start_missing": "not found",
-    "start_reports": "Reports",
-    "start_ops_ready": "work/ops exists and will hold operation reports.",
-    "start_ops_missing": "work/ops has not been created yet; it will appear with the first report.",
-    "start_contributors": "Contributor tools",
-    "start_contributors_note": "The pinned Logics tooling and its offline Mermaid support are for corpus work, not for running an operation.",
-    "start_preview": "A demonstration, or your first operation, will give this area its first geometry preview.",
-    "main_menu": "Main menu",
-    "menu_file": "File",
-    "menu_view": "View",
-    "menu_report": "Report",
-    "menu_help": "Help",
-    "menu_group_project": "Project",
-    "menu_group_sections": "Sections",
-    "menu_group_docs": "Docs",
-    "menu_group_language": "Language",
-    "menu_version": "Version",
-    "command_start": "Start screen",
-    "command_list": "List operations",
-    "command_doctor": "Check setup",
-    "command_prune": "Preview pruning",
-    "command_runbook": "Create a runbook",
-    "copied": "copied ✓",
-    "copy": "Copy",
-    "copy_path": "Copy this path",
-    "file": "file",
-    "open_file": "Open file",
-    "reveal_file": "Reveal file",
-    "operation": "operation",
-    "engine": "engine",
-    "kind": "kind",
-    "summary": "summary",
-    "requirement": "requirement",
-    "status_label": "status",
-    "detail": "detail",
-    "setup_found": "found",
-    "setup_missing": "missing",
-    "runbook_select_report": "select a report first",
-    "running": "running…",
-    "run_busy": "a command is already running; try again once it finishes",
-    "run_refused": "refused ({status})",
-    "run_result": "exit {code}",
-    "run_failed": "could not reach the server",
-    "workspace": "Workspace",
-    "workspace_chain": "Chain",
-    "workspace_compare": "Compare",
-    "workspace_runbooks": "Runbooks",
-    "filter": "filter…",
-    "report_sections": "Report sections",
-    "close": "Close",
-    "splash_subtitle": "local report viewer",
-    "splash_continue": "Continue",
-    "splash_templates": "Templates",
-    "splash_tpl_demo": "Build the vehicle demonstration",
-    "splash_tpl_inspect": "Build the figurine demonstration",
-    "splash_tpl_repair": "Start a project of your own",
-    "splash_recent": "Recent chain",
-    "splash_recent_empty": "This project holds no report yet. Run one of the commands beside this, then rebuild the page.",
-    "splash_recent_found": "{count} reports loaded from the current chain.",
-    "splash_demo_note": "No subject of your own yet? Either demonstration builds its own project and opens here.",
-    "runbook_empty": "No runbook matches the current filter.",
-    "runbook_no_summary": "Open the runbook to read its procedure.",
-    "runbook_content": "Runbook",
-    "first_run": "↺ first run",
-    "renders": "Renders",
-    "artefact_badge": "artefact {state}",
-    "branches": "{count} branches",
-    "vertices_total": "{count} vertices",
-    "schema_ops": "schema {version} · {project}",
-    "rb_col_doc": "document",
-    "rb_col_settles": "what it settles",
-    "rb_col_applied": "applied by",
-    "chain_named": "Chain — {name}",
-    "branch_named": "Branch — {name}",
-    "no_renders": "This operation produced no render.",
-    "compare_note": "Identical camera on both states. What the numbers understate, the wipe shows.",
-    "node_tile": "node tile",
-    "no_comparison": "This operation wrote no before/after pair. Comparison needs two renders shot with the same camera.",
-    "artefact_note": "The file the operation wrote. Pruning drops it and keeps the report; the report is the record, not the file.",
-    "project": "Project",
-    "project_reports": "{count} reports",
-    "splash_project": "Active project",
-    "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here.",
-    "splash_nothing": "Nothing to continue to"
+  "prune": {
+   "help": "prune old report-owned artefacts",
+   "would": "would delete",
+   "deleted": "deleted",
+   "item": "{verb} {path} ({bytes} bytes)",
+   "total": "{count} artefact(s), {bytes} bytes"
   },
-  "operation": {
-    "clean_shells": {
-      "summary": "Drop every shell below a vertex threshold, pruning by size and never by rank."
-    },
-    "list_shells": {
-      "summary": "Enumerate the shells of an object with their size and bounding box."
-    },
-    "ray_visibility": {
-      "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere."
-    },
-    "recenter": {
-      "summary": "Centre the geometry on X and Y, sit it on z = 0, optionally at a scale."
-    },
-    "scan_defects": {
-      "summary": "Sweep a scene for smeared patches and coincident duplicate objects."
-    },
-    "voxel_remesh": {
-      "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid."
-    },
-    "import_step": {
-      "summary": "Read a STEP source in FreeCAD and tessellate it into an STL mesh."
-    },
-    "apply_modifiers": {
-      "summary": "Bake every modifier into the mesh, so a Mirror is geometry before anything joins it."
-    },
-    "solidify": {
-      "summary": "Give every open surface a wall, so the remesh that follows has a volume to work on."
-    },
-    "import_mesh": {
-      "summary": "Read an OBJ, STL or PLY source into the chain, recording what came in."
-    }
+  "usage": "usage: ",
+  "positional_arguments": "positional arguments",
+  "options": "options",
+  "help": "show this help message and exit",
+  "json": "write machine-readable JSON to stdout",
+  "version_help": "show program's version number and exit",
+  "set": {
+   "malformed": "--set expects NAME=VALUE, got {pair}"
+  },
+  "init": {
+   "help": "make this directory a project and create its work directories"
+  },
+  "project": {
+   "made": "project {name} ready at {path}",
+   "already": "{path} is already a project",
+   "where": "project {name} ({path}), resolved by {rule}"
   }
+ },
+ "list": {
+  "empty": "no operation found. An operation is a script plus a <script>.op.json beside it."
+ },
+ "run": {
+  "unknown_operation": "unknown operation: {name}. Try: meshanvil list",
+  "no_such_file": "no such file: {path}",
+  "source_is_read_only": "{path} is a source. Operations never write to work/in/ -- copy it into work/out/ and run on the copy.",
+  "unknown_parameters": "unknown parameter(s): {names}",
+  "invalid_parameter": "invalid value for {name}: {value}",
+  "work_unavailable": "{path} is not writable; fix it before running an operation",
+  "target_busy": "another operation is already running on this source; wait for it to finish",
+  "no_report": "the engine wrote no report after {seconds}s; job kept at {job}",
+  "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running",
+  "unreadable_format": "{operation} cannot read {suffix}; it accepts {accepts}",
+  "operation_failed": "the operation ran and did not succeed; read the report",
+  "no_report_json": "the engine wrote no report; the job file is kept for diagnosis"
+ },
+ "engine": {
+  "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
+  "override_missing": "{variable} points at {path}, which does not exist",
+  "too_old": "{engine} {found} is too old: {needed} or later is required by {reason}; set {variable} to another binary"
+ },
+ "doctor": {
+  "blender": {
+   "reason": "Required to run mesh operations."
+  },
+  "freecad": {
+   "reason": "Optional; only needed to ingest a STEP source."
+  },
+  "work": {
+   "reason": "Required for reports, outputs, and renders."
+  },
+  "refused": "setup is incomplete"
+ },
+ "view": {
+  "built": "{path}  ({count} reports)",
+  "serving": "http://127.0.0.1:{port}/{entry}  (ctrl-c to stop)",
+  "open_address": "open the address below in a browser",
+  "reusing": "reusing viewer on http://127.0.0.1:{port}/viewer/index.html",
+  "port_busy": "viewer port {port} is already in use by another process"
+ },
+ "bridge": {
+  "evidence_failed": "no Logics evidence was written because the operation failed",
+  "evidence_unavailable": "Logics evidence was not written: logics-manager is unavailable",
+  "evidence_error": "Logics evidence was not written: {reason}",
+  "runbook_unavailable": "Logics runbook was not created: logics-manager is unavailable",
+  "runbook_error": "Logics runbook was not created: {reason}"
+ },
+ "ui": {
+  "outliner": "Outliner",
+  "node_editor": "Node Editor",
+  "image_editor": "Image Editor",
+  "properties": "Properties",
+  "report": "report",
+  "operations": "{count} operations",
+  "failed_kept": "{count} failed, kept",
+  "read_at": "read {at}",
+  "no_report": "no report",
+  "no_operation_yet": "No operation yet",
+  "reports_appear": "Reports appear here once one has been written under work/ops/.",
+  "nothing_selected": "Nothing selected",
+  "report_shows": "A report shows its input, what changed, what was not checked, and its renders.",
+  "no_render": "This operation left no render.",
+  "no_render_hint": "Run it with rendering enabled, or open the file in Blender to look at the geometry.",
+  "input": "Input",
+  "output": "Output",
+  "parameters": "Parameters",
+  "measurements": "Measurements",
+  "bounding_box": "Bounding box, mm",
+  "findings": "Findings",
+  "not_checked": "Not checked",
+  "tool": "Tool",
+  "links": "Links",
+  "before": "before",
+  "after": "after",
+  "delta": "delta",
+  "measured": "measured",
+  "axis": "axis",
+  "axes_moved": "Axes moved: {axes}. Computed by the report writer, not by the operation.",
+  "warning_codes_note": "Warning codes, not sentences: an agent can act on a code.",
+  "nothing_declared": "nothing declared",
+  "no_parent": "No parent -- start of the chain.",
+  "parent_resolved": "parent resolved by {source}",
+  "render_provenance": "Written by the operation and listed in renders[]. The viewer renders nothing: it shows what the engine already produced.",
+  "tile_hint": "this one is the node tile",
+  "version_drift": "This report was produced by engine {mine}; others in this chain used {others}. Numbers from different engine versions are not comparable.",
+  "status": "status {status}",
+  "artefact": "Artefact",
+  "no_output": "no output",
+  "failed_kept_node": "failed - kept",
+  "chain_outliner": "Chain outliner",
+  "operation_graph": "Operation graph",
+  "render_preview": "Render preview",
+  "operation_report": "Operation report",
+  "view": "View",
+  "render_alt": "{view} view of {operation}",
+  "document_missing": "document missing",
+  "runbooks": "Runbooks",
+  "applied_by": "Applied by reports",
+  "not_applied": "Not yet applied by an operation.",
+  "compare_before": "before operation",
+  "compare_after": "after operation",
+  "compare_wipe": "Comparison wipe position",
+  "start_title": "Start a review chain",
+  "start_outliner": "Run one command below; its report will become the first chain entry.",
+  "start_intro": "Meshanvil records operations instead of changing the source. Build a demonstration, or start a project of your own and run an operation on it.",
+  "start_demo": "Build a demonstration:",
+  "start_inspect": "Or start your own project:",
+  "start_prepare": "Then run an operation on your source:",
+  "start_environment": "Environment",
+  "start_environment_note": "This page only reads the last setup report; it does not run checks or install anything.",
+  "start_doctor": "Setup check",
+  "start_doctor_missing": "No setup report yet. Run this command to see the Blender binary and version that Meshanvil will use.",
+  "start_blender": "Blender binary",
+  "start_version": "version",
+  "start_missing": "not found",
+  "start_reports": "Reports",
+  "start_ops_ready": "work/ops exists and will hold operation reports.",
+  "start_ops_missing": "work/ops has not been created yet; it will appear with the first report.",
+  "start_contributors": "Contributor tools",
+  "start_contributors_note": "The pinned Logics tooling and its offline Mermaid support are for corpus work, not for running an operation.",
+  "start_preview": "A demonstration, or your first operation, will give this area its first geometry preview.",
+  "main_menu": "Main menu",
+  "menu_file": "File",
+  "menu_view": "View",
+  "menu_report": "Report",
+  "menu_help": "Help",
+  "menu_group_project": "Project",
+  "menu_group_sections": "Sections",
+  "menu_group_docs": "Docs",
+  "menu_group_language": "Language",
+  "menu_version": "Version",
+  "command_start": "Start screen",
+  "command_list": "List operations",
+  "command_doctor": "Check setup",
+  "command_prune": "Preview pruning",
+  "command_runbook": "Create a runbook",
+  "copied": "copied ✓",
+  "copy": "Copy",
+  "copy_path": "Copy this path",
+  "file": "file",
+  "open_file": "Open file",
+  "reveal_file": "Reveal file",
+  "operation": "operation",
+  "engine": "engine",
+  "kind": "kind",
+  "summary": "summary",
+  "requirement": "requirement",
+  "status_label": "status",
+  "detail": "detail",
+  "setup_found": "found",
+  "setup_missing": "missing",
+  "runbook_select_report": "select a report first",
+  "running": "running…",
+  "run_busy": "a command is already running; try again once it finishes",
+  "run_refused": "refused ({status})",
+  "run_result": "exit {code}",
+  "run_failed": "could not reach the server",
+  "workspace": "Workspace",
+  "workspace_chain": "Chain",
+  "workspace_compare": "Compare",
+  "workspace_runbooks": "Runbooks",
+  "filter": "filter…",
+  "report_sections": "Report sections",
+  "close": "Close",
+  "splash_subtitle": "local report viewer",
+  "splash_continue": "Continue",
+  "splash_templates": "Templates",
+  "splash_tpl_demo": "Build the vehicle demonstration",
+  "splash_tpl_inspect": "Build the figurine demonstration",
+  "splash_tpl_repair": "Start a project of your own",
+  "splash_recent": "Recent chain",
+  "splash_recent_empty": "This project holds no report yet. Run one of the commands beside this, then rebuild the page.",
+  "splash_recent_found": "{count} reports loaded from the current chain.",
+  "splash_demo_note": "No subject of your own yet? Either demonstration builds its own project and opens here.",
+  "runbook_empty": "No runbook matches the current filter.",
+  "runbook_no_summary": "Open the runbook to read its procedure.",
+  "runbook_content": "Runbook",
+  "first_run": "↺ first run",
+  "renders": "Renders",
+  "artefact_badge": "artefact {state}",
+  "branches": "{count} branches",
+  "vertices_total": "{count} vertices",
+  "schema_ops": "schema {version} · {project}",
+  "rb_col_doc": "document",
+  "rb_col_settles": "what it settles",
+  "rb_col_applied": "applied by",
+  "chain_named": "Chain — {name}",
+  "branch_named": "Branch — {name}",
+  "no_renders": "This operation produced no render.",
+  "compare_note": "Identical camera on both states. What the numbers understate, the wipe shows.",
+  "node_tile": "node tile",
+  "no_comparison": "This operation wrote no before/after pair. Comparison needs two renders shot with the same camera.",
+  "artefact_note": "The file the operation wrote. Pruning drops it and keeps the report; the report is the record, not the file.",
+  "project": "Project",
+  "project_reports": "{count} reports",
+  "splash_project": "Active project",
+  "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here.",
+  "splash_nothing": "Nothing to continue to"
+ },
+ "operation": {
+  "clean_shells": {
+   "summary": "Drop every shell below a vertex threshold, pruning by size and never by rank."
+  },
+  "list_shells": {
+   "summary": "Enumerate the shells of an object with their size and bounding box."
+  },
+  "ray_visibility": {
+   "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere."
+  },
+  "recenter": {
+   "summary": "Centre the geometry on X and Y, sit it on z = 0, optionally at a scale."
+  },
+  "scan_defects": {
+   "summary": "Sweep a scene for smeared patches and coincident duplicate objects."
+  },
+  "voxel_remesh": {
+   "summary": "Join every mesh and remesh it at a voxel size, producing one closed solid."
+  },
+  "import_step": {
+   "summary": "Read a STEP source in FreeCAD and tessellate it into an STL mesh."
+  },
+  "apply_modifiers": {
+   "summary": "Bake every modifier into the mesh, so a Mirror is geometry before anything joins it."
+  },
+  "solidify": {
+   "summary": "Give every open surface a wall, so the remesh that follows has a volume to work on."
+  },
+  "import_mesh": {
+   "summary": "Read an OBJ, STL or PLY source into the chain, recording what came in."
+  }
+ },
+ "reports": {
+  "none_yet": "no report yet: run an operation, or `meshanvil demo`",
+  "report_not_found": "no report matches {id}",
+  "ambiguous_report_id": "{id} matches more than one report",
+  "malformed_report": "the report could not be read: {reason}"
+ }
 }

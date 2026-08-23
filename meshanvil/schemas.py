@@ -3,6 +3,9 @@ from __future__ import annotations
 
 from . import runner
 
+# Every code a JSON command can put in `error.code`. A declared list that omits one is worse
+# than no list: an agent branches on it and never sees the case coming. `check_error_codes`
+# in scripts/selfcheck.py drives the refusals and fails if one is emitted from outside here.
 ERROR_CODES = [
     "unknown_operation",
     "missing_source_file",
@@ -11,12 +14,15 @@ ERROR_CODES = [
     "invalid_parameter",
     "malformed_set",
     "unreadable_input_format",
+    "read_only_source",
     "work_unavailable",
+    "setup_refused",
     "report_not_found",
     "ambiguous_report_id",
     "malformed_report",
     "operation_failed",
     "no_report",
+    "refused",
 ]
 
 

@@ -50,8 +50,14 @@ def list_reports(root: Path) -> list[dict]:
 
 
 def latest(root: Path) -> Path | None:
+    """The most recently written report, which is not the last name in the chain.
+
+    `--from` allocates a sibling on its parent's ordinal, so branching off 001 after 005
+    exists writes 002a -- a name that sorts before the five reports preceding it. Listing
+    stays in chain order; only "latest" means time, and the filesystem already knows it.
+    """
     found = files(root)
-    return found[-1] if found else None
+    return max(found, key=lambda path: (path.stat().st_mtime_ns, path.name), default=None)
 
 
 def find(root: Path, identity: str) -> tuple[Path | None, str | None]:
