@@ -1,13 +1,13 @@
 ## req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone - Make meshanvil an installable tool instead of a repository you clone
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:27
+> Indicators reviewed: 2026-08-23 02:00:16
 
 # AI Context
 - Summary: Packages meshanvil so it is installed once and used in any project directory: an entry point, one asset-resolution rule that works from a tree or a wheel, a build that fails when the package is missing part of itself, and the decision superseding adr_004's `No publication yet`.

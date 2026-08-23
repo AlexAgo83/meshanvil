@@ -1,14 +1,14 @@
 ## item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus - Decide what an installed meshanvil offers in place of this repository's corpus
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 75%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:49:59
+> Indicators reviewed: 2026-08-23 02:00:17
 
 # AI Context
 - Summary: Settles what the runbook workspace shows when the installation is not this repository: shipped content, the project's own, or an explained empty state.
@@ -57,3 +57,9 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_025_deliver_an_installable_meshanvil`
+
+# Notes
+- Task `task_025_deliver_an_installable_meshanvil` was finished via `logics-manager flow finish task` on 2026-08-23.

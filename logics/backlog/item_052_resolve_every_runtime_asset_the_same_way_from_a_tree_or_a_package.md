@@ -1,14 +1,14 @@
 ## item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package - Resolve every runtime asset the same way from a tree or a package
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 75%
+> Progress: 100%
 > Complexity: High
 > Theme: Distribution and installation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 01:49:59
+> Indicators reviewed: 2026-08-23 02:00:17
 
 # AI Context
 - Summary: One repo-first resolution rule replaces the repository-root lookup at every call site, each asset directory is declared in the package, and a build missing one fails.
@@ -58,3 +58,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_025_deliver_an_installable_meshanvil`
+
+# Notes
+- Task `task_025_deliver_an_installable_meshanvil` was finished via `logics-manager flow finish task` on 2026-08-23.

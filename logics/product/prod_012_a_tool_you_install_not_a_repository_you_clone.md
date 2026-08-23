@@ -1,12 +1,12 @@
 ## prod_012_a_tool_you_install_not_a_repository_you_clone - A tool you install, not a repository you clone
 > Date: 2026-08-23
-> Status: Proposed
+> Status: Settled
 > Related request: `req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone`
-> Related backlog: `item_051_declare_the_package_and_give_the_tool_a_real_entry_point`, `item_052_resolve_every_runtime_asset_the_same_way_from_a_tree_or_a_package`, `item_053_run_the_viewer_s_closed_command_set_through_the_installed_entry_point`, `item_054_decide_what_an_installed_meshanvil_offers_in_place_of_this_repository_s_corpus`, `item_055_make_releasing_a_procedure_and_state_what_was_measured`
+> Related backlog: `item_051_declare_the_package_and_give_the_tool_a_real_entry_point`
 > Related task: `task_025_deliver_an_installable_meshanvil`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 00:48:28
+> Indicators reviewed: 2026-08-23 02:00:17
 
 # Overview
 Turns meshanvil from a source tree that has to be acquired into a command an operator installs once and uses in any project directory, without giving up the working-tree route contributors depend on and without pretending to support a platform nobody measured.
@@ -48,5 +48,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_011_make_meshanvil_an_installable_tool_instead_of_a_repository_you_clone`
+- Product back-reference: `item_051_declare_the_package_and_give_the_tool_a_real_entry_point`
 - Task back-reference: `task_025_deliver_an_installable_meshanvil`
