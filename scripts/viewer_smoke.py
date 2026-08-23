@@ -110,6 +110,27 @@ SMOKE = r"""
     document.querySelector('[data-splash="close"]').click();
     assert(document.querySelector("#splash").classList.contains("hidden"), "splash did not close");
 
+    // The regression this guards: the canvas draws one chain, the one the selection belongs
+    // to, and the layout that positions it runs inside the draw. Placing once at load left
+    // every other chain at left:undefined -- nine nodes stacked in the corner, one visible.
+    // Two starts are needed to see it at all, which is why the smoke fixture carries a second.
+    const startRows = [...document.querySelectorAll("#outliner .outgroup")]
+      .filter((group) => /^(Chain|Orphan)/.test(group.textContent.trim()));
+    assert(startRows.length >= 2, "the smoke fixture must carry two starts to exercise the canvas");
+    for (const id of ["001", "900"]) {
+      const row = [...document.querySelectorAll("#outliner .row")].find((r) => r.dataset.id === id);
+      assert(row, `no outliner row for ${id}`);
+      row.click();
+      const drawn = [...document.querySelectorAll("#nodes .node")];
+      assert(drawn.length, `selecting ${id} drew no node`);
+      assert(drawn.some((node) => node.dataset.id === id), `selecting ${id} did not draw ${id}`);
+      const spots = new Set(drawn.map((node) => `${node.style.left},${node.style.top}`));
+      assert(spots.size === drawn.length,
+        `selecting ${id} stacked ${drawn.length} nodes on ${spots.size} positions`);
+      assert(![...spots].some((spot) => spot.includes("undefined")),
+        `selecting ${id} left a node unplaced`);
+    }
+
     // The regression this guards: opening the splash from the File menu's own "Start screen"
     // row is a click *inside* that open <details>, so the generic "click outside a menu closes
     // it" check never ran for it -- the dropdown used to stay open, visible on top of the modal.
@@ -216,7 +237,11 @@ SMOKE = r"""
         && document.querySelector("#status-schema").textContent.trim(), "status bar totals missing");
     assert(document.querySelector(".status #start-screen"), "the start button is not in the status bar");
     // The outliner groups on forks, and the status bar counts them. One number, two readers.
-    const branchGroups = [...document.querySelectorAll("#outliner .outgroup")].length - 1;
+    // Every start opens a group of its own too, so those are discounted rather than assumed
+    // to be exactly one: the count broke the day a second chain appeared in the same project.
+    const allGroups = [...document.querySelectorAll("#outliner .outgroup")];
+    const starts = allGroups.filter((group) => /^(Chain|Orphan)/.test(group.textContent.trim()));
+    const branchGroups = allGroups.length - starts.length;
     const branchCount = Number((document.querySelector("#status-branches").textContent.match(/\d+/) || [0])[0]);
     assert(branchGroups === branchCount,
       `outliner shows ${branchGroups} branch groups, the status bar counts ${branchCount}`);
@@ -294,6 +319,30 @@ SMOKE = r"""
 })();
 </script>
 """
+
+
+def second_start(data_js: Path) -> None:
+    """Give the fixture a second chain start, which the demo chain does not have.
+
+    The outliner groups by start and the canvas draws one start at a time; with a single
+    root every such rule is trivially satisfied, and the layout bug that stacked a whole
+    chain in the corner was invisible until a second start existed to switch to.
+    """
+    text = data_js.read_text(encoding="utf-8")
+    prefix, _, body = text.partition("=")
+    payload = json.loads(body.strip().rstrip(";"))
+    first = payload["reports"][0]
+    clone = json.loads(json.dumps(first))
+    clone["id"] = "900"
+    clone["input"] = {**clone.get("input", {}), "path": "/smoke/second-source.obj"}
+    clone["links"] = {**clone.get("links", {}), "parent": None, "parent_source": None}
+    payload["reports"].append(clone)
+    # projects[] carries its own copy of the same list, and switching projects reads that one:
+    # injecting into only one of the two makes the operation count change under a round trip.
+    for project in payload.get("projects", []):
+        if project.get("name") == payload.get("active"):
+            project["reports"].append(clone)
+    data_js.write_text(f"{prefix}= {json.dumps(payload, indent=1)};\n", encoding="utf-8")
 
 
 def chrome_path() -> str | None:
@@ -405,6 +454,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="meshanvil-viewer-smoke-") as tmp:
         tmp_root = Path(tmp)
         shutil.copytree(project / "work" / "viewer", tmp_root / "viewer")
+        second_start(tmp_root / "viewer" / "data.js")
         renders = project / "work" / "renders"
         if renders.exists():
             shutil.copytree(renders, tmp_root / "renders")

@@ -7,9 +7,9 @@
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile types viewer-bundle test selfcheck i18n hygiene fixture viewer-smoke logics package package-check install-check release-dry-run
+.PHONY: check compile types viewer-bundle viewer-test test selfcheck i18n hygiene fixture viewer-smoke logics package package-check install-check release-dry-run
 
-check: compile types viewer-bundle test i18n hygiene
+check: compile types viewer-bundle viewer-test test i18n hygiene
 
 compile:
 	$(PYTHON) -m compileall -q meshanvil meshanvil_engine pipeline tools scripts tests
@@ -21,6 +21,11 @@ types:
 
 viewer-bundle:
 	@npm run check:viewer --silent
+
+# The chain rules decide what the outliner groups and what the canvas draws: checked without
+# a DOM, which is why they live in viewer/src/chains.js rather than in the page body.
+viewer-test:
+	@node --test viewer/src/chains.test.js
 
 test:
 	@$(PYTHON) -m pytest -q

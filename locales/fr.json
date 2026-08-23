@@ -262,6 +262,7 @@
   "rb_col_settles": "ce qu'il tranche",
   "rb_col_applied": "appliqué par",
   "chain_named": "Chaîne — {name}",
+  "orphan_named": "Orphelin — {name}",
   "branch_named": "Branche — {name}",
   "no_renders": "Cette opération n'a produit aucun rendu.",
   "compare_note": "Même caméra des deux côtés. Ce que les chiffres minimisent, le volet le montre.",

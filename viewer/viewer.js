@@ -114,6 +114,27 @@
     return out.join("\n");
   }
 
+  // viewer/src/chains.js
+  function rootOf(byId, id) {
+    const seen = /* @__PURE__ */ new Set();
+    let report = byId.get(id);
+    while (report && report.links && report.links.parent && byId.has(report.links.parent)) {
+      if (seen.has(report.id)) break;
+      seen.add(report.id);
+      report = byId.get(report.links.parent);
+    }
+    return report ? report.id : null;
+  }
+  function isOrphan(report) {
+    if (report.links && report.links.parent) return false;
+    return /\.blend$/i.test(String((report.input || {}).path || ""));
+  }
+  function groupKey(report, children, groupOf) {
+    const parent = report.links && report.links.parent;
+    if (!parent) return report.id;
+    return (children.get(parent) || 0) > 1 ? parent : groupOf.get(parent) ?? report.id;
+  }
+
   // viewer/src/app.js
   var DATA = (
     /** @type {{reports: OperationReport[], generated_at: string, root: string,
@@ -175,7 +196,6 @@
     currentDoc = null;
     view = 0;
     start = !DATA.reports.length;
-    place();
     paintProjects();
     paintTotals();
     outliner();
@@ -195,7 +215,6 @@
     BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
     if (!current || !BY_ID.has(current)) current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
     start = !DATA.reports.length;
-    place();
     paintTotals();
     applyStaticStrings();
     paintProjects();
@@ -229,9 +248,15 @@
     if (entries.length < 2) return;
     select2.innerHTML = entries.map((entry) => `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)} \xB7 ${esc(t("ui.project_reports", { count: entry.reports.length }))}</option>`).join("");
   }
+  function onCanvas() {
+    const root = current ? rootOf(BY_ID, current) : null;
+    if (!root) return DATA.reports;
+    return DATA.reports.filter((report) => rootOf(BY_ID, report.id) === root);
+  }
   function place() {
+    const shown = onCanvas();
     const depth = /* @__PURE__ */ new Map(), row = /* @__PURE__ */ new Map();
-    for (const report of DATA.reports) {
+    for (const report of shown) {
       const parent = report.links && report.links.parent;
       const level = parent && depth.has(parent) ? depth.get(parent) + 1 : 0;
       depth.set(report.id, level);
@@ -240,6 +265,7 @@
       report._x = 20 + level * 232;
       report._y = 20 + used * 196;
     }
+    return shown;
   }
   function outliner() {
     if (start) {
@@ -259,8 +285,11 @@
     let first = true;
     for (const [fork, reports] of chains) {
       const parent = BY_ID.get(fork);
-      const label = first ? t("ui.chain_named", { name: chainName(reports) }) : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
-      const indent = first ? "" : " child";
+      const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
+      let label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+      if (root && isOrphan(root)) label = t("ui.orphan_named", { name: chainName(reports) });
+      else if (root) label = t("ui.chain_named", { name: chainName(reports) });
+      const indent = root ? "" : " child";
       first = false;
       html += `<div class="outgroup">${esc(label)}</div>`;
       for (const report of reports) {
@@ -287,8 +316,7 @@
     }
     const groupOf = /* @__PURE__ */ new Map(), result = /* @__PURE__ */ new Map();
     for (const report of DATA.reports) {
-      const parent = report.links && report.links.parent;
-      const key = !parent ? "" : children.get(parent) > 1 ? parent : groupOf.get(parent) ?? "";
+      const key = groupKey(report, children, groupOf);
       groupOf.set(report.id, key);
       if (!result.has(key)) result.set(key, []);
       result.get(key).push(report);
@@ -296,7 +324,7 @@
     return result;
   }
   function chainName(reports) {
-    const root = reports[0];
+    const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
     const path = String((root.input || {}).path || "");
     return path.split("/").pop().replace(/\.blend$/, "") || root.chain || root.id;
   }
@@ -365,13 +393,14 @@
       document.getElementById("noodles").innerHTML = "";
       return;
     }
+    const shown = place();
     graphHead(
       "\u2B21",
       t("ui.node_editor"),
-      DATA.reports.length ? `chain / ${chainName(DATA.reports)}` : "links.parent"
+      shown.length ? `chain / ${chainName(shown)}` : "links.parent"
     );
     let html = "";
-    for (const report of DATA.reports) {
+    for (const report of shown) {
       const kind = report.status === "failed" ? "failed" : report.kind;
       const state = artefactState(report);
       const lines = headline(report).map(([key, value]) => `<div class="nline"><span>${esc(key)}</span><b>${esc(value)}</b></div>`).join("");
@@ -394,9 +423,9 @@
     }
     document.getElementById("nodes").innerHTML = html;
     const canvas = document.getElementById("canvas");
-    canvas.style.width = Math.max(860, ...DATA.reports.map((r) => r._x + 240)) + "px";
-    canvas.style.height = Math.max(420, ...DATA.reports.map((r) => r._y + 200)) + "px";
-    noodles();
+    canvas.style.width = Math.max(860, ...shown.map((r) => r._x + 240)) + "px";
+    canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200)) + "px";
+    noodles(shown);
   }
   function headline(report) {
     if (report.kind === "transform" && report.after) {
@@ -408,9 +437,9 @@
     const measured = report.measured || {};
     return [["objects", num(measured.objects)], ["vertices", num(measured.vertices)]];
   }
-  function noodles() {
+  function noodles(shown) {
     let path = "";
-    for (const report of DATA.reports) {
+    for (const report of shown) {
       const parent = report.links && report.links.parent && BY_ID.get(report.links.parent);
       if (!parent) continue;
       const x1 = parent._x + 186, y1 = parent._y + 56, x2 = report._x, y2 = report._y + 34;
@@ -1096,7 +1125,6 @@
   }
   async function init() {
     await fetchData();
-    place();
     paintTotals();
     applyStaticStrings();
     document.getElementById("app-version").textContent = DATA.version ? `v${DATA.version}` : "";

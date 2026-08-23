@@ -9,6 +9,7 @@
 
 import { startLiveRefresh } from "./live.js";
 import { esc, mdToHtml } from "./markdown.js";
+import { rootOf, isOrphan, groupKey } from "./chains.js";
 
 /** The report contract, as adr_001 defines it. Named OperationReport rather than Report:
  * the DOM already has a Report interface, and the collision silently made every property
@@ -94,7 +95,6 @@ function selectProject(name) {
   currentDoc = null;
   view = 0;
   start = !DATA.reports.length;
-  place();
   paintProjects();
   paintTotals();
   outliner(); nodes(); props(); preview();
@@ -112,7 +112,6 @@ async function fetchData() {
   BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
   if (!current || !BY_ID.has(current)) current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
   start = !DATA.reports.length;
-  place();
   paintTotals();
   applyStaticStrings();
   paintProjects();
@@ -141,10 +140,21 @@ function paintProjects() {
       esc(t("ui.project_reports", { count: entry.reports.length }))}</option>`).join("");
 }
 
-/* ---------- layout: depth from the parent chain, siblings stacked ---------- */
+/* ---------- roots: a report with no parent starts its own chain ---------- */
+/** The reports drawn on the canvas: the chain the selection belongs to, and only that one. */
+function onCanvas() {
+  const root = current ? rootOf(BY_ID, current) : null;
+  if (!root) return DATA.reports;
+  return DATA.reports.filter((report) => rootOf(BY_ID, report.id) === root);
+}
+
+/* ---------- layout: depth from the parent chain, siblings stacked ----------
+   Called by the draw, not once at load: which reports are on the canvas follows the
+   selection now, and a chain that was never placed draws every node at left:undefined. */
 function place() {
+  const shown = onCanvas();
   const depth = new Map(), row = new Map();
-  for (const report of DATA.reports) {
+  for (const report of shown) {
     const parent = report.links && report.links.parent;
     const level = parent && depth.has(parent) ? depth.get(parent) + 1 : 0;
     depth.set(report.id, level);
@@ -153,6 +163,7 @@ function place() {
     report._x = 20 + level * 232;
     report._y = 20 + used * 196;
   }
+  return shown;
 }
 
 /* ---------- outliner ---------- */
@@ -176,9 +187,12 @@ function outliner() {
   let first = true;
   for (const [fork, reports] of chains) {
     const parent = BY_ID.get(fork);
-    const label = first ? t("ui.chain_named", { name: chainName(reports) })
-                        : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
-    const indent = first ? "" : " child";
+    const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
+    // Written out rather than folding the key into one t(): the i18n check reads literals.
+    let label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+    if (root && isOrphan(root)) label = t("ui.orphan_named", { name: chainName(reports) });
+    else if (root) label = t("ui.chain_named", { name: chainName(reports) });
+    const indent = root ? "" : " child";
     first = false;
     html += `<div class="outgroup">${esc(label)}</div>`;
     for (const report of reports) {
@@ -208,9 +222,8 @@ function groups() {
   }
   const groupOf = new Map(), result = new Map();
   for (const report of DATA.reports) {
-    const parent = report.links && report.links.parent;
-    // A fork opens a group; anything else continues its parent's.
-    const key = !parent ? "" : (children.get(parent) > 1 ? parent : (groupOf.get(parent) ?? ""));
+    // A fork opens a group, a root opens its own; anything else continues its parent's.
+    const key = groupKey(report, children, groupOf);
     groupOf.set(report.id, key);
     if (!result.has(key)) result.set(key, []);
     result.get(key).push(report);
@@ -220,7 +233,7 @@ function groups() {
 
 /** A chain is named after the file it started from; the identity is already in the row. */
 function chainName(reports) {
-  const root = reports[0];
+  const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
   const path = String((root.input || {}).path || "");
   return path.split("/").pop().replace(/\.blend$/, "") || root.chain || root.id;
 }
@@ -300,10 +313,11 @@ function nodes() {
     document.getElementById("noodles").innerHTML = "";
     return;
   }
+  const shown = place();
   graphHead("⬡", t("ui.node_editor"),
-    DATA.reports.length ? `chain / ${chainName(DATA.reports)}` : "links.parent");
+    shown.length ? `chain / ${chainName(shown)}` : "links.parent");
   let html = "";
-  for (const report of DATA.reports) {
+  for (const report of shown) {
     const kind = report.status === "failed" ? "failed" : report.kind;
     const state = artefactState(report);
     const lines = headline(report).map(([key, value]) =>
@@ -324,9 +338,9 @@ function nodes() {
   }
   document.getElementById("nodes").innerHTML = html;
   const canvas = document.getElementById("canvas");
-  canvas.style.width = Math.max(860, ...DATA.reports.map((r) => r._x + 240)) + "px";
-  canvas.style.height = Math.max(420, ...DATA.reports.map((r) => r._y + 200)) + "px";
-  noodles();
+  canvas.style.width = Math.max(860, ...shown.map((r) => r._x + 240)) + "px";
+  canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200)) + "px";
+  noodles(shown);
 }
 
 function headline(report) {
@@ -338,9 +352,9 @@ function headline(report) {
   return [["objects", num(measured.objects)], ["vertices", num(measured.vertices)]];
 }
 
-function noodles() {
+function noodles(shown) {
   let path = "";
-  for (const report of DATA.reports) {
+  for (const report of shown) {
     const parent = report.links && report.links.parent && BY_ID.get(report.links.parent);
     if (!parent) continue;
     const x1 = parent._x + 186, y1 = parent._y + 56, x2 = report._x, y2 = report._y + 34;
@@ -940,7 +954,6 @@ function paintTotals() {
 
 async function init() {
   await fetchData();
-  place();
   paintTotals();
   applyStaticStrings();
   document.getElementById("app-version").textContent = DATA.version ? `v${DATA.version}` : "";
