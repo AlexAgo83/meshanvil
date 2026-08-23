@@ -525,7 +525,7 @@ function props() {
   target.innerHTML = html;
 }
 
-const short = (path) => String(path || "").replace(DATA.root + "/", "");
+const short = (path) => String(path || "").split(/[\\/]/).filter(Boolean).pop() || String(path || "");
 function shortRef(slug) {
   const prefix = { run: "N", req: "R", item: "I", task: "T", prod: "P", adr: "A" };
   const match = /^([a-z]+)_(\d+)/.exec(slug || "");

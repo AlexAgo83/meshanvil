@@ -35,6 +35,7 @@ SERVED_SMOKE = r"""
 
     const controls = document.querySelector(".filectrls");
     assert(controls, "file controls missing on served page");
+    assert(!controls.querySelector(".filelabel").textContent.includes("/"), "served file label shows a full path");
     assert(controls.querySelector('[data-file-open][aria-label="Open file"]:not(:disabled)'), "served Open file control missing or disabled");
     assert(controls.querySelector('[data-copy][aria-label="Copy this path"]'), "Copy path control missing accessible name");
     assert(controls.querySelector('[data-file-reveal][aria-label="Reveal file"]:not(:disabled)'), "served Reveal file control missing or disabled");
@@ -194,6 +195,7 @@ SMOKE = r"""
     await settled();
     const fileControls = document.querySelector(".filectrls");
     assert(fileControls, "file controls missing from file page");
+    assert(!fileControls.querySelector(".filelabel").textContent.includes("/"), "file page label shows a full path");
     assert(fileControls.querySelector('[data-copy][aria-label="Copy this path"]'), "file page lost copy path");
     assert(fileControls.querySelector('[data-file-open]:disabled') && fileControls.querySelector('[data-file-reveal]:disabled'),
       "file page presents Open or Reveal as working controls");
