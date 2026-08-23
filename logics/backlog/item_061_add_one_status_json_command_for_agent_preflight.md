@@ -1,14 +1,14 @@
 ## item_061_add_one_status_json_command_for_agent_preflight - Add one status JSON command for agent preflight
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 12:40:44
+> Indicators reviewed: 2026-08-23 12:45:05
 
 # AI Context
 - Summary: Add one JSON preflight command that combines project, setup, operations, report summary, viewer hint and next hints.
@@ -56,3 +56,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_027_deliver_the_agent_ready_cli_contract`
+
+# Notes
+- Task `task_027_deliver_the_agent_ready_cli_contract` was finished via `logics-manager flow finish task` on 2026-08-23.

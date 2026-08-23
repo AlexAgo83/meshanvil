@@ -1,13 +1,13 @@
 ## req_014_make_the_cli_a_dependable_surface_for_ai_operators - Make the CLI a dependable surface for AI operators
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
 > Complexity: High
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:22:28
+> Indicators reviewed: 2026-08-23 12:45:04
 
 # AI Context
 - Summary: Define meshanvil's AI-facing CLI contract: schema discovery, status, report access, stable JSON errors and a short agent playbook.

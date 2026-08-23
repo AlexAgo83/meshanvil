@@ -1,12 +1,12 @@
 ## prod_014_an_agent_ready_command_surface_for_meshanvil - An agent-ready command surface for meshanvil
 > Date: 2026-08-23
-> Status: Proposed
+> Status: Settled
 > Related request: `req_014_make_the_cli_a_dependable_surface_for_ai_operators`
-> Related backlog: `item_060_expose_report_operation_and_cli_schemas_from_the_tool`, `item_061_add_one_status_json_command_for_agent_preflight`, `item_062_let_agents_list_and_read_reports_through_the_cli`, `item_063_standardize_json_success_and_error_envelopes`, `item_064_give_actionable_refusals_stable_error_codes`, `item_066_document_the_agent_operating_contract`
+> Related backlog: `item_060_expose_report_operation_and_cli_schemas_from_the_tool`
 > Related task: `task_027_deliver_the_agent_ready_cli_contract`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:43:10
+> Indicators reviewed: 2026-08-23 12:45:05
 
 # Overview
 Makes meshanvil usable by AI operators through an explicit schema command, a single status view that also advises the next safe command, report access commands, stable JSON errors and a short agent playbook in `AGENTS.md`, without adding an agent runtime.
@@ -51,5 +51,5 @@ flowchart LR
 - JSON-mode failures carry stable codes and remain parseable across locales.
 
 # References
-- Product back-reference: `req_014_make_the_cli_a_dependable_surface_for_ai_operators`
+- Product back-reference: `item_060_expose_report_operation_and_cli_schemas_from_the_tool`
 - Task back-reference: `task_027_deliver_the_agent_ready_cli_contract`
