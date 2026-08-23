@@ -15,6 +15,22 @@ ARGPARSE = {
 }
 
 
+def speak_utf8() -> None:
+    """Make captured output UTF-8, whatever the host's ANSI codepage says.
+
+    A console is fine as it is: Python writes it through the wide API and any character
+    survives. A pipe is not -- on Windows it falls back to cp1252, which turns an accent into
+    mojibake for whoever captured it and raises UnicodeEncodeError outright on a character the
+    codepage has no room for. That is the shape an agent, a CI job or `> log.txt` always takes.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure") and not stream.isatty():
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (OSError, ValueError):
+                pass          # a stream that will not be reconfigured still has to print
+
+
 def print_json(data: dict) -> None:
     print(json.dumps(data, indent=1))
 
@@ -119,6 +135,7 @@ def show_list(json_mode: bool = False) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    speak_utf8()
     argv = sys.argv[1:] if argv is None else argv
     if not argv:
         print(welcome())

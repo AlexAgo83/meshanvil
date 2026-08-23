@@ -129,6 +129,32 @@ def check_refusals():
         assert cli.main(arguments) == runner.EXIT_REFUSED, arguments
 
 
+def check_captured_output_is_utf8():
+    """Captured output is UTF-8, and a mark outside the host codepage does not kill the command.
+
+    Windows encodes a pipe with the ANSI codepage: an accent arrives as mojibake and a glyph
+    like the viewer's check mark raises UnicodeEncodeError. The catalogues are shared between
+    the page and the terminal, so nothing but this stops one reaching a printed string.
+    """
+    from meshanvil import cli
+
+    class Pipe(io.TextIOWrapper):
+        pass
+
+    buffer = io.BytesIO()
+    stream = Pipe(buffer, encoding="cp1252", errors="strict", newline="")
+    original = sys.stdout
+    try:
+        sys.stdout = stream
+        cli.speak_utf8()
+        assert stream.encoding.lower().replace("-", "") == "utf8", stream.encoding
+        print("accent \u00e9 and mark \u2713")
+        stream.flush()
+    finally:
+        sys.stdout = original
+    assert "\u2713" in buffer.getvalue().decode("utf-8"), buffer.getvalue()
+
+
 def check_cli_welcome():
     from meshanvil import cli
     stream = io.StringIO()
@@ -836,6 +862,7 @@ def main() -> int:
         check_projects(tmp)
         check_bbox_delta()
         check_refusals()
+        check_captured_output_is_utf8()
         check_cli_welcome()
         check_cli_json(tmp)
         check_cli_reports(tmp)
