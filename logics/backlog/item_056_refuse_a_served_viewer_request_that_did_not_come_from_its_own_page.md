@@ -2,8 +2,8 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Ready
-> Understanding: 90%
-> Confidence: 85%
+> Understanding: 95%
+> Confidence: 90%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Host boundary
@@ -19,11 +19,13 @@
 - GET /api/data and the static file work/viewer/data.js both hand out run_token with no token check, and run_token is what gates POST /run and POST /file.
 - No route inspects Host, Origin or Referer, so a page in the operator's own browser that resolves a name to 127.0.0.1 reaches the server as a same-origin caller.
 - stable_port makes the port a function of the project path rather than a random value, while SECURITY.md still describes a random port and a token embedded only in the generated page.
+- work/viewer/server.json, the reuse registry, carries the same token and sits inside the served directory, so a per-route token check would not have closed the read path anyway.
 
 # Scope
 - In:
-  - A single origin guard in the request handler, applied to every GET and POST before any route dispatch or static file is served.
-  - Refusal of any request whose Host header names something other than a loopback host, and of any present Origin that is not this server's own.
+  - A single origin guard in the request handler, applied to every GET and POST before any route dispatch or static file is served, so the reuse registry and data.js are behind it too.
+  - The guard reads the port from the bound socket at request time: make_server defaults to port 0 and both scripts/selfcheck.py and tests/test_viewer.py call it that way, so the port argument is not the served port.
+  - Refusal of any request whose Host header is absent or names something other than a loopback host, and of any present Origin that is not this server's own.
   - Rewriting the '--serve' section of SECURITY.md and the boundary section of adr_007 to state the port rule, what the token proves, and the cross-origin answer.
   - One selfcheck covering an accepted request and each refused shape, with its pytest wrapper.
 - Out:
@@ -35,8 +37,10 @@
 - AC1: A request carrying Host: evil.example is refused on /api/ping, /api/data, /api/events, /run, /file and a static path, with no route body executed.
 - AC2: A request carrying an Origin other than this server's own is refused even when its Host is loopback; a request with no Origin and a loopback Host is served.
 - AC3: SECURITY.md and adr_007 name the port rule and the token's actual guarantee, and neither states that the port is random or that the token is unreadable.
+- AC4: The guard holds on a server started with port 0, where the served port is known only after the socket is bound.
 
 # AC Traceability
+- request-AC1 -> This backlog slice. Proof: AC4: The guard holds on a server started with port 0, where the served port is known only after the socket is bound.
 - request-AC1 -> This backlog slice. Proof: AC1: A request carrying Host: evil.example is refused on /api/ping, /api/data, /api/events, /run, /file and a static path, with no route body executed.
 - request-AC2 -> This backlog slice. Proof: AC2: A request carrying an Origin other than this server's own is refused even when its Host is loopback; a request with no Origin and a loopback Host is served.
 - request-AC8 -> This backlog slice. Proof: AC3: SECURITY.md and adr_007 name the port rule and the token's actual guarantee, and neither states that the port is random or that the token is unreadable.

@@ -1,9 +1,9 @@
 ## req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented - Make the served viewer, prune and project resolution behave the way they are documented
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
-> Understanding: 90%
-> Confidence: 85%
+> Status: Ready
+> Understanding: 95%
+> Confidence: 90%
 > Complexity: Medium
 > Theme: Host boundary
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
@@ -28,6 +28,11 @@
 - stable_port derives the port from a SHA-256 of the project path, so the port is predictable once the project location is known; nothing else on the server inspects Host, Origin or Referer.
 - The custom X-Meshanvil-Token header already forces a CORS preflight on POST, which is the property currently preventing blind cross-origin writes. It should be a stated defence rather than an incidental one.
 - Every behaviour this request changes is host-side and needs no Blender, so each one belongs in scripts/selfcheck.py with a thin pytest wrapper in tests/ -- the suite that already gates CI.
+- make_server takes port=0 by default and both scripts/selfcheck.py and tests/test_viewer.py call it that way, so the handler cannot know its own origin when the class is defined. The guard has to read the port from the bound socket at request time.
+- work/viewer/server.json, the registry written so a second launch reuses a running viewer, carries the same token and sits inside the served directory. It is a third read path alongside /api/data and work/viewer/data.js, and the reason the guard has to cover static files rather than only the routes.
+- Reusing a running viewer builds a fresh data.js whose token the running server does not accept; the page recovers only because /api/data returns the running server's own token. That is a second reason removing the token from that route is out of scope.
+- doctor.check reports the resolution rule as project.resolved_by in work/doctor.json, which the viewer displays and an agent reads. Renaming the fallback rule changes a machine-readable value, not only a label, and item_010's rule that identifiers are never translated applies to it.
+- adr_007's decision -- closed command set, per-launch token, single flight -- is not being reversed. What is wrong is its description of what the token guarantees. Amend that description and the consequences; supersede only if the decision itself turns out to need changing, which is the convention adr_007 itself followed with adr_003.
 
 # Acceptance criteria
 - AC1: A request whose Host is not a loopback name, or whose Origin is present and is not this server's own origin, is refused on every route including /api/ping, /api/data, /api/events, /run and static files.

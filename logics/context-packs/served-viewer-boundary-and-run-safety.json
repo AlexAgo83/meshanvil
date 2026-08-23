@@ -1,10 +1,10 @@
 {
   "budgets": {
-    "max_docs": 24,
-    "max_docs_per_ref": 4
+    "max_docs": 56,
+    "max_docs_per_ref": 8
   },
   "changed_paths": [],
-  "command": "logics-manager sync context-pack req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page item_057_keep_prune_inside_the_project_it_was_asked_to_prune item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution --mode summary-only --profile normal --handoff",
+  "command": "logics-manager sync context-pack req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented prod_013_a_host_boundary_that_matches_its_own_documentation item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page item_057_keep_prune_inside_the_project_it_was_asked_to_prune item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution --mode full --profile deep --handoff",
   "companion_docs": [
     {
       "kind": "product",
@@ -27,6 +27,33 @@
       },
       "path": "logics/product/prod_013_a_host_boundary_that_matches_its_own_documentation.md",
       "ref": "prod_013_a_host_boundary_that_matches_its_own_documentation",
+      "sections": {
+        "Goals": [
+          "- Make the served viewer answer only requests that came from the page it generated.",
+          "- Keep the one command that deletes files inside the project it was pointed at.",
+          "- Have each security claim in SECURITY.md and adr_007 be checkable against the code it describes.",
+          "- Leave a runnable check behind for every boundary this establishes, in the suite CI already runs."
+        ],
+        "Key product decisions": [
+          "- The run token is not a secret. work/viewer/data.js and work/viewer/server.json are files on disk inside the served directory, so any local process reads them. The token proves a request came from the page this server generated, and nothing more.",
+          "- The defence against a name rebound to loopback is an origin guard, not the token. One guard ahead of route dispatch, covering static files as well as routes, rather than a token check per route.",
+          "- The port stays derived from the project path. Predictability was chosen deliberately when the viewer learned to reuse a running instance, and the guard is what makes it harmless.",
+          "- A report's output path is not a licence to delete outside the project that owns the report.",
+          "- A document that describes a boundary is part of the boundary: SECURITY.md and adr_007 are changed in the same slices as the code they describe."
+        ],
+        "Overview": [
+          "Closes the gap between what meshanvil's security-relevant host code does and what its documents say it does. It covers the served viewer's request boundary, the containment of the one destructive command, and the labels on the decision that chooses where a run lands.",
+          "```mermaid",
+          "flowchart TD",
+          "  own[Request from the page this server generated] --> guard{Loopback Host, own Origin?}",
+          "  foreign[Request from a rebound name or another origin] --> guard",
+          "  guard -->|no| refused[Refused before any route runs]"
+        ],
+        "References": [
+          "- Product back-reference: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`",
+          "- Task back-reference: `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution`"
+        ]
+      },
       "status": "Proposed",
       "title": "A host boundary that matches its own documentation"
     },
@@ -51,6 +78,23 @@
       },
       "path": "logics/architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md",
       "ref": "adr_007_let_the_served_viewer_execute_a_closed_command_set",
+      "sections": {
+        "Overview": [
+          "- Supersedes `adr_003_the_viewer_reads_the_command_acts` for three commands only: List operations, Check setup, Preview pruning. A page opened via `meshanvil view --serve` can run them and see their result; a page opened from `file://` cannot reach a server at all and keeps copying the command to the clipboard, exactly as it did before this decision.",
+          "```mermaid",
+          "flowchart LR",
+          "  row[Menu row: list / doctor / prune] -->|served page, token attached| ep[POST /run on --serve's http.server]",
+          "  ep -->|token wrong or missing| refuse1[401, refused before anything starts]",
+          "  ep -->|a run is already in flight| refuse2[409, refused, no queue]"
+        ],
+        "References": [
+          "- The refusal this reverses, and the price it named for reversing it: `adr_003_the_viewer_reads_the_command_acts`",
+          "- The server this adds to: `adr_004_target_technology_and_process_model`",
+          "- Related request: `req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`",
+          "- Related backlog: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`, `item_033_show_a_command_s_own_output_where_its_text_used_to_sit`",
+          "- Related task: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`"
+        ]
+      },
       "status": "Accepted",
       "title": "Let the served viewer execute a closed command set"
     },
@@ -76,17 +120,124 @@
       },
       "path": "logics/product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md",
       "ref": "prod_007_a_served_viewer_that_can_run_what_it_already_shows",
+      "sections": {
+        "Goals": [
+          "- Let the three safe, argument-free menu commands run from a served viewer page and show their result in place.",
+          "- Keep a plain file:// page exactly as safe as it is today -- copy-to-clipboard, nothing more.",
+          "- Record the reversal as a superseding ADR rather than editing adr_003's decision in place."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Reverses adr_003's refusal to execute, on the terms adr_003 itself priced: a local server, a per-launch token, and one command at a time, limited to the closed set of commands the menu already prints.",
+          "```mermaid",
+          "flowchart LR",
+          "  page[Menu row: List / Doctor / Prune] -->|served page, token attached| endpoint[Run endpoint on --serve]",
+          "  endpoint -->|wrong or missing token| refuse1[Refused]",
+          "  endpoint -->|a run is already in flight| refuse2[Refused]"
+        ],
+        "References": [
+          "- Product back-reference: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`",
+          "- Task back-reference: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`"
+        ]
+      },
       "status": "Settled",
       "title": "A served viewer that can run what it already shows"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
+        "item": [
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command",
+          "item_003_read_the_chain_of_operations_in_a_local_viewer"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_003_the_viewer_reads_the_command_acts.md",
+      "ref": "adr_003_the_viewer_reads_the_command_acts",
+      "sections": {
+        "Overview": [
+          "- The viewer never runs an operation. Every action it offers -- run, re-run, branch, prune, re-render, open in Blender -- is presented as the exact command that does it, ready to copy, and the operator or the agent runs it themselves.",
+          "```mermaid",
+          "flowchart LR",
+          "  op[Operator or agent] --> cmd[meshanvil run \u2026]",
+          "  cmd --> blender[Headless Blender]",
+          "  blender --> report[work/ops/*.json]"
+        ],
+        "References": [
+          "- The command this decision points to: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`",
+          "- The viewer it constrains: `item_003_read_the_chain_of_operations_in_a_local_viewer`",
+          "- Superseded in part by: `adr_007_let_the_served_viewer_execute_a_closed_command_set`",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_003_read_the_chain_of_operations_in_a_local_viewer`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Superseded",
+      "title": "The viewer reads, the command acts"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_001_operation_report_format",
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_004_target_technology_and_process_model",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set",
+          "adr_008_python_package_distribution_and_runtime_assets"
+        ],
+        "item": [
+          "item_002_run_one_named_operation_from_a_single_agent_agnostic_command"
+        ],
+        "req": [
+          "req_000_make_every_3d_operation_reviewable_without_reopening_blender"
+        ],
+        "task": [
+          "task_001_deliver_the_reviewable_operation_loop"
+        ]
+      },
+      "path": "logics/architecture/adr_004_target_technology_and_process_model.md",
+      "ref": "adr_004_target_technology_and_process_model",
+      "sections": {
+        "Overview": [
+          "- Stdlib Python on both sides of a process boundary, a JSON job in and a JSON report out, and a viewer that is a plain page reading a generated data file -- no framework, no build step, and no dependency a 3D user has to install beyond Blender itself.",
+          "```mermaid",
+          "flowchart TD",
+          "  agent[Operator or agent] --> cli[\"bin/meshanvil \u2014 host Python 3.11+, stdlib only\"]",
+          "  cli --> job[work/ops/.job/NNN.json<br/>what to run, on what]",
+          "  cli -->|subprocess| bl[\"Blender -b file -P operation --  --job \u2026\"]"
+        ],
+        "References": [
+          "- The boundary contract this reuses: the cm-sim Blender worker, job JSON in and result JSON out",
+          "- The read-only constraint it builds on: `adr_003_the_viewer_reads_the_command_acts`",
+          "- The report it carries: `adr_001_operation_report_format`",
+          "- Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`",
+          "- Related backlog: `item_002_run_one_named_operation_from_a_single_agent_agnostic_command`",
+          "- Related task: `task_001_deliver_the_reviewable_operation_loop`"
+        ]
+      },
+      "status": "Accepted",
+      "title": "Target technology and process model"
     }
   ],
   "docs": [
     {
       "ai_context": {
         "keywords": "served, viewer, prune, project, resolution, behave, way, they, documented",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "skip when": "working on engine-side geometry under tools/ or pipeline/, on the viewer's interface or payload shape, or on the hand-armed bl_cmd bridge described in run_001.",
+        "summary": "Closes the seven findings captured in req_012: the served viewer answers requests that did not come from its page, prune can delete outside the project, and two labels contradict the behaviour they name. Host-side only, no Blender.",
+        "use when": "planning or implementing any change to the served viewer's request boundary, to what prune is allowed to delete, or to how the active project is chosen and named."
       },
       "kind": "request",
       "linked_refs": {
@@ -110,6 +261,23 @@
       "path": "logics/request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md",
       "ref": "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
       "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A request whose Host is not a loopback name, or whose Origin is present and is not this server's own origin, is refused on every route including /api/ping, /api/data, /api/events, /run and static files.",
+          "- AC2: SECURITY.md and adr_007 state how the port is chosen, what the run token proves and does not prove, and what a cross-origin or rebound request receives; no claim in either document contradicts the code.",
+          "- AC3: prune ignores any report output path that is not inside the active project, and both prune and prune --dry-run complete without an unhandled exception on such a report.",
+          "- AC4: A GET for a directory under the served root returns 404 rather than a listing, and the viewer page still loads and refreshes.",
+          "- AC5: An /api/events connection whose peer has gone is released without waiting for a report or runbook to change.",
+          "- AC6: Interrupting a run terminates the engine process before the runner re-raises, and what the interrupt leaves on disk is stated in the runner's own docstring."
+        ],
+        "Needs": [
+          "- The served viewer must refuse a request that did not come from its own page, so that the boundary SECURITY.md and adr_007 describe is the one the code enforces.",
+          "- SECURITY.md and adr_007 must describe the boundary that exists: how the port is chosen, what the run token proves, and what a cross-origin request gets.",
+          "- prune must never delete a file outside the project it was asked to prune, and neither prune nor prune --dry-run may end in an unhandled traceback.",
+          "- The served viewer must not enumerate work/ to a caller, and must not hold a thread for a connection whose peer has gone.",
+          "- An interrupted run must leave no engine process behind, and the rule that chose the active project must be labelled and documented as what it actually is."
+        ]
+      },
       "status": "Draft",
       "title": "Make the served viewer, prune and project resolution behave the way they are documented"
     },
@@ -129,21 +297,40 @@
           "prod_007_a_served_viewer_that_can_run_what_it_already_shows"
         ],
         "req": [
-          "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution"
+          "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution",
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
         ]
       },
       "path": "logics/request/req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution.md",
       "ref": "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution",
       "schema_version": "1.0",
-      "status": "Draft",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: `run_token` is not readable without already holding it -- neither from `/api/data` nor from",
+          "  any static file under the served directory -- and the `POST /run` and `POST /file` boundary is",
+          "  reachable only by the page the server itself generated.",
+          "- AC2: `SECURITY.md` and `adr_007` describe the boundary that the code actually implements: how the",
+          "  port is chosen, what the token proves, and what a cross-origin request gets.",
+          "- AC3: `prune` refuses, or clearly reports, any output path outside the project root, and neither"
+        ],
+        "Needs": [
+          "## N1 -- The served viewer hands out its own run token to any unauthenticated caller",
+          "`viewer_payload.payload()` puts `run_token` in the payload (`meshanvil/viewer_payload.py:64`).",
+          "Two routes then serve that payload with no token check: `GET /api/data`",
+          "(`meshanvil/viewer_routes/data.py:9-17`) and the static file `work/viewer/data.js`, which",
+          "`viewer.view()` exposes because the whole of `work/` is the served directory",
+          "(`meshanvil/viewer.py:33-36`). The token is what gates `POST /run` and `POST /file`."
+        ]
+      },
+      "status": "Obsolete",
       "title": "Review findings: served viewer boundary, prune safety and project resolution"
     },
     {
       "ai_context": {
         "keywords": "refuse, served, viewer, request, did, not, come, own, page",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "skip when": "changing how the page obtains run_token, adding CORS headers or a second credential, or altering stable_port.",
+        "summary": "One origin guard ahead of route dispatch, refusing a non-loopback Host or a foreign Origin, plus the SECURITY.md and adr_007 rewrite that makes the documented boundary the real one.",
+        "use when": "adding or reviewing the check that decides whether the served viewer answers a request at all."
       },
       "kind": "backlog",
       "linked_refs": {
@@ -163,15 +350,29 @@
       "path": "logics/backlog/item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page.md",
       "ref": "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
       "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A request carrying Host: evil.example is refused on /api/ping, /api/data, /api/events, /run, /file and a static path, with no route body executed.",
+          "- AC2: A request carrying an Origin other than this server's own is refused even when its Host is loopback; a request with no Origin and a loopback Host is served.",
+          "- AC3: SECURITY.md and adr_007 name the port rule and the token's actual guarantee, and neither states that the port is random or that the token is unreadable.",
+          "- AC4: The guard holds on a server started with port 0, where the served port is known only after the socket is bound."
+        ],
+        "Problem": [
+          "- GET /api/data and the static file work/viewer/data.js both hand out run_token with no token check, and run_token is what gates POST /run and POST /file.",
+          "- No route inspects Host, Origin or Referer, so a page in the operator's own browser that resolves a name to 127.0.0.1 reaches the server as a same-origin caller.",
+          "- stable_port makes the port a function of the project path rather than a random value, while SECURITY.md still describes a random port and a token embedded only in the generated page.",
+          "- work/viewer/server.json, the reuse registry, carries the same token and sits inside the served directory, so a per-route token check would not have closed the read path anyway."
+        ]
+      },
       "status": "Ready",
       "title": "Refuse a served-viewer request that did not come from its own page"
     },
     {
       "ai_context": {
         "keywords": "prune, inside, project, asked",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "skip when": "changing the pinned, linked-document or work/in exclusions, or where an operation may write its output.",
+        "summary": "A containment condition in prune.candidates so a report pointing outside the active project selects nothing, which also removes the traceback that currently follows the deletion.",
+        "use when": "touching what prune is allowed to select or delete."
       },
       "kind": "backlog",
       "linked_refs": {
@@ -191,22 +392,71 @@
       "path": "logics/backlog/item_057_keep_prune_inside_the_project_it_was_asked_to_prune.md",
       "ref": "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
       "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A report whose output path resolves outside the active project is not returned by prune.candidates.",
+          "- AC2: prune and prune --dry-run both exit without an unhandled exception on such a report, and the out-of-project file still exists afterwards."
+        ],
+        "Problem": [
+          "- prune.candidates accepts any absolute output path a report carries and only excludes paths under work/in, so a report pointing outside the project selects a file outside the project.",
+          "- prune.run unlinks before the caller prints, and cli prints with Path.relative_to, which raises on exactly the paths that were not contained -- the deletion happens, then the traceback.",
+          "- prune --dry-run raises the same exception, so the dry run cannot warn about the case it exists to warn about."
+        ]
+      },
       "status": "Ready",
       "title": "Keep prune inside the project it was asked to prune"
     },
     {
       "ai_context": {
-        "keywords": "close, review, findings, served, viewer, prune, project, resolution",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "served, viewer, listing, work, holding, threads, absent, peers",
+        "skip when": "replacing mtime polling with a platform watcher, or adding a connection cap before the write-per-poll check shows one is needed.",
+        "summary": "Two small refusals on the served viewer: no directory listing under work/, and a write on every /api/events poll so a departed peer is detected instead of holding its thread.",
+        "use when": "working on what the served viewer exposes by default or on the lifetime of an events connection."
       },
-      "kind": "task",
+      "kind": "backlog",
       "linked_refs": {
         "item": [
-          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
-          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
-          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/backlog/item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers.md",
+      "ref": "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: A GET for the served root and for a directory beneath it returns 404, while the viewer page and its assets still load.",
+          "- AC2: An /api/events connection whose peer has closed is released without any report or runbook changing."
+        ],
+        "Problem": [
+          "- The handler serves root/work through SimpleHTTPRequestHandler with directory listings left on, so a GET of the served root enumerates in/, out/, ops/ and renders/ -- and SECURITY.md names source file paths as the sensitive part of this work.",
+          "- /api/events writes only when a signature changes, so a connection whose peer has gone is never written to and its thread is never released; the server caps neither threads nor connections.",
+          "- The page never needs a directory listing: it fetches /api/data.",
+          "- Only a directory with no index.html reaches the listing branch, so refusing it leaves work/viewer/ serving its page as before; work/ itself, work/in/, work/out/ and work/renders/ are the directories that currently enumerate.",
+          "- A write to a departed peer can succeed once before the connection is seen as gone, so detection may take two polls rather than one; the check has to allow for that rather than assert on the first."
+        ]
+      },
+      "status": "Ready",
+      "title": "Stop the served viewer listing work/ and holding threads for absent peers"
+    },
+    {
+      "ai_context": {
+        "keywords": "leave, nothing, running, mislabelled, after, interrupted, run",
+        "skip when": "adding a run timeout or resume, or changing which directory the fallback resolution returns.",
+        "summary": "Kill the engine on the interrupt path before the report is unlinked, and rename the fallback project rule to the directory it actually returns.",
+        "use when": "working on what an interrupted run leaves behind, or on the rule name the doctor command prints."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
           "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
         ],
         "prod": [
@@ -219,11 +469,24 @@
           "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
         ]
       },
-      "path": "logics/tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md",
-      "ref": "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
+      "path": "logics/backlog/item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run.md",
+      "ref": "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run",
       "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Interrupting a run terminates the engine process before the runner re-raises, and the runner's docstring says what the interrupt leaves behind.",
+          "- AC2: The fallback rule name and the paths module docstring describe the directory that resolve actually returns, and make i18n stays green."
+        ],
+        "Problem": [
+          "- runner.run starts the engine with Popen and waits in watch; on any BaseException it unlinks the report and re-raises without terminating the child, so after an interrupt the engine keeps writing to a path that was just removed while the target lock is released and a second run may start alongside it.",
+          "- paths.resolve returns the working directory for its fallback but labels it BY_INSTALLATION, while the module docstring says the installation is the project in that case and code_root returns something else.",
+          "- That rule is printed to the operator by the doctor command, so the wrong label is on screen.",
+          "- doctor.check also writes it as project.resolved_by into work/doctor.json, which the viewer displays and an agent reads, so the rename changes a machine-readable value; item_010's rule that identifiers are never translated applies to the new name.",
+          "- scripts/selfcheck.py already asserts on paths.BY_INSTALLATION by constant, so the rename must follow through there even though the assertion still compiles."
+        ]
+      },
       "status": "Ready",
-      "title": "Close the review findings on the served viewer, prune and project resolution"
+      "title": "Leave nothing running and nothing mislabelled after an interrupted run"
     },
     {
       "ai_context": {},
@@ -248,47 +511,50 @@
       "path": "logics/product/prod_013_a_host_boundary_that_matches_its_own_documentation.md",
       "ref": "prod_013_a_host_boundary_that_matches_its_own_documentation",
       "schema_version": "1.0",
+      "sections": {},
       "status": "Proposed",
       "title": "A host boundary that matches its own documentation"
     },
     {
-      "ai_context": {
-        "keywords": "served, viewer, listing, work, holding, threads, absent, peers",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
-      },
-      "kind": "backlog",
+      "ai_context": {},
+      "kind": "architecture",
       "linked_refs": {
-        "item": [
-          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers"
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_004_target_technology_and_process_model",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
         ],
-        "prod": [
-          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        "item": [
+          "item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server",
+          "item_033_show_a_command_s_own_output_where_its_text_used_to_sit"
         ],
         "req": [
-          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+          "req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
         ],
         "task": [
-          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+          "task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
         ]
       },
-      "path": "logics/backlog/item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers.md",
-      "ref": "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+      "path": "logics/architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md",
+      "ref": "adr_007_let_the_served_viewer_execute_a_closed_command_set",
       "schema_version": "1.0",
-      "status": "Ready",
-      "title": "Stop the served viewer listing work/ and holding threads for absent peers"
+      "sections": {},
+      "status": "Accepted",
+      "title": "Let the served viewer execute a closed command set"
     },
     {
       "ai_context": {
-        "keywords": "leave, nothing, running, mislabelled, after, interrupted, run",
-        "skip when": "(unfilled: replace before this doc is used)",
-        "summary": "(unfilled: replace before this doc is used)",
-        "use when": "(unfilled: replace before this doc is used)"
+        "keywords": "close, review, findings, served, viewer, prune, project, resolution",
+        "skip when": "scoping new work, or implementing anything outside the four backlog items this task carries.",
+        "summary": "The ordered plan for req_013: settle adr_007 first, then the origin guard, prune containment, the two viewer refusals, the runner and paths labels, each with a selfcheck.",
+        "use when": "implementing req_013, in the order the plan gives."
       },
-      "kind": "backlog",
+      "kind": "task",
       "linked_refs": {
         "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
           "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
         ],
         "prod": [
@@ -301,24 +567,36 @@
           "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
         ]
       },
-      "path": "logics/backlog/item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run.md",
-      "ref": "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run",
+      "path": "logics/tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md",
+      "ref": "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
       "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Four host-side slices closing the seven findings req_012 captured at commit 3e13ed0. No Blender is needed for any of them; make check is the gate.",
+          "- The order matters once: adr_007's description of what the token guarantees has to be settled before the guard that replaces it is written. Everything after step 4 is independent and can land in any order.",
+          "- Three traps that are not visible from the findings alone: make_server binds port 0 in both callers under test, so the guard must read its port from the bound socket; work/viewer/server.json carries the token inside the served directory, so the guard has to cover static files; and doctor.check writes the resolution rule into work/doctor.json, so renaming it changes a value an agent parses.",
+          "- Reproduce the two destructive findings on a scratch project outside the repository. Never against this repository's work/."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
       "status": "Ready",
-      "title": "Leave nothing running and nothing mislabelled after an interrupted run"
+      "title": "Close the review findings on the served viewer, prune and project resolution"
     }
   ],
   "estimates": {
-    "char_count": 10944,
-    "companion_doc_count": 3,
-    "doc_count": 8
+    "char_count": 30087,
+    "companion_doc_count": 5,
+    "doc_count": 9
   },
-  "generated_at": "2026-08-23T00:37:20Z",
+  "generated_at": "2026-08-23T00:47:27Z",
   "handoff": {
-    "companion_doc_count": 3,
+    "companion_doc_count": 5,
     "enabled": true,
     "source_refs": [
       "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
+      "prod_013_a_host_boundary_that_matches_its_own_documentation",
       "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
       "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
       "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
@@ -357,11 +635,12 @@
     "ok": true,
     "state": "valid"
   },
-  "mode": "summary-only",
-  "profile": "normal",
-  "ref": "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented,item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page,item_057_keep_prune_inside_the_project_it_was_asked_to_prune,item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers,item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run,task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
+  "mode": "full",
+  "profile": "deep",
+  "ref": "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented,prod_013_a_host_boundary_that_matches_its_own_documentation,item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page,item_057_keep_prune_inside_the_project_it_was_asked_to_prune,item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers,item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run,task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
   "refs": [
     "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
+    "prod_013_a_host_boundary_that_matches_its_own_documentation",
     "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
     "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
     "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",

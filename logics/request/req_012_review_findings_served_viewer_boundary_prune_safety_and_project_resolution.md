@@ -1,13 +1,13 @@
 ## req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution - Review findings: served viewer boundary, prune safety and project resolution
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Obsolete
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium
 > Theme: General
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 02:36:05
+> Indicators reviewed: 2026-08-23 02:47:54
 
 # AI Context
 - Summary: Findings from a read-only review of the repository at `3e13ed0`. `make check` and `make logics` both pass; the corpus has no open document. What follows are candidates, ranked by strength of evidence, not committed work.
@@ -156,3 +156,6 @@ decision rather than merely implementing it.
 
 # Backlog
 - none
+
+# Links
+- Superseded by: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`

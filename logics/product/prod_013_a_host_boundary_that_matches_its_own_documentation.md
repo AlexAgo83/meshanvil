@@ -6,6 +6,7 @@
 > Related task: `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
+> Indicators reviewed: 2026-08-23 02:46:38
 
 # Overview
 Closes the gap between what meshanvil's security-relevant host code does and what its documents say it does. It covers the served viewer's request boundary, the containment of the one destructive command, and the labels on the decision that chooses where a run lands.
@@ -40,16 +41,24 @@ flowchart TD
 - Changing the engine-side code under tools/ and pipeline/, or adding a Blender-dependent check to CI.
 
 # Scope and guardrails
-- In: scaffolded request, product, backlog, orchestration task, validation, and handoff context.
-- Out: unrelated workflow docs and implementation of generated tasks.
+- In: the served viewer's request boundary, the containment of prune, what an interrupted run leaves behind, and the documents that describe those three things.
+- In: one runnable check per boundary, in scripts/selfcheck.py, reached from tests/ so CI already runs it.
+- Out: the engine-side code under tools/ and pipeline/, the viewer's interface and payload shape, and the hand-armed bl_cmd bridge described in run_001.
+- Guardrail: the closed command set adr_007 permits does not widen, and no part of a command line ever comes from the page.
+- Guardrail: reproduce a destructive finding on a scratch project, never against this repository's work/.
 
 # Key product decisions
-- Use structured input as the source of truth for generated docs.
-- Keep generated write paths local and repo-bounded.
+- The run token is not a secret. work/viewer/data.js and work/viewer/server.json are files on disk inside the served directory, so any local process reads them. The token proves a request came from the page this server generated, and nothing more.
+- The defence against a name rebound to loopback is an origin guard, not the token. One guard ahead of route dispatch, covering static files as well as routes, rather than a token check per route.
+- The port stays derived from the project path. Predictability was chosen deliberately when the viewer learned to reuse a running instance, and the guard is what makes it harmless.
+- A report's output path is not a licence to delete outside the project that owns the report.
+- A document that describes a boundary is part of the boundary: SECURITY.md and adr_007 are changed in the same slices as the code they describe.
 
 # Success signals
-- Generated docs pass lint and audit without broad manual rewrites.
-- Context-pack output can be handed to an implementation agent directly.
+- A request with a foreign Host or Origin is refused on every route and every static path, while the viewer page still loads and refreshes.
+- A report pointing outside its project deletes nothing and raises nothing, under prune and under prune --dry-run.
+- Every claim in the --serve section of SECURITY.md can be checked against a line of code or a selfcheck.
+- make check stays green, and each closed finding has a check that fails if the behaviour comes back.
 
 # References
 - Product back-reference: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`

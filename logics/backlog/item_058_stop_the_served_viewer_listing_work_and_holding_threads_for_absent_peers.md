@@ -19,6 +19,8 @@
 - The handler serves root/work through SimpleHTTPRequestHandler with directory listings left on, so a GET of the served root enumerates in/, out/, ops/ and renders/ -- and SECURITY.md names source file paths as the sensitive part of this work.
 - /api/events writes only when a signature changes, so a connection whose peer has gone is never written to and its thread is never released; the server caps neither threads nor connections.
 - The page never needs a directory listing: it fetches /api/data.
+- Only a directory with no index.html reaches the listing branch, so refusing it leaves work/viewer/ serving its page as before; work/ itself, work/in/, work/out/ and work/renders/ are the directories that currently enumerate.
+- A write to a departed peer can succeed once before the connection is seen as gone, so detection may take two polls rather than one; the check has to allow for that rather than assert on the first.
 
 # Scope
 - In:

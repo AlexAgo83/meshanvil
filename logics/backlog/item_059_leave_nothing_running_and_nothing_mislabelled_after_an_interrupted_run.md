@@ -19,6 +19,8 @@
 - runner.run starts the engine with Popen and waits in watch; on any BaseException it unlinks the report and re-raises without terminating the child, so after an interrupt the engine keeps writing to a path that was just removed while the target lock is released and a second run may start alongside it.
 - paths.resolve returns the working directory for its fallback but labels it BY_INSTALLATION, while the module docstring says the installation is the project in that case and code_root returns something else.
 - That rule is printed to the operator by the doctor command, so the wrong label is on screen.
+- doctor.check also writes it as project.resolved_by into work/doctor.json, which the viewer displays and an agent reads, so the rename changes a machine-readable value; item_010's rule that identifiers are never translated applies to the new name.
+- scripts/selfcheck.py already asserts on paths.BY_INSTALLATION by constant, so the rename must follow through there even though the assertion still compiles.
 
 # Scope
 - In:

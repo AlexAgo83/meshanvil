@@ -63,7 +63,11 @@
       "priority": "High",
       "complexity": "Medium",
       "theme": "Host boundary",
-      "request_acs": ["AC1", "AC2", "AC8"],
+      "request_acs": [
+        "AC1",
+        "AC2",
+        "AC8"
+      ],
       "problem": [
         "GET /api/data and the static file work/viewer/data.js both hand out run_token with no token check, and run_token is what gates POST /run and POST /file.",
         "No route inspects Host, Origin or Referer, so a page in the operator's own browser that resolves a name to 127.0.0.1 reaches the server as a same-origin caller.",
@@ -91,7 +95,10 @@
       "priority": "High",
       "complexity": "Low",
       "theme": "Destructive safety",
-      "request_acs": ["AC3", "AC8"],
+      "request_acs": [
+        "AC3",
+        "AC8"
+      ],
       "problem": [
         "prune.candidates accepts any absolute output path a report carries and only excludes paths under work/in, so a report pointing outside the project selects a file outside the project.",
         "prune.run unlinks before the caller prints, and cli prints with Path.relative_to, which raises on exactly the paths that were not contained -- the deletion happens, then the traceback.",
@@ -116,7 +123,11 @@
       "priority": "Medium",
       "complexity": "Low",
       "theme": "Host boundary",
-      "request_acs": ["AC4", "AC5", "AC8"],
+      "request_acs": [
+        "AC4",
+        "AC5",
+        "AC8"
+      ],
       "problem": [
         "The handler serves root/work through SimpleHTTPRequestHandler with directory listings left on, so a GET of the served root enumerates in/, out/, ops/ and renders/ -- and SECURITY.md names source file paths as the sensitive part of this work.",
         "/api/events writes only when a signature changes, so a connection whose peer has gone is never written to and its thread is never released; the server caps neither threads nor connections.",
@@ -142,7 +153,11 @@
       "priority": "Medium",
       "complexity": "Low",
       "theme": "Runner and paths",
-      "request_acs": ["AC6", "AC7", "AC8"],
+      "request_acs": [
+        "AC6",
+        "AC7",
+        "AC8"
+      ],
       "problem": [
         "runner.run starts the engine with Popen and waits in watch; on any BaseException it unlinks the report and re-raises without terminating the child, so after an interrupt the engine keeps writing to a path that was just removed while the target lock is released and a second run may start alongside it.",
         "paths.resolve returns the working directory for its fallback but labels it BY_INSTALLATION, while the module docstring says the installation is the project in that case and code_root returns something else.",
@@ -183,7 +198,7 @@
   },
   "context_pack": {
     "out": "logics/context-packs/served-viewer-boundary-and-run-safety.json",
-    "mode": "summary-only",
+    "mode": "full",
     "profile": "normal"
   }
 }
