@@ -9,7 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-23 10:31:27
+> Indicators reviewed: 2026-08-23 10:44:59
 
 # AI Context
 - Summary: The ordered plan for req_013: settle adr_007 first, then the origin guard, prune containment, the two viewer refusals, the runner and paths labels, each with a selfcheck.
@@ -82,10 +82,12 @@
 - Closed N1/N2 by putting Host/Origin validation before `/api/ping`, `/api/data`, `/api/events`, `/run`, `/file`, and static files; adr_007 and SECURITY.md now say the token is page-origin proof after the origin guard, not a local secret.
 - Closed N3 by keeping prune candidates inside the resolved project root; dry-run and deleting prune both ignore outside paths and leave the outside file intact.
 - Closed N4 by refusing served-root directory listings while leaving `work/viewer/index.html` loadable.
-- Closed N5 by writing an SSE comment on every `/api/events` poll so a gone peer is released without report or runbook changes.
-- Closed N6 by retaining the engine `Popen` and terminating or killing it on `BaseException` before the empty claimed report is removed; the runner docstring states the job file remains and the target lock is released.
+- Closed N6 by writing an SSE comment on every `/api/events` poll so a gone peer is released without report or runbook changes.
+- Closed N5 by retaining the engine `Popen` and terminating or killing it on `BaseException` before the empty claimed report is removed; the runner docstring states the job file remains and the target lock is released.
 - Closed N7 by renaming the fallback project resolution rule to `current_directory` and updating the paths documentation and selfcheck assertion.
 - Confirmed the req_012 context note that the served token is exposed in served viewer data; contradicted the stale SECURITY.md claim that randomness of the port or token secrecy was the boundary.
+- Post-closeout review of the delivered slices found two gaps and both were fixed in the same wave: `do_HEAD`, inherited from `SimpleHTTPRequestHandler`, reached the static tree without the origin guard and answered the size and existence of every file under `work/` to a foreign Host, which made AC1 and the new sentences in SECURITY.md and adr_007 untrue until it was guarded too; and the termination added for N5 could raise `TimeoutExpired` in place of the interrupt, leaving the claimed report unremoved, so it moved into `runner.stop`, which cannot raise. Both now have a check in `scripts/selfcheck.py`.
+- The N5 and N6 labels above were transposed in the first version of this report and are corrected here; both findings were closed either way.
 - Finished on 2026-08-23.
 - Linked backlog item(s): `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`, `item_057_keep_prune_inside_the_project_it_was_asked_to_prune`, `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`, `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`
 - Related request(s): `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`

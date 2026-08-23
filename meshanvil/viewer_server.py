@@ -107,6 +107,13 @@ def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.
             self.send_error(404, "directory listing refused")
             return None
 
+        def do_HEAD(self):
+            # Inherited from SimpleHTTPRequestHandler, so it reaches the static tree on its own:
+            # unguarded it answered the size and existence of every file under work/.
+            if not self.guard_origin():
+                return
+            super().do_HEAD()
+
         def do_GET(self):
             if not self.guard_origin():
                 return

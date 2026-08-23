@@ -109,6 +109,25 @@ def claim_target(root: Path, digest: str) -> Path:
 STALE_AFTER = 60.0
 
 
+def stop(process: subprocess.Popen) -> None:
+    """Terminate the engine on the way out. Nothing here may raise.
+
+    The caller is already unwinding, and an exception from the termination would take the
+    place of the interrupt that caused it -- leaving the claimed report behind unremoved.
+    """
+    try:
+        if process.poll() is not None:
+            return
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        pass
+
+
 def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
     """A long operation proves it is alive by touching its progress file.
 
@@ -206,13 +225,8 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
             process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             watch(process, root / RUNS / f"{identity}.progress")
         except BaseException:
-            if process and process.poll() is None:
-                process.terminate()
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait(timeout=5)
+            if process is not None:
+                stop(process)                     # before the unlink: a live engine would rewrite it
             report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
             raise
 

@@ -305,6 +305,11 @@ def check_viewer_origin_and_listing(tmp: Path):
         assert request("GET", "/api/ping", skip_host=True) == 403
         for path in ("/api/ping", "/api/data", "/api/events", "/viewer/data.js"):
             assert request("GET", path, bad_host) == 403, path
+        # HEAD is inherited, reaches the static tree by itself, and answered size and existence
+        # for every file under work/ until it was guarded too.
+        for path in ("/viewer/data.js", "/in/"):
+            assert request("HEAD", path, bad_host) == 403, path
+        assert request("HEAD", "/viewer/index.html", good) == 200
         for path, body in (("/run", {"command": "list"}), ("/file", {"id": "x", "action": "open"})):
             assert request("POST", path, {**bad_host, "X-Meshanvil-Token": "token"}, body) == 403, path
         assert request("GET", "/api/data", bad_origin) == 403
@@ -438,6 +443,22 @@ def check_runner_interrupt_stops_engine(tmp: Path):
         except KeyboardInterrupt:
             pass
         assert stopped == ["terminate"], stopped
+        assert not list((root / runner.OPS).glob("*.json"))
+
+        # A termination that will not complete must not take the place of the interrupt, or the
+        # claimed report survives with nothing in it.
+        class Stuck(FakeProcess):
+            def wait(self, timeout=None):
+                raise runner.subprocess.TimeoutExpired("engine", timeout)
+
+        stopped.clear()
+        runner.subprocess.Popen = lambda *args, **kwargs: Stuck()
+        try:
+            runner.run("op", str(source), {})
+            raise AssertionError("interrupt was swallowed")
+        except KeyboardInterrupt:
+            pass
+        assert stopped == ["terminate", "kill"], stopped
         assert not list((root / runner.OPS).glob("*.json"))
     finally:
         (runner.paths.work_root, runner.manifests.discover, runner.doctor.work,

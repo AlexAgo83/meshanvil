@@ -31,7 +31,7 @@
   - Selfchecks for the terminated child and for the fallback rule name, with pytest wrappers.
 - Out:
   - A run timeout, a resume mechanism, or any change to the heartbeat and its stale warning.
-  - Changing which directory the fallback returns; only its name and documentation are in scope.
+  - Changing which directory the fallback returns; only its name and documentation are in scope. Delivery narrowed this deliberately: `resolve()` now returns the resolved `start` argument rather than the working directory, which changes nothing for production -- no caller passes `start` -- and fixes a latent bug in the parameter that the renamed rule made visible.
   - The marker and override rules, which already behave as documented.
 
 # Acceptance criteria
