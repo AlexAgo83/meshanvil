@@ -254,9 +254,9 @@
     return DATA.reports.filter((report) => rootOf(BY_ID, report.id) === root);
   }
   function place() {
-    const shown = onCanvas();
+    const shown2 = onCanvas();
     const depth = /* @__PURE__ */ new Map(), row = /* @__PURE__ */ new Map();
-    for (const report of shown) {
+    for (const report of shown2) {
       const parent = report.links && report.links.parent;
       const level = parent && depth.has(parent) ? depth.get(parent) + 1 : 0;
       depth.set(report.id, level);
@@ -265,7 +265,7 @@
       report._x = 20 + level * 232;
       report._y = 20 + used * 196;
     }
-    return shown;
+    return shown2;
   }
   function outliner() {
     if (start) {
@@ -352,6 +352,8 @@
     <button type="button" class="iconbtn" data-file-reveal="${esc(id)}"${disabled} aria-label="${esc(t("ui.reveal_file"))}" title="${esc(t("ui.reveal_file"))}">\u2316</button>
   </span>`;
   }
+  var APPLIED_SHOWN = 2;
+  var shown = (applied) => applied.slice(0, APPLIED_SHOWN);
   function runbookRows() {
     const docs = (DATA.runbooks || []).filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText));
     const head = `<div class="rbcols"><span>${esc(t("ui.rb_col_doc"))}</span>
@@ -362,7 +364,7 @@
       return `<button type="button" class="rbrow" data-doc="${esc(doc.ref)}" aria-current="${doc.ref === currentDoc}">
       <span class="rbhead"><span class="kindicon inspection">N</span><span>${esc(shortRef(doc.ref))}</span><b>${esc(doc.title || doc.ref)}</b></span>
       <span class="rbpurpose">${esc(docPurpose(full))}</span>
-      <span class="rbapplied">${applied.length ? applied.map((report) => `<span class="docref docref--op"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></span>`).join("") : `<span class="unapplied">${esc(t("ui.not_applied"))}</span>`}</span>
+      <span class="rbapplied">${applied.length ? shown(applied).map((report) => `<span class="docref docref--op"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></span>`).join("") + (applied.length > APPLIED_SHOWN ? `<span class="docref docref--more">${esc(t("ui.applied_more", { count: applied.length - APPLIED_SHOWN }))}</span>` : "") : `<span class="unapplied">${esc(t("ui.not_applied"))}</span>`}</span>
     </button>`;
     }).join("") || `<div class="blank"><span class="big">${esc(t("ui.runbooks"))}</span><span>${esc(t("ui.runbook_empty"))}</span></div>`);
   }
@@ -393,14 +395,14 @@
       document.getElementById("noodles").innerHTML = "";
       return;
     }
-    const shown = place();
+    const shown2 = place();
     graphHead(
       "\u2B21",
       t("ui.node_editor"),
-      shown.length ? `chain / ${chainName(shown)}` : "links.parent"
+      shown2.length ? `chain / ${chainName(shown2)}` : "links.parent"
     );
     let html = "";
-    for (const report of shown) {
+    for (const report of shown2) {
       const kind = report.status === "failed" ? "failed" : report.kind;
       const state = artefactState(report);
       const lines = headline(report).map(([key, value]) => `<div class="nline"><span>${esc(key)}</span><b>${esc(value)}</b></div>`).join("");
@@ -423,9 +425,9 @@
     }
     document.getElementById("nodes").innerHTML = html;
     const canvas = document.getElementById("canvas");
-    canvas.style.width = Math.max(860, ...shown.map((r) => r._x + 240)) + "px";
-    canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200)) + "px";
-    noodles(shown);
+    canvas.style.width = Math.max(860, ...shown2.map((r) => r._x + 240)) + "px";
+    canvas.style.height = Math.max(420, ...shown2.map((r) => r._y + 200)) + "px";
+    noodles(shown2);
   }
   function headline(report) {
     if (report.kind === "transform" && report.after) {
@@ -437,9 +439,9 @@
     const measured = report.measured || {};
     return [["objects", num(measured.objects)], ["vertices", num(measured.vertices)]];
   }
-  function noodles(shown) {
+  function noodles(shown2) {
     let path = "";
-    for (const report of shown) {
+    for (const report of shown2) {
       const parent = report.links && report.links.parent && BY_ID.get(report.links.parent);
       if (!parent) continue;
       const x1 = parent._x + 186, y1 = parent._y + 56, x2 = report._x, y2 = report._y + 34;

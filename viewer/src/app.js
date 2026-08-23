@@ -269,6 +269,12 @@ function fileControls(path, label) {
   </span>`;
 }
 
+/** A runbook applied by a dozen operations turned one table row into a column of pills and
+    pushed the rest of the table off screen. Two name the runbook's use; the count carries
+    the rest, and the row itself opens the full list. */
+const APPLIED_SHOWN = 2;
+const shown = (applied) => applied.slice(0, APPLIED_SHOWN);
+
 function runbookRows() {
   const docs = (DATA.runbooks || []).filter((doc) => `${doc.ref} ${doc.title}`.toLowerCase().includes(filterText));
   const head = `<div class="rbcols"><span>${esc(t("ui.rb_col_doc"))}</span>
@@ -279,8 +285,11 @@ function runbookRows() {
     return `<button type="button" class="rbrow" data-doc="${esc(doc.ref)}" aria-current="${doc.ref === currentDoc}">
       <span class="rbhead"><span class="kindicon inspection">N</span><span>${esc(shortRef(doc.ref))}</span><b>${esc(doc.title || doc.ref)}</b></span>
       <span class="rbpurpose">${esc(docPurpose(full))}</span>
-      <span class="rbapplied">${applied.length ? applied.map((report) =>
+      <span class="rbapplied">${applied.length ? shown(applied).map((report) =>
         `<span class="docref docref--op"><code>${esc(report.id)}</code><span class="rtitle">${esc(report.operation)}</span></span>`).join("")
+        + (applied.length > APPLIED_SHOWN
+          ? `<span class="docref docref--more">${esc(t("ui.applied_more", { count: applied.length - APPLIED_SHOWN }))}</span>`
+          : "")
         : `<span class="unapplied">${esc(t("ui.not_applied"))}</span>`}</span>
     </button>`;
   }).join("") || `<div class="blank"><span class="big">${esc(t("ui.runbooks"))}</span><span>${esc(t("ui.runbook_empty"))}</span></div>`);

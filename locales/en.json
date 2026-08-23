@@ -263,6 +263,7 @@
   "rb_col_applied": "applied by",
   "chain_named": "Chain — {name}",
   "orphan_named": "Orphan — {name}",
+  "applied_more": "+{count}",
   "branch_named": "Branch — {name}",
   "no_renders": "This operation produced no render.",
   "compare_note": "Identical camera on both states. What the numbers understate, the wipe shows.",
