@@ -20,6 +20,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: python -m pip install pytest   # the only test dependency; the tool itself has none
       - run: make check          # compile, types, selfcheck, hygiene
       - run: make install-check  # builds the wheel and runs the console script from a venv
       - run: make logics         # the corpus is part of the deliverable, so it is gated
