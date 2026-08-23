@@ -1,8 +1,9 @@
 """meshanvil <command>. One way in, whoever is typing -- a person, Claude or Codex."""
 from __future__ import annotations
 import argparse, contextlib, io, json, sys
+from pathlib import Path
 
-from . import VERSION, demo, doctor, engines, logics_bridge, manifests, paths, prune, runner, viewer
+from . import VERSION, demo, doctor, engines, logics_bridge, manifests, paths, prune, reports, runner, schemas, status, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -16,6 +17,23 @@ ARGPARSE = {
 
 def print_json(data: dict) -> None:
     print(json.dumps(data, indent=1))
+
+
+def json_ok(**data) -> None:
+    print_json({"ok": True, **data})
+
+
+def json_error(code: str, message: str, exit_code: int = runner.EXIT_REFUSED, **data) -> None:
+    print_json({"ok": False, "exit_code": exit_code,
+                "error": {"code": code, "message": message}, **data})
+
+
+def error_code(refusal: BaseException) -> str:
+    if isinstance(refusal, engines.EngineMissing):
+        return "engine_missing"
+    if isinstance(refusal, KeyError):
+        return "invalid_parameter"
+    return getattr(refusal, "code", "refused")
 
 
 def colour(text: str, code: str) -> str:
@@ -47,6 +65,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     listing = sub.add_parser("list", help=t("cli.list.help"))
     listing.add_argument("--json", action="store_true", help=t("cli.json"))
+    machine_schema = sub.add_parser("schema", help=t("cli.schema.help"))
+    machine_schema.add_argument("--json", action="store_true", help=t("cli.json"))
+    machine_status = sub.add_parser("status", help=t("cli.status.help"))
+    machine_status.add_argument("--json", action="store_true", help=t("cli.json"))
+    report_list = sub.add_parser("reports", help=t("cli.reports.help"))
+    report_list.add_argument("id", nargs="?")
+    report_list.add_argument("--latest", action="store_true", help=t("cli.reports.latest"))
+    report_list.add_argument("--json", action="store_true", help=t("cli.json"))
     started = sub.add_parser("init", help=t("cli.init.help"))
     started.add_argument("directory", nargs="?", default=".")
     setup = sub.add_parser("doctor", help=t("cli.doctor.help"))
@@ -79,7 +105,7 @@ def build_parser() -> argparse.ArgumentParser:
 def show_list(json_mode: bool = False) -> int:
     found = manifests.discover()
     if json_mode:
-        print_json({"ok": True, "operations": found})
+        json_ok(operations=found)
         return runner.EXIT_OK
     if not found:
         print(t("list.empty"))
@@ -100,6 +126,41 @@ def main(argv: list[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     if arguments.command == "list":
         return show_list(arguments.json)
+    if arguments.command == "schema":
+        json_ok(**schemas.all_schemas())
+        return runner.EXIT_OK
+    if arguments.command == "status":
+        data = status.collect()
+        payload = {key: value for key, value in data.items() if key != "ok"}
+        if data["ok"]:
+            json_ok(**payload)
+            return runner.EXIT_OK
+        json_error(f"{data['doctor']['next']}_missing",
+                   next(item["reason"] for item in data["doctor"]["requirements"]
+                        if item["name"] == data["doctor"]["next"]),
+                   runner.EXIT_REFUSED, **payload)
+        return runner.EXIT_REFUSED
+    if arguments.command == "reports":
+        project = paths.work_root()
+        if arguments.latest:
+            report_path = reports.latest(project)
+            if not report_path:
+                json_error("report_not_found", "no report found")
+                return runner.EXIT_REFUSED
+        elif arguments.id:
+            report_path, problem = reports.find(project, arguments.id)
+            if problem:
+                json_error(problem, problem.replace("_", " "))
+                return runner.EXIT_REFUSED
+        else:
+            json_ok(reports=reports.list_reports(project))
+            return runner.EXIT_OK
+        report, warning = reports.load(report_path)
+        if warning:
+            json_error("malformed_report", warning)
+            return runner.EXIT_REFUSED
+        json_ok(report_path=str(report_path.relative_to(project)), report=report)
+        return runner.EXIT_OK
     if arguments.command == "init":
         root, fresh = paths.initialise(arguments.directory)
         # Literal keys: the i18n check reads the source, and a key hidden behind a
@@ -113,8 +174,15 @@ def main(argv: list[str] | None = None) -> int:
         active, rule = paths.resolve()
         result = doctor.check(active)
         if arguments.json:
-            print_json({"ok": result["ok"], "project": {
-                "name": paths.name(active), "path": str(active), "resolved_by": rule}, "doctor": result})
+            data = {"project": {"name": paths.name(active), "path": str(active), "resolved_by": rule},
+                    "doctor": result}
+            if result["ok"]:
+                json_ok(**data)
+            else:
+                code = "engine_missing" if result.get("next") == "blender" else f"{result.get('next')}_missing"
+                json_error(code, next((item["reason"] for item in result.get("requirements", [])
+                                       if item["name"] == result.get("next")), "setup refused"),
+                           runner.EXIT_REFUSED, **data)
             return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
         print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
         print(json.dumps(result, indent=1))
@@ -141,10 +209,10 @@ def main(argv: list[str] | None = None) -> int:
         project = paths.work_root()
         dropped, freed = prune.run(project, max(0, arguments.keep), arguments.dry_run)
         if arguments.json:
-            print_json({"ok": True, "dry_run": arguments.dry_run, "keep": max(0, arguments.keep),
-                        "artefacts": [{"path": str(path.relative_to(project)), "bytes": size}
-                                      for path, size in dropped],
-                        "count": len(dropped), "bytes": freed})
+            json_ok(dry_run=arguments.dry_run, keep=max(0, arguments.keep),
+                    artefacts=[{"path": str(path.relative_to(project)), "bytes": size}
+                               for path, size in dropped],
+                    count=len(dropped), bytes=freed)
             return runner.EXIT_OK
         for path, size in dropped:
             verb = t("cli.prune.would") if arguments.dry_run else t("cli.prune.deleted")
@@ -156,7 +224,7 @@ def main(argv: list[str] | None = None) -> int:
         if "=" not in pair:
             message = t("cli.set.malformed", pair=pair)
             if arguments.json:
-                print_json({"ok": False, "exit_code": runner.EXIT_REFUSED, "error": message})
+                json_error("malformed_set", message)
                 return runner.EXIT_REFUSED
             print(message, file=sys.stderr)
             return runner.EXIT_REFUSED
@@ -167,14 +235,26 @@ def main(argv: list[str] | None = None) -> int:
             stream = io.StringIO()
             with contextlib.redirect_stdout(stream):
                 code = runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)
-            report = stream.getvalue().strip() or None
-            print_json({"ok": code == runner.EXIT_OK, "exit_code": code, "report": report})
+            report_path = stream.getvalue().strip() or None
+            data = {"exit_code": code, "report_path": report_path}
+            if report_path:
+                report, warning = reports.load(paths.work_root() / Path(report_path))
+                if report:
+                    data.update(id=report.get("id"), status=report.get("status"))
+                elif warning:
+                    data["warning"] = {"code": "malformed_report", "message": warning}
+            if code == runner.EXIT_OK:
+                json_ok(**data)
+            else:
+                json_error("no_report" if code == runner.EXIT_NO_REPORT else "operation_failed",
+                           "operation did not complete successfully", code,
+                           **{key: value for key, value in data.items() if key != "exit_code"})
             return code
         return runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)
     except (runner.Refused, engines.EngineMissing, KeyError) as refusal:
         message = str(refusal).strip("'")
         if getattr(arguments, "json", False):
-            print_json({"ok": False, "exit_code": runner.EXIT_REFUSED, "error": message})
+            json_error(error_code(refusal), message)
             return runner.EXIT_REFUSED
         print(message, file=sys.stderr)
         return runner.EXIT_REFUSED

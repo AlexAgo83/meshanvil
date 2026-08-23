@@ -14,6 +14,16 @@
     "list": {
       "help": "the operations found, and what each one takes"
     },
+    "schema": {
+      "help": "print the report, operation and CLI JSON contracts"
+    },
+    "status": {
+      "help": "print project state and next-action hints as JSON"
+    },
+    "reports": {
+      "help": "list reports or read one report as JSON",
+      "latest": "read the latest report"
+    },
     "doctor": {
       "help": "check setup and write work/doctor.json"
     },

@@ -1,14 +1,14 @@
 ## item_060_expose_report_operation_and_cli_schemas_from_the_tool - Expose report operation and CLI schemas from the tool
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:21:52
+> Indicators reviewed: 2026-08-23 12:40:44
 
 # AI Context
 - Summary: Add one `schema --json` command so agents can learn report, operation manifest and CLI JSON shapes from meshanvil itself.

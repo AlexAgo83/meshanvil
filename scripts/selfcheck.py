@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import demo, doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer, viewer_server  # noqa: E402
+from meshanvil import demo, doctor, engines, i18n, logics_bridge, manifests, prune, reports, runner, schemas, status, viewer, viewer_server  # noqa: E402
 from meshanvil.viewer_routes import events as viewer_events  # noqa: E402
 from meshanvil.viewer_routes import run as viewer_run  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
@@ -150,25 +150,125 @@ def check_cli_json(tmp: Path):
         cli.paths.work_root = lambda: project
         cli.doctor.check = lambda root: {"ok": True, "requirements": []}
         cli.prune.run = lambda root, keep, dry_run: ([(root / "work" / "out.blend", 12)], 12)
-        cli.runner.run = lambda *args, **kwargs: (print("work/ops/001_op.json") or runner.EXIT_OK)
+        def run_ok(*args, **kwargs):
+            report = project / "work" / "ops" / "001_op.json"
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(json.dumps({"id": "001", "operation": "op", "status": "ok"}),
+                              encoding="utf-8")
+            print("work/ops/001_op.json")
+            return runner.EXIT_OK
+
+        cli.runner.run = run_ok
 
         for arguments, key in ((["list", "--json"], "operations"),
                                (["doctor", "--json"], "doctor"),
                                (["prune", "--dry-run", "--json"], "artefacts"),
-                               (["run", "op", "source.blend", "--json"], "report")):
+                               (["run", "op", "source.blend", "--json"], "report_path")):
             stream = io.StringIO()
             with contextlib.redirect_stdout(stream):
                 assert cli.main(arguments) == runner.EXIT_OK, arguments
             data = json.loads(stream.getvalue())
             assert data["ok"] is True and key in data, data
-        cli.runner.run = lambda *args, **kwargs: (_ for _ in ()).throw(runner.Refused("nope"))
+        cli.runner.run = lambda *args, **kwargs: (_ for _ in ()).throw(runner.Refused("nope", "unknown_operation"))
         stream = io.StringIO()
         with contextlib.redirect_stdout(stream):
             assert cli.main(["run", "op", "source.blend", "--json"]) == runner.EXIT_REFUSED
-        assert json.loads(stream.getvalue()) == {"ok": False, "exit_code": runner.EXIT_REFUSED, "error": "nope"}
+        data = json.loads(stream.getvalue())
+        assert data["error"] == {"code": "unknown_operation", "message": "nope"}, data
+        for arguments, code, fake in (
+            (["run", "op", "source.blend", "--set", "bad", "--json"], "malformed_set", None),
+            (["run", "op", "source.blend", "--json"], "engine_missing", engines.EngineMissing("missing")),
+            (["run", "op", "source.blend", "--json"], "invalid_parameter", KeyError("bad parameter")),
+        ):
+            if fake is not None:
+                cli.runner.run = lambda *args, error=fake, **kwargs: (_ for _ in ()).throw(error)
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                assert cli.main(arguments) == runner.EXIT_REFUSED
+            assert json.loads(stream.getvalue())["error"]["code"] == code
     finally:
         (cli.manifests.discover, cli.paths.resolve, cli.paths.work_root,
          cli.doctor.check, cli.prune.run, cli.runner.run) = original
+
+
+def check_cli_reports(tmp: Path):
+    from meshanvil import cli
+    root = tmp / "reports-cli"; ops = root / "work" / "ops"; ops.mkdir(parents=True)
+    (ops / "001_scan.json").write_text(json.dumps({
+        "id": "001", "operation": "scan", "status": "ok",
+        "input": {"path": "work/out/source.blend"},
+        "output": {"path": "work/out/result.blend", "state": "present"},
+        "created_at": "2026-08-23T00:00:00Z",
+    }), encoding="utf-8")
+    (ops / "002_bad.json").write_text("{", encoding="utf-8")
+    (ops / "003a_scan.json").write_text(json.dumps({"id": "003a", "operation": "scan", "status": "failed"}),
+                                        encoding="utf-8")
+    original = cli.paths.work_root
+    try:
+        cli.paths.work_root = lambda: root
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["reports", "--json"]) == runner.EXIT_OK
+        listed = json.loads(stream.getvalue())
+        assert listed["ok"] is True and len(listed["reports"]) == 3
+        assert listed["reports"][1]["warning"]["code"] == "malformed_report"
+
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["reports", "--latest", "--json"]) == runner.EXIT_OK
+        assert json.loads(stream.getvalue())["report"]["id"] == "003a"
+
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["reports", "001", "--json"]) == runner.EXIT_OK
+        assert json.loads(stream.getvalue())["report_path"] == "work/ops/001_scan.json"
+
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["reports", "00", "--json"]) == runner.EXIT_REFUSED
+        assert json.loads(stream.getvalue())["error"]["code"] == "ambiguous_report_id"
+    finally:
+        cli.paths.work_root = original
+
+
+def check_cli_status(tmp: Path):
+    from meshanvil import cli, paths
+    root = tmp / "status-cli"; (root / paths.MARKER).mkdir(parents=True); (root / "work").mkdir()
+    binary = tmp / "blender"; binary.write_text("", encoding="utf-8")
+    original = (status.paths.resolve, status.engines.find, cli.status.paths.resolve, cli.status.engines.find)
+    try:
+        status.paths.resolve = lambda: (root, paths.BY_MARKER)
+        cli.status.paths.resolve = status.paths.resolve
+        status.engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing("missing"))
+        cli.status.engines.find = status.engines.find
+        before = sorted(path.relative_to(root) for path in root.rglob("*"))
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["status", "--json"]) == runner.EXIT_OK
+        data = json.loads(stream.getvalue())
+        after = sorted(path.relative_to(root) for path in root.rglob("*"))
+        assert before == after, "status wrote under work"
+        assert data["ok"] is True and data["reports"]["count"] == 0
+        assert data["next"][-1]["reason"] == "no_reports_yet"
+
+        (root / "work").rmdir()
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["status", "--json"]) == runner.EXIT_REFUSED
+        refused = json.loads(stream.getvalue())
+        assert refused["ok"] is False and refused["error"]["code"] == "work_missing"
+    finally:
+        (status.paths.resolve, status.engines.find, cli.status.paths.resolve, cli.status.engines.find) = original
+
+
+def check_cli_schema():
+    from meshanvil import cli
+    stream = io.StringIO()
+    with contextlib.redirect_stdout(stream):
+        assert cli.main(["schema", "--json"]) == runner.EXIT_OK
+    data = json.loads(stream.getvalue())
+    assert {"report", "operation", "cli"} <= data.keys(), data
+    assert set(schemas.ERROR_CODES) <= set(data["cli"]["error_codes"])
 
 
 def check_demo_command(tmp: Path):
@@ -643,6 +743,9 @@ def main() -> int:
         check_refusals()
         check_cli_welcome()
         check_cli_json(tmp)
+        check_cli_reports(tmp)
+        check_cli_status(tmp)
+        check_cli_schema()
         check_demo_command(tmp)
         check_i18n()
         check_doctor(tmp)

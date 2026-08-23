@@ -1,14 +1,14 @@
 ## item_061_add_one_status_json_command_for_agent_preflight - Add one status JSON command for agent preflight
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:21:52
+> Indicators reviewed: 2026-08-23 12:40:44
 
 # AI Context
 - Summary: Add one JSON preflight command that combines project, setup, operations, report summary, viewer hint and next hints.

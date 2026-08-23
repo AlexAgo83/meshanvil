@@ -14,6 +14,16 @@
     "list": {
       "help": "les opérations trouvées, et ce que chacune attend"
     },
+    "schema": {
+      "help": "afficher les contrats JSON de rapport, opération et CLI"
+    },
+    "status": {
+      "help": "afficher l'état projet et les prochaines actions en JSON"
+    },
+    "reports": {
+      "help": "lister les rapports ou lire un rapport en JSON",
+      "latest": "lire le dernier rapport"
+    },
     "doctor": {
       "help": "vérifier la configuration et écrire work/doctor.json"
     },

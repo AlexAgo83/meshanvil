@@ -1,14 +1,15 @@
 ## task_027_deliver_the_agent_ready_cli_contract - Deliver the agent-ready CLI contract
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:21:41
+> Indicators reviewed: 2026-08-23 12:40:44
+> Owner: codex
 
 # AI Context
 - Summary: Implementation plan for the agent-ready CLI request, documenting the surface first, then envelopes, error codes, reports, status and schema.

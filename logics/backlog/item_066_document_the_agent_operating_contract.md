@@ -1,14 +1,14 @@
 ## item_066_document_the_agent_operating_contract - Document the agent operating contract
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Agent-facing CLI contract
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 11:22:01
+> Indicators reviewed: 2026-08-23 12:40:44
 
 # AI Context
 - Summary: Turn `AGENTS.md` into the AI operator playbook: JSON-first workflow, report-first reading, exit codes, `work/in` safety and Logics evidence usage.

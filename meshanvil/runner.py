@@ -23,6 +23,10 @@ EXIT_OK, EXIT_FAILED, EXIT_REFUSED, EXIT_NO_REPORT = 0, 1, 2, 3
 class Refused(Exception):
     """The command will not run. Exit code 2, nothing written, nothing touched."""
 
+    def __init__(self, message: str, code: str = "refused"):
+        super().__init__(message)
+        self.code = code
+
 
 def fingerprint(path: Path) -> str:
     digest = hashlib.sha256()
@@ -102,7 +106,7 @@ def claim_target(root: Path, digest: str) -> Path:
     try:
         os.close(os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
     except FileExistsError:
-        raise Refused(t("run.target_busy"))
+        raise Refused(t("run.target_busy"), "target_busy")
     return path
 
 
@@ -154,27 +158,27 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     install = paths.asset_root(".")   # operation scripts and the engine package
     known = manifests.discover()
     if operation not in known:
-        raise Refused(t("run.unknown_operation", name=operation))
+        raise Refused(t("run.unknown_operation", name=operation), "unknown_operation")
     manifest = known[operation]
     source = Path(target).resolve()
     if not source.is_file():
-        raise Refused(t("run.no_such_file", path=target))
+        raise Refused(t("run.no_such_file", path=target), "missing_source_file")
     accepts = manifest.get("accepts")
     if accepts and source.suffix.lower() not in accepts:
         # Refused here rather than inside the engine: a refusal must leave work/ops untouched,
         # and a SystemExit in a Blender script only reaches the operator as "no report".
         raise Refused(t("run.unreadable_format", operation=operation,
                         suffix=source.suffix.lower() or source.name,
-                        accepts=", ".join(accepts)))
+                        accepts=", ".join(accepts)), "unreadable_input_format")
     opens_target = manifest.get("opens_target", manifest["engine"] != "freecad")
     if (root / "work" / "in") in source.parents and opens_target:
-        raise Refused(t("run.source_is_read_only", path=target))
+        raise Refused(t("run.source_is_read_only", path=target), "read_only_source")
     try:
         (root / "work").mkdir(exist_ok=True)
     except OSError:
-        raise Refused(t("run.work_unavailable", path=root / "work"))
+        raise Refused(t("run.work_unavailable", path=root / "work"), "work_unavailable")
     if doctor.work(root)["state"] != "found":
-        raise Refused(t("run.work_unavailable", path=root / "work"))
+        raise Refused(t("run.work_unavailable", path=root / "work"), "work_unavailable")
     values = manifests.resolve(manifest, params)   # validated before an identity is claimed:
     binary = engines.find(manifest["engine"])       # a refusal must leave work/ops untouched
     number, build = engines.version(binary)
