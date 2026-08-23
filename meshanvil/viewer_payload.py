@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import hashlib, json, os, shutil, time
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from . import VERSION, logics_bridge, paths
 from .i18n import SOURCE, catalogue, language
@@ -24,18 +24,27 @@ def collect(root: Path, page: Path) -> list[dict]:
     return reports
 
 
+def _url(target: str, page: Path) -> str:
+    """A relative URL, which on Windows is not what `relpath` returns.
+
+    `relpath` answers in the host's separator, so a page written on Windows carried
+    `..\\renders\\001_3q.png` into an `img src`. Chromium happens to fold a backslash into a
+    slash for file:, so it loaded anyway -- on leniency, not on a correct URL. Say it properly.
+    """
+    try:
+        # PureWindowsPath parses both separators on any host, which is what makes this
+        # check-able from macOS: the bug only exists where relpath answers in backslashes.
+        return PureWindowsPath(os.path.relpath(target, page)).as_posix()
+    except ValueError:
+        return target
+
+
 def with_render_urls(page: Path, report: dict) -> dict:
     for render in report.get("renders", []):
-        try:
-            render["url"] = os.path.relpath(render["path"], page)
-        except ValueError:
-            render["url"] = render["path"]
+        render["url"] = _url(render["path"], page)
     for pair in report.get("comparisons", []):
         for state in ("before", "after"):
-            try:
-                pair[f"{state}_url"] = os.path.relpath(pair[state], page)
-            except ValueError:
-                pair[f"{state}_url"] = pair[state]
+            pair[f"{state}_url"] = _url(pair[state], page)
     return report
 
 

@@ -512,6 +512,38 @@ def check_doctor_exit_code():
         doctor.check = original
 
 
+def check_render_urls_are_urls():
+    """A render reference is a URL, not a host path.
+
+    On Windows `os.path.relpath` answers with backslashes, and the payload put them straight
+    into an `img src`. Chromium folds them back for file:, so it loaded and nothing said
+    otherwise -- the kind of defect that only shows up on the platform nobody develops on.
+    """
+    from meshanvil import viewer_payload
+
+    page = Path("/project/work/viewer")
+    report = {"renders": [{"path": "/project/work/renders/001_3q.png"}],
+              "comparisons": [{"before": "/project/work/renders/001_before.png",
+                               "after": "/project/work/renders/001_after.png"}]}
+    built = viewer_payload.with_render_urls(page, report)
+    urls = [built["renders"][0]["url"],
+            built["comparisons"][0]["before_url"], built["comparisons"][0]["after_url"]]
+    for url in urls:
+        assert "\\" not in url, f"a backslash reached a render URL: {url!r}"
+    assert urls[0] == "../renders/001_3q.png", urls
+
+    # The Windows shape, asserted without a Windows host: ntpath is what runs there.
+    import ntpath
+    original = viewer_payload.os.path.relpath
+    try:
+        viewer_payload.os.path.relpath = ntpath.relpath
+        windows = viewer_payload.with_render_urls(
+            Path(r"C:/project/work/viewer"), {"renders": [{"path": r"C:/project/work/renders/x.png"}]})
+        assert windows["renders"][0]["url"] == "../renders/x.png", windows
+    finally:
+        viewer_payload.os.path.relpath = original
+
+
 def check_viewer_start(tmp: Path):
     root = tmp / "viewer-start"
     root.mkdir()
@@ -818,6 +850,7 @@ def main() -> int:
         check_fix_command_fits_the_host()
         check_wsl_boundary(tmp)
         check_doctor_exit_code()
+        check_render_urls_are_urls()
         check_viewer_start(tmp)
         check_run_endpoint(tmp)
         check_viewer_origin_and_listing(tmp)
