@@ -341,10 +341,10 @@ def check_served(chrome: str, project: Path) -> None:
             raise SystemExit("served viewer did not report a port in time")
         served_dir = project / "work" / "viewer"
         smoke_page = served_dir / "served_smoke.html"
-        smoke_page.write_text((served_dir / "index.html").read_text(encoding="utf-8")
-                              .replace('<script src="viewer.js"></script>',
-                                       '<script>window.EventSource = undefined;</script>\n<script src="viewer.js"></script>')
-                              .replace("</body>", SERVED_SMOKE + "\n</body>"), encoding="utf-8")
+        smoke_html = (served_dir / "index.html").read_text(encoding="utf-8")
+        smoke_html = re.sub(r'(<script src="viewer\.js[^"]*"></script>)',
+                            '<script>window.EventSource = undefined;</script>\n\\1', smoke_html)
+        smoke_page.write_text(smoke_html.replace("</body>", SERVED_SMOKE + "\n</body>"), encoding="utf-8")
         try:
             url = f"http://127.0.0.1:{port}/viewer/served_smoke.html"
             live = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",

@@ -100,8 +100,12 @@ def resolve_file(root: Path, file_id_value: str) -> Path | None:
 def build(root: Path, run_token: str | None = None) -> tuple[Path, dict]:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)
-    for name in ("index.html", "viewer.css", "viewer.js", "icon.png"):
+    for name in ("viewer.css", "viewer.js", "icon.png"):
         shutil.copyfile(paths.asset_root("viewer") / name, target / name)
+    stamp = str(int(time.time()))
+    index = (paths.asset_root("viewer") / "index.html").read_text(encoding="utf-8")
+    (target / "index.html").write_text(index.replace('src="viewer.js"', f'src="viewer.js?v={stamp}"'),
+                                       encoding="utf-8")
     data = payload(root, target, run_token)
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(data, indent=1) + ";\n", encoding="utf-8")
