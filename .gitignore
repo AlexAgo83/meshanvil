@@ -7,3 +7,5 @@ logics/external/*
 node_modules/
 *.blend1
 *.egg-info/
+build/
+dist/
