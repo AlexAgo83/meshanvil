@@ -42,6 +42,7 @@
     "positional_arguments": "arguments positionnels",
     "options": "options",
     "help": "afficher cette aide et quitter",
+    "json": "écrire du JSON exploitable par machine sur stdout",
     "version_help": "afficher le numéro de version du programme et quitter",
     "set": {
       "malformed": "--set attend NOM=VALEUR, reçu {pair}"

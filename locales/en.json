@@ -42,6 +42,7 @@
     "positional_arguments": "positional arguments",
     "options": "options",
     "help": "show this help message and exit",
+    "json": "write machine-readable JSON to stdout",
     "version_help": "show program's version number and exit",
     "set": {
       "malformed": "--set expects NAME=VALUE, got {pair}"

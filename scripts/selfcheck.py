@@ -139,6 +139,38 @@ def check_cli_welcome():
     assert "error:" not in text.lower(), text
 
 
+def check_cli_json(tmp: Path):
+    from meshanvil import cli, paths
+    original = (cli.manifests.discover, cli.paths.resolve, cli.paths.work_root,
+                cli.doctor.check, cli.prune.run, cli.runner.run)
+    project = tmp / "cli-json"; project.mkdir()
+    try:
+        cli.manifests.discover = lambda: {"op": {"operation": "op", "engine": "blender", "kind": "mesh"}}
+        cli.paths.resolve = lambda: (project, paths.BY_CWD)
+        cli.paths.work_root = lambda: project
+        cli.doctor.check = lambda root: {"ok": True, "requirements": []}
+        cli.prune.run = lambda root, keep, dry_run: ([(root / "work" / "out.blend", 12)], 12)
+        cli.runner.run = lambda *args, **kwargs: (print("work/ops/001_op.json") or runner.EXIT_OK)
+
+        for arguments, key in ((["list", "--json"], "operations"),
+                               (["doctor", "--json"], "doctor"),
+                               (["prune", "--dry-run", "--json"], "artefacts"),
+                               (["run", "op", "source.blend", "--json"], "report")):
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                assert cli.main(arguments) == runner.EXIT_OK, arguments
+            data = json.loads(stream.getvalue())
+            assert data["ok"] is True and key in data, data
+        cli.runner.run = lambda *args, **kwargs: (_ for _ in ()).throw(runner.Refused("nope"))
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert cli.main(["run", "op", "source.blend", "--json"]) == runner.EXIT_REFUSED
+        assert json.loads(stream.getvalue()) == {"ok": False, "exit_code": runner.EXIT_REFUSED, "error": "nope"}
+    finally:
+        (cli.manifests.discover, cli.paths.resolve, cli.paths.work_root,
+         cli.doctor.check, cli.prune.run, cli.runner.run) = original
+
+
 def check_i18n():
     previous = os.environ.get("MESHANVIL_LANG")
     original_locale, original_catalogue = i18n.locale.getlocale, i18n.catalogue
@@ -500,6 +532,7 @@ def main() -> int:
         check_bbox_delta()
         check_refusals()
         check_cli_welcome()
+        check_cli_json(tmp)
         check_i18n()
         check_doctor(tmp)
         check_engine_floor()

@@ -1,6 +1,6 @@
 """meshanvil <command>. One way in, whoever is typing -- a person, Claude or Codex."""
 from __future__ import annotations
-import argparse, json, sys
+import argparse, contextlib, io, json, sys
 
 from . import VERSION, doctor, engines, logics_bridge, manifests, paths, prune, runner, viewer
 from .i18n import t
@@ -14,19 +14,23 @@ ARGPARSE = {
 }
 
 
+def print_json(data: dict) -> None:
+    print(json.dumps(data, indent=1))
+
+
 def colour(text: str, code: str) -> str:
     return f"\033[{code}m{text}\033[0m" if sys.stdout.isatty() else text
 
 
 def welcome() -> str:
     name = colour("meshanvil", "1;38;5;214")
-    command = colour("meshanvil view", "38;5;75")
+    command = "meshanvil view"
     return "\n".join((
         f"{name} {VERSION}",
         t("cli.welcome.tagline"),
         "",
         t("cli.welcome.next"),
-        f"  {command:<24} {t('cli.welcome.view')}",
+        f"  {colour(command, '38;5;75')}{' ' * (24 - len(command))} {t('cli.welcome.view')}",
         f"  {'meshanvil init .':<24} {t('cli.welcome.init')}",
         f"  {'meshanvil doctor':<24} {t('cli.welcome.doctor')}",
         f"  {'meshanvil list':<24} {t('cli.welcome.list')}",
@@ -40,10 +44,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="meshanvil", description=t("cli.description"))
     parser.add_argument("--version", action="version", version=f"meshanvil {VERSION}")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("list", help=t("cli.list.help"))
+    listing = sub.add_parser("list", help=t("cli.list.help"))
+    listing.add_argument("--json", action="store_true", help=t("cli.json"))
     started = sub.add_parser("init", help=t("cli.init.help"))
     started.add_argument("directory", nargs="?", default=".")
-    sub.add_parser("doctor", help=t("cli.doctor.help"))
+    setup = sub.add_parser("doctor", help=t("cli.doctor.help"))
+    setup.add_argument("--json", action="store_true", help=t("cli.json"))
     run = sub.add_parser("run", help=t("cli.run.help"))
     run.add_argument("operation")
     run.add_argument("target")
@@ -52,6 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--from", dest="parent", default=None, metavar="ID",
                      help=t("cli.run.from"))
     run.add_argument("--evidence", metavar="TASK:AC", help=t("cli.run.evidence"))
+    run.add_argument("--json", action="store_true", help=t("cli.json"))
     show = sub.add_parser("view", help=t("cli.view.help"))
     show.add_argument("--serve", action="store_true",
                       help=t("cli.view.serve"))
@@ -62,11 +69,15 @@ def build_parser() -> argparse.ArgumentParser:
     pruning = sub.add_parser("prune", help=t("cli.prune.help"))
     pruning.add_argument("--keep", type=int, default=3)
     pruning.add_argument("--dry-run", action="store_true")
+    pruning.add_argument("--json", action="store_true", help=t("cli.json"))
     return parser
 
 
-def show_list() -> int:
+def show_list(json_mode: bool = False) -> int:
     found = manifests.discover()
+    if json_mode:
+        print_json({"ok": True, "operations": found})
+        return runner.EXIT_OK
     if not found:
         print(t("list.empty"))
         return runner.EXIT_OK
@@ -85,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
         return runner.EXIT_OK
     arguments = build_parser().parse_args(argv)
     if arguments.command == "list":
-        return show_list()
+        return show_list(arguments.json)
     if arguments.command == "init":
         root, fresh = paths.initialise(arguments.directory)
         # Literal keys: the i18n check reads the source, and a key hidden behind a
@@ -97,8 +108,12 @@ def main(argv: list[str] | None = None) -> int:
         return runner.EXIT_OK
     if arguments.command == "doctor":
         active, rule = paths.resolve()
-        print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
         result = doctor.check(active)
+        if arguments.json:
+            print_json({"ok": result["ok"], "project": {
+                "name": paths.name(active), "path": str(active), "resolved_by": rule}, "doctor": result})
+            return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
+        print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
         print(json.dumps(result, indent=1))
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
     if arguments.command == "view":
@@ -116,6 +131,12 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.command == "prune":
         project = paths.work_root()
         dropped, freed = prune.run(project, max(0, arguments.keep), arguments.dry_run)
+        if arguments.json:
+            print_json({"ok": True, "dry_run": arguments.dry_run, "keep": max(0, arguments.keep),
+                        "artefacts": [{"path": str(path.relative_to(project)), "bytes": size}
+                                      for path, size in dropped],
+                        "count": len(dropped), "bytes": freed})
+            return runner.EXIT_OK
         for path, size in dropped:
             verb = t("cli.prune.would") if arguments.dry_run else t("cli.prune.deleted")
             print(t("cli.prune.item", path=path.relative_to(project), bytes=size, verb=verb))
@@ -124,14 +145,29 @@ def main(argv: list[str] | None = None) -> int:
     given = {}
     for pair in arguments.set:
         if "=" not in pair:
-            print(t("cli.set.malformed", pair=pair), file=sys.stderr)
+            message = t("cli.set.malformed", pair=pair)
+            if arguments.json:
+                print_json({"ok": False, "exit_code": runner.EXIT_REFUSED, "error": message})
+                return runner.EXIT_REFUSED
+            print(message, file=sys.stderr)
             return runner.EXIT_REFUSED
         name, value = pair.split("=", 1)
         given[name] = value
     try:
+        if arguments.json:
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                code = runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)
+            report = stream.getvalue().strip() or None
+            print_json({"ok": code == runner.EXIT_OK, "exit_code": code, "report": report})
+            return code
         return runner.run(arguments.operation, arguments.target, given, arguments.parent, arguments.evidence)
     except (runner.Refused, engines.EngineMissing, KeyError) as refusal:
-        print(str(refusal).strip("'"), file=sys.stderr)
+        message = str(refusal).strip("'")
+        if getattr(arguments, "json", False):
+            print_json({"ok": False, "exit_code": runner.EXIT_REFUSED, "error": message})
+            return runner.EXIT_REFUSED
+        print(message, file=sys.stderr)
         return runner.EXIT_REFUSED
 
 
