@@ -6,3 +6,4 @@ logics/external/*
 !logics/external/.gitkeep
 node_modules/
 *.blend1
+*.egg-info/

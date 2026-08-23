@@ -48,7 +48,7 @@ logics:
 	npx --no-install logics-manager audit --group-by-doc
 
 package:
-	@rm -rf dist
+	@rm -rf dist *.egg-info      # a stale SOURCES.txt re-adds files package-data never listed
 	@$(PYTHON) -m pip wheel . --no-deps -w dist
 	@$(PYTHON) scripts/check_package.py dist/meshanvil-*.whl
 

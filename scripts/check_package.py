@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail a built wheel that forgot a runtime asset."""
+"""Fail a built wheel that forgot a runtime asset, or carried a contributor-only one."""
 from __future__ import annotations
 
 import json, sys, zipfile
@@ -48,6 +48,15 @@ def main(argv: list[str]) -> int:
     if missing:
         for name in missing:
             print(f"package missing asset: {name}", file=sys.stderr)
+        return 1
+    # A stale meshanvil.egg-info/SOURCES.txt puts files back that package-data never listed.
+    # The demo chains are the ones that hurt: installed, they resolve bin/ and fixtures/ from
+    # site-packages, write a generated .blend there, and fail on every CLI call.
+    stray = sorted(name for name in names if name.endswith(".sh"))
+    if stray:
+        for name in stray:
+            print(f"package carries a contributor-only script: {name}", file=sys.stderr)
+        print("hint: rm -rf meshanvil.egg-info, then rebuild", file=sys.stderr)
         return 1
     if "Requires-Dist:" in metadata_text:
         print("package declares a runtime dependency", file=sys.stderr)
