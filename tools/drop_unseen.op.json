@@ -1,0 +1,12 @@
+{
+  "operation": "drop_unseen",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/drop_unseen.py",
+  "summary_key": "operation.drop_unseen.summary",
+  "params": [
+    {"name": "faint_max", "type": "int", "default": 0, "unit": "rays"},
+    {"name": "cache", "type": "str", "default": ""},
+    {"name": "render", "type": "bool", "default": true}
+  ]
+}

@@ -278,6 +278,9 @@
   "clean_shells": {
    "summary": "Supprime chaque coque sous un seuil de sommets, selon sa taille et jamais son rang."
   },
+  "drop_unseen": {
+   "summary": "Supprime chaque objet que ray_visibility n'a jamais vu, ne laissant que l'enveloppe extérieure."
+  },
   "list_shells": {
    "summary": "Énumère les coques d'un objet avec leur taille et leur boîte englobante."
   },

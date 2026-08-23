@@ -278,6 +278,9 @@
   "clean_shells": {
    "summary": "Drop every shell below a vertex threshold, pruning by size and never by rank."
   },
+  "drop_unseen": {
+   "summary": "Delete every object ray_visibility never saw, leaving the outer envelope."
+  },
   "list_shells": {
    "summary": "Enumerate the shells of an object with their size and bounding box."
   },
