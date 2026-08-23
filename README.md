@@ -140,7 +140,7 @@ out "never seen" only because they fall through the ray grid.
 Install the tool after Blender is available:
 
 ```bash
-python -m pip install meshanvil
+python -m pip install git+https://github.com/AlexAgo83/meshanvil
 meshanvil doctor
 ```
 
@@ -148,6 +148,7 @@ The package installs the `meshanvil` command and the runtime assets it reads: op
 manifests, scripts, catalogues, viewer files and the engine-side report package. It does not
 install Blender, FreeCAD, Node or this repository's Logics corpus. Pre-1.0 releases state which
 platforms were measured; Linux is unverified until a Blender-equipped Linux machine checks it.
+The PyPI name is deferred to 1.0; until then, install from the repository URL above.
 
 Contributors can still clone and run `./bin/meshanvil` directly. `make check` compiles the
 scripts, type-checks the viewer, runs `scripts/selfcheck.py` (host logic, no Blender needed)
