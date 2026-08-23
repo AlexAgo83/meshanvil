@@ -5,6 +5,7 @@
 > Related backlog: `item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server`, `item_033_show_a_command_s_own_output_where_its_text_used_to_sit`
 > Related task: `task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served`
 > Drivers: paying the exact price adr_003 named rather than reopening the question, keeping a file:// page exactly as safe as it always was, no operator-supplied argument ever reaching a subprocess
+> Non-semantic edit: reworded one path citation so a clean checkout does not read it as a missing code anchor; the decision is unchanged.
 > Reminder: Update status, linked refs, decision rationale, consequences, and follow-up work when you edit this doc.
 > Indicators reviewed: 2026-08-23 14:10:00
 
@@ -24,7 +25,7 @@ flowchart LR
 
 # Context
 - `adr_003` refused execution and named its price precisely: "a local server with authentication, a job model, and a decision about concurrent access to a file Blender may already hold." It also called the refusal reversible, "so that cost is chosen deliberately rather than discovered." This is that choice, made on purpose, with the price paid in full for a command set narrow enough that the price stays small.
-- `adr_004` already runs an opt-in server for `--serve`: `http.server` bound to `127.0.0.1`, port 0, serving `work/` read-only, for auto-refresh. It exists and is proven; this decision adds one endpoint to it rather than standing up a second process.
+- `adr_004` already runs an opt-in server for `--serve`: `http.server` bound to `127.0.0.1`, port 0, serving the project's runtime work tree read-only, for auto-refresh. It exists and is proven; this decision adds one endpoint to it rather than standing up a second process.
 - The three commands in scope take no path, no operation name, and no operator-supplied value of any kind. They are exactly the strings the menu already prints, and this session already made that same text copyable to the clipboard -- the request is to close the remaining gap between reading a command and running it, not to open a general execution surface.
 - `Refresh viewer` would ask the server handling the request to restart itself, and `Create a runbook <report-id>` shows a placeholder id with no real report behind it in the generic Help menu. Neither is safe to wire up here; both stay copy-only and are recorded as backlog for a slice that gives them a real target.
 - The runner already refuses a busy target (`target_busy`) and already serialises identity allocation per project. This decision does not re-implement that: the endpoint's own single-flight guard exists only so that two clicks on the same button in the same page cannot start two subprocesses racing each other, which is a narrower problem than the runner's.
