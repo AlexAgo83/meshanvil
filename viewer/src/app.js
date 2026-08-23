@@ -681,8 +681,8 @@ function setLanguage(code) {
     (already escaped HTML, e.g. a shortened path) is what shows; `full` (raw text) is what
     gets copied, only different from `label` when the display was shortened for space. */
 function cmdButton(label, full) {
-  return `<button type="button" data-copy="${esc(full === undefined ? label : full)}">
-    <code class="command">${label}</code></button>`;
+  return `<button type="button" class="copycmd" data-copy="${esc(full === undefined ? label : full)}">
+    <code class="command">${label}</code><span>${esc(t("ui.copy"))}</span></button>`;
 }
 
 /** The viewer reads and starts no process -- adr_003. A menu command cannot run itself, but

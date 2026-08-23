@@ -754,8 +754,8 @@
     renderSplash();
   }
   function cmdButton(label, full) {
-    return `<button type="button" data-copy="${esc(full === void 0 ? label : full)}">
-    <code class="command">${label}</code></button>`;
+    return `<button type="button" class="copycmd" data-copy="${esc(full === void 0 ? label : full)}">
+    <code class="command">${label}</code><span>${esc(t("ui.copy"))}</span></button>`;
   }
   function copyCommand(button) {
     const code = button.querySelector("code");
