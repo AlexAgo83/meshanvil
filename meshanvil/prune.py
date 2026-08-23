@@ -8,6 +8,7 @@ OPS = "work/ops"
 
 def candidates(root: Path, keep: int) -> list[tuple[Path, dict, Path]]:
     grouped: dict[str, list[tuple[Path, dict, Path]]] = {}
+    project = root.resolve()
     source = (root / "work" / "in").resolve()
     for report_path in sorted((root / OPS).glob("*.json")):
         try:
@@ -17,6 +18,8 @@ def candidates(root: Path, keep: int) -> list[tuple[Path, dict, Path]]:
         except (OSError, ValueError, KeyError, json.JSONDecodeError):
             continue
         if output.get("state") != "present" or path == source or source in path.parents:
+            continue
+        if path != project and project not in path.parents:
             continue
         if output.get("pinned") or report.get("links", {}).get("docs"):
             continue

@@ -16,6 +16,14 @@ def test_run_endpoint(tmp_path: Path):
     selfcheck.check_run_endpoint(tmp_path)
 
 
+def test_viewer_origin_and_listing(tmp_path: Path):
+    selfcheck.check_viewer_origin_and_listing(tmp_path)
+
+
+def test_events_releases_gone_peer(tmp_path: Path):
+    selfcheck.check_events_releases_gone_peer(tmp_path)
+
+
 def test_viewer_comparison_layout():
     selfcheck.check_viewer_comparison_layout()
 

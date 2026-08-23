@@ -26,17 +26,29 @@ The scripts here run inside Blender, on 3D files you supply. They read and write
 under `work/`, which is not versioned. By default they open no socket, contact no
 service, and send nothing anywhere. Two opt-in exceptions deserve attention.
 
-**`meshanvil view --serve`** starts an HTTP server bound to `127.0.0.1` on a random port,
-opt-in and off unless you pass the flag. It serves `work/` read-only, and it exposes one
-`POST /run` endpoint that can execute exactly three fixed, argument-free commands (`list`,
-`doctor`, `prune --dry-run`) as a subprocess of `bin/meshanvil` -- never a string the page
-supplies. Every request must carry a random token generated fresh for that server process
-and embedded only in that process's own generated page; a missing or mismatched token is
-refused before any subprocess starts, and only one command runs at a time. See
-`adr_007_let_the_served_viewer_execute_a_closed_command_set` for the full boundary and why
-it supersedes `adr_003`'s original refusal to execute anything. `--serve` is meant for one
-operator on their own machine; it is not designed to be exposed beyond `127.0.0.1`, and
-nothing about port 0 or the per-launch token is a substitute for keeping it that way.
+**`meshanvil view --serve`** starts an HTTP server bound to `127.0.0.1`, opt-in and
+off unless you pass the flag. It serves `work/` read-only, with directory listings
+refused, and it exposes a closed `POST /run` endpoint for exactly three fixed,
+argument-free commands (`list`, `doctor`, `prune --dry-run`) plus `POST /file` for
+server-owned file ids already named by the current reports. No path or command string
+supplied by the page becomes a subprocess argument.
+
+Every request must carry a loopback `Host` matching the port the server actually bound;
+a present `Origin` must also be this same loopback server origin. Bad or missing Host
+headers and foreign Origins are refused before routes or static files run, which blocks
+cross-origin and DNS-rebinding use of the local page. The port may be derived from the
+project or chosen by the OS with port 0; either way the check uses the bound socket's
+actual port.
+
+`/run` and `/file` also require a random token generated fresh for that server process.
+That token proves the request came from the generated page after the origin guard passes;
+it is not a secret from local processes because served viewer data is readable from the
+served tree and `/api/data`. A missing or mismatched token is refused before an action
+starts, and only one command runs at a time. See
+`adr_007_let_the_served_viewer_execute_a_closed_command_set` for the full boundary and
+why it supersedes `adr_003`'s original refusal to execute anything. `--serve` is meant
+for one operator on their own machine; it is not designed to be exposed beyond
+`127.0.0.1`.
 
 `run_001` describes a second, unrelated bridge: executing `~/bl_cmd.py` inside a running
 Blender session on a half-second poll. Anything that can write that file can run Python in

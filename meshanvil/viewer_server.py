@@ -67,6 +67,10 @@ def release_lock(root: Path, fd) -> None:
         lock_path(root).unlink(missing_ok=True)
 
 
+def _loopback_host(value: str) -> bool:
+    return value in {"127.0.0.1", "localhost", "::1"}
+
+
 def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.server.ThreadingHTTPServer:
     lock = threading.Lock()
 
@@ -76,7 +80,36 @@ def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.
         meshanvil_token = token
         meshanvil_lock = lock
 
+        def same_origin(self) -> bool:
+            actual = self.server.server_address[1]
+            host = self.headers.get("Host", "")
+            parsed_host = urlparse(f"//{host}")
+            try:
+                host_port = parsed_host.port or 80
+            except ValueError:
+                return False
+            if not (_loopback_host(parsed_host.hostname or "") and host_port == actual):
+                return False
+            origin = self.headers.get("Origin")
+            if not origin:
+                return True
+            parsed_origin = urlparse(origin)
+            return (parsed_origin.scheme == "http" and _loopback_host(parsed_origin.hostname or "")
+                    and (parsed_origin.port or 80) == actual)
+
+        def guard_origin(self) -> bool:
+            if self.same_origin():
+                return True
+            self.send_error(403, "served viewer origin refused")
+            return False
+
+        def list_directory(self, path):
+            self.send_error(404, "directory listing refused")
+            return None
+
         def do_GET(self):
+            if not self.guard_origin():
+                return
             parsed = urlparse(self.path)
             if parsed.path == "/api/ping":
                 body = json.dumps({"root": str(root)}).encode("utf-8")
@@ -92,6 +125,8 @@ def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.
             super().do_GET()
 
         def do_POST(self):
+            if not self.guard_origin():
+                return
             parsed = urlparse(self.path)
             for route in ROUTES:
                 if getattr(route, "handle_post", lambda *_: False)(self, parsed.path, parsed):

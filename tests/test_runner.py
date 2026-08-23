@@ -18,3 +18,7 @@ def test_refusals():
 
 def test_target_lock(tmp_path: Path):
     selfcheck.check_target_lock(tmp_path)
+
+
+def test_runner_interrupt_stops_engine(tmp_path: Path):
+    selfcheck.check_runner_interrupt_stops_engine(tmp_path)

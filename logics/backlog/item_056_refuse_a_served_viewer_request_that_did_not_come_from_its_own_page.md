@@ -1,13 +1,14 @@
 ## item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page - Refuse a served-viewer request that did not come from its own page
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 0%
+> Progress: 90%
 > Complexity: Medium
 > Theme: Host boundary
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 10:21:31
 
 # AI Context
 - Summary: One origin guard ahead of route dispatch, refusing a non-loopback Host or a foreign Origin, plus the SECURITY.md and adr_007 rewrite that makes the documented boundary the real one.

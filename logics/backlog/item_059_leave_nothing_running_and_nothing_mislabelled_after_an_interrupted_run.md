@@ -1,13 +1,14 @@
 ## item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run - Leave nothing running and nothing mislabelled after an interrupted run
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 90%
 > Complexity: Low
 > Theme: Runner and paths
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 10:21:31
 
 # AI Context
 - Summary: Kill the engine on the interrupt path before the report is unlinked, and rename the fallback project rule to the directory it actually returns.

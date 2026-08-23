@@ -4,17 +4,17 @@ One value used to answer both questions, and every model an operator opened shar
 directory: a second subject took the first one's identity numbering, merged into its outliner
 group, and had its retention decided by the first one's activity.
 
-The installation holds what ships with the tool -- operation manifests, locales, the viewer's
-own files, the Logics corpus. A project holds what the operator makes: reports, sources,
-renders, the built page, the setup report.
+The installation holds what ships with the tool -- operation manifests, locales and the
+viewer's own files. A project holds what the operator makes: reports, sources, renders, the
+built page, the setup report and any Logics corpus it wants the viewer to read.
 
 A project is found by walking up from the working directory for a marker, the way a version
 control tool finds its own. That keeps the choice visible: the working directory is on screen,
 an environment variable is not, and this decides where a destructive run lands. The variable
 exists for a non-interactive caller that has no working directory to speak of.
 
-With no marker anywhere above, the installation is the project. That is what the repository
-itself has always been, so nothing that worked before needs a migration.
+With no marker anywhere above, the current directory is the project. That is what an installed
+command needs when it is run outside a checkout.
 """
 from __future__ import annotations
 
@@ -27,11 +27,11 @@ OVERRIDE = "MESHANVIL_PROJECT"
 
 BY_OVERRIDE = "override"
 BY_MARKER = "marker"
-BY_INSTALLATION = "installation"
+BY_CWD = "current_directory"
 
 
 def code_root() -> Path:
-    """The installation: manifests, locales, viewer sources, Logics documents."""
+    """The installation: host package, runtime assets and contributor corpus."""
     return Path(__file__).resolve().parent.parent
 
 
@@ -52,7 +52,7 @@ def resolve(start: Path | None = None) -> tuple[Path, str]:
     for candidate in (here, *here.parents):
         if (candidate / MARKER).is_dir():
             return candidate, BY_MARKER
-    return Path.cwd().resolve(), BY_INSTALLATION
+    return here, BY_CWD
 
 
 def work_root(start: Path | None = None) -> Path:
@@ -60,7 +60,7 @@ def work_root(start: Path | None = None) -> Path:
 
 
 def name(root: Path) -> str:
-    """What to call a project on screen. The installation is not one, and says so."""
+    """What to call a project on screen."""
     return Path(root).resolve().name or "project"
 
 
@@ -85,7 +85,7 @@ def projects(root: Path | None = None) -> list[Path]:
                 continue
             if (candidate / MARKER).is_dir() and (candidate / "work" / "ops").is_dir():
                 found.append(candidate.resolve())
-    # And whatever the active root contains. An installation that holds its demonstrations
+    # And whatever the active root contains. A checkout that holds its demonstrations
     # under work/demo is not a sibling of them, so without this the page opened at the place
     # everyone knows lists nothing while the reports sit two directories down.
     for depth in ("*", "*/*", "*/*/*"):     # work/demo/<name> is three down

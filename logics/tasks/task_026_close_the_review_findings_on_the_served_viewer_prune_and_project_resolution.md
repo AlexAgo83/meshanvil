@@ -1,13 +1,15 @@
 ## task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution - Close the review findings on the served viewer, prune and project resolution
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 0%
+> Progress: 90%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: codex
+> Indicators reviewed: 2026-08-23 10:21:31
 
 # AI Context
 - Summary: The ordered plan for req_013: settle adr_007 first, then the origin guard, prune containment, the two viewer refusals, the runner and paths labels, each with a selfcheck.
@@ -22,20 +24,20 @@
 - Reproduce the two destructive findings on a scratch project outside the repository. Never against this repository's work/.
 
 # Plan
-- [ ] 1. Read req_012 for the observed evidence behind each finding, then reproduce the two destructive ones on a scratch project outside the repository: the unauthenticated token read and the out-of-project prune. Do not run either against this repository's work/.
-- [ ] 2. Settle adr_007 first: amend its boundary description and consequences to say that the run token proves a request came from the generated page rather than being a secret, and that the origin guard is the defence against a rebound name. Its decision -- closed command set, per-launch token, single flight -- is not reversed, so amend rather than supersede; write a superseding ADR only if the decision itself turns out to need changing.
-- [ ] 3. Add the origin guard to ViewerHandler ahead of route dispatch in both do_GET and do_POST, covering /api/ping and the static branch as well as the routes; refuse an absent or non-loopback Host and a foreign Origin. Read the port from self.server.server_address at request time -- make_server defaults to port 0 and both test callers use that default.
-- [ ] 4. Rewrite the --serve section of SECURITY.md against the code as it then stands: the port rule, the token's guarantee, the cross-origin answer, and the directory-listing behaviour once the next step lands.
-- [ ] 5. Add the containment condition to prune.candidates and confirm both prune and prune --dry-run survive a report pointing outside the project, with the file intact.
-- [ ] 6. Refuse directory requests under the served root, and write on every /api/events poll so a gone peer is detected on the next turn. Only a directory without index.html reaches the listing branch, so work/viewer/ is unaffected; allow up to two polls for the broken peer to surface.
-- [ ] 7. Hold the engine Popen so the existing BaseException path kills it before unlinking the report, and record in the docstring what an interrupt leaves.
-- [ ] 8. Rename the fallback resolution rule and correct the paths docstring, following the name through doctor.check's project.resolved_by field, the cli.project.where message, the locale catalogues and the existing assertion in scripts/selfcheck.py. The new name is an identifier an agent reads, so it is not translated.
-- [ ] 9. Add one check per change to scripts/selfcheck.py with its thin pytest wrapper in tests/, following the shape the existing checks use.
-- [ ] 10. Run make check and make logics, plus scripts/viewer_smoke.py in served mode; run scripts/fixture_check.py if a Blender is available and say so if it is not.
-- [ ] 11. Record in the task which findings were closed by which change, and which of req_012's context notes were confirmed or contradicted along the way.
-- [ ] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
-- [ ] Keep commit creation under operator control; do not force one commit per micro-step.
-- [ ] GATE: do not close until lint, audit, and scaffold validation pass.
+- [x] 1. Read req_012 for the observed evidence behind each finding, then reproduce the two destructive ones on a scratch project outside the repository: the unauthenticated token read and the out-of-project prune. Do not run either against this repository's work/.
+- [x] 2. Settle adr_007 first: amend its boundary description and consequences to say that the run token proves a request came from the generated page rather than being a secret, and that the origin guard is the defence against a rebound name. Its decision -- closed command set, per-launch token, single flight -- is not reversed, so amend rather than supersede; write a superseding ADR only if the decision itself turns out to need changing.
+- [x] 3. Add the origin guard to ViewerHandler ahead of route dispatch in both do_GET and do_POST, covering /api/ping and the static branch as well as the routes; refuse an absent or non-loopback Host and a foreign Origin. Read the port from self.server.server_address at request time -- make_server defaults to port 0 and both test callers use that default.
+- [x] 4. Rewrite the --serve section of SECURITY.md against the code as it then stands: the port rule, the token's guarantee, the cross-origin answer, and the directory-listing behaviour once the next step lands.
+- [x] 5. Add the containment condition to prune.candidates and confirm both prune and prune --dry-run survive a report pointing outside the project, with the file intact.
+- [x] 6. Refuse directory requests under the served root, and write on every /api/events poll so a gone peer is detected on the next turn. Only a directory without index.html reaches the listing branch, so work/viewer/ is unaffected; allow up to two polls for the broken peer to surface.
+- [x] 7. Hold the engine Popen so the existing BaseException path kills it before unlinking the report, and record in the docstring what an interrupt leaves.
+- [x] 8. Rename the fallback resolution rule and correct the paths docstring, following the name through doctor.check's project.resolved_by field, the cli.project.where message, the locale catalogues and the existing assertion in scripts/selfcheck.py. The new name is an identifier an agent reads, so it is not translated.
+- [x] 9. Add one check per change to scripts/selfcheck.py with its thin pytest wrapper in tests/, following the shape the existing checks use.
+- [x] 10. Run make check and make logics, plus scripts/viewer_smoke.py in served mode; run scripts/fixture_check.py if a Blender is available and say so if it is not.
+- [x] 11. Record in the task which findings were closed by which change, and which of req_012's context notes were confirmed or contradicted along the way.
+- [x] ADR 009 checkpoint: update affected Logics docs during each meaningful wave and leave the repo commit-ready.
+- [x] Keep commit creation under operator control; do not force one commit per micro-step.
+- [x] GATE: do not close until lint, audit, and scaffold validation pass.
 
 # Backlog
 - `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`
@@ -67,10 +69,23 @@
 - request-AC8 -> `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`. Proof deferred to slice closeout.
 
 # Validation
-- (no validation recorded yet)
+- `python3 scripts/selfcheck.py` passed.
+- `python3 -m pytest -q tests/test_viewer.py tests/test_prune.py tests/test_runner.py tests/test_paths.py` passed: 16 tests.
+- `make check` passed: compileall, types, viewer bundle, line budget, 24 pytest tests, i18n, hygiene.
+- `make viewer-smoke` passed against the served viewer.
+- `python3 scripts/fixture_check.py` passed: 7 reports, defects found unaided.
+- `logics-manager lint --require-status` passed.
+- `logics-manager audit --group-by-doc` passed with warnings only.
+- `logics-manager flow validate task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution` passed.
 
 # Report
-- Not started.
+- Closed N1/N2 by putting Host/Origin validation before `/api/ping`, `/api/data`, `/api/events`, `/run`, `/file`, and static files; adr_007 and SECURITY.md now say the token is page-origin proof after the origin guard, not a local secret.
+- Closed N3 by keeping prune candidates inside the resolved project root; dry-run and deleting prune both ignore outside paths and leave the outside file intact.
+- Closed N4 by refusing served-root directory listings while leaving `work/viewer/index.html` loadable.
+- Closed N5 by writing an SSE comment on every `/api/events` poll so a gone peer is released without report or runbook changes.
+- Closed N6 by retaining the engine `Popen` and terminating or killing it on `BaseException` before the empty claimed report is removed; the runner docstring states the job file remains and the target lock is released.
+- Closed N7 by renaming the fallback project resolution rule to `current_directory` and updating the paths documentation and selfcheck assertion.
+- Confirmed the req_012 context note that the served token is exposed in served viewer data; contradicted the stale SECURITY.md claim that randomness of the port or token secrecy was the boundary.
 
 # Links
 - Request: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`

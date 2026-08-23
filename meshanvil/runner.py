@@ -2,7 +2,8 @@
 
 Nothing is parsed out of the engine's stdout. The report is a file, which is what makes the
 boundary survive a crash, a Windows binary called from WSL, and two interpreters that share
-no import. See adr_004 and adr_005.
+no import. An interrupt terminates the engine, removes the empty claimed report, leaves
+the job file for diagnosis, and releases the target lock. See adr_004 and adr_005.
 """
 from __future__ import annotations
 import hashlib, json, os, subprocess, sys, time
@@ -200,10 +201,18 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
                        "-P", engines.for_engine(Path(job["script"]), binary),
                        "--", "--job", engines.for_engine(job_path, binary)]
         started = time.time()
+        process = None
         try:
-            watch(subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),
-                  root / RUNS / f"{identity}.progress")
+            process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            watch(process, root / RUNS / f"{identity}.progress")
         except BaseException:
+            if process and process.poll() is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=5)
             report_path.unlink(missing_ok=True)   # a claimed identity with no run is not a report
             raise
 

@@ -10,7 +10,8 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer  # noqa: E402
+from meshanvil import doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer, viewer_server  # noqa: E402
+from meshanvil.viewer_routes import events as viewer_events  # noqa: E402
 from meshanvil.viewer_routes import run as viewer_run  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
 
@@ -77,8 +78,8 @@ def check_projects(tmp: Path):
     # A directory under a project belongs to it; the walk-up is what makes that true.
     inner = alpha / "work" / "out"
     assert paths.resolve(inner)[0] == alpha.resolve(), paths.resolve(inner)
-    # Nothing above either of them is a project, so an unmarked directory is the installation.
-    assert paths.resolve(tmp)[1] == paths.BY_INSTALLATION, paths.resolve(tmp)
+    # Nothing above it is a project, so the named directory itself is the fallback project.
+    assert paths.resolve(tmp) == (tmp.resolve(), paths.BY_CWD), paths.resolve(tmp)
 
     # Identity restarts per project rather than continuing another one's numbering.
     first_a, path_a = runner.allocate(alpha, "op", None)
@@ -264,6 +265,86 @@ def check_run_endpoint(tmp: Path):
         thread.join(timeout=2)
 
 
+def check_viewer_origin_and_listing(tmp: Path):
+    root = tmp / "served-boundary"
+    served = root / "work"
+    (served / "viewer").mkdir(parents=True)
+    (served / "in").mkdir()
+    (served / "viewer" / "index.html").write_text("ok", encoding="utf-8")
+    (served / "viewer" / "data.js").write_text("token", encoding="utf-8")
+    server = viewer_server.make_server(served, root, "token")
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    port = server.server_address[1]
+
+    def request(method, path, headers=None, body=None, skip_host=False):
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+        if skip_host:
+            conn.putrequest(method, path, skip_host=True)
+            for key, value in (headers or {}).items():
+                conn.putheader(key, value)
+            conn.endheaders()
+            if body is not None:
+                conn.send(json.dumps(body).encode("utf-8"))
+        else:
+            conn.request(method, path, body=json.dumps(body) if body is not None else None,
+                         headers=headers or {})
+        response = conn.getresponse()
+        status = response.status
+        response.read()
+        conn.close()
+        return status
+
+    good = {"Host": f"127.0.0.1:{port}"}
+    bad_host = {"Host": "evil.example"}
+    bad_origin = {"Host": f"127.0.0.1:{port}", "Origin": "http://evil.example"}
+    good_origin = {"Host": f"127.0.0.1:{port}", "Origin": f"http://127.0.0.1:{port}"}
+    try:
+        assert request("GET", "/api/ping", good) == 200
+        assert request("GET", "/api/ping", good_origin) == 200
+        assert request("GET", "/api/ping", skip_host=True) == 403
+        for path in ("/api/ping", "/api/data", "/api/events", "/viewer/data.js"):
+            assert request("GET", path, bad_host) == 403, path
+        for path, body in (("/run", {"command": "list"}), ("/file", {"id": "x", "action": "open"})):
+            assert request("POST", path, {**bad_host, "X-Meshanvil-Token": "token"}, body) == 403, path
+        assert request("GET", "/api/data", bad_origin) == 403
+        assert request("GET", "/", good) == 404
+        assert request("GET", "/in/", good) == 404
+        assert request("GET", "/viewer/index.html", good) == 200
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+
+def check_events_releases_gone_peer(tmp: Path):
+    original_signatures, original_sleep = viewer_events.signatures, viewer_events.time.sleep
+    writes = []
+
+    class Gone:
+        def write(self, data):
+            writes.append(data)
+            if len(writes) > 1:
+                raise BrokenPipeError()
+        def flush(self):
+            pass
+
+    class Handler:
+        meshanvil_root = tmp
+        wfile = Gone()
+        def send_response(self, code): pass
+        def send_header(self, key, value): pass
+        def end_headers(self): pass
+
+    try:
+        viewer_events.signatures = lambda root: {"reports": (), "doctor": (), "runbooks": ()}
+        viewer_events.time.sleep = lambda seconds: None
+        assert viewer_events.handle_get(Handler(), "/api/events", None) is True
+        assert writes == [b": connected\n\n", b": poll\n\n"], writes
+    finally:
+        viewer_events.signatures, viewer_events.time.sleep = original_signatures, original_sleep
+
+
 def check_viewer_comparison_layout():
     css = (ROOT / "viewer" / "viewer.css").read_text(encoding="utf-8")
     script = (ROOT / "viewer" / "src" / "app.js").read_text(encoding="utf-8")
@@ -308,6 +389,60 @@ def check_prune(tmp: Path):
     prune.run(root, 1, False)
     changed = json.loads((root / "work" / "ops" / "000_op.json").read_text(encoding="utf-8"))
     assert not (outputs / "0.blend").exists() and changed["output"]["state"] == "pruned"
+    root = tmp / "outside-prune"; (root / "work" / "ops").mkdir(parents=True)
+    outside = tmp / "outside.blend"; outside.write_bytes(b"outside")
+    report = {"id": "009", "chain": "009", "output": {"path": str(outside), "state": "present"}, "links": {"docs": []}}
+    (root / "work" / "ops" / "009_op.json").write_text(json.dumps(report), encoding="utf-8")
+    assert all(path != outside for _, _, path in prune.candidates(root, 0))
+    assert prune.run(root, 0, True)[0] == [] and outside.is_file()
+    assert prune.run(root, 0, False)[0] == [] and outside.is_file()
+
+
+def check_runner_interrupt_stops_engine(tmp: Path):
+    root = tmp / "interrupt"; source = root / "source.blend"
+    source.parent.mkdir(parents=True)
+    source.write_bytes(b"blend")
+    original = (runner.paths.work_root, runner.manifests.discover, runner.doctor.work,
+                runner.manifests.resolve, runner.engines.find, runner.engines.version,
+                runner.engines.check_floor, runner.subprocess.Popen, runner.watch)
+    stopped = []
+
+    class FakeProcess:
+        def __init__(self):
+            self.dead = False
+        def poll(self):
+            return 0 if self.dead else None
+        def terminate(self):
+            stopped.append("terminate")
+            self.dead = True
+        def wait(self, timeout=None):
+            return 0
+        def kill(self):
+            stopped.append("kill")
+            self.dead = True
+
+    try:
+        runner.paths.work_root = lambda: root
+        runner.manifests.discover = lambda: {"op": {"operation": "op", "kind": "inspection",
+                                                    "engine": "blender", "script": "tools/op.py"}}
+        runner.doctor.work = lambda project: {"state": "found"}
+        runner.manifests.resolve = lambda manifest, params: {}
+        runner.engines.find = lambda name: Path("/bin/echo")
+        runner.engines.version = lambda binary: ("5.2.0", "")
+        runner.engines.check_floor = lambda name, number: None
+        runner.subprocess.Popen = lambda *args, **kwargs: FakeProcess()
+        runner.watch = lambda process, progress: (_ for _ in ()).throw(KeyboardInterrupt())
+        try:
+            runner.run("op", str(source), {})
+            raise AssertionError("interrupt was swallowed")
+        except KeyboardInterrupt:
+            pass
+        assert stopped == ["terminate"], stopped
+        assert not list((root / runner.OPS).glob("*.json"))
+    finally:
+        (runner.paths.work_root, runner.manifests.discover, runner.doctor.work,
+         runner.manifests.resolve, runner.engines.find, runner.engines.version,
+         runner.engines.check_floor, runner.subprocess.Popen, runner.watch) = original
 
 
 def check_target_lock(tmp: Path):
@@ -340,9 +475,12 @@ def main() -> int:
         check_doctor_exit_code()
         check_viewer_start(tmp)
         check_run_endpoint(tmp)
+        check_viewer_origin_and_listing(tmp)
+        check_events_releases_gone_peer(tmp)
         check_viewer_comparison_layout()
         check_logics_bridge()
         check_prune(tmp)
+        check_runner_interrupt_stops_engine(tmp)
         check_target_lock(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

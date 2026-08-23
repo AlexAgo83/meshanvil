@@ -48,7 +48,9 @@ def handle_get(handler, route: str, parsed: urlparse) -> bool:
                 last = current
                 payload = json.dumps({"components": changed})
                 handler.wfile.write(f"event: changed\ndata: {payload}\n\n".encode("utf-8"))
-                handler.wfile.flush()
+            else:
+                handler.wfile.write(b": poll\n\n")
+            handler.wfile.flush()
             # ponytail: mtime polling; switch to platform watchers only if idle polling shows up in profiles.
             time.sleep(max(1.0, (time.perf_counter() - started) * 20))
     except (BrokenPipeError, ConnectionError, OSError):
