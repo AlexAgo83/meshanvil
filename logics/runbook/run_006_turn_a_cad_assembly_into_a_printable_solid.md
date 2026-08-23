@@ -1,7 +1,7 @@
 ## run_006_turn_a_cad_assembly_into_a_printable_solid - Turn a CAD assembly into a printable solid
 > Status: Active
 > Category: other
-> Verified: 2026-08-21 (571-mesh assembly to a watertight 1/10 solid, 0 non-manifold edges)
+> Verified: 2026-08-21 (571-mesh assembly to a watertight 1/10 solid, 0 non-manifold edges); 2026-08-24 re-run end to end on the same assembly at 1/13.9 (202 x 123 x 113 mm, 1 shell, 0 non-manifold edges, 413 cm3), which is where the clamp and skip_closed traps below were found
 > Related request: (none yet)
 > Related backlog: (none yet)
 > Related task: (none yet)
@@ -13,7 +13,8 @@
 
 # Prerequisites
 - The source file saved, and the whole pipeline run **headless on a copy**. It is destructive by design (it deletes most of the scene) and a voxel remesh over millions of faces will freeze an interactive session for minutes.
-- The envelope part list, from run_005.
+- The envelope part list, from run_005, and the parts it rejected already deleted (`drop_unseen`) rather than merely listed.
+- **The assembly, not an STL of it.** An STL welds every part into one object, which makes the envelope selection above impossible and leaves the interior permanently inside the result. See run_013.
 - The target scale decided first: it sets every other parameter.
 
 # Why a CAD assembly is not printable as-is
@@ -28,10 +29,14 @@ Parameters below are for 1/10 on a 0.4 mm nozzle; scale them, do not copy them b
 2. **Delete everything outside the envelope list.**
 3. **Join** the survivors into one object.
 4. **Solidify**, thickness = minimum printable wall x scale factor (1.2 mm printed -> 12 mm real at 1/10), offset 0. This is what turns surfaces into volumes.
+   - **Turn the thickness clamp off.** Blender's Solidify clamps thickness against local geometry to avoid self-intersection, and on tessellated CAD that clamp bites nearly everywhere: the requested wall is silently reduced, the following remesh has less than a voxel to work with, and the result comes out **pitted all over** -- not obviously wrong, just eaten. `thickness_clamp=0` on the same input produced a clean surface at the same thickness. This one parameter decided the outcome twice in one session.
+   - **A closed mesh is skipped by default.** Tessellated CAD panels are often already manifold volumes, so `skip_closed=true` (the default) walls nothing at all and reports success. If the report says `walled 0 / already_closed N`, the operation did nothing: pass `skip_closed=false` to thicken a closed body deliberately.
 5. **Clean before thickening.** Merge doubles, dissolve degenerate edges, triangulate. Solidify on tessellated CAD reacts to near-zero-area faces by throwing out spikes: one such spike put a vertex 450 mm outside the object's flank and inflated the reported width by 400 mm. Nothing downstream detects this except a bounding box that stops making sense.
 6. **Voxel remesh**, voxel = target surface detail x scale factor (0.8 mm printed -> 8 mm real). This single step fixes watertightness, interpenetration and non-manifold geometry at once. Its brutality is the point.
    - Cost is cubic: halving the voxel multiplies memory by eight. At 8 mm over a 2.8 m object it is about 16 M voxels and runs in minutes; at 4 mm it is 130 M and will not finish comfortably.
    - Styling grooves narrower than the voxel are erased. Check the ones that matter before committing to a voxel size.
+   - **A coarser voxel does not close openings, it erodes panels.** The intuition that a bigger voxel will bridge a window aperture or a panel gap is wrong: sheet metal thinner than the voxel disappears first. On a body whose walls measured 0.68 mm at print scale, a 2.5 mm voxel turned the bonnet into lace while the apertures stayed open. Thickness comes from step 4; the voxel only ever removes.
+   - **The floor is two voxels, and the operation reports it.** `thin_feature` gives `thinnest_mm`, `median_mm` and `share_below_floor`. A `share_below_floor` near 1.0 means the voxel size is not viable for this geometry no matter how the render looks at thumbnail size.
 7. **Prune shells by size, never by rank.** Keep every connected component above a vertex threshold; drop only specks.
 8. **Measure, scale, export** STL or 3MF in millimetres.
 

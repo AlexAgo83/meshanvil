@@ -1,7 +1,7 @@
 ## run_010_verify_that_a_command_did_what_it_appeared_to_do - Verify that a command did what it appeared to do
 > Status: Active
 > Category: other
-> Verified: 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh and an eighth, both from headless-browser smokes rather than a shell
+> Verified: 2026-08-21 (six silent failures collected in one session, each one caught by a proof line rather than by the command's own output); 2026-08-22 added a seventh and an eighth, both from headless-browser smokes rather than a shell; 2026-08-24 added a tenth and an eleventh, where passing unit checks and a passing browser smoke both missed a visibly broken page
 > Related request: `req_000_make_every_3d_operation_reviewable_without_reopening_blender`
 > Related backlog: (none yet)
 > Related task: `task_001_deliver_the_reviewable_operation_loop`
@@ -26,6 +26,8 @@
 7. **Test a gate in both directions, every time.** Feed it a line that must fail and confirm it fails, then remove the line and confirm it passes. A gate that has only ever returned "clean" has not been shown to be a gate.
 8. **A check that cannot pass in its own harness is not proof the thing it checks is broken.** A headless-Chrome smoke asserting on `navigator.clipboard.writeText` and on `document.execCommand("copy")` got `NotAllowedError: Document is not focused` and `execCommand=false` from both, on a feature that works the moment a person clicks it in a real, focused tab. The env lacks focus and clipboard permission by construction, not because the code regressed. Assert what the harness can actually prove -- the button exists, is a real `<button>`, and clicking it never throws -- not the part of the behaviour the harness cannot grant.
 9. **`--virtual-time-budget` is not a reason to drop it against a live server -- it is why the timers waiting on that server's response ever fire.** A smoke against a real `--serve` subprocess omitted the flag on the theory that virtualised time would fight a real network round trip; `--dump-dom` then returned the page exactly as it loaded, before the click handler's `fetch` had a chance to resolve, because Chrome dumps at the load event and does not wait for pending JS timers on its own. The flag does not block real sockets, it advances the clock so the `setTimeout` polling loop waiting on the response actually runs before the dump. Verified by adding it back at 5s and watching the same assertion pass.
+10. **A passing unit check on the rule is not evidence the artefact built from it works.** Four checks over a viewer's grouping rules passed against the project's real data -- the right chains, the right names, the orphan correctly flagged -- while the page itself drew one node instead of nine. The rules were right; the layout that consumed them ran once at load and never again, so every chain but the first was positioned at `left:undefined` and the nodes stacked in the corner. Nothing in the pure checks could see that, because none of them rendered anything. Open the artefact, or assert on the rendered result, before reporting the work done.
+11. **A fixture with one of something proves nothing about the rule that groups them.** The same viewer's browser smoke passed throughout, because its demonstration project has exactly one chain start -- and with one start, "each start gets its own group" and "the canvas draws only the selected start's chain" are true by construction. The regression became visible the moment the fixture carried a second start, and the assertion that catches it is one line: the drawn nodes must occupy as many distinct positions as there are nodes. Count the axis your rule discriminates on, and make sure the fixture has at least two.
 
 # Verification
 - After a cleanup: count what remains, do not assume. `ls work/ops/*.json | wc -l`.
@@ -34,6 +36,8 @@
 - When a measurement contradicts an action that was supposed to change it: suspect the measurement first. In Blender, `object.bound_box` is a cache that stays stale until the depsgraph updates, and reading it after a mesh edit reports the geometry from before the edit.
 - Before asserting on a browser API in a headless smoke: check what the harness itself can grant (focus, permissions, a real user gesture) and assert only up to that boundary.
 - Before dropping a Chrome timing flag against a live server on a theoretical conflict: try it with the flag first. `--dump-dom` proves nothing about work still pending in a timer when the dump was taken without one.
+- After changing anything a page renders: dump or screenshot the page itself, on the real data, and look at it. Reason about the rule if you like, but report only what the artefact showed.
+- Before trusting a fixture: check it contains at least two of whatever the rule distinguishes. A one-of-a-kind fixture satisfies most grouping and selection rules without exercising them.
 
 # Rollback
 - Nothing here writes. The cost of the mistakes is wasted reasoning, and the recovery is re-running the step with a proof line attached.

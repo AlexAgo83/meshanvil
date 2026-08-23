@@ -1,7 +1,7 @@
 ## run_005_select_the_outer_envelope_of_an_assembly_by_ray_visibility - Select the outer envelope of an assembly by ray visibility
 > Status: Active
 > Category: other
-> Verified: 2026-08-21 (571 meshes sorted into 73 envelope parts with 508,200 rays, ~2 min headless)
+> Verified: 2026-08-21 (571 meshes sorted into 73 envelope parts with 508,200 rays, ~2 min headless); 2026-08-24 the verdict acted on in-chain by `drop_unseen`: 277 of 568 objects dropped, 291 kept, no bbox axis moved
 > Related request: (none yet)
 > Related backlog: (none yet)
 > Related task: (none yet)
@@ -26,11 +26,15 @@
    - 1 to 4 hits -> glimpsed through a panel gap, negligible;
    - 0 hits -> internal, never seen.
 6. Write the classification to JSON and review the envelope list by eye before consuming it. It should read like a parts list a human would write.
+7. **Act on the verdict inside the chain, with `drop_unseen`.** The classification is only a sorted list until something deletes on it, and doing that by hand puts the most destructive step of the run outside the reports. `meshanvil run drop_unseen <file>` reads the visibility cache this operation wrote and removes what it never saw.
+   - `faint_max` defaults to `0`: never-seen only. Raising it also drops objects seen by that many rays or fewer -- on a real assembly the 1-ray hits were M10/M14 hardware and bushings, and `faint_max=2` took 277 of 568 objects while keeping 291. Widen it deliberately, never as a default, because this operation warns `thin_parts_below_ray_grid` about its own grid.
+   - The bounding box is compared before and after: an object nothing saw from outside cannot be holding the outer extent, so any axis that moves means the grid missed a thin visible part and real skin was deleted. That is the check, and it is the reason not to prune by hand.
 
 # Verification
 - The envelope list contains every panel you can name from a walkaround, and nothing you cannot see.
 - Counts add up to the total mesh count.
 - Sanity check the extremes: the most-hit object should be the largest exterior surface, and known-internal parts should be absent.
+- After `drop_unseen`: `bbox_delta_mm.axes_moved` must be empty, and the report's `dropped` + `kept` must equal the object count the import recorded. A moved axis is not a rounding artefact here -- it means a visible part was classified as internal.
 
 # Rollback
 - Read-only. Nothing to undo.
