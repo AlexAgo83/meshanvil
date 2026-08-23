@@ -1,15 +1,15 @@
 ## task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution - Close the review findings on the served viewer, prune and project resolution
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: codex
-> Indicators reviewed: 2026-08-23 10:21:31
+> Indicators reviewed: 2026-08-23 10:31:27
 
 # AI Context
 - Summary: The ordered plan for req_013: settle adr_007 first, then the origin guard, prune containment, the two viewer refusals, the runner and paths labels, each with a selfcheck.
@@ -46,27 +46,24 @@
 - `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`
 
 # Definition of Done (DoD)
-- [ ] Each of req_012's seven findings is either closed by a named change or recorded as deliberately left, with the reason.
-- [ ] Every claim in the --serve section of SECURITY.md and in adr_007's boundary description can be pointed at a line of code or a selfcheck.
-- [ ] Each closed finding has a check in scripts/selfcheck.py, reached from tests/, that fails if the behaviour comes back.
-- [ ] make check and make logics are green, and scripts/viewer_smoke.py passes in served mode.
-- [ ] Generated request, product, backlog, and task docs are present.
-- [ ] Context-pack handoff is available when requested.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] Each of req_012's seven findings is either closed by a named change or recorded as deliberately left, with the reason.
+- [x] Every claim in the --serve section of SECURITY.md and in adr_007's boundary description can be pointed at a line of code or a selfcheck.
+- [x] Each closed finding has a check in scripts/selfcheck.py, reached from tests/, that fails if the behaviour comes back.
+- [x] make check and make logics are green, and scripts/viewer_smoke.py passes in served mode.
+- [x] Generated request, product, backlog, and task docs are present.
+- [x] Context-pack handoff is available when requested.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # AC Traceability
-- request-AC1 -> `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`. Proof deferred to slice closeout.
-- request-AC2 -> `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`. Proof deferred to slice closeout.
-- request-AC8 -> `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`. Proof deferred to slice closeout.
-- request-AC3 -> `item_057_keep_prune_inside_the_project_it_was_asked_to_prune`. Proof deferred to slice closeout.
-- request-AC8 -> `item_057_keep_prune_inside_the_project_it_was_asked_to_prune`. Proof deferred to slice closeout.
-- request-AC4 -> `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`. Proof deferred to slice closeout.
-- request-AC5 -> `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`. Proof deferred to slice closeout.
-- request-AC8 -> `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`. Proof deferred to slice closeout.
-- request-AC6 -> `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`. Proof deferred to slice closeout.
-- request-AC7 -> `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`. Proof deferred to slice closeout.
-- request-AC8 -> `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`. Proof deferred to slice closeout.
+- request-AC1 -> This task. Proof: `check_viewer_origin_and_listing` refuses bad Host and bad Origin before `/api/ping`, `/api/data`, `/api/events`, `/run`, `/file`, and static files; validated by `python3 scripts/selfcheck.py`, `pytest tests/test_viewer.py`, `make check`, and commit `00a4997`.
+- request-AC2 -> This task. Proof: SECURITY.md and adr_007 now state the bound-port Host rule, the same-origin Origin rule, and that the token proves page origin after the guard rather than local secrecy; validated by `logics-manager lint --require-status`, `logics-manager audit --group-by-doc`, and commit `00a4997`.
+- request-AC3 -> This task. Proof: `prune.candidates` skips outputs outside the project root; `check_prune` covers dry-run and deleting prune on an outside path and confirms the file remains; validated by `python3 scripts/selfcheck.py`, `pytest tests/test_prune.py`, `make check`, and commit `00a4997`.
+- request-AC4 -> This task. Proof: `ViewerHandler.list_directory` returns 404, while `check_viewer_origin_and_listing` confirms `/` and `/in/` are refused and `/viewer/index.html` still loads; validated by `python3 scripts/selfcheck.py`, `pytest tests/test_viewer.py`, `make viewer-smoke`, and commit `00a4997`.
+- request-AC5 -> This task. Proof: `/api/events` writes a poll comment and flushes every unchanged poll; `check_events_releases_gone_peer` raises `BrokenPipeError` on the next write and returns without report/runbook changes; validated by `python3 scripts/selfcheck.py`, `pytest tests/test_viewer.py`, `make check`, and commit `00a4997`.
+- request-AC6 -> This task. Proof: `runner.run` keeps the `Popen`, terminates or kills it on `BaseException`, removes the empty report, re-raises, and documents that the job remains while the target lock is released; validated by `check_runner_interrupt_stops_engine`, `pytest tests/test_runner.py`, `make check`, and commit `00a4997`.
+- request-AC7 -> This task. Proof: `paths.resolve` returns the searched directory as `current_directory` when no marker is found, and the module docs describe current-directory fallback rather than installation fallback; validated by `check_projects`, `pytest tests/test_paths.py`, `make check`, and commit `00a4997`.
+- request-AC8 -> This task. Proof: each accepted behavior has a `scripts/selfcheck.py` check reached by pytest wrappers in `tests/`; `make check`, `make viewer-smoke`, `python3 scripts/fixture_check.py`, lint, audit, and flow validate all passed before closeout; source commit `00a4997`.
 
 # Validation
 - `python3 scripts/selfcheck.py` passed.
@@ -77,6 +74,9 @@
 - `logics-manager lint --require-status` passed.
 - `logics-manager audit --group-by-doc` passed with warnings only.
 - `logics-manager flow validate task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution` passed.
+- Implemented in 00a4997. Passed: python3 scripts/selfcheck.py; python3 -m pytest -q tests/test_viewer.py tests/test_prune.py tests/test_runner.py tests/test_paths.py; make check; make viewer-smoke; python3 scripts/fixture_check.py; logics-manager lint --require-status; logics-manager audit --group-by-doc; logics-manager flow validate task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution; validate-closeout.
+- Finish workflow executed on 2026-08-23.
+- Linked backlog/request close verification passed.
 
 # Report
 - Closed N1/N2 by putting Host/Origin validation before `/api/ping`, `/api/data`, `/api/events`, `/run`, `/file`, and static files; adr_007 and SECURITY.md now say the token is page-origin proof after the origin guard, not a local secret.
@@ -86,6 +86,9 @@
 - Closed N6 by retaining the engine `Popen` and terminating or killing it on `BaseException` before the empty claimed report is removed; the runner docstring states the job file remains and the target lock is released.
 - Closed N7 by renaming the fallback project resolution rule to `current_directory` and updating the paths documentation and selfcheck assertion.
 - Confirmed the req_012 context note that the served token is exposed in served viewer data; contradicted the stale SECURITY.md claim that randomness of the port or token secrecy was the boundary.
+- Finished on 2026-08-23.
+- Linked backlog item(s): `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`, `item_057_keep_prune_inside_the_project_it_was_asked_to_prune`, `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`, `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`
+- Related request(s): `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`
 
 # Links
 - Request: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`

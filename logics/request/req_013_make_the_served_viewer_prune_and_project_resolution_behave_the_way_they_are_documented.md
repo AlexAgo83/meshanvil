@@ -1,12 +1,13 @@
 ## req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented - Make the served viewer, prune and project resolution behave the way they are documented
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 95%
 > Confidence: 90%
 > Complexity: Medium
 > Theme: Host boundary
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 10:31:27
 
 # AI Context
 - Summary: Closes the seven findings captured in req_012: the served viewer answers requests that did not come from its page, prune can delete outside the project, and two labels contradict the behaviour they name. Host-side only, no Blender.

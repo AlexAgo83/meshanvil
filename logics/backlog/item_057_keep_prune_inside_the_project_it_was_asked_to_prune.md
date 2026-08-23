@@ -1,14 +1,14 @@
 ## item_057_keep_prune_inside_the_project_it_was_asked_to_prune - Keep prune inside the project it was asked to prune
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 90%
+> Progress: 100%
 > Complexity: Low
 > Theme: Destructive safety
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 10:21:31
+> Indicators reviewed: 2026-08-23 10:31:28
 
 # AI Context
 - Summary: A containment condition in prune.candidates so a report pointing outside the active project selects nothing, which also removes the traceback that currently follows the deletion.
@@ -51,3 +51,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution`
+
+# Notes
+- Task `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution` was finished via `logics-manager flow finish task` on 2026-08-23.

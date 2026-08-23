@@ -1,12 +1,12 @@
 ## prod_013_a_host_boundary_that_matches_its_own_documentation - A host boundary that matches its own documentation
 > Date: 2026-08-23
-> Status: Proposed
+> Status: Settled
 > Related request: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`
-> Related backlog: `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`, `item_057_keep_prune_inside_the_project_it_was_asked_to_prune`, `item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers`, `item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run`
+> Related backlog: `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`
 > Related task: `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
-> Indicators reviewed: 2026-08-23 02:46:38
+> Indicators reviewed: 2026-08-23 10:31:28
 
 # Overview
 Closes the gap between what meshanvil's security-relevant host code does and what its documents say it does. It covers the served viewer's request boundary, the containment of the one destructive command, and the labels on the decision that chooses where a run lands.
@@ -61,5 +61,5 @@ flowchart TD
 - make check stays green, and each closed finding has a check that fails if the behaviour comes back.
 
 # References
-- Product back-reference: `req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented`
+- Product back-reference: `item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page`
 - Task back-reference: `task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution`
