@@ -12,16 +12,54 @@
 
 **Driving a 3D application with an agent, and checking what it did.**
 
-Using AI on 3D work. The method lives in `logics/runbook/`; the code is the residue.
+An agent driving a 3D application is only as good as the measurements it takes.
+**Renders are how you get fooled.** So every operation here writes a JSON report --
+what went in, what came out, the numbers before and after, and what it did *not* check --
+and a local viewer turns those reports into a chain you can read.
+
+![The viewer over a demo chain: outliner, node graph, render and measurements](docs/img/viewer-report.png)
+
+## Try it in a minute
+
+Blender 4.2+ is the only requirement. Nothing else to install, no 3D file to bring:
+`demo` generates its own subject from primitives.
+
+```bash
+python -m pip install git+https://github.com/AlexAgo83/meshanvil
+meshanvil demo          # generates a subject, runs an operation, writes a report
+meshanvil view          # opens the viewer over it
+```
+
+That is the whole loop. For an agent, `status --json` says where it stands, `schema --json`
+says the shapes it must obey, and `list`, `doctor`, `run`, `reports` and `prune` all speak the
+same JSON envelope: `ok`, an exit code, and a stable `error.code` that does not change with the
+locale. The contract is written down in [`AGENTS.md`](AGENTS.md).
+
+## What you actually get
+
+**Numbers, not impressions.** Every report carries the measurements before and after and
+the per-axis bounding-box delta. Below, a voxel remesh: 504 shells down to 84, 85,586
+vertices gone. The wipe shows what the numbers understate -- the grille and mirrors the
+remesh ate.
+
+![The Compare workspace wiping before against after](docs/img/viewer-compare.png)
+
+**What was checked, and what was not.** An operation declares its findings as codes an
+agent can branch on, and declares what it left unchecked rather than staying silent about
+it. Renders, tool versions and the source hash travel with the report.
+
+![The findings and not-checked panels of a scan report](docs/img/viewer-findings.png)
+
+**A chain, not a pile.** Reports link by parentage, so a branch reads as a branch. A failed
+operation is kept, not swallowed -- the red one in the outliner is a real voxel remesh that
+did not hold, still readable next to the one that did.
 
 The problem this project works on: a CAD assembly of several hundred to a few thousand parts,
 authored for manufacturing, has to become a single closed body a printer will accept. Nothing
-about that assembly was made for printing — surfaces have no thickness, parts interpenetrate,
-half the geometry is internal hardware nobody will ever see. The runbooks record what worked,
-what failed, and how each claim was checked.
-
-The working assumption throughout: an agent driving a 3D application is only as good as the
-measurements it takes. Renders are how you get fooled.
+about that assembly was made for printing -- surfaces have no thickness, parts interpenetrate,
+half the geometry is internal hardware nobody will ever see. The method lives in
+`logics/runbook/`; the code is the residue. Read the runbooks first, not this file, if you are
+about to repeat the work.
 
 ## What it needs
 
@@ -33,26 +71,6 @@ to run an operation.
 Verified on macOS (Blender 5.2), Windows (Blender 5.2, not on `PATH`) and WSL Ubuntu (no Linux
 Blender; the Windows binary is called through `/mnt/c` with paths translated). Linux is
 untested. `MESHANVIL_BLENDER` and `MESHANVIL_FREECAD` override the discovered paths.
-
-After installation, run `meshanvil doctor`. It writes `work/doctor.json` with
-the discovered engines, their versions, the exact platform-specific override command, and the
-writability and free space of `work/`.
-
-## Reopening this
-
-Blender is at `/Applications/Blender.app/Contents/MacOS/Blender` (not on PATH). Everything
-runs headless on a copy:
-
-```bash
-/Applications/Blender.app/Contents/MacOS/Blender -b work/out/<file>.blend \
-  -P tools/list_shells.py
-```
-
-To drive the operator's open Blender session instead, see
-`run_001_drive_a_live_blender_session_from_the_agent`. They arm the bridge once per launch by
-pasting one line into the Python Console; after that, writing `~/bl_cmd.py` executes there
-within half a second and `~/bl_out.txt` carries the output back. Heavy work stays headless so
-their interface never freezes.
 
 ## What it does
 
@@ -72,8 +90,7 @@ Every operation follows the same loop, whether typed by a person or run by an ag
 
 The method behind the loop -- what to measure, what a render cannot tell you, how a claim gets
 checked -- lives in `logics/runbook/`; the code above is its residue. `req_000` through `req_005`
-in `logics/request/` record why each decision was made, all closed. Read the runbooks first, not
-this file, if you're about to repeat the work.
+in `logics/request/` record why each decision was made, all closed.
 
 ## Layout
 
@@ -137,12 +154,9 @@ out "never seen" only because they fall through the ray grid.
 
 ## Engineering honesty
 
-Install the tool after Blender is available:
-
-```bash
-python -m pip install git+https://github.com/AlexAgo83/meshanvil
-meshanvil doctor
-```
+Run `meshanvil doctor` after installing: it writes `work/doctor.json` with the discovered
+engines, their versions, the platform-specific override command, and the writability and free
+space of `work/`.
 
 The package installs the `meshanvil` command and the runtime assets it reads: operation
 manifests, scripts, catalogues, viewer files and the engine-side report package. It does not
@@ -245,6 +259,22 @@ duplicated at identical coordinates, a slab exactly 2 mm thick, a sphere with a 
 removed -- so `scripts/fixture_check.py` can assert that a sweep finds what was built in and
 that a guard reads a thickness it already knows. Ground truth and demonstration are different
 jobs.
+
+## Reopening this
+
+Blender is at `/Applications/Blender.app/Contents/MacOS/Blender` (not on PATH). Everything
+runs headless on a copy:
+
+```bash
+/Applications/Blender.app/Contents/MacOS/Blender -b work/out/<file>.blend \
+  -P tools/list_shells.py
+```
+
+To drive the operator's open Blender session instead, see
+`run_001_drive_a_live_blender_session_from_the_agent`. They arm the bridge once per launch by
+pasting one line into the Python Console; after that, writing `~/bl_cmd.py` executes there
+within half a second and `~/bl_out.txt` carries the output back. Heavy work stays headless so
+their interface never freezes.
 
 ## Working rules that earned their place
 
