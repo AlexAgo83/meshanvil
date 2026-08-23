@@ -1,0 +1,326 @@
+{
+  "budgets": {
+    "max_docs": 48,
+    "max_docs_per_ref": 8
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_015_make_a_fresh_installation_reach_its_first_report item_067_install_the_wheel_and_run_the_command_in_a_clean_environment item_068_give_a_fresh_installation_a_subject_it_can_generate_itself item_069_let_doctor_read_init_prepare_and_run_create item_070_point_the_readme_installation_at_a_route_that_works_today task_028_deliver_a_first_run_path_a_fresh_installation_can_walk --mode full --profile deep --handoff",
+  "companion_docs": [],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "installation, first run, PyPI, onboarding, sample source, doctor side effect",
+        "skip when": "changing operation semantics, viewer presentation, or the agent-facing JSON contract, which is scoped separately.",
+        "summary": "Close the gap between installing meshanvil and reading a first report: an installation command that works, something to run an operation on, and a `doctor` that does not create directories where it was only asked to look.",
+        "use when": "working on what a new user meets between installing the tool and reading their first report."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment",
+          "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself",
+          "item_069_let_doctor_read_init_prepare_and_run_create",
+          "item_070_point_the_readme_installation_at_a_route_that_works_today"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ]
+      },
+      "path": "logics/request/req_015_make_a_fresh_installation_reach_its_first_report.md",
+      "ref": "req_015_make_a_fresh_installation_reach_its_first_report",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The documented installation command works as written. Decided: the README installs from the repository (`pip install git+https://github.com/AlexAgo83/meshanvil`) and says so plainly; PyPI is deferred to 1.0 rather than claimed for a pre-1.0 tool.",
+          "- AC2: A new user with no 3D file of their own can produce a first report with commands from the README alone, using a subject the tool generates from primitives.",
+          "- AC3: Whatever exposes that subject is reachable from an installed package: it resolves the CLI through the installed console script and writes only under the active project's `work/`, never beside the installed package.",
+          "- AC4: `meshanvil doctor` does not create directories. A missing `work/` is reported as missing with its existing `mkdir` fix, and the `run` refusal path is adjusted in the same change so an uninitialised project still gives one actionable message.",
+          "- AC5: A check installs the built wheel into a clean environment and asserts the console script runs: `--version`, the bare welcome, and `doctor --json` parsing as JSON. It fails if an installed command no longer starts.",
+          "- AC6: `make check`, `make package`, `logics-manager lint --require-status` and `logics-manager audit --group-by-doc` pass."
+        ],
+        "Needs": [
+          "- `python -m pip install meshanvil` is the first command in the README and returns 404: the name is not on PyPI. Every reader who follows the documented path stops on line one. Either the package is published, or the README states the real installation route until it is.",
+          "- A fresh installation has a working CLI, a `doctor` that passes, ten operations in `meshanvil list`, and nothing to run any of them on. Every operation needs a `.blend`, `.obj`, `.stl`, `.ply` or `.step` source the user must already own. The tool cannot demonstrate itself, so the first report is gated on the user having a 3D file and knowing which operation suits it.",
+          "- `tools/make_demo_vehicle.py` and `tools/make_demo_figure.py` already generate a subject from primitives with no donor file and nothing to license, and both ship in the wheel. What is missing is a command that reaches them: the shell chains that used to call them resolved `bin/meshanvil` and `fixtures/` from their own parent and were removed from the wheel because neither is packaged.",
+          "- `meshanvil doctor` creates `work/` before probing it for writability. It is the command the README tells a new user to run first, so running it in a home directory to check whether Blender was found leaves a `work/` and a `work/doctor.json` behind. A check should report that the directory is missing and offer the `mkdir` fix it already carries, not create it.",
+          "- Nothing verifies the installed package from outside the checkout. `make check` and `scripts/check_package.py` inspect the tree and the wheel's file list; neither installs the wheel into a clean environment and runs the command. That is the gap the two defects fixed alongside this request both hid in."
+        ]
+      },
+      "status": "Draft",
+      "title": "Make a fresh installation reach its first report"
+    },
+    {
+      "ai_context": {
+        "keywords": "install check, wheel, clean venv, console script, smoke test",
+        "skip when": "changing what the wheel contains; that is `scripts/check_package.py` and `pyproject.toml`.",
+        "summary": "Add a check that installs the built wheel into a throwaway environment and runs the console script, so a broken installation fails a target instead of a user.",
+        "use when": "adding or changing the check that exercises meshanvil as an installed package."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ],
+        "task": [
+          "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+        ]
+      },
+      "path": "logics/backlog/item_067_install_the_wheel_and_run_the_command_in_a_clean_environment.md",
+      "ref": "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC5: A check installs the built wheel into a clean environment and asserts the console script runs: `--version`, the bare welcome, and `doctor --json` parsing as JSON. It fails if an installed command no longer starts.",
+          "- AC6: `make check`, `make package`, `logics-manager lint --require-status` and `logics-manager audit --group-by-doc` pass."
+        ],
+        "Problem": [
+          "- Nothing exercises meshanvil as an installed package. `make check` inspects the source tree and `scripts/check_package.py` inspects the wheel's file list; neither installs the wheel and runs the command.",
+          "- That blind spot is not theoretical: it hid a `fix_command` hint that offered a WSL path on macOS, and a set of contributor shell scripts that shipped in the wheel, wrote a generated `.blend` into `site-packages`, failed on every CLI call and still exited 0."
+        ]
+      },
+      "status": "Ready",
+      "title": "Install the wheel and run the command in a clean environment"
+    },
+    {
+      "ai_context": {
+        "keywords": "demo command, generated subject, first report, onboarding",
+        "skip when": "changing what the existing operations measure or how reports are shaped.",
+        "summary": "Add a command that generates a subject from primitives and runs a short chain on it, so a new user reaches a first report without owning a 3D file.",
+        "use when": "implementing the command that gives a fresh installation something to run."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ],
+        "task": [
+          "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+        ]
+      },
+      "path": "logics/backlog/item_068_give_a_fresh_installation_a_subject_it_can_generate_itself.md",
+      "ref": "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC2: A new user with no 3D file of their own can produce a first report with commands from the README alone, using a subject the tool generates from primitives.",
+          "- AC3: Whatever exposes that subject is reachable from an installed package: it resolves the CLI through the installed console script and writes only under the active project's `work/`, never beside the installed package."
+        ],
+        "Problem": [
+          "- The README's \"Demonstration data\" section still points every reader at `tools/build_demo_chain.sh`, which no longer ships in the wheel. An installed reader following it finds nothing.",
+          "- A fresh installation has a working CLI, a `doctor` that passes and ten operations in `meshanvil list`, and nothing to run any of them on. Every operation needs a source the user must already own, so the first report is gated on having a 3D file and knowing which operation suits it.",
+          "- The generators already exist and ship in the wheel: `tools/make_demo_vehicle.py` and `tools/make_demo_figure.py` build a subject from primitives, with no donor file and nothing to license. What is missing is a command that reaches them.",
+          "- The shell chains that used to call them resolved `bin/meshanvil` and `fixtures/` from their own parent. Neither is packaged, so installed they wrote into `site-packages` and failed on every CLI call. They are contributor scripts and no longer ship."
+        ]
+      },
+      "status": "Ready",
+      "title": "Give a fresh installation a subject it can generate itself"
+    },
+    {
+      "ai_context": {
+        "keywords": "doctor side effect, work directory, read-only check, run precondition",
+        "skip when": "changing engine discovery or the doctor report shape.",
+        "summary": "Stop `doctor` creating `work/`: a check reports, `init` prepares, and `run` creates what it is about to write.",
+        "use when": "changing where the work directory is created and what refuses when it is missing."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_069_let_doctor_read_init_prepare_and_run_create"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ],
+        "task": [
+          "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+        ]
+      },
+      "path": "logics/backlog/item_069_let_doctor_read_init_prepare_and_run_create.md",
+      "ref": "item_069_let_doctor_read_init_prepare_and_run_create",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC4: `meshanvil doctor` does not create directories. A missing `work/` is reported as missing with its existing `mkdir` fix, and the `run` refusal path is adjusted in the same change so an uninitialised project still gives one actionable message."
+        ],
+        "Problem": [
+          "- `doctor.work()` calls `mkdir` before probing for writability. `doctor` is the command the README hands a new user first, so running it in a home directory to check whether Blender was found leaves a `work/` and a `work/doctor.json` behind.",
+          "- A check that creates what it was asked to look at cannot report that it is missing, and the `mkdir` fix string it already carries is unreachable."
+        ]
+      },
+      "status": "Ready",
+      "title": "Let doctor read, init prepare, and run create"
+    },
+    {
+      "ai_context": {
+        "keywords": "README, install command, PyPI, pre-1.0 honesty",
+        "skip when": "preparing or publishing a PyPI release.",
+        "summary": "Replace the README's `pip install meshanvil` with the repository install that works today, and say plainly that PyPI comes at 1.0.",
+        "use when": "correcting the documented installation route."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_070_point_the_readme_installation_at_a_route_that_works_today"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ],
+        "task": [
+          "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+        ]
+      },
+      "path": "logics/backlog/item_070_point_the_readme_installation_at_a_route_that_works_today.md",
+      "ref": "item_070_point_the_readme_installation_at_a_route_that_works_today",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The documented installation command works as written. Decided: the README installs from the repository (`pip install git+https://github.com/AlexAgo83/meshanvil`) and says so plainly; PyPI is deferred to 1.0 rather than claimed for a pre-1.0 tool."
+        ],
+        "Problem": [
+          "- `python -m pip install meshanvil` is the first command in the README's installation section and returns 404: the name is not on PyPI. Every reader who follows the documented path stops on line one."
+        ]
+      },
+      "status": "Ready",
+      "title": "Point the README installation at a route that works today"
+    },
+    {
+      "ai_context": {
+        "keywords": "install check, demo command, doctor side effect, README install route",
+        "skip when": "working on the agent-facing JSON contract, which is a separate request.",
+        "summary": "Implementation plan for the first-run request, ordered so the check that catches installation defects lands before the slices that could introduce them.",
+        "use when": "delivering req_015 or coordinating its four backlog slices."
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment",
+          "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself",
+          "item_069_let_doctor_read_init_prepare_and_run_create",
+          "item_070_point_the_readme_installation_at_a_route_that_works_today"
+        ],
+        "req": [
+          "req_015_make_a_fresh_installation_reach_its_first_report"
+        ],
+        "task": [
+          "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+        ]
+      },
+      "path": "logics/tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md",
+      "ref": "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Coordinate the AC-aware split backlog items without implementing them directly.",
+          "- The request was written from a real walkthrough: the wheel built, installed into a clean venv, and the README followed line by line. Two defects found on that walk are already fixed; these four slices are what it did not cover.",
+          "- PyPI was decided against for a pre-1.0 tool. the README slice below documents the route that works today; claiming the name is deferred to 1.0."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Deliver a first-run path a fresh installation can walk"
+    }
+  ],
+  "estimates": {
+    "char_count": 13242,
+    "companion_doc_count": 0,
+    "doc_count": 6
+  },
+  "generated_at": "2026-08-23T10:28:21Z",
+  "handoff": {
+    "companion_doc_count": 0,
+    "enabled": true,
+    "source_refs": [
+      "req_015_make_a_fresh_installation_reach_its_first_report",
+      "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment",
+      "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself",
+      "item_069_let_doctor_read_init_prepare_and_run_create",
+      "item_070_point_the_readme_installation_at_a_route_that_works_today",
+      "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Keep catalogs valid with logics-manager i18n validate in the project quality gate."
+    ],
+    "applicable": true,
+    "catalogs": {
+      "en": 222,
+      "fr": 222
+    },
+    "configured": true,
+    "contract": {
+      "applicability": "applicable",
+      "catalog": {
+        "path": "locales/{locale}.json"
+      },
+      "default_locale": "en",
+      "fallback_locale": "en",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "schema_version": "1.0",
+      "source_locale": "en"
+    },
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "The i18n contract is valid.",
+    "ok": true,
+    "state": "valid"
+  },
+  "mode": "full",
+  "profile": "deep",
+  "ref": "req_015_make_a_fresh_installation_reach_its_first_report,item_067_install_the_wheel_and_run_the_command_in_a_clean_environment,item_068_give_a_fresh_installation_a_subject_it_can_generate_itself,item_069_let_doctor_read_init_prepare_and_run_create,item_070_point_the_readme_installation_at_a_route_that_works_today,task_028_deliver_a_first_run_path_a_fresh_installation_can_walk",
+  "refs": [
+    "req_015_make_a_fresh_installation_reach_its_first_report",
+    "item_067_install_the_wheel_and_run_the_command_in_a_clean_environment",
+    "item_068_give_a_fresh_installation_a_subject_it_can_generate_itself",
+    "item_069_let_doctor_read_init_prepare_and_run_create",
+    "item_070_point_the_readme_installation_at_a_route_that_works_today",
+    "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_id": null,
+    "target_version": null,
+    "targets": []
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md",
+      "ref": "task_028_deliver_a_first_run_path_a_fresh_installation_can_walk"
+    }
+  ]
+}

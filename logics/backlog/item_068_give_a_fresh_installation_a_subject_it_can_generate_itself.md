@@ -8,6 +8,7 @@
 > Complexity: Medium
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 12:28:21
 
 # AI Context
 - Summary: Add a command that generates a subject from primitives and runs a short chain on it, so a new user reaches a first report without owning a 3D file.
@@ -16,6 +17,7 @@
 - Skip when: changing what the existing operations measure or how reports are shaped.
 
 # Problem
+- The README's "Demonstration data" section still points every reader at `tools/build_demo_chain.sh`, which no longer ships in the wheel. An installed reader following it finds nothing.
 - A fresh installation has a working CLI, a `doctor` that passes and ten operations in `meshanvil list`, and nothing to run any of them on. Every operation needs a source the user must already own, so the first report is gated on having a 3D file and knowing which operation suits it.
 - The generators already exist and ship in the wheel: `tools/make_demo_vehicle.py` and `tools/make_demo_figure.py` build a subject from primitives, with no donor file and nothing to license. What is missing is a command that reaches them.
 - The shell chains that used to call them resolved `bin/meshanvil` and `fixtures/` from their own parent. Neither is packaged, so installed they wrote into `site-packages` and failed on every CLI call. They are contributor scripts and no longer ship.
@@ -26,6 +28,7 @@
   - Everything it writes lands under the active project's `work/`, resolved by `paths`, never beside the installed package.
   - A closing line naming the reports it wrote and `meshanvil view` as the next command.
   - A selfcheck that runs the command with the engine stubbed, asserting where it writes and that it refuses rather than half-runs when Blender is missing.
+  - The README's "Demonstration data" section: it lists `tools/build_demo_chain.sh` and `tools/build_figurine_chain.sh` with repository-relative paths and does not say they need a checkout. Those scripts no longer ship in the wheel, so an installed reader following that section finds nothing. Mark them as contributor scripts and point an installed reader at the new command.
 - Out:
   - Shipping a `.blend` fixture in the wheel: a generator that needs no donor file is already there.
   - A new operation, or new geometry logic of any kind.
