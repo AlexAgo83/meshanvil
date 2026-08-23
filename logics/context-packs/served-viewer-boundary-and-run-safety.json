@@ -1,0 +1,407 @@
+{
+  "budgets": {
+    "max_docs": 24,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page item_057_keep_prune_inside_the_project_it_was_asked_to_prune item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution --mode summary-only --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+          "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/product/prod_013_a_host_boundary_that_matches_its_own_documentation.md",
+      "ref": "prod_013_a_host_boundary_that_matches_its_own_documentation",
+      "status": "Proposed",
+      "title": "A host boundary that matches its own documentation"
+    },
+    {
+      "kind": "architecture",
+      "linked_refs": {
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_004_target_technology_and_process_model",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
+        "item": [
+          "item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server",
+          "item_033_show_a_command_s_own_output_where_its_text_used_to_sit"
+        ],
+        "req": [
+          "req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
+        ],
+        "task": [
+          "task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
+        ]
+      },
+      "path": "logics/architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md",
+      "ref": "adr_007_let_the_served_viewer_execute_a_closed_command_set",
+      "status": "Accepted",
+      "title": "Let the served viewer execute a closed command set"
+    },
+    {
+      "kind": "product",
+      "linked_refs": {
+        "adr": [
+          "adr_003_the_viewer_reads_the_command_acts",
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
+        "item": [
+          "item_032_run_a_closed_set_of_commands_from_the_served_viewer_s_own_server"
+        ],
+        "prod": [
+          "prod_007_a_served_viewer_that_can_run_what_it_already_shows"
+        ],
+        "req": [
+          "req_006_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
+        ],
+        "task": [
+          "task_020_let_the_viewer_run_the_commands_it_already_shows_when_it_is_served"
+        ]
+      },
+      "path": "logics/product/prod_007_a_served_viewer_that_can_run_what_it_already_shows.md",
+      "ref": "prod_007_a_served_viewer_that_can_run_what_it_already_shows",
+      "status": "Settled",
+      "title": "A served viewer that can run what it already shows"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "served, viewer, prune, project, resolution, behave, way, they, documented",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "request",
+      "linked_refs": {
+        "adr": [
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
+        "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+          "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution",
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ]
+      },
+      "path": "logics/request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md",
+      "ref": "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
+      "schema_version": "1.0",
+      "status": "Draft",
+      "title": "Make the served viewer, prune and project resolution behave the way they are documented"
+    },
+    {
+      "ai_context": {
+        "keywords": "review, findings, viewer, serve, token, prune, paths, security",
+        "skip when": "looking for the state of an operation, an engine, or a runbook; this doc only covers host-side code.",
+        "summary": "Findings from a read-only review of the repository at `3e13ed0`. `make check` and `make logics` both pass; the corpus has no open document. What follows are candidates, ranked by strength of evidence, not committed work.",
+        "use when": "deciding what to promote into a backlog slice after this review."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "adr": [
+          "adr_007_let_the_served_viewer_execute_a_closed_command_set"
+        ],
+        "prod": [
+          "prod_007_a_served_viewer_that_can_run_what_it_already_shows"
+        ],
+        "req": [
+          "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution"
+        ]
+      },
+      "path": "logics/request/req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution.md",
+      "ref": "req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution",
+      "schema_version": "1.0",
+      "status": "Draft",
+      "title": "Review findings: served viewer boundary, prune safety and project resolution"
+    },
+    {
+      "ai_context": {
+        "keywords": "refuse, served, viewer, request, did, not, come, own, page",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/backlog/item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page.md",
+      "ref": "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Refuse a served-viewer request that did not come from its own page"
+    },
+    {
+      "ai_context": {
+        "keywords": "prune, inside, project, asked",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/backlog/item_057_keep_prune_inside_the_project_it_was_asked_to_prune.md",
+      "ref": "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Keep prune inside the project it was asked to prune"
+    },
+    {
+      "ai_context": {
+        "keywords": "close, review, findings, served, viewer, prune, project, resolution",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+          "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md",
+      "ref": "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Close the review findings on the served viewer, prune and project resolution"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+          "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+          "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/product/prod_013_a_host_boundary_that_matches_its_own_documentation.md",
+      "ref": "prod_013_a_host_boundary_that_matches_its_own_documentation",
+      "schema_version": "1.0",
+      "status": "Proposed",
+      "title": "A host boundary that matches its own documentation"
+    },
+    {
+      "ai_context": {
+        "keywords": "served, viewer, listing, work, holding, threads, absent, peers",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/backlog/item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers.md",
+      "ref": "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Stop the served viewer listing work/ and holding threads for absent peers"
+    },
+    {
+      "ai_context": {
+        "keywords": "leave, nothing, running, mislabelled, after, interrupted, run",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run"
+        ],
+        "prod": [
+          "prod_013_a_host_boundary_that_matches_its_own_documentation"
+        ],
+        "req": [
+          "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented"
+        ],
+        "task": [
+          "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+        ]
+      },
+      "path": "logics/backlog/item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run.md",
+      "ref": "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Leave nothing running and nothing mislabelled after an interrupted run"
+    }
+  ],
+  "estimates": {
+    "char_count": 10944,
+    "companion_doc_count": 3,
+    "doc_count": 8
+  },
+  "generated_at": "2026-08-23T00:37:20Z",
+  "handoff": {
+    "companion_doc_count": 3,
+    "enabled": true,
+    "source_refs": [
+      "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
+      "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+      "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+      "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+      "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run",
+      "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Keep catalogs valid with logics-manager i18n validate in the project quality gate."
+    ],
+    "applicable": true,
+    "catalogs": {
+      "en": 214,
+      "fr": 214
+    },
+    "configured": true,
+    "contract": {
+      "applicability": "applicable",
+      "catalog": {
+        "path": "locales/{locale}.json"
+      },
+      "default_locale": "en",
+      "fallback_locale": "en",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "schema_version": "1.0",
+      "source_locale": "en"
+    },
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "The i18n contract is valid.",
+    "ok": true,
+    "state": "valid"
+  },
+  "mode": "summary-only",
+  "profile": "normal",
+  "ref": "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented,item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page,item_057_keep_prune_inside_the_project_it_was_asked_to_prune,item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers,item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run,task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution",
+  "refs": [
+    "req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented",
+    "item_056_refuse_a_served_viewer_request_that_did_not_come_from_its_own_page",
+    "item_057_keep_prune_inside_the_project_it_was_asked_to_prune",
+    "item_058_stop_the_served_viewer_listing_work_and_holding_threads_for_absent_peers",
+    "item_059_leave_nothing_running_and_nothing_mislabelled_after_an_interrupted_run",
+    "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_id": null,
+    "target_version": null,
+    "targets": []
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md",
+      "ref": "task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution"
+    }
+  ]
+}

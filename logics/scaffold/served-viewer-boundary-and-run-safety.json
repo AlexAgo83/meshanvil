@@ -1,0 +1,189 @@
+{
+  "title": "Make the served viewer, prune and project resolution behave the way they are documented",
+  "references": [
+    "logics/request/req_012_review_findings_served_viewer_boundary_prune_safety_and_project_resolution.md",
+    "meshanvil/viewer_server.py",
+    "meshanvil/viewer_payload.py",
+    "meshanvil/viewer_routes/events.py",
+    "meshanvil/prune.py",
+    "meshanvil/runner.py",
+    "meshanvil/paths.py",
+    "scripts/selfcheck.py",
+    "SECURITY.md",
+    "logics/architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Host boundary",
+    "needs": [
+      "The served viewer must refuse a request that did not come from its own page, so that the boundary SECURITY.md and adr_007 describe is the one the code enforces.",
+      "SECURITY.md and adr_007 must describe the boundary that exists: how the port is chosen, what the run token proves, and what a cross-origin request gets.",
+      "prune must never delete a file outside the project it was asked to prune, and neither prune nor prune --dry-run may end in an unhandled traceback.",
+      "The served viewer must not enumerate work/ to a caller, and must not hold a thread for a connection whose peer has gone.",
+      "An interrupted run must leave no engine process behind, and the rule that chose the active project must be labelled and documented as what it actually is."
+    ],
+    "context": [
+      "Findings captured in req_012 from a read-only review at commit 3e13ed0; make check and make logics were green at that commit.",
+      "The run token cannot be a secret against a local process: work/viewer/data.js is a file on disk and the whole of work/ is the served directory. What it can prove is that a request came from the page this server generated, which is a browser-facing property.",
+      "viewer/src/app.js replaces its boot payload with GET /api/data and derives its served flag from run_token, so removing the token from that route without a replacement signal breaks the live refresh.",
+      "stable_port derives the port from a SHA-256 of the project path, so the port is predictable once the project location is known; nothing else on the server inspects Host, Origin or Referer.",
+      "The custom X-Meshanvil-Token header already forces a CORS preflight on POST, which is the property currently preventing blind cross-origin writes. It should be a stated defence rather than an incidental one.",
+      "Every behaviour this request changes is host-side and needs no Blender, so each one belongs in scripts/selfcheck.py with a thin pytest wrapper in tests/ -- the suite that already gates CI."
+    ],
+    "acceptance_criteria": [
+      "AC1: A request whose Host is not a loopback name, or whose Origin is present and is not this server's own origin, is refused on every route including /api/ping, /api/data, /api/events, /run and static files.",
+      "AC2: SECURITY.md and adr_007 state how the port is chosen, what the run token proves and does not prove, and what a cross-origin or rebound request receives; no claim in either document contradicts the code.",
+      "AC3: prune ignores any report output path that is not inside the active project, and both prune and prune --dry-run complete without an unhandled exception on such a report.",
+      "AC4: A GET for a directory under the served root returns 404 rather than a listing, and the viewer page still loads and refreshes.",
+      "AC5: An /api/events connection whose peer has gone is released without waiting for a report or runbook to change.",
+      "AC6: Interrupting a run terminates the engine process before the runner re-raises, and what the interrupt leaves on disk is stated in the runner's own docstring.",
+      "AC7: The rule name and module documentation for the fallback project resolution describe the directory that is actually returned.",
+      "AC8: Each accepted change leaves one runnable check in scripts/selfcheck.py, reached by a pytest wrapper in tests/, and make check stays green."
+    ]
+  },
+  "product": {
+    "title": "A host boundary that matches its own documentation",
+    "overview": "Closes the gap between what meshanvil's security-relevant host code does and what its documents say it does. It covers the served viewer's request boundary, the containment of the one destructive command, and the labels on the decision that chooses where a run lands.",
+    "goals": [
+      "Make the served viewer answer only requests that came from the page it generated.",
+      "Keep the one command that deletes files inside the project it was pointed at.",
+      "Have each security claim in SECURITY.md and adr_007 be checkable against the code it describes.",
+      "Leave a runnable check behind for every boundary this establishes, in the suite CI already runs."
+    ],
+    "non_goals": [
+      "Exposing the viewer beyond loopback, or adding TLS, accounts, sessions or token rotation.",
+      "Widening the closed command set adr_007 permits, or letting the page supply any part of a command line.",
+      "Reworking the viewer's interface, its payload shape or its visual design.",
+      "Changing the engine-side code under tools/ and pipeline/, or adding a Blender-dependent check to CI."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Refuse a served-viewer request that did not come from its own page",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Host boundary",
+      "request_acs": ["AC1", "AC2", "AC8"],
+      "problem": [
+        "GET /api/data and the static file work/viewer/data.js both hand out run_token with no token check, and run_token is what gates POST /run and POST /file.",
+        "No route inspects Host, Origin or Referer, so a page in the operator's own browser that resolves a name to 127.0.0.1 reaches the server as a same-origin caller.",
+        "stable_port makes the port a function of the project path rather than a random value, while SECURITY.md still describes a random port and a token embedded only in the generated page."
+      ],
+      "scope_in": [
+        "A single origin guard in the request handler, applied to every GET and POST before any route dispatch or static file is served.",
+        "Refusal of any request whose Host header names something other than a loopback host, and of any present Origin that is not this server's own.",
+        "Rewriting the '--serve' section of SECURITY.md and the boundary section of adr_007 to state the port rule, what the token proves, and the cross-origin answer.",
+        "One selfcheck covering an accepted request and each refused shape, with its pytest wrapper."
+      ],
+      "scope_out": [
+        "Removing run_token from the payload or changing how the page obtains it; app.js derives its served flag from it and that is a separate decision.",
+        "CORS response headers, cookies, sessions, or any second credential.",
+        "Changing stable_port itself, which item on reuse deliberately made stable."
+      ],
+      "acceptance_criteria": [
+        "AC1: A request carrying Host: evil.example is refused on /api/ping, /api/data, /api/events, /run, /file and a static path, with no route body executed.",
+        "AC2: A request carrying an Origin other than this server's own is refused even when its Host is loopback; a request with no Origin and a loopback Host is served.",
+        "AC3: SECURITY.md and adr_007 name the port rule and the token's actual guarantee, and neither states that the port is random or that the token is unreadable."
+      ]
+    },
+    {
+      "title": "Keep prune inside the project it was asked to prune",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Destructive safety",
+      "request_acs": ["AC3", "AC8"],
+      "problem": [
+        "prune.candidates accepts any absolute output path a report carries and only excludes paths under work/in, so a report pointing outside the project selects a file outside the project.",
+        "prune.run unlinks before the caller prints, and cli prints with Path.relative_to, which raises on exactly the paths that were not contained -- the deletion happens, then the traceback.",
+        "prune --dry-run raises the same exception, so the dry run cannot warn about the case it exists to warn about."
+      ],
+      "scope_in": [
+        "A containment condition in prune.candidates rejecting any output path not inside the active project root.",
+        "One selfcheck asserting that such a report is not a candidate and that its file survives a prune with keep 0, plus its pytest wrapper."
+      ],
+      "scope_out": [
+        "Changing the pinned, linked-document or work/in exclusions that already decide what prune may touch.",
+        "Reporting skipped out-of-project paths to the operator as a new message, unless the check shows one is needed.",
+        "The report schema, or where an operation is allowed to write its output."
+      ],
+      "acceptance_criteria": [
+        "AC1: A report whose output path resolves outside the active project is not returned by prune.candidates.",
+        "AC2: prune and prune --dry-run both exit without an unhandled exception on such a report, and the out-of-project file still exists afterwards."
+      ]
+    },
+    {
+      "title": "Stop the served viewer listing work/ and holding threads for absent peers",
+      "priority": "Medium",
+      "complexity": "Low",
+      "theme": "Host boundary",
+      "request_acs": ["AC4", "AC5", "AC8"],
+      "problem": [
+        "The handler serves root/work through SimpleHTTPRequestHandler with directory listings left on, so a GET of the served root enumerates in/, out/, ops/ and renders/ -- and SECURITY.md names source file paths as the sensitive part of this work.",
+        "/api/events writes only when a signature changes, so a connection whose peer has gone is never written to and its thread is never released; the server caps neither threads nor connections.",
+        "The page never needs a directory listing: it fetches /api/data."
+      ],
+      "scope_in": [
+        "Refusing a directory request under the served root instead of rendering a listing.",
+        "Writing on every poll of /api/events so a broken peer surfaces on the next turn and the existing handler releases the thread.",
+        "Selfchecks for both, with pytest wrappers."
+      ],
+      "scope_out": [
+        "Replacing mtime polling with a platform watcher, which the code already marks as a later step gated on profiling.",
+        "A connection cap, a thread pool or a stream lifetime, unless the write-per-poll check shows one is still needed.",
+        "Serving anything other than work/, or changing which files the page fetches."
+      ],
+      "acceptance_criteria": [
+        "AC1: A GET for the served root and for a directory beneath it returns 404, while the viewer page and its assets still load.",
+        "AC2: An /api/events connection whose peer has closed is released without any report or runbook changing."
+      ]
+    },
+    {
+      "title": "Leave nothing running and nothing mislabelled after an interrupted run",
+      "priority": "Medium",
+      "complexity": "Low",
+      "theme": "Runner and paths",
+      "request_acs": ["AC6", "AC7", "AC8"],
+      "problem": [
+        "runner.run starts the engine with Popen and waits in watch; on any BaseException it unlinks the report and re-raises without terminating the child, so after an interrupt the engine keeps writing to a path that was just removed while the target lock is released and a second run may start alongside it.",
+        "paths.resolve returns the working directory for its fallback but labels it BY_INSTALLATION, while the module docstring says the installation is the project in that case and code_root returns something else.",
+        "That rule is printed to the operator by the doctor command, so the wrong label is on screen."
+      ],
+      "scope_in": [
+        "Holding the Popen handle so it can be terminated in the existing BaseException path before the report is unlinked and the exception re-raised.",
+        "Stating in the runner's docstring what an interrupt leaves on disk.",
+        "Renaming the fallback rule to name the directory actually returned, updating the paths module docstring and any locale string that carries the old name.",
+        "Selfchecks for the terminated child and for the fallback rule name, with pytest wrappers."
+      ],
+      "scope_out": [
+        "A run timeout, a resume mechanism, or any change to the heartbeat and its stale warning.",
+        "Changing which directory the fallback returns; only its name and documentation are in scope.",
+        "The marker and override rules, which already behave as documented."
+      ],
+      "acceptance_criteria": [
+        "AC1: Interrupting a run terminates the engine process before the runner re-raises, and the runner's docstring says what the interrupt leaves behind.",
+        "AC2: The fallback rule name and the paths module docstring describe the directory that resolve actually returns, and make i18n stays green."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Close the review findings on the served viewer, prune and project resolution",
+    "plan": [
+      "Read req_012 for the observed evidence behind each finding, then reproduce the two destructive ones on a scratch project outside the repository: the unauthenticated token read and the out-of-project prune. Do not run either against this repository's work/.",
+      "Amend adr_007 first: decide and write down that the run token proves a request came from the generated page rather than being a secret, and that the origin guard is the defence against a rebound name. The code that follows depends on that being settled.",
+      "Add the origin guard to ViewerHandler ahead of route dispatch in both do_GET and do_POST, covering /api/ping and the static branch as well as the routes; refuse a non-loopback Host and a foreign Origin.",
+      "Rewrite the --serve section of SECURITY.md against the code as it then stands: the port rule, the token's guarantee, the cross-origin answer, and the directory-listing behaviour once the next step lands.",
+      "Add the containment condition to prune.candidates and confirm both prune and prune --dry-run survive a report pointing outside the project, with the file intact.",
+      "Refuse directory requests under the served root, and write on every /api/events poll so a gone peer is detected on the next turn.",
+      "Hold the engine Popen so the existing BaseException path kills it before unlinking the report, and record in the docstring what an interrupt leaves.",
+      "Rename the fallback resolution rule and correct the paths docstring, following the name through the doctor output and the locale catalogues.",
+      "Add one check per change to scripts/selfcheck.py with its thin pytest wrapper in tests/, following the shape the existing checks use.",
+      "Run make check and make logics, plus scripts/viewer_smoke.py in served mode; run scripts/fixture_check.py if a Blender is available and say so if it is not.",
+      "Record in the task which findings were closed by which change, and which of req_012's context notes were confirmed or contradicted along the way."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/served-viewer-boundary-and-run-safety.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
