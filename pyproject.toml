@@ -22,6 +22,8 @@ version = {attr = "meshanvil.VERSION"}
 
 [tool.setuptools.package-data]
 locales = ["*.json"]
-tools = ["*.op.json", "*.sh"]
+# No *.sh: the demo chains resolve bin/meshanvil and fixtures/ from their own parent, and
+# neither is packaged. Shipped, they write into site-packages and fail on every CLI call.
+tools = ["*.op.json"]
 viewer = ["*.html", "*.css", "*.js", "*.png"]
 "viewer.src" = ["*.js"]

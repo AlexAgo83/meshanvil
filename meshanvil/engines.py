@@ -99,7 +99,14 @@ def fix_command(engine: str) -> str:
     variable = OVERRIDE[engine]
     if platform.system() == "Windows":
         return f"set {variable}={CANDIDATES[engine][-1]}"
-    candidate = next((path for path in CANDIDATES[engine] if path.startswith("/mnt/c/")), CANDIDATES[engine][0])
+    # The hint a failing user is sent to must name a path their machine can hold: the /mnt/c
+    # candidate is the right answer under WSL and nonsense anywhere else.
+    if in_wsl():
+        candidate = next(path for path in CANDIDATES[engine] if path.startswith("/mnt/c/"))
+    elif platform.system() == "Darwin":
+        candidate = CANDIDATES[engine][0]
+    else:
+        candidate = f"/path/to/{engine}"   # ponytail: Linux is unverified, so say so, don't guess
     return f'export {variable}="{candidate}"'
 
 

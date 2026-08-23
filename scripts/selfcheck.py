@@ -219,6 +219,24 @@ def check_engine_floor():
     assert "MESHANVIL_BLENDER" in engines.fix_command("blender")
 
 
+def check_fix_command_fits_the_host():
+    """The override hint is the one screen a user with no engine is sent to. A /mnt/c path
+    offered on macOS is a dead end, so the hint follows the host and not the candidate order."""
+    original_wsl, original_system = engines.in_wsl, engines.platform.system
+    try:
+        engines.in_wsl = lambda: True
+        engines.platform.system = lambda: "Linux"
+        assert "/mnt/c/" in engines.fix_command("blender")
+        engines.in_wsl = lambda: False
+        engines.platform.system = lambda: "Darwin"
+        assert engines.fix_command("blender").count("/Applications/Blender.app") == 1
+        assert "/mnt/c/" not in engines.fix_command("freecad")
+        engines.platform.system = lambda: "Windows"
+        assert engines.fix_command("blender").startswith("set MESHANVIL_BLENDER=")
+    finally:
+        engines.in_wsl, engines.platform.system = original_wsl, original_system
+
+
 def check_wsl_boundary(tmp: Path):
     original_wsl, original_run = engines.in_wsl, engines.subprocess.run
     try:
@@ -536,6 +554,7 @@ def main() -> int:
         check_i18n()
         check_doctor(tmp)
         check_engine_floor()
+        check_fix_command_fits_the_host()
         check_wsl_boundary(tmp)
         check_doctor_exit_code()
         check_viewer_start(tmp)
