@@ -1,13 +1,14 @@
 ## item_070_point_the_readme_installation_at_a_route_that_works_today - Point the README installation at a route that works today
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 20%
 > Complexity: Low
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 12:30:45
 
 # AI Context
 - Summary: Replace the README's `pip install meshanvil` with the repository install that works today, and say plainly that PyPI comes at 1.0.

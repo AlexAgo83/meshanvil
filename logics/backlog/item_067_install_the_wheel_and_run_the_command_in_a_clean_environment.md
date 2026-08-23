@@ -1,13 +1,14 @@
 ## item_067_install_the_wheel_and_run_the_command_in_a_clean_environment - Install the wheel and run the command in a clean environment
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 20%
 > Complexity: Low
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 12:30:45
 
 # AI Context
 - Summary: Add a check that installs the built wheel into a throwaway environment and runs the console script, so a broken installation fails a target instead of a user.

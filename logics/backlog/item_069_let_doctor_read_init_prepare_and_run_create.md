@@ -1,13 +1,14 @@
 ## item_069_let_doctor_read_init_prepare_and_run_create - Let doctor read, init prepare, and run create
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 20%
 > Complexity: Low
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 12:30:45
 
 # AI Context
 - Summary: Stop `doctor` creating `work/`: a check reports, `init` prepares, and `run` creates what it is about to write.

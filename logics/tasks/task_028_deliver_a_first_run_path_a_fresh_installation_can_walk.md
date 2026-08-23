@@ -1,13 +1,15 @@
 ## task_028_deliver_a_first_run_path_a_fresh_installation_can_walk - Deliver a first-run path a fresh installation can walk
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 20%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
+> Owner: codex
+> Indicators reviewed: 2026-08-23 12:30:45
 
 # AI Context
 - Summary: Implementation plan for the first-run request, ordered so the check that catches installation defects lands before the slices that could introduce them.

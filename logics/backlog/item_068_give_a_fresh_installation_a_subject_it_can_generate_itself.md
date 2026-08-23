@@ -1,14 +1,14 @@
 ## item_068_give_a_fresh_installation_a_subject_it_can_generate_itself - Give a fresh installation a subject it can generate itself
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 20%
 > Complexity: Medium
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 12:28:21
+> Indicators reviewed: 2026-08-23 12:30:45
 
 # AI Context
 - Summary: Add a command that generates a subject from primitives and runs a short chain on it, so a new user reaches a first report without owning a 3D file.

@@ -7,7 +7,7 @@
 BLENDER ?= /Applications/Blender.app/Contents/MacOS/Blender
 PYTHON  ?= python3
 
-.PHONY: check compile types viewer-bundle test selfcheck i18n hygiene fixture viewer-smoke logics package package-check release-dry-run
+.PHONY: check compile types viewer-bundle test selfcheck i18n hygiene fixture viewer-smoke logics package package-check install-check release-dry-run
 
 check: compile types viewer-bundle test i18n hygiene
 
@@ -55,5 +55,8 @@ package:
 package-check:
 	@$(PYTHON) scripts/check_package.py dist/meshanvil-*.whl
 
-release-dry-run: check package logics
+install-check: package
+	@$(PYTHON) scripts/install_check.py dist/meshanvil-*.whl
+
+release-dry-run: check package install-check logics
 	@$(PYTHON) scripts/release.py --dry-run
