@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from meshanvil import doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer, viewer_server  # noqa: E402
+from meshanvil import demo, doctor, engines, i18n, logics_bridge, manifests, prune, runner, viewer, viewer_server  # noqa: E402
 from meshanvil.viewer_routes import events as viewer_events  # noqa: E402
 from meshanvil.viewer_routes import run as viewer_run  # noqa: E402
 from meshanvil_engine.report import bbox_delta     # noqa: E402
@@ -169,6 +169,53 @@ def check_cli_json(tmp: Path):
     finally:
         (cli.manifests.discover, cli.paths.resolve, cli.paths.work_root,
          cli.doctor.check, cli.prune.run, cli.runner.run) = original
+
+
+def check_demo_command(tmp: Path):
+    root = tmp / "demo-project"; root.mkdir()
+    original = (demo.paths.work_root, demo.paths.asset_root, demo.engines.find, demo.engines.version,
+                demo.engines.check_floor, demo.subprocess.run, demo.runner.run)
+    calls = []
+
+    def generate(command, **kwargs):
+        destination = Path(command[-1])
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(b"blend")
+        calls.append(("generate", destination))
+        return SimpleNamespace(returncode=0, stdout="generated", stderr="")
+
+    def run_operation(operation, source, params):
+        calls.append(("run", operation, Path(source)))
+        print("work/ops/001_scan_defects.json")
+        return runner.EXIT_OK
+
+    try:
+        demo.paths.work_root = lambda: root
+        demo.paths.asset_root = lambda *parts: ROOT.joinpath(*parts)
+        demo.engines.find = lambda name: Path("/bin/echo")
+        demo.engines.version = lambda binary: ("5.2.0", "")
+        demo.engines.check_floor = lambda name, number: None
+        demo.subprocess.run = generate
+        demo.runner.run = run_operation
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert demo.run("figure") == runner.EXIT_OK
+        expected = root / "work" / "out" / "demo_figure.blend"
+        assert calls == [("generate", expected), ("run", "scan_defects", expected)], calls
+        assert "work/ops/001_scan_defects.json" in stream.getvalue()
+
+        shutil.rmtree(root / "work")
+        calls.clear()
+        demo.engines.find = lambda name: (_ for _ in ()).throw(engines.EngineMissing("missing"))
+        try:
+            demo.run("figure")
+            raise AssertionError("missing Blender should refuse")
+        except engines.EngineMissing:
+            pass
+        assert calls == [] and not (root / "work").exists()
+    finally:
+        (demo.paths.work_root, demo.paths.asset_root, demo.engines.find, demo.engines.version,
+         demo.engines.check_floor, demo.subprocess.run, demo.runner.run) = original
 
 
 def check_i18n():
@@ -596,6 +643,7 @@ def main() -> int:
         check_refusals()
         check_cli_welcome()
         check_cli_json(tmp)
+        check_demo_command(tmp)
         check_i18n()
         check_doctor(tmp)
         check_run_creates_work(tmp)

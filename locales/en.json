@@ -5,6 +5,7 @@
       "tagline": "Local report viewer and operation runner.",
       "next": "Start here:",
       "view": "open the live report viewer",
+      "demo": "generate a demo subject and first report",
       "init": "make this folder a project",
       "doctor": "check Blender and project setup",
       "list": "show available operations",
@@ -15,6 +16,13 @@
     },
     "doctor": {
       "help": "check setup and write work/doctor.json"
+    },
+    "demo": {
+      "help": "generate a demo subject and write the first report",
+      "failed": "demo source generation failed",
+      "ready": "demo source ready at {source}",
+      "report": "report {report}",
+      "next": "next: meshanvil view"
     },
     "run": {
       "help": "run one operation and write its report",

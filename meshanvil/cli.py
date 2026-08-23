@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, contextlib, io, json, sys
 
-from . import VERSION, doctor, engines, logics_bridge, manifests, paths, prune, runner, viewer
+from . import VERSION, demo, doctor, engines, logics_bridge, manifests, paths, prune, runner, viewer
 from .i18n import t
 
 ARGPARSE = {
@@ -31,6 +31,7 @@ def welcome() -> str:
         "",
         t("cli.welcome.next"),
         f"  {colour(command, '38;5;75')}{' ' * (24 - len(command))} {t('cli.welcome.view')}",
+        f"  {'meshanvil demo':<24} {t('cli.welcome.demo')}",
         f"  {'meshanvil init .':<24} {t('cli.welcome.init')}",
         f"  {'meshanvil doctor':<24} {t('cli.welcome.doctor')}",
         f"  {'meshanvil list':<24} {t('cli.welcome.list')}",
@@ -50,6 +51,8 @@ def build_parser() -> argparse.ArgumentParser:
     started.add_argument("directory", nargs="?", default=".")
     setup = sub.add_parser("doctor", help=t("cli.doctor.help"))
     setup.add_argument("--json", action="store_true", help=t("cli.json"))
+    demonstration = sub.add_parser("demo", help=t("cli.demo.help"))
+    demonstration.add_argument("subject", nargs="?", choices=sorted(demo.SUBJECTS), default="figure")
     run = sub.add_parser("run", help=t("cli.run.help"))
     run.add_argument("operation")
     run.add_argument("target")
@@ -116,6 +119,12 @@ def main(argv: list[str] | None = None) -> int:
         print(t("cli.project.where", name=paths.name(active), path=active, rule=rule))
         print(json.dumps(result, indent=1))
         return runner.EXIT_OK if result["ok"] else runner.EXIT_REFUSED
+    if arguments.command == "demo":
+        try:
+            return demo.run(arguments.subject)
+        except (runner.Refused, engines.EngineMissing) as refusal:
+            print(str(refusal).strip("'"), file=sys.stderr)
+            return runner.EXIT_REFUSED
     if arguments.command == "view":
         return viewer.view(serve_it=True, open_it=not arguments.no_open, file_it=arguments.file)
     if arguments.command == "runbook":

@@ -19,6 +19,8 @@ STATIC = [
     "viewer/src/app.js",
     "viewer/src/live.js",
     "viewer/src/markdown.js",
+    "tools/make_demo_figure.py",
+    "tools/make_demo_vehicle.py",
 ]
 
 

@@ -193,18 +193,31 @@ that share nothing.
 
 ## Demonstration data
 
-Two demonstrations, sibling projects under `work/demo/`, so the viewer can offer both:
+An installed user can generate a subject from primitives and write a first report without
+bringing a 3D file:
 
+```bash
+meshanvil demo
+meshanvil view
 ```
+
+`meshanvil demo` defaults to the small figurine subject. `meshanvil demo vehicle` generates the
+larger render-scale subject instead. Both write only under the active project's `work/` tree.
+
+For contributors rebuilding the full repository demonstrations, the shell chains still exist
+in a checkout and create sibling projects under `work/demo/`, so the viewer can offer both:
+
+```bash
 tools/build_demo_chain.sh [asset.blend]        # a render-scale subject
 tools/build_figurine_chain.sh [asset.blend]    # a small, sound subject
 ```
 
-Given no argument, each defaults to a hand-modelled subject committed under `fixtures/` --
-authored for this project, nothing downloaded, nothing to license. `tools/make_demo_vehicle.py`
-and `tools/make_demo_figure.py` build the same kind of subject from primitives instead, with no
-donor file at all, and are what each chain falls back to if its fixture is ever missing. Any
-`.blend` works in either chain's place; no operation in either chain is specific to one subject.
+Those shell chains are not installed in the wheel. Given no argument in a checkout, each
+defaults to a hand-modelled subject committed under `fixtures/` -- authored for this project,
+nothing downloaded, nothing to license. `tools/make_demo_vehicle.py` and
+`tools/make_demo_figure.py` build the same kind of subject from primitives instead, with no
+donor file at all. Any `.blend` works in either chain's place; no operation in either chain is
+specific to one subject.
 
 The vehicle-scale chain is built to expose defects a render asset typically carries and a
 printing pipeline cannot ignore: on the current subject, `scan_defects` finds a real coincident

@@ -5,6 +5,7 @@
       "tagline": "Visualiseur local de rapports et lanceur d'opérations.",
       "next": "Commence ici :",
       "view": "ouvrir le visualiseur live",
+      "demo": "générer une démo et un premier rapport",
       "init": "faire de ce dossier un projet",
       "doctor": "vérifier Blender et le projet",
       "list": "afficher les opérations disponibles",
@@ -15,6 +16,13 @@
     },
     "doctor": {
       "help": "vérifier la configuration et écrire work/doctor.json"
+    },
+    "demo": {
+      "help": "générer un sujet de démonstration et écrire le premier rapport",
+      "failed": "la génération du sujet de démonstration a échoué",
+      "ready": "sujet de démonstration prêt dans {source}",
+      "report": "rapport {report}",
+      "next": "suite : meshanvil view"
     },
     "run": {
       "help": "lancer une opération et écrire son rapport",
