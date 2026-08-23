@@ -2,14 +2,14 @@
 > From version: 0.1.0
 > Schema version: 1.0
 > Status: Draft
-> Understanding: 85
-> Confidence: 80
+> Understanding: 90
+> Confidence: 85
 > Complexity: Medium
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
 
 # AI Context
-- Summary: Close the gap between `pip install meshanvil` and a first report: a published package, something to run an operation on, and a `doctor` that does not create directories where it was only asked to look.
+- Summary: Close the gap between installing meshanvil and reading a first report: an installation command that works, something to run an operation on, and a `doctor` that does not create directories where it was only asked to look.
 - Keywords: installation, first run, PyPI, onboarding, sample source, doctor side effect
 - Use when: working on what a new user meets between installing the tool and reading their first report.
 - Skip when: changing operation semantics, viewer presentation, or the agent-facing JSON contract, which is scoped separately.
@@ -24,12 +24,12 @@
 # Context
 - Keep this about installation and first run. The agent-facing JSON contract is scoped by its own request and is not in scope here.
 - No new runtime dependency and no downloaded asset: a generated subject is the only kind this project can ship, and both generators already exist.
-- Publishing to PyPI is an operator decision with a name to claim and a release to sign. This request records the gap; it does not assume the answer.
+- Publishing to PyPI is an operator decision with a name to claim and a release to sign. Decided against for now: a pre-1.0 tool documents the route that works today and claims the name at 1.0.
 - Changing `doctor` to stop creating `work/` changes what `run` sees in an uninitialised directory, since `run` refuses when `doctor.work(root)["state"] != "found"`. Decide the pair together.
 - Generated and runtime data under `work/` is not versioned. Demonstration output belongs under the project's own `work/`, never beside the installed package.
 
 # Acceptance criteria
-- AC1: The documented installation command works as written. Either `meshanvil` resolves on PyPI, or the README's installation section names the route that does until it is published.
+- AC1: The documented installation command works as written. Decided: the README installs from the repository (`pip install git+https://github.com/AlexAgo83/meshanvil`) and says so plainly; PyPI is deferred to 1.0 rather than claimed for a pre-1.0 tool.
 - AC2: A new user with no 3D file of their own can produce a first report with commands from the README alone, using a subject the tool generates from primitives.
 - AC3: Whatever exposes that subject is reachable from an installed package: it resolves the CLI through the installed console script and writes only under the active project's `work/`, never beside the installed package.
 - AC4: `meshanvil doctor` does not create directories. A missing `work/` is reported as missing with its existing `mkdir` fix, and the `run` refusal path is adjusted in the same change so an uninitialised project still gives one actionable message.
@@ -60,4 +60,7 @@
 - scripts/selfcheck.py
 
 # Backlog
-- none
+- `item_067_install_the_wheel_and_run_the_command_in_a_clean_environment`
+- `item_068_give_a_fresh_installation_a_subject_it_can_generate_itself`
+- `item_069_let_doctor_read_init_prepare_and_run_create`
+- `item_070_point_the_readme_installation_at_a_route_that_works_today`

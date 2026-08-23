@@ -127,6 +127,10 @@ _None_
 | [item_064_give_actionable_refusals_stable_error_codes](backlog/item_064_give_actionable_refusals_stable_error_codes.md) | Give actionable refusals stable error codes | Ready |  | 0% | backlog/item_064_give_actionable_refusals_stable_error_codes.md |
 | [item_065_add_a_next_action_command_that_advises_without_acting](backlog/item_065_add_a_next_action_command_that_advises_without_acting.md) | Add a next action command that advises without acting | Obsolete |  | 0% | backlog/item_065_add_a_next_action_command_that_advises_without_acting.md |
 | [item_066_document_the_agent_operating_contract](backlog/item_066_document_the_agent_operating_contract.md) | Document the agent operating contract | Ready |  | 0% | backlog/item_066_document_the_agent_operating_contract.md |
+| [item_067_install_the_wheel_and_run_the_command_in_a_clean_environment](backlog/item_067_install_the_wheel_and_run_the_command_in_a_clean_environment.md) | Install the wheel and run the command in a clean environment | Ready |  | 0% | backlog/item_067_install_the_wheel_and_run_the_command_in_a_clean_environment.md |
+| [item_068_give_a_fresh_installation_a_subject_it_can_generate_itself](backlog/item_068_give_a_fresh_installation_a_subject_it_can_generate_itself.md) | Give a fresh installation a subject it can generate itself | Ready |  | 0% | backlog/item_068_give_a_fresh_installation_a_subject_it_can_generate_itself.md |
+| [item_069_let_doctor_read_init_prepare_and_run_create](backlog/item_069_let_doctor_read_init_prepare_and_run_create.md) | Let doctor read, init prepare, and run create | Ready |  | 0% | backlog/item_069_let_doctor_read_init_prepare_and_run_create.md |
+| [item_070_point_the_readme_installation_at_a_route_that_works_today](backlog/item_070_point_the_readme_installation_at_a_route_that_works_today.md) | Point the README installation at a route that works today | Ready |  | 0% | backlog/item_070_point_the_readme_installation_at_a_route_that_works_today.md |
 
 ## Tasks
 
@@ -159,6 +163,7 @@ _None_
 | [task_025_deliver_an_installable_meshanvil](tasks/task_025_deliver_an_installable_meshanvil.md) | Deliver an installable meshanvil | Done | codex | 100% | tasks/task_025_deliver_an_installable_meshanvil.md |
 | [task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution](tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md) | Close the review findings on the served viewer, prune and project resolution | Done | codex | 100% | tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md |
 | [task_027_deliver_the_agent_ready_cli_contract](tasks/task_027_deliver_the_agent_ready_cli_contract.md) | Deliver the agent-ready CLI contract | Ready |  | 0% | tasks/task_027_deliver_the_agent_ready_cli_contract.md |
+| [task_028_deliver_a_first_run_path_a_fresh_installation_can_walk](tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md) | Deliver a first-run path a fresh installation can walk | Ready |  | 0% | tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md |
 
 ## Runbooks
 
