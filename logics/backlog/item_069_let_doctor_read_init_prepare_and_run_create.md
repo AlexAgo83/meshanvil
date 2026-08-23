@@ -1,14 +1,14 @@
 ## item_069_let_doctor_read_init_prepare_and_run_create - Let doctor read, init prepare, and run create
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 80%
+> Progress: 100%
 > Complexity: Low
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-23 12:30:45
+> Indicators reviewed: 2026-08-23 12:38:21
 
 # AI Context
 - Summary: Stop `doctor` creating `work/`: a check reports, `init` prepares, and `run` creates what it is about to write.
@@ -58,6 +58,7 @@
 - Hybrid rationale: Derived from request `req_015_make_a_fresh_installation_reach_its_first_report` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_015_make_a_fresh_installation_reach_its_first_report.md`.
 - Generated locally by logics-manager.
+- Task `task_028_deliver_a_first_run_path_a_fresh_installation_can_walk` was finished via `logics-manager flow finish task` on 2026-08-23.
 
 # Tasks
 - `task_028_deliver_a_first_run_path_a_fresh_installation_can_walk`

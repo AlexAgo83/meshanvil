@@ -1,12 +1,13 @@
 ## req_015_make_a_fresh_installation_reach_its_first_report - Make a fresh installation reach its first report
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90
 > Confidence: 85
 > Complexity: Medium
 > Theme: Installation and first run
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
+> Indicators reviewed: 2026-08-23 12:38:21
 
 # AI Context
 - Summary: Close the gap between installing meshanvil and reading a first report: an installation command that works, something to run an operation on, and a `doctor` that does not create directories where it was only asked to look.
