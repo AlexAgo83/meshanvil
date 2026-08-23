@@ -1,0 +1,297 @@
+{
+  "title": "Make the CLI a dependable surface for AI operators",
+  "references": [
+    "meshanvil/cli.py",
+    "meshanvil/runner.py",
+    "meshanvil/doctor.py",
+    "meshanvil/manifests.py",
+    "meshanvil/prune.py",
+    "meshanvil/paths.py",
+    "meshanvil/viewer_payload.py",
+    "meshanvil/logics_bridge.py",
+    "meshanvil/i18n.py",
+    "scripts/selfcheck.py",
+    "tests/test_cli.py",
+    "locales/en.json",
+    "locales/fr.json",
+    "work/ops",
+    "tools"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Agent-facing CLI contract",
+    "needs": [
+      "The CLI now has `--json` on the most useful commands for automation, but an AI still has to infer too much from scattered commands and report files. A first-time agent needs one canonical way to learn the project state, the available schemas, the reports that already exist, and what to do next.",
+      "`doctor --json`, `list --json`, `prune --json` and `run --json` do not yet share one error envelope. Refusals still expose translated human text as the only stable value in some paths, which makes an agent parse prose instead of identifiers.",
+      "Reports are deliberately JSON files under `work/ops`, but there is no CLI for listing, selecting or reading them. Agents can read the filesystem, but that makes the workflow depend on filename conventions rather than a product contract.",
+      "The report and operation formats are mostly discoverable by reading code, manifests and examples. That is workable for a human contributor and brittle for an AI operator, which should be able to ask the tool for the schema it is expected to obey.",
+      "There is no single `status` or `next` command that answers whether the active directory is a project, whether setup passes, whether reports exist, which operations are available, and what the next safe command is.",
+      "There is no short agent-oriented document that states the canonical commands, the `--json` preference, the report-first workflow, the `work/in` immutability rule, and how to attach Logics evidence."
+    ],
+    "context": [
+      "Keep this a CLI and JSON contract change. Do not introduce an agent framework, MCP server, background daemon or new runtime dependency.",
+      "Machine identifiers are not translated. Human messages can stay localized, but JSON fields and error codes must be stable across locales.",
+      "The existing `scripts/selfcheck.py` plus thin pytest wrappers are the right test shape for this project. Each new machine contract needs one small check that fails if stdout stops being parseable JSON or a stable field disappears.",
+      "The CLI's existing exit codes are part of the contract and should not change. JSON reports the exit code; the process still returns it.",
+      "The tool already has the ingredients for `status`: `paths.resolve`, `doctor.check`, `manifests.discover`, and the reports under `work/ops`. The request is to expose them consistently, not to build a planner.",
+      "`next` should be advice, not automation. It names safe next commands and reasons; it does not run them.",
+      "Generated or runtime data under `work/` is not versioned. Docs and schemas must describe it without committing sample client paths."
+    ],
+    "acceptance_criteria": [
+      "AC1: `meshanvil schema report --json`, `meshanvil schema operation --json`, and `meshanvil schema cli --json` print JSON schemas or schema-like contracts that are complete enough for an AI to validate reports, operation manifests and supported JSON CLI envelopes without reading Python source.",
+      "AC2: `meshanvil status --json` prints one JSON object containing project identity, setup state, operation summary, report summary, viewer hint, and next-action hints; stdout contains no human preamble.",
+      "AC3: `meshanvil reports --json`, `meshanvil reports --latest --json`, and `meshanvil reports <id> --json` let an agent list reports, find the latest report, and read one report without walking `work/ops` itself.",
+      "AC4: Every command that accepts `--json` returns the same top-level success and error envelope: success includes `ok: true`; failures include `ok: false`, `exit_code`, and a stable `error.code` plus a human `error.message`.",
+      "AC5: Refusals that an agent can act on have stable error codes, at least for unknown operation, missing source file, engine missing, target busy, invalid parameter, malformed `--set`, unreadable input format, and unavailable work directory.",
+      "AC6: `meshanvil next --json` returns ordered, safe next actions with reason codes and commands; it never starts a viewer, runs an operation, writes a report, or modifies a source file.",
+      "AC7: An agent-facing doc exists and states the canonical automation workflow: prefer `--json`, never write to `work/in`, discover before run, read reports rather than stdout, use `--evidence TASK:AC` when Logics is active, and keep client/source names out of committed docs.",
+      "AC8: Each new command and envelope rule has a selfcheck plus a thin pytest wrapper, and `make check`, `logics-manager lint --require-status`, and `logics-manager audit --group-by-doc` pass."
+    ]
+  },
+  "product": {
+    "title": "An agent-ready command surface for meshanvil",
+    "overview": "Makes meshanvil usable by AI operators through explicit schemas, a single status view, report access commands, stable JSON errors, next-action advice and a short agent playbook, without adding an agent runtime.",
+    "goals": [
+      "An AI can discover what meshanvil can do without reading Python source.",
+      "An AI can decide the next safe command from one status response.",
+      "An AI can list and read reports through a stable CLI contract instead of filesystem conventions.",
+      "JSON output stays parseable and stable across locales.",
+      "The human CLI remains friendly and unchanged unless `--json` is requested."
+    ],
+    "non_goals": [
+      "No autonomous planner or agent framework.",
+      "No MCP server or background daemon.",
+      "No change to report semantics or operation execution.",
+      "No versioned sample data from `work/`.",
+      "No localization of machine identifiers or error codes."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Expose report operation and CLI schemas from the tool",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC1",
+        "AC8"
+      ],
+      "problem": [
+        "An agent has to infer the report, operation and CLI JSON shapes from source code and examples, which makes integration brittle and version-dependent."
+      ],
+      "scope_in": [
+        "`meshanvil schema report --json` for the report object shape the viewer and runner expect.",
+        "`meshanvil schema operation --json` for operation manifests under `tools`.",
+        "`meshanvil schema cli --json` for the top-level CLI JSON success and error envelopes.",
+        "One selfcheck and pytest wrapper proving each schema command prints parseable JSON with required fields."
+      ],
+      "scope_out": [
+        "A full external JSON Schema package dependency.",
+        "Runtime validation of every historical report during normal commands.",
+        "Changing the report format."
+      ],
+      "acceptance_criteria": [
+        "AC1: Each schema subcommand prints JSON to stdout and no human preamble.",
+        "AC2: The report schema names required top-level report fields and the optional sections the viewer consumes.",
+        "AC3: The operation schema names required manifest fields, parameter field shapes and known parameter types.",
+        "AC4: The CLI schema describes the success envelope, error envelope and common command-specific payload fields.",
+        "AC5: `make check` fails if any schema command stops producing parseable JSON."
+      ]
+    },
+    {
+      "title": "Add one status JSON command for agent preflight",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC2",
+        "AC8"
+      ],
+      "problem": [
+        "A first-time agent must call several commands and inspect files to know whether it is in a project, whether setup passes, what operations exist, and whether reports already exist."
+      ],
+      "scope_in": [
+        "`meshanvil status --json` combining project resolution, `doctor.check`, `manifests.discover`, report counts and latest report metadata.",
+        "A viewer hint that says whether `meshanvil view` is a useful next action without starting it.",
+        "A small list of next-action hints, each with a stable reason code and a command string."
+      ],
+      "scope_out": [
+        "Starting the viewer or running setup checks beyond what `doctor.check` already does.",
+        "A planner that chooses operation parameters.",
+        "Human table output; this command can be JSON-only initially."
+      ],
+      "acceptance_criteria": [
+        "AC1: `status --json` prints one parseable object with `ok`, `project`, `doctor`, `operations`, `reports`, `viewer` and `next` keys.",
+        "AC2: The command exits with the same refused status as `doctor` when required setup is missing, while still printing the JSON object.",
+        "AC3: Report summary includes count and latest report id/path when present, but does not read every large artefact.",
+        "AC4: Next-action hints are ordered and include stable reason codes.",
+        "AC5: Selfcheck covers both a healthy and an unhealthy project."
+      ]
+    },
+    {
+      "title": "Let agents list and read reports through the CLI",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC3",
+        "AC8"
+      ],
+      "problem": [
+        "Reports are the product's main record, but agents must currently walk `work/ops` and understand filename conventions to find or read them."
+      ],
+      "scope_in": [
+        "`meshanvil reports --json` returning sorted report summaries.",
+        "`meshanvil reports --latest --json` returning the latest report object or a stable not-found error.",
+        "`meshanvil reports <id> --json` resolving ids like `003` and `003a` to the matching report file and returning its parsed JSON plus path metadata."
+      ],
+      "scope_out": [
+        "Searching inside reports by arbitrary query.",
+        "Opening artefacts or renders.",
+        "Changing report filenames."
+      ],
+      "acceptance_criteria": [
+        "AC1: Report listing includes id, operation, status, path, input path when present, output path/state when present, and created/readable timestamp if available.",
+        "AC2: Latest report resolution is deterministic and matches current filename ordering rules.",
+        "AC3: Reading a report by id returns exactly one report or a stable ambiguous/not-found error.",
+        "AC4: Malformed report files are reported in the listing with a stable warning field rather than crashing the command.",
+        "AC5: Selfcheck covers empty, malformed, single-report and ambiguous-id cases."
+      ]
+    },
+    {
+      "title": "Standardize JSON success and error envelopes",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC4",
+        "AC8"
+      ],
+      "problem": [
+        "The first `--json` pass made stdout parseable for the common path, but error payloads are not yet consistent across commands and some failures expose only prose."
+      ],
+      "scope_in": [
+        "One helper for JSON success and error output used by every command that accepts `--json`.",
+        "Top-level `ok` on success and `ok`, `exit_code`, `error.code`, `error.message` on failure.",
+        "Preserving existing human stderr for non-JSON mode."
+      ],
+      "scope_out": [
+        "Changing process exit codes.",
+        "Changing localized human messages.",
+        "Adding JSON mode to every command in this slice."
+      ],
+      "acceptance_criteria": [
+        "AC1: All current `--json` commands use the same top-level envelope.",
+        "AC2: JSON-mode failures never print human-only text to stdout.",
+        "AC3: Non-JSON failures keep their current human output.",
+        "AC4: Selfcheck proves success and failure envelope shape for list, doctor, prune and run."
+      ]
+    },
+    {
+      "title": "Give actionable refusals stable error codes",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC5",
+        "AC8"
+      ],
+      "problem": [
+        "An agent can recover from many refusals, but today it must parse translated text to distinguish missing files, unknown operations, invalid parameters and busy targets."
+      ],
+      "scope_in": [
+        "Stable error codes for unknown operation, missing source file, engine missing, target busy, invalid parameter, malformed `--set`, unreadable input format and unavailable work directory.",
+        "A refusal representation that carries code plus human message without losing the current exception flow.",
+        "Mapping existing exception sources to codes at the boundary where the CLI prints JSON."
+      ],
+      "scope_out": [
+        "Translating codes.",
+        "Changing report warning codes.",
+        "Recovering automatically from refusals."
+      ],
+      "acceptance_criteria": [
+        "AC1: Each named refusal has a stable code in JSON mode.",
+        "AC2: The human message remains present for logs and operators.",
+        "AC3: Codes are documented by `schema cli --json`.",
+        "AC4: Selfcheck covers at least one recovery path per named code without starting Blender."
+      ]
+    },
+    {
+      "title": "Add a next action command that advises without acting",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC6",
+        "AC8"
+      ],
+      "problem": [
+        "Agents need a safe way to ask what to do next, but the product should not hide state changes behind advice."
+      ],
+      "scope_in": [
+        "`meshanvil next --json` returning ordered action objects with reason codes, command strings and risk notes where needed.",
+        "Advice for no project marker, failed setup, no reports, reports present, no operations found, and viewer useful.",
+        "Shared status-gathering logic with `status --json` where that removes duplication."
+      ],
+      "scope_out": [
+        "Running the commands it suggests.",
+        "Picking operation parameters for a source file.",
+        "Writing Logics evidence."
+      ],
+      "acceptance_criteria": [
+        "AC1: `next --json` never modifies `work/`, starts a server, launches Blender, or writes reports.",
+        "AC2: Each action includes `reason`, `command` and `description` fields.",
+        "AC3: Advice is deterministic for the same project state.",
+        "AC4: Selfcheck covers at least no project marker, unhealthy setup, empty reports and existing reports."
+      ]
+    },
+    {
+      "title": "Document the agent operating contract",
+      "priority": "Medium",
+      "complexity": "Low",
+      "theme": "Agent-facing CLI contract",
+      "request_acs": [
+        "AC7",
+        "AC8"
+      ],
+      "problem": [
+        "The project has contributor instructions, but no short operator-facing contract for AI tools that only need to use meshanvil safely."
+      ],
+      "scope_in": [
+        "A short `docs/AI.md` or equivalent linked from the repository entry points.",
+        "Canonical command sequence: `status --json`, `schema ... --json`, `list --json`, `doctor --json`, `run ... --json`, `reports ... --json`.",
+        "Safety rules: do not write to `work/in`, do not commit `work/`, prefer report JSON over stdout, and keep client/source names out of docs.",
+        "Logics rule: use `--evidence TASK:AC` when implementing an active Logics task."
+      ],
+      "scope_out": [
+        "General contributor setup documentation.",
+        "Prompt templates for a specific vendor.",
+        "Long tutorials."
+      ],
+      "acceptance_criteria": [
+        "AC1: The doc is under version control and linked from an obvious existing entry point.",
+        "AC2: It names the JSON commands and the report-first workflow.",
+        "AC3: It states safety and privacy rules for `work/`, `work/in` and committed docs.",
+        "AC4: It is short enough for an agent to load as context without replacing the full docs."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver the agent-ready CLI contract",
+    "plan": [
+      "1. Add the schema command first so the rest of the JSON contract has a place to document itself.",
+      "2. Factor the smallest shared JSON envelope helper and move current `--json` commands onto it without changing their exit codes.",
+      "3. Add stable refusal codes at the CLI boundary and cover the named recovery cases without launching Blender.",
+      "4. Add report listing, latest-report and report-by-id commands over `work/ops`, including malformed and ambiguous cases.",
+      "5. Add shared status collection and expose it through `status --json`.",
+      "6. Add `next --json` as a pure advice command that reuses status data and never mutates project state.",
+      "7. Write the short agent operating contract and link it from the repository's existing docs.",
+      "8. Add selfchecks and pytest wrappers for each new command and envelope rule, then run `make check`, Logics lint, audit and flow validate."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/agent-ready-cli-contract.json",
+    "mode": "full",
+    "profile": "normal"
+  }
+}

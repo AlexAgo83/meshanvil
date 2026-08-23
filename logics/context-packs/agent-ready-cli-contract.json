@@ -1,0 +1,558 @@
+{
+  "budgets": {
+    "max_docs": 36,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_014_make_the_cli_a_dependable_surface_for_ai_operators item_060_expose_report_operation_and_cli_schemas_from_the_tool item_061_add_one_status_json_command_for_agent_preflight item_062_let_agents_list_and_read_reports_through_the_cli item_063_standardize_json_success_and_error_envelopes item_064_give_actionable_refusals_stable_error_codes item_065_add_a_next_action_command_that_advises_without_acting item_066_document_the_agent_operating_contract task_027_deliver_the_agent_ready_cli_contract --mode full --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+          "item_061_add_one_status_json_command_for_agent_preflight",
+          "item_062_let_agents_list_and_read_reports_through_the_cli",
+          "item_063_standardize_json_success_and_error_envelopes",
+          "item_064_give_actionable_refusals_stable_error_codes",
+          "item_065_add_a_next_action_command_that_advises_without_acting",
+          "item_066_document_the_agent_operating_contract"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/product/prod_014_an_agent_ready_command_surface_for_meshanvil.md",
+      "ref": "prod_014_an_agent_ready_command_surface_for_meshanvil",
+      "sections": {
+        "Goals": [
+          "- An AI can discover what meshanvil can do without reading Python source.",
+          "- An AI can decide the next safe command from one status response.",
+          "- An AI can list and read reports through a stable CLI contract instead of filesystem conventions.",
+          "- JSON output stays parseable and stable across locales.",
+          "- The human CLI remains friendly and unchanged unless `--json` is requested."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Makes meshanvil usable by AI operators through explicit schemas, a single status view, report access commands, stable JSON errors, next-action advice and a short agent playbook, without adding an agent runtime."
+        ],
+        "References": [
+          "- Product back-reference: `req_014_make_the_cli_a_dependable_surface_for_ai_operators`",
+          "- Task back-reference: `task_027_deliver_the_agent_ready_cli_contract`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "An agent-ready command surface for meshanvil"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "cli, dependable, surface, operators",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+          "item_061_add_one_status_json_command_for_agent_preflight",
+          "item_062_let_agents_list_and_read_reports_through_the_cli",
+          "item_063_standardize_json_success_and_error_envelopes",
+          "item_064_give_actionable_refusals_stable_error_codes",
+          "item_065_add_a_next_action_command_that_advises_without_acting",
+          "item_066_document_the_agent_operating_contract"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ]
+      },
+      "path": "logics/request/req_014_make_the_cli_a_dependable_surface_for_ai_operators.md",
+      "ref": "req_014_make_the_cli_a_dependable_surface_for_ai_operators",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: `meshanvil schema report --json`, `meshanvil schema operation --json`, and `meshanvil schema cli --json` print JSON schemas or schema-like contracts that are complete enough for an AI to validate reports, operation manifests and supported JSON CLI envelopes without reading Python source.",
+          "- AC2: `meshanvil status --json` prints one JSON object containing project identity, setup state, operation summary, report summary, viewer hint, and next-action hints; stdout contains no human preamble.",
+          "- AC3: `meshanvil reports --json`, `meshanvil reports --latest --json`, and `meshanvil reports <id> --json` let an agent list reports, find the latest report, and read one report without walking `work/ops` itself.",
+          "- AC4: Every command that accepts `--json` returns the same top-level success and error envelope: success includes `ok: true`; failures include `ok: false`, `exit_code`, and a stable `error.code` plus a human `error.message`.",
+          "- AC5: Refusals that an agent can act on have stable error codes, at least for unknown operation, missing source file, engine missing, target busy, invalid parameter, malformed `--set`, unreadable input format, and unavailable work directory.",
+          "- AC6: `meshanvil next --json` returns ordered, safe next actions with reason codes and commands; it never starts a viewer, runs an operation, writes a report, or modifies a source file."
+        ],
+        "Needs": [
+          "- The CLI now has `--json` on the most useful commands for automation, but an AI still has to infer too much from scattered commands and report files. A first-time agent needs one canonical way to learn the project state, the available schemas, the reports that already exist, and what to do next.",
+          "- `doctor --json`, `list --json`, `prune --json` and `run --json` do not yet share one error envelope. Refusals still expose translated human text as the only stable value in some paths, which makes an agent parse prose instead of identifiers.",
+          "- Reports are deliberately JSON files under `work/ops`, but there is no CLI for listing, selecting or reading them. Agents can read the filesystem, but that makes the workflow depend on filename conventions rather than a product contract.",
+          "- The report and operation formats are mostly discoverable by reading code, manifests and examples. That is workable for a human contributor and brittle for an AI operator, which should be able to ask the tool for the schema it is expected to obey.",
+          "- There is no single `status` or `next` command that answers whether the active directory is a project, whether setup passes, whether reports exist, which operations are available, and what the next safe command is.",
+          "- There is no short agent-oriented document that states the canonical commands, the `--json` preference, the report-first workflow, the `work/in` immutability rule, and how to attach Logics evidence."
+        ]
+      },
+      "status": "Draft",
+      "title": "Make the CLI a dependable surface for AI operators"
+    },
+    {
+      "ai_context": {
+        "keywords": "expose, report, operation, cli, schemas, tool",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_060_expose_report_operation_and_cli_schemas_from_the_tool"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_060_expose_report_operation_and_cli_schemas_from_the_tool.md",
+      "ref": "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Each schema subcommand prints JSON to stdout and no human preamble.",
+          "- AC2: The report schema names required top-level report fields and the optional sections the viewer consumes.",
+          "- AC3: The operation schema names required manifest fields, parameter field shapes and known parameter types.",
+          "- AC4: The CLI schema describes the success envelope, error envelope and common command-specific payload fields.",
+          "- AC5: `make check` fails if any schema command stops producing parseable JSON."
+        ],
+        "Problem": [
+          "- An agent has to infer the report, operation and CLI JSON shapes from source code and examples, which makes integration brittle and version-dependent."
+        ]
+      },
+      "status": "Ready",
+      "title": "Expose report operation and CLI schemas from the tool"
+    },
+    {
+      "ai_context": {
+        "keywords": "add, status, json, command, agent, preflight",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_061_add_one_status_json_command_for_agent_preflight"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_061_add_one_status_json_command_for_agent_preflight.md",
+      "ref": "item_061_add_one_status_json_command_for_agent_preflight",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: `status --json` prints one parseable object with `ok`, `project`, `doctor`, `operations`, `reports`, `viewer` and `next` keys.",
+          "- AC2: The command exits with the same refused status as `doctor` when required setup is missing, while still printing the JSON object.",
+          "- AC3: Report summary includes count and latest report id/path when present, but does not read every large artefact.",
+          "- AC4: Next-action hints are ordered and include stable reason codes.",
+          "- AC5: Selfcheck covers both a healthy and an unhealthy project."
+        ],
+        "Problem": [
+          "- A first-time agent must call several commands and inspect files to know whether it is in a project, whether setup passes, what operations exist, and whether reports already exist."
+        ]
+      },
+      "status": "Ready",
+      "title": "Add one status JSON command for agent preflight"
+    },
+    {
+      "ai_context": {
+        "keywords": "let, agents, list, read, reports, through, cli",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_062_let_agents_list_and_read_reports_through_the_cli"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_062_let_agents_list_and_read_reports_through_the_cli.md",
+      "ref": "item_062_let_agents_list_and_read_reports_through_the_cli",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Report listing includes id, operation, status, path, input path when present, output path/state when present, and created/readable timestamp if available.",
+          "- AC2: Latest report resolution is deterministic and matches current filename ordering rules.",
+          "- AC3: Reading a report by id returns exactly one report or a stable ambiguous/not-found error.",
+          "- AC4: Malformed report files are reported in the listing with a stable warning field rather than crashing the command.",
+          "- AC5: Selfcheck covers empty, malformed, single-report and ambiguous-id cases."
+        ],
+        "Problem": [
+          "- Reports are the product's main record, but agents must currently walk `work/ops` and understand filename conventions to find or read them."
+        ]
+      },
+      "status": "Ready",
+      "title": "Let agents list and read reports through the CLI"
+    },
+    {
+      "ai_context": {
+        "keywords": "deliver, agent, ready, cli, contract",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+          "item_061_add_one_status_json_command_for_agent_preflight",
+          "item_062_let_agents_list_and_read_reports_through_the_cli",
+          "item_063_standardize_json_success_and_error_envelopes",
+          "item_064_give_actionable_refusals_stable_error_codes",
+          "item_065_add_a_next_action_command_that_advises_without_acting",
+          "item_066_document_the_agent_operating_contract"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/tasks/task_027_deliver_the_agent_ready_cli_contract.md",
+      "ref": "task_027_deliver_the_agent_ready_cli_contract",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Deliver the agent-ready CLI contract"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+          "item_061_add_one_status_json_command_for_agent_preflight",
+          "item_062_let_agents_list_and_read_reports_through_the_cli",
+          "item_063_standardize_json_success_and_error_envelopes",
+          "item_064_give_actionable_refusals_stable_error_codes",
+          "item_065_add_a_next_action_command_that_advises_without_acting",
+          "item_066_document_the_agent_operating_contract"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/product/prod_014_an_agent_ready_command_surface_for_meshanvil.md",
+      "ref": "prod_014_an_agent_ready_command_surface_for_meshanvil",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Proposed",
+      "title": "An agent-ready command surface for meshanvil"
+    },
+    {
+      "ai_context": {
+        "keywords": "standardize, json, success, error, envelopes",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_063_standardize_json_success_and_error_envelopes"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_063_standardize_json_success_and_error_envelopes.md",
+      "ref": "item_063_standardize_json_success_and_error_envelopes",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: All current `--json` commands use the same top-level envelope.",
+          "- AC2: JSON-mode failures never print human-only text to stdout.",
+          "- AC3: Non-JSON failures keep their current human output.",
+          "- AC4: Selfcheck proves success and failure envelope shape for list, doctor, prune and run."
+        ],
+        "Problem": [
+          "- The first `--json` pass made stdout parseable for the common path, but error payloads are not yet consistent across commands and some failures expose only prose."
+        ]
+      },
+      "status": "Ready",
+      "title": "Standardize JSON success and error envelopes"
+    },
+    {
+      "ai_context": {
+        "keywords": "actionable, refusals, stable, error, codes",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_064_give_actionable_refusals_stable_error_codes"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_064_give_actionable_refusals_stable_error_codes.md",
+      "ref": "item_064_give_actionable_refusals_stable_error_codes",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: Each named refusal has a stable code in JSON mode.",
+          "- AC2: The human message remains present for logs and operators.",
+          "- AC3: Codes are documented by `schema cli --json`.",
+          "- AC4: Selfcheck covers at least one recovery path per named code without starting Blender."
+        ],
+        "Problem": [
+          "- An agent can recover from many refusals, but today it must parse translated text to distinguish missing files, unknown operations, invalid parameters and busy targets."
+        ]
+      },
+      "status": "Ready",
+      "title": "Give actionable refusals stable error codes"
+    },
+    {
+      "ai_context": {
+        "keywords": "add, next, action, command, advises, acting",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_065_add_a_next_action_command_that_advises_without_acting"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_065_add_a_next_action_command_that_advises_without_acting.md",
+      "ref": "item_065_add_a_next_action_command_that_advises_without_acting",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: `next --json` never modifies `work/`, starts a server, launches Blender, or writes reports.",
+          "- AC2: Each action includes `reason`, `command` and `description` fields.",
+          "- AC3: Advice is deterministic for the same project state.",
+          "- AC4: Selfcheck covers at least no project marker, unhealthy setup, empty reports and existing reports."
+        ],
+        "Problem": [
+          "- Agents need a safe way to ask what to do next, but the product should not hide state changes behind advice."
+        ]
+      },
+      "status": "Ready",
+      "title": "Add a next action command that advises without acting"
+    },
+    {
+      "ai_context": {
+        "keywords": "document, agent, operating, contract",
+        "skip when": "(unfilled: replace before this doc is used)",
+        "summary": "(unfilled: replace before this doc is used)",
+        "use when": "(unfilled: replace before this doc is used)"
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_066_document_the_agent_operating_contract"
+        ],
+        "prod": [
+          "prod_014_an_agent_ready_command_surface_for_meshanvil"
+        ],
+        "req": [
+          "req_014_make_the_cli_a_dependable_surface_for_ai_operators"
+        ],
+        "task": [
+          "task_027_deliver_the_agent_ready_cli_contract"
+        ]
+      },
+      "path": "logics/backlog/item_066_document_the_agent_operating_contract.md",
+      "ref": "item_066_document_the_agent_operating_contract",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: The doc is under version control and linked from an obvious existing entry point.",
+          "- AC2: It names the JSON commands and the report-first workflow.",
+          "- AC3: It states safety and privacy rules for `work/`, `work/in` and committed docs.",
+          "- AC4: It is short enough for an agent to load as context without replacing the full docs."
+        ],
+        "Problem": [
+          "- The project has contributor instructions, but no short operator-facing contract for AI tools that only need to use meshanvil safely."
+        ]
+      },
+      "status": "Ready",
+      "title": "Document the agent operating contract"
+    }
+  ],
+  "estimates": {
+    "char_count": 18087,
+    "companion_doc_count": 1,
+    "doc_count": 10
+  },
+  "generated_at": "2026-08-23T09:20:15Z",
+  "handoff": {
+    "companion_doc_count": 1,
+    "enabled": true,
+    "source_refs": [
+      "req_014_make_the_cli_a_dependable_surface_for_ai_operators",
+      "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+      "item_061_add_one_status_json_command_for_agent_preflight",
+      "item_062_let_agents_list_and_read_reports_through_the_cli",
+      "item_063_standardize_json_success_and_error_envelopes",
+      "item_064_give_actionable_refusals_stable_error_codes",
+      "item_065_add_a_next_action_command_that_advises_without_acting",
+      "item_066_document_the_agent_operating_contract",
+      "task_027_deliver_the_agent_ready_cli_contract"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Keep catalogs valid with logics-manager i18n validate in the project quality gate."
+    ],
+    "applicable": true,
+    "catalogs": {
+      "en": 222,
+      "fr": 222
+    },
+    "configured": true,
+    "contract": {
+      "applicability": "applicable",
+      "catalog": {
+        "path": "locales/{locale}.json"
+      },
+      "default_locale": "en",
+      "fallback_locale": "en",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "schema_version": "1.0",
+      "source_locale": "en"
+    },
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "The i18n contract is valid.",
+    "ok": true,
+    "state": "valid"
+  },
+  "mode": "full",
+  "profile": "normal",
+  "ref": "req_014_make_the_cli_a_dependable_surface_for_ai_operators,item_060_expose_report_operation_and_cli_schemas_from_the_tool,item_061_add_one_status_json_command_for_agent_preflight,item_062_let_agents_list_and_read_reports_through_the_cli,item_063_standardize_json_success_and_error_envelopes,item_064_give_actionable_refusals_stable_error_codes,item_065_add_a_next_action_command_that_advises_without_acting,item_066_document_the_agent_operating_contract,task_027_deliver_the_agent_ready_cli_contract",
+  "refs": [
+    "req_014_make_the_cli_a_dependable_surface_for_ai_operators",
+    "item_060_expose_report_operation_and_cli_schemas_from_the_tool",
+    "item_061_add_one_status_json_command_for_agent_preflight",
+    "item_062_let_agents_list_and_read_reports_through_the_cli",
+    "item_063_standardize_json_success_and_error_envelopes",
+    "item_064_give_actionable_refusals_stable_error_codes",
+    "item_065_add_a_next_action_command_that_advises_without_acting",
+    "item_066_document_the_agent_operating_contract",
+    "task_027_deliver_the_agent_ready_cli_contract"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_id": null,
+    "target_version": null,
+    "targets": []
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_027_deliver_the_agent_ready_cli_contract.md",
+      "ref": "task_027_deliver_the_agent_ready_cli_contract"
+    }
+  ]
+}
