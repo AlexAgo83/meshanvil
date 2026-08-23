@@ -193,6 +193,8 @@ def check_i18n():
 
 
 def check_doctor(tmp: Path):
+    empty = tmp / "doctor-empty"
+    empty.mkdir()
     binary = tmp / "blender"
     binary.write_text("", encoding="utf-8")
     original_find, original_version = engines.find, engines.version
@@ -200,6 +202,13 @@ def check_doctor(tmp: Path):
     try:
         engines.find = lambda name: binary if name == "blender" else (_ for _ in ()).throw(engines.EngineMissing())
         engines.version = lambda path: (calls.append(path) or ("5.2.0", ""))
+        missing = doctor.check(empty)
+        work_item = next(item for item in missing["requirements"] if item["name"] == "work")
+        assert missing["ok"] is False and work_item["state"] == "missing", missing
+        assert not (empty / "work").exists(), "doctor created work while checking"
+
+        (tmp / "work").mkdir(exist_ok=True)
+        calls.clear()
         result = doctor.check(tmp)
         assert result["ok"] is True
         assert [item["state"] for item in result["requirements"]] == ["found", "missing", "found"]
@@ -208,6 +217,42 @@ def check_doctor(tmp: Path):
         assert doctor.check(tmp)["next"] is None and len(calls) == 1
     finally:
         engines.find, engines.version = original_find, original_version
+
+
+def check_run_creates_work(tmp: Path):
+    root = tmp / "run-creates-work"; source = root / "source.blend"
+    source.parent.mkdir(parents=True)
+    source.write_bytes(b"blend")
+    original = (runner.paths.work_root, runner.manifests.discover, runner.doctor.work,
+                runner.manifests.resolve, runner.engines.find, runner.engines.version,
+                runner.engines.check_floor, runner.subprocess.Popen, runner.watch)
+
+    class Done:
+        def poll(self): return 0
+
+    try:
+        runner.paths.work_root = lambda: root
+        runner.manifests.discover = lambda: {"op": {"operation": "op", "kind": "inspection",
+                                                    "engine": "blender", "script": "tools/op.py"}}
+        runner.doctor.work = doctor.work
+        runner.manifests.resolve = lambda manifest, params: {}
+        runner.engines.find = lambda name: Path("/bin/echo")
+        runner.engines.version = lambda binary: ("5.2.0", "")
+        runner.engines.check_floor = lambda name, number: None
+        runner.subprocess.Popen = lambda *args, **kwargs: Done()
+        def write_report(process, progress):
+            report = progress.parents[1] / "001_op.json"
+            report.write_text(json.dumps({"id": "001", "status": "ok", "output": {}}, indent=1),
+                              encoding="utf-8")
+        runner.watch = write_report
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            assert runner.run("op", str(source), {}) == runner.EXIT_OK
+        assert (root / "work").is_dir() and "work/ops/001_op.json" in stream.getvalue()
+    finally:
+        (runner.paths.work_root, runner.manifests.discover, runner.doctor.work,
+         runner.manifests.resolve, runner.engines.find, runner.engines.version,
+         runner.engines.check_floor, runner.subprocess.Popen, runner.watch) = original
 
 
 def check_engine_floor():
@@ -553,6 +598,7 @@ def main() -> int:
         check_cli_json(tmp)
         check_i18n()
         check_doctor(tmp)
+        check_run_creates_work(tmp)
         check_engine_floor()
         check_fix_command_fits_the_host()
         check_wsl_boundary(tmp)

@@ -22,3 +22,7 @@ def test_target_lock(tmp_path: Path):
 
 def test_runner_interrupt_stops_engine(tmp_path: Path):
     selfcheck.check_runner_interrupt_stops_engine(tmp_path)
+
+
+def test_run_creates_work(tmp_path: Path):
+    selfcheck.check_run_creates_work(tmp_path)

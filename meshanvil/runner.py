@@ -169,6 +169,10 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
     opens_target = manifest.get("opens_target", manifest["engine"] != "freecad")
     if (root / "work" / "in") in source.parents and opens_target:
         raise Refused(t("run.source_is_read_only", path=target))
+    try:
+        (root / "work").mkdir(exist_ok=True)
+    except OSError:
+        raise Refused(t("run.work_unavailable", path=root / "work"))
     if doctor.work(root)["state"] != "found":
         raise Refused(t("run.work_unavailable", path=root / "work"))
     values = manifests.resolve(manifest, params)   # validated before an identity is claimed:
