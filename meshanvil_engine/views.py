@@ -26,6 +26,26 @@ def _points(objects):
     return [o.matrix_world @ v.co for o in objects for v in o.data.vertices]
 
 
+def _fit(points, centre):
+    """The ortho width that holds the subject from every canonical direction.
+
+    One width for all four views and for both states, because a camera fitted per view or per
+    state makes a wipe lie -- but fitted against what is actually projected, not against the
+    bounding diagonal. `ortho_scale` sizes the *long* sensor axis, so on a 1200x760 frame the
+    visible height is 0.63 of it: a 432 mm hammer under the old diagonal rule was given 352 mm
+    of height and was cropped at both ends, while a car, being wide, never showed the bug.
+    """
+    need = 0.0
+    for _, direction in DIRECTIONS:
+        rotation = (-direction.normalized()).to_track_quat('-Z', 'Y')
+        right, up = rotation @ Vector((1, 0, 0)), rotation @ Vector((0, 1, 0))
+        across = [(p - centre).dot(right) for p in points]
+        upward = [(p - centre).dot(up) for p in points]
+        need = max(need, max(across) - min(across),
+                   (max(upward) - min(upward)) * WIDTH / HEIGHT)
+    return max(need * 1.12, 1e-4)
+
+
 def _stage(points):
     """One ortho camera and one sun, framed on every point it will ever be pointed at."""
     low = Vector([min(p[i] for p in points) for i in range(3)])
@@ -35,7 +55,7 @@ def _stage(points):
     scene = bpy.context.scene
     data = bpy.data.cameras.new("meshanvil_cam")
     data.type = 'ORTHO'
-    data.ortho_scale = radius * 2.3
+    data.ortho_scale = _fit(points, centre)
     camera = bpy.data.objects.new("meshanvil_cam", data)
     scene.collection.objects.link(camera)
     scene.camera = camera
