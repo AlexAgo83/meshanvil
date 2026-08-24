@@ -1,14 +1,14 @@
 ## item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports - Let a human say what the numbers do not, without touching the reports
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Annotations over machine records
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:23:17
+> Indicators reviewed: 2026-08-25 01:11:22
 
 # AI Context
 - Summary: A report says what an operation did and nothing about why it mattered, which parameter was a guess, or what the next attempt should change. The storage decision is the substance: annotations stay outside the reports, because the reports' value is that every number in them came out of an engine. An agent returning to a chain is a first-class reader, so the file has to be readable with cat.
@@ -70,3 +70,9 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work`
+
+# Notes
+- Task `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work` was finished via `logics-manager flow finish task` on 2026-08-25.

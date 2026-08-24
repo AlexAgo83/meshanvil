@@ -1,14 +1,14 @@
 ## item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed - Fetch what the first paint draws, and the rest when it is needed
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Viewer payload and first paint
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:23:17
+> Indicators reviewed: 2026-08-25 01:11:22
 
 # AI Context
 - Summary: Measured at 623 KB before any click: 217 KB of reports for every sibling project with the active one duplicated, and 124 KB of runbook bodies nobody has opened. Renders are already lazy; the JSON is not. The cost is structural rather than large today, and it grows with every project and runbook added.
@@ -60,3 +60,9 @@
 # Priority
 - Priority: Medium
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work`
+
+# Notes
+- Task `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work` was finished via `logics-manager flow finish task` on 2026-08-25.

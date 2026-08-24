@@ -32,7 +32,7 @@
 | [prod_012_a_tool_you_install_not_a_repository_you_clone](product/prod_012_a_tool_you_install_not_a_repository_you_clone.md) | A tool you install, not a repository you clone | Settled |  |  | product/prod_012_a_tool_you_install_not_a_repository_you_clone.md |
 | [prod_013_a_host_boundary_that_matches_its_own_documentation](product/prod_013_a_host_boundary_that_matches_its_own_documentation.md) | A host boundary that matches its own documentation | Settled |  |  | product/prod_013_a_host_boundary_that_matches_its_own_documentation.md |
 | [prod_014_an_agent_ready_command_surface_for_meshanvil](product/prod_014_an_agent_ready_command_surface_for_meshanvil.md) | An agent-ready command surface for meshanvil | Settled |  |  | product/prod_014_an_agent_ready_command_surface_for_meshanvil.md |
-| [prod_015_a_viewer_that_keeps_up_with_the_work](product/prod_015_a_viewer_that_keeps_up_with_the_work.md) | A viewer that keeps up with the work | Proposed |  |  | product/prod_015_a_viewer_that_keeps_up_with_the_work.md |
+| [prod_015_a_viewer_that_keeps_up_with_the_work](product/prod_015_a_viewer_that_keeps_up_with_the_work.md) | A viewer that keeps up with the work | Settled |  |  | product/prod_015_a_viewer_that_keeps_up_with_the_work.md |
 
 ## Roadmaps
 
@@ -58,7 +58,7 @@ _None_
 | [req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented](request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md) | Make the served viewer, prune and project resolution behave the way they are documented | Done |  |  | request/req_013_make_the_served_viewer_prune_and_project_resolution_behave_the_way_they_are_documented.md |
 | [req_014_make_the_cli_a_dependable_surface_for_ai_operators](request/req_014_make_the_cli_a_dependable_surface_for_ai_operators.md) | Make the CLI a dependable surface for AI operators | Done |  |  | request/req_014_make_the_cli_a_dependable_surface_for_ai_operators.md |
 | [req_015_make_a_fresh_installation_reach_its_first_report](request/req_015_make_a_fresh_installation_reach_its_first_report.md) | Make a fresh installation reach its first report | Done |  |  | request/req_015_make_a_fresh_installation_reach_its_first_report.md |
-| [req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use](request/req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use.md) | Make the viewer's outliner, refresh and annotations hold up in daily use | Draft |  |  | request/req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use.md |
+| [req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use](request/req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use.md) | Make the viewer's outliner, refresh and annotations hold up in daily use | Done |  |  | request/req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use.md |
 
 ## Backlog
 
@@ -134,10 +134,10 @@ _None_
 | [item_068_give_a_fresh_installation_a_subject_it_can_generate_itself](backlog/item_068_give_a_fresh_installation_a_subject_it_can_generate_itself.md) | Give a fresh installation a subject it can generate itself | Done |  | 100% | backlog/item_068_give_a_fresh_installation_a_subject_it_can_generate_itself.md |
 | [item_069_let_doctor_read_init_prepare_and_run_create](backlog/item_069_let_doctor_read_init_prepare_and_run_create.md) | Let doctor read, init prepare, and run create | Done |  | 100% | backlog/item_069_let_doctor_read_init_prepare_and_run_create.md |
 | [item_070_point_the_readme_installation_at_a_route_that_works_today](backlog/item_070_point_the_readme_installation_at_a_route_that_works_today.md) | Point the README installation at a route that works today | Done |  | 100% | backlog/item_070_point_the_readme_installation_at_a_route_that_works_today.md |
-| [item_071_fold_a_chain_and_everything_under_it_from_one_visible_control](backlog/item_071_fold_a_chain_and_everything_under_it_from_one_visible_control.md) | Fold a chain and everything under it, from one visible control | Ready |  | 0% | backlog/item_071_fold_a_chain_and_everything_under_it_from_one_visible_control.md |
-| [item_072_keep_the_operator_s_choices_across_a_live_refresh](backlog/item_072_keep_the_operator_s_choices_across_a_live_refresh.md) | Keep the operator's choices across a live refresh | Ready |  | 0% | backlog/item_072_keep_the_operator_s_choices_across_a_live_refresh.md |
-| [item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed](backlog/item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed.md) | Fetch what the first paint draws, and the rest when it is needed | Ready |  | 0% | backlog/item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed.md |
-| [item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports](backlog/item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports.md) | Let a human say what the numbers do not, without touching the reports | Ready |  | 0% | backlog/item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports.md |
+| [item_071_fold_a_chain_and_everything_under_it_from_one_visible_control](backlog/item_071_fold_a_chain_and_everything_under_it_from_one_visible_control.md) | Fold a chain and everything under it, from one visible control | Done |  | 100% | backlog/item_071_fold_a_chain_and_everything_under_it_from_one_visible_control.md |
+| [item_072_keep_the_operator_s_choices_across_a_live_refresh](backlog/item_072_keep_the_operator_s_choices_across_a_live_refresh.md) | Keep the operator's choices across a live refresh | Done |  | 100% | backlog/item_072_keep_the_operator_s_choices_across_a_live_refresh.md |
+| [item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed](backlog/item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed.md) | Fetch what the first paint draws, and the rest when it is needed | Done |  | 100% | backlog/item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed.md |
+| [item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports](backlog/item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports.md) | Let a human say what the numbers do not, without touching the reports | Done |  | 100% | backlog/item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports.md |
 
 ## Tasks
 
@@ -171,7 +171,7 @@ _None_
 | [task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution](tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md) | Close the review findings on the served viewer, prune and project resolution | Done | codex | 100% | tasks/task_026_close_the_review_findings_on_the_served_viewer_prune_and_project_resolution.md |
 | [task_027_deliver_the_agent_ready_cli_contract](tasks/task_027_deliver_the_agent_ready_cli_contract.md) | Deliver the agent-ready CLI contract | Done | codex | 100% | tasks/task_027_deliver_the_agent_ready_cli_contract.md |
 | [task_028_deliver_a_first_run_path_a_fresh_installation_can_walk](tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md) | Deliver a first-run path a fresh installation can walk | Done | codex | 100% | tasks/task_028_deliver_a_first_run_path_a_fresh_installation_can_walk.md |
-| [task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work](tasks/task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work.md) | Deliver the viewer's fold, refresh, payload and annotation work | Ready |  | 0% | tasks/task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work.md |
+| [task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work](tasks/task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work.md) | Deliver the viewer's fold, refresh, payload and annotation work | Done | claude | 100% | tasks/task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work.md |
 
 ## Runbooks
 

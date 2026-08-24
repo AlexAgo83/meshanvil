@@ -1,14 +1,14 @@
 ## item_072_keep_the_operator_s_choices_across_a_live_refresh - Keep the operator's choices across a live refresh
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 95%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Viewer usability and live state
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:23:17
+> Indicators reviewed: 2026-08-25 01:11:22
 
 # AI Context
 - Summary: Two independent problems behind one symptom. The bug: fetchData() assigns a whole new DATA, so the active project in the response replaces the one the operator selected. The design point: the events route sleeps for twenty times its own scan cost, so the viewer gets slower the more projects there are to watch.
@@ -57,3 +57,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work`
+
+# Notes
+- Task `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work` was finished via `logics-manager flow finish task` on 2026-08-25.

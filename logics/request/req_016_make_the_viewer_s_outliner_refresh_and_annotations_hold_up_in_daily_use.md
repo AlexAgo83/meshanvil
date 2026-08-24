@@ -1,13 +1,13 @@
 ## req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use - Make the viewer's outliner, refresh and annotations hold up in daily use
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
 > Theme: Viewer usability and live state
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:18:11
+> Indicators reviewed: 2026-08-25 01:11:21
 
 # AI Context
 - Summary: Four defects that only appear once a project has several chains and several sibling projects: folding a chain orphans its branches, a background refresh silently undoes the operator's project choice, the live channel's cadence is derived from its own scan cost so it slows as the project grows, and the first paint ships every project's reports and every runbook's body. Plus the one thing the page cannot hold at all -- what a person knows about a report that its numbers do not say.
@@ -40,8 +40,8 @@
 - AC6: The first paint fetches only what it draws. Runbook bodies and the reports of projects other than the active one are fetched when they are first needed, and the page renders a placeholder in the meantime rather than an empty region.
 - AC7: An operator can write and edit a free-text note on any report, and a name on any chain, from the page; both survive a live refresh, a page reload and a server restart.
 - AC8: Annotations are stored outside the reports, in one flat JSON file readable with `cat`, keyed so that a note follows its report and a chain name follows the sha256 of the source file rather than its path.
-- AC10: The page's ability to write is recorded as a decision before it is built, and the route it uses is guarded like the ones that already exist -- token, origin and host -- and takes no path from the request.
 - AC9: Every behaviour above is covered where it can be proved: the grouping and annotation rules without a DOM in viewer/src, the rendered result in the browser smoke, and the server routes in the Python checks.
+- AC10: The page's ability to write is recorded as a decision before it is built, and the route it uses is guarded like the ones that already exist -- token, origin and host -- and takes no path from the request.
 
 # Definition of Ready (DoR)
 - [x] Problem statement is explicit and user impact is clear.
@@ -76,3 +76,15 @@
 - `item_072_keep_the_operator_s_choices_across_a_live_refresh`
 - `item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed`
 - `item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports`
+
+# AC Traceability
+- request-AC1 -> This task. Proof: Implemented in `48d2963`; folding is keyed on the chain, so a chain's branches go with it, headers included. `scripts/viewer_smoke.py` fails if a folded chain keeps a branch header, verified against the old group keying.
+- request-AC2 -> This task. Proof: Implemented in `48d2963`; a branch header is a heading again with no fold control, and the smoke asserts no fold button is a branch.
+- request-AC3 -> This task. Proof: Implemented in `48d2963`; the control is a bordered box brighter than the per-row triangles, brightens on hover, and `aria-expanded` is asserted against the glyph in both states.
+- request-AC4 -> This task. Proof: Implemented in `59bf3b7`; `fetchData` carries the chosen project across the assignment. The served smoke selects another project, refreshes, and fails if the selection or the fold state moved.
+- request-AC5 -> This task. Proof: Implemented in `59bf3b7`; the events route sleeps a declared `INTERVAL` minus the scan's duration. `tests/test_viewer.py::test_events_cadence_is_declared` makes the scan ten times dearer and asserts the period holds; verified against the old backoff.
+- request-AC6 -> This task. Proof: Implemented in `8e9275a`; the served first paint is 268 KB against 623 KB, with two guarded read-only routes for the rest. `test_first_paint_carries_what_it_draws` asserts both payload shapes come from one builder.
+- request-AC7 -> This task. Proof: Implemented in `b44e1e4` and `f3c2a68`; the served smoke types a note, refreshes, finds it and clears it, and names a chain.
+- request-AC8 -> This task. Proof: Implemented in `b44e1e4`; `test_annotations_stay_out_of_the_reports` asserts a report's bytes are unchanged by every write path and that an interrupted rename leaves the previous file with no temporary behind.
+- request-AC9 -> This task. Proof: Implemented across the five commits above; pure rules checked without a DOM in `viewer/src`, rendered results in `scripts/viewer_smoke.py`, routes in `scripts/selfcheck.py`, each verified to fail when reverted.
+- request-AC10 -> This task. Proof: Recorded in `adr_009_let_the_served_viewer_write_annotations_and_nothing_else` before the route existed; six malformed or unauthorised requests are asserted refused.
