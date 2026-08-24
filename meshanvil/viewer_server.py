@@ -118,6 +118,15 @@ def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.
             if not self.guard_origin():
                 return
             parsed = urlparse(self.path)
+            # The server is rooted above work/ so renders resolve, which leaves "/" pointing at
+            # a directory it refuses to list -- a 404 on the address anyone types first. The
+            # page lives one level down; say so rather than making it be typed.
+            if parsed.path in ("", "/"):
+                self.send_response(302)
+                self.send_header("Location", "/viewer/index.html")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             if parsed.path == "/api/ping":
                 body = json.dumps({"root": str(root)}).encode("utf-8")
                 self.send_response(200)

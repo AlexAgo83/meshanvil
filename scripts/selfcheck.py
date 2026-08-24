@@ -686,7 +686,18 @@ def check_viewer_origin_and_listing(tmp: Path):
         for path, body in (("/run", {"command": "list"}), ("/file", {"id": "x", "action": "open"})):
             assert request("POST", path, {**bad_host, "X-Meshanvil-Token": "token"}, body) == 403, path
         assert request("GET", "/api/data", bad_origin) == 403
-        assert request("GET", "/", good) == 404
+        # "/" is the address anyone types, and it points at a directory this server refuses to
+        # list. It redirects to the page rather than 404ing; the destination is asserted too,
+        # because a redirect to the wrong place passes a status check.
+        assert request("GET", "/", good) == 302
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+        conn.request("GET", "/", headers=good)
+        response = conn.getresponse()
+        location = response.getheader("Location")
+        response.read(); conn.close()
+        assert location == "/viewer/index.html", location
+        # Every other directory still refuses: the redirect is a convenience on one path, not
+        # a hole in the listing boundary.
         assert request("GET", "/in/", good) == 404
         assert request("GET", "/viewer/index.html", good) == 200
     finally:
