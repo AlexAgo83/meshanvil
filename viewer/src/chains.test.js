@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { rootOf, sourceOf, groupKey } from "./chains.js";
+import { rootOf, sourceOf, sourcesOf, groupKey } from "./chains.js";
 
 /** Two independent starts, a fork under the first, and -- the case that broke it -- three
  *  operations reading the same subject directly, none of which has a parent. */
@@ -46,4 +46,23 @@ test("parentless reports on one subject are one chain, not one each", () => {
   assert.notEqual(keys.get("001"), keys.get("006"), "two subjects must never share a group");
   assert.equal(keys.get("004"), "003", "a fork opens a group under the parent");
   assert.equal(keys.get("007"), keys.get("006"), "a single child stays in its parent's group");
+});
+
+test("one source card per file, carrying every root that reads it", () => {
+  const sources = sourcesOf(REPORTS);
+  assert.equal(sources.length, 2, "two subjects, two source cards");
+  const subject = sources.find((s) => s.key === "/work/out/subject.blend");
+  assert.deepEqual(subject.roots, ["001", "002", "003"],
+    "every parentless report on that file hangs from its card");
+  assert.equal(subject.name, "subject.blend", "the card is named after the file, not the path");
+  const other = sources.find((s) => s.key === "/src/other.obj");
+  assert.deepEqual(other.roots, ["006"]);
+});
+
+test("a report with a parent never gets a source card of its own", () => {
+  const sources = sourcesOf(REPORTS);
+  const claimed = sources.flatMap((s) => s.roots);
+  for (const id of ["004", "005", "007"]) {
+    assert.ok(!claimed.includes(id), `${id} descends from another report and needs no card`);
+  }
 });

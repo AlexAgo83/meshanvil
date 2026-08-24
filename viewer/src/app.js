@@ -9,7 +9,7 @@
 
 import { startLiveRefresh } from "./live.js";
 import { esc, mdToHtml } from "./markdown.js";
-import { rootOf, groupKey } from "./chains.js";
+import { rootOf, groupKey, sourcesOf } from "./chains.js";
 
 /** The report contract, as adr_001 defines it. Named OperationReport rather than Report:
  * the DOM already has a Report interface, and the collision silently made every property
@@ -160,10 +160,19 @@ function place() {
     depth.set(report.id, level);
     const used = row.get(level) || 0;
     row.set(level, used + 1);
-    report._x = 20 + level * 232;
+    // Column zero belongs to the source cards, so the reports start one column in.
+    report._x = 20 + (level + 1) * 232;
     report._y = 20 + used * 196;
   }
-  return shown;
+  // A source sits level with the middle of the roots it feeds, so its links fan rather
+  // than cross.
+  const sources = sourcesOf(shown);
+  for (const source of sources) {
+    const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
+    source._x = 20;
+    source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
+  }
+  return { shown, sources };
 }
 
 /* ---------- outliner ---------- */
@@ -327,7 +336,7 @@ function nodes() {
     document.getElementById("noodles").innerHTML = "";
     return;
   }
-  const shown = place();
+  const { shown, sources } = place();
   graphHead("⬡", t("ui.node_editor"),
     shown.length ? `chain / ${chainName(shown)}` : "links.parent");
   let html = "";
@@ -350,11 +359,22 @@ function nodes() {
       <div class="nfoot"><span class="dot ${esc(state)}"></span>${esc(foot)}</div>
     </button>`;
   }
+  // The source card carries no status and cannot be selected: it is a file, not an
+  // operation, and every other affordance in this panel means "a report happened".
+  html += sources.map((source) => `<div class="node source" style="left:${source._x}px;top:${source._y}px">
+      <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(source.name)}</div>
+      <div class="nbody">
+        <div class="nline"><span>${esc(t("ui.source_reads"))}</span><b>${source.roots.length}</b></div>
+        ${source.sha256 ? `<div class="nline"><span>sha-256</span><b>${esc(source.sha256.slice(0, 10))}…</b></div>` : ""}
+      </div>
+      <div class="nfoot">${esc(t("ui.source_foot"))}</div>
+    </div>`).join("");
   document.getElementById("nodes").innerHTML = html;
   const canvas = document.getElementById("canvas");
   canvas.style.width = Math.max(860, ...shown.map((r) => r._x + 240)) + "px";
-  canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200)) + "px";
-  noodles(shown);
+  canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200),
+                                 ...sources.map((s) => s._y + 200)) + "px";
+  noodles(shown, sources);
 }
 
 function headline(report) {
@@ -366,8 +386,19 @@ function headline(report) {
   return [["objects", num(measured.objects)], ["vertices", num(measured.vertices)]];
 }
 
-function noodles(shown) {
+function noodles(shown, sources) {
   let path = "";
+  for (const source of sources || []) {
+    for (const id of source.roots) {
+      const report = BY_ID.get(id);
+      if (!report) continue;
+      const x1 = source._x + 186, y1 = source._y + 56, x2 = report._x, y2 = report._y + 34;
+      const bend = Math.max(40, (x2 - x1) / 2);
+      path += `<path d="M${x1} ${y1} C${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2} ${y2}"
+          fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="2 5"/>
+        <circle cx="${x2}" cy="${y2}" r="3.5" fill="#7a7a7a"/>`;
+    }
+  }
   for (const report of shown) {
     const parent = report.links && report.links.parent && BY_ID.get(report.links.parent);
     if (!parent) continue;

@@ -114,6 +114,25 @@ SMOKE = r"""
     // to, and the layout that positions it runs inside the draw. Placing once at load left
     // every other chain at left:undefined -- nine nodes stacked in the corner, one visible.
     // Two starts are needed to see it at all, which is why the smoke fixture carries a second.
+    // Every chain shows where it starts. Without this the canvas drew a chain of inspections
+    // as disconnected tiles: they share a source no operation produced, so none of them has a
+    // parent and there was nothing to draw a link from.
+    const cards = [...document.querySelectorAll("#nodes .node.source")];
+    assert(cards.length >= 1, "no source card on a canvas that has a chain");
+    const roots = DATA.reports.filter((r) => !(r.links && r.links.parent));
+    const drawn = [...document.querySelectorAll("#nodes .node")].filter((n) => n.dataset.id);
+    const drawnRoots = drawn.filter((n) => {
+      const r = DATA.reports.find((x) => x.id === n.dataset.id);
+      return r && !(r.links && r.links.parent);
+    });
+    assert(drawnRoots.length >= 1, "no root drawn to hang from a source card");
+    assert(document.querySelectorAll("#noodles path").length >= drawnRoots.length,
+      "fewer links than roots: a root is drawn with no source to come from");
+    assert(!cards.some((c) => c.dataset.id),
+      "a source card carries a report id: it is a file, not an operation");
+    assert(!cards.some((c) => c.tagName === "BUTTON"),
+      "a source card is clickable: nothing about it can be selected");
+
     // Folding a group hides its rows and nothing else: the header stays, and the chevron
     // and aria-expanded agree with what is actually rendered.
     const firstHead = document.querySelector("#outliner .outgroup");

@@ -89,6 +89,14 @@ button.outgroup:hover{color:var(--dim);background:#343434}
 /* A rule between groups, never above the first one: the list starts at the panel edge. */
 .outgroup~.outgroup{margin-top:6px;border-top:1px solid var(--line-soft);padding-top:9px}
 
+/* The source card is a file, not an operation: dashed, unlit, and nothing to click. It
+   exists so a chain has a visible origin -- four inspections of one subject were four
+   disconnected tiles before it. */
+.node.source{border-style:dashed;border-color:var(--line-soft);background:#242424;cursor:default;opacity:.9}
+.node.source .nhead{background:#2b2b2b;color:var(--dim)}
+.node.source .nidx{color:var(--dimmer);text-transform:uppercase;letter-spacing:.5px}
+.node.source .nfoot{color:var(--dimmer);font-size:10px}
+
 /* ---------- node editor ---------- */
 .nodewrap{position:relative;flex:1;min-height:0;overflow:auto;background:
   radial-gradient(circle at 1px 1px, #232323 1px, transparent 0) 0 0/22px 22px, var(--node-bg)}

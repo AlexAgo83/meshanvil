@@ -128,6 +128,25 @@
     }
     return report ? sourceOf(report) : null;
   }
+  function sourcesOf(reports) {
+    const found = /* @__PURE__ */ new Map();
+    for (const report of reports) {
+      if (report.links && report.links.parent) continue;
+      const key = sourceOf(report);
+      if (!found.has(key)) {
+        const input = report.input || {};
+        found.set(key, {
+          key,
+          name: String(input.path || key).split("/").pop() || key,
+          path: String(input.path || ""),
+          sha256: String(input.sha256 || ""),
+          roots: []
+        });
+      }
+      found.get(key).roots.push(report.id);
+    }
+    return [...found.values()];
+  }
   function groupKey(report, children, groupOf) {
     const parent = report.links && report.links.parent;
     if (!parent) return sourceOf(report);
@@ -261,10 +280,16 @@
       depth.set(report.id, level);
       const used = row.get(level) || 0;
       row.set(level, used + 1);
-      report._x = 20 + level * 232;
+      report._x = 20 + (level + 1) * 232;
       report._y = 20 + used * 196;
     }
-    return shown2;
+    const sources = sourcesOf(shown2);
+    for (const source of sources) {
+      const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
+      source._x = 20;
+      source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
+    }
+    return { shown: shown2, sources };
   }
   function outliner() {
     if (start) {
@@ -396,7 +421,7 @@
       document.getElementById("noodles").innerHTML = "";
       return;
     }
-    const shown2 = place();
+    const { shown: shown2, sources } = place();
     graphHead(
       "\u2B21",
       t("ui.node_editor"),
@@ -424,11 +449,23 @@
       <div class="nfoot"><span class="dot ${esc(state)}"></span>${esc(foot)}</div>
     </button>`;
     }
+    html += sources.map((source) => `<div class="node source" style="left:${source._x}px;top:${source._y}px">
+      <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(source.name)}</div>
+      <div class="nbody">
+        <div class="nline"><span>${esc(t("ui.source_reads"))}</span><b>${source.roots.length}</b></div>
+        ${source.sha256 ? `<div class="nline"><span>sha-256</span><b>${esc(source.sha256.slice(0, 10))}\u2026</b></div>` : ""}
+      </div>
+      <div class="nfoot">${esc(t("ui.source_foot"))}</div>
+    </div>`).join("");
     document.getElementById("nodes").innerHTML = html;
     const canvas = document.getElementById("canvas");
     canvas.style.width = Math.max(860, ...shown2.map((r) => r._x + 240)) + "px";
-    canvas.style.height = Math.max(420, ...shown2.map((r) => r._y + 200)) + "px";
-    noodles(shown2);
+    canvas.style.height = Math.max(
+      420,
+      ...shown2.map((r) => r._y + 200),
+      ...sources.map((s) => s._y + 200)
+    ) + "px";
+    noodles(shown2, sources);
   }
   function headline(report) {
     if (report.kind === "transform" && report.after) {
@@ -440,8 +477,19 @@
     const measured = report.measured || {};
     return [["objects", num(measured.objects)], ["vertices", num(measured.vertices)]];
   }
-  function noodles(shown2) {
+  function noodles(shown2, sources) {
     let path = "";
+    for (const source of sources || []) {
+      for (const id of source.roots) {
+        const report = BY_ID.get(id);
+        if (!report) continue;
+        const x1 = source._x + 186, y1 = source._y + 56, x2 = report._x, y2 = report._y + 34;
+        const bend = Math.max(40, (x2 - x1) / 2);
+        path += `<path d="M${x1} ${y1} C${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2} ${y2}"
+          fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="2 5"/>
+        <circle cx="${x2}" cy="${y2}" r="3.5" fill="#7a7a7a"/>`;
+      }
+    }
     for (const report of shown2) {
       const parent = report.links && report.links.parent && BY_ID.get(report.links.parent);
       if (!parent) continue;
