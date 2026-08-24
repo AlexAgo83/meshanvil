@@ -29,24 +29,24 @@ HL = LENGTH / 2
 # The half-width is a coke-bottle plan: widest at the rear haunch, waisted at the doors,
 # narrower over the front axle. Held constant it reads as a bus from above.
 KEY = [
-    (-2225, 878, 430, 905, 905),      # tail: cut off square, Kamm rather than tapered away
-    (-2150, 896, 395, 917, 919),
-    (-2060, 906, 320, 925, 940),
-    (-1745, 946, 200, 946, 1000),
+    (-2225, 852, 430, 938, 938),      # tail: cut off square, Kamm rather than tapered away
+    (-2150, 878, 395, 946, 948),      # ducktail: the deck lifts into the cut instead of drooping to it
+    (-2060, 898, 320, 934, 946),
+    (-1745, 946, 200, 940, 1000),
     (-1560, 950, 194, 952, 1062),     # backlight, base
     (-1325, 950, 188, 955, 1148),     # rear axle: widest, haunch
     (-900,  942, 180, 948, 1225),
     (-600,  932, 176, 942, 1245),
     (-100,  916, 170, 932, 1250),     # roof apex, at 52% of the length from the nose
-    (250,   906, 166, 926, 1232),
-    (700,   902, 162, 920, 1090),
-    (940,   908, 160, 912, 985),      # cowl: windscreen base
-    (1040,  914, 162, 906, 906),      # hood, flat from here forward
+    (560,   902, 164, 922, 1238),     # windscreen top
+    (800,   906, 162, 918, 1096),
+    (1040,  914, 160, 910, 988),      # cowl: windscreen base
+    (1140,  920, 163, 902, 902),      # hood, flat from here forward
     (1325,  928, 172, 866, 866),      # front axle
     (1745,  902, 190, 812, 812),
-    (2060,  838, 250, 756, 756),
-    (2150,  800, 285, 732, 732),
-    (2225,  742, 320, 712, 712),      # nose: a fascia to carry lights and a grille, not a point
+    (2060,  878, 250, 756, 756),
+    (2150,  856, 285, 732, 732),
+    (2225,  818, 320, 712, 712),      # nose: a bumper wraps nearly the full width, it does not taper to a snout: a fascia to carry lights and a grille, not a point
 ]
 
 # Half of the cross-section, as fractions of the station's half-width and of the height of
@@ -255,17 +255,25 @@ body, glass = loft([ring(*s) for s in stations()], "body_paint", DLO_BANDS, "gla
 # the nose cap is a flat face at x = 2225, so a lamp spanning 2200 to 2232 reads as recessed
 # into the fascia with a few millimetres proud, which is what a lamp does.
 for side, sign in (("left", -1), ("right", 1)):
-    box(f"headlight_{side}", (2196, 2232), (sign * 250, sign * 640), (596, 690))
-    box(f"taillight_{side}", (-2232, -2198), (sign * 210, sign * 690), (712, 806))
+    box(f"headlight_{side}", (2196, 2236), (sign * 214, sign * 716), (588, 694))
     # Mirror on a short stalk off the door skin: the housing clears the flank, the stalk
     # bridges the gap, so nothing floats and nothing is buried.
-    box(f"trim_mirror_{side}", (628, 760), (sign * 946, sign * 1046), (928, 1004))
-    box(f"trim_mirror_stalk_{side}", (664, 724), (sign * 892, sign * 950), (916, 962))
+    box(f"trim_mirror_{side}", (612, 776), (sign * 944, sign * 1074), (932, 1024))
+    box(f"trim_mirror_stalk_{side}", (660, 730), (sign * 888, sign * 952), (918, 968))
     # Air intake ahead of the rear arch, the one styling cue that says where the engine is.
     box(f"trim_intake_{side}", (-1010, -880), (sign * 902, sign * 952), (404, 536))
 
-box("trim_grille", (2192, 2228), (-470, 470), (372, 548))
+# The fascia between the lamps and the splitter was a dead plane in the front view. A lower
+# intake under the grille is what a real one does with that height, and it costs one box.
+box("trim_grille", (2194, 2230), (-436, 436), (438, 570))
+box("trim_intake_lower", (2160, 2236), (-628, 628), (330, 404))
+box("trim_vent_left", (2150, 2238), (-812, -672), (356, 528))
+box("trim_vent_right", (2150, 2238), (672, 812), (356, 528))
 box("trim_splitter", (2110, 2246), (-700, 700), (300, 344))
+# One bar across the whole width rather than a lamp per side: two boxes stopping short of the
+# centreline read as two lamps with a gap, which is the opposite of what a light bar is.
+box("taillight_bar", (-2236, -2200), (-742, 742), (740, 814))
+box("trim_plate", (-2232, -2206), (-268, 268), (516, 646))
 box("trim_diffuser", (-2246, -2090), (-660, 660), (378, 452))
 
 # Wheels: built on both sides explicitly rather than mirrored. A mirror modifier left
@@ -328,8 +336,9 @@ def preview(path):
         direction = direction.normalized()
         cam.location = centre + direction * radius * 4
         # Straight down leaves track-to's up vector free to pick anything, and the plan came
-        # out rotated 45 degrees. Nose up the frame is the only reading worth having.
-        cam.rotation_euler = ((0, 0, math.pi / 2) if view == "top"
+        # out rotated 45 degrees. Zero puts the length across a landscape frame, which is the
+        # only way a 4.5 m car fits it -- turned upright it was cropped at both ends.
+        cam.rotation_euler = ((0, 0, 0) if view == "top"
                               else (-direction).to_track_quat('-Z', 'Y').to_euler())
         scene.render.filepath = os.path.splitext(path)[0] + f"_{view}.png"
         bpy.ops.render.render(write_still=True)
