@@ -1,0 +1,214 @@
+{
+  "title": "Make the viewer's outliner, refresh and annotations hold up in daily use",
+  "references": [
+    "viewer/src/app.js",
+    "viewer/src/chains.js",
+    "viewer/src/chains.test.js",
+    "viewer/src/live.js",
+    "viewer/viewer.css",
+    "viewer/index.html",
+    "meshanvil/viewer_routes/events.py",
+    "meshanvil/viewer_payload.py",
+    "meshanvil/viewer_server.py",
+    "meshanvil/viewer_routes",
+    "scripts/viewer_smoke.py",
+    "scripts/selfcheck.py",
+    "tests/test_viewer.py",
+    "locales/en.json",
+    "locales/fr.json",
+    "work/viewer/data.js"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Viewer usability and live state",
+    "needs": [
+      "Group folding was added per group rather than per chain. Folding a chain leaves its branches on screen with nothing above them, which reads worse than not folding at all, and every branch row carries a fold control that folds a group nobody thinks of as foldable.",
+      "The fold affordance reuses the dim used by the per-row triangles. It is a control and reads as decoration, so operators do not discover it.",
+      "A live refresh replaces the whole DATA object, `active` included, so an operator who has switched projects is silently returned to the served one the next time anything on disk changes. This is a defect, not a tuning question: the project selector reads data already in memory and would otherwise be instant.",
+      "The events channel sleeps `max(1s, scan_cost * 20)`. Its cadence is therefore a function of how expensive its own scan is, which grows with the number of projects and reports -- the viewer becomes less responsive the more it is used.",
+      "Every refresh refetches the whole payload and repaints the page, whatever changed.",
+      "The first paint ships everything: measured at 623 KB, of which 217 KB is the reports of all sibling projects (the active one duplicated) and 124 KB is the full text of every runbook, none of it needed until something is clicked.",
+      "There is nowhere to write down why a report matters. An operator returning to a chain, or an agent picking it up later, has the numbers and none of the reasoning -- which parameter was a guess, which finding was already investigated, what the next attempt should change.",
+      "A chain is identified by its source file name. Two chains from similar files are told apart by reading paths, and a chain cannot be given the name the work actually has."
+    ],
+    "context": [
+      "The viewer is a static page over reports written by operations; adr_001 and adr_003 set the boundary that the page reads and does not establish. Annotations are the first content the page would let a human write, so where they live matters more than how they render.",
+      "Reports are the record of what an engine did, and the project's premise is that every number in them came out of Blender. Mixing human prose into them would dilute exactly what makes them evidence.",
+      "The served page and the file:// snapshot share one built page. Anything added to the payload or the markup has to work in both, or be added only to the served response.",
+      "The rules that decide grouping already live in viewer/src/chains.js so they can be checked without a DOM; scripts/viewer_smoke.py covers what only a browser can prove."
+    ],
+    "acceptance_criteria": [
+      "AC1: Folding a chain in the outliner hides that chain's rows and the rows of every branch below it, and unfolding restores exactly what was hidden.",
+      "AC2: Only a chain header carries a fold control. A branch header carries none, because folding a branch independently is no longer possible.",
+      "AC3: The fold control is legible without hovering: it is visually distinct from the per-row triangles it sits above, and its state is readable at a glance and through aria-expanded.",
+      "AC4: A live refresh preserves the operator's project selection, the selected report, and the fold state.",
+      "AC5: The cadence of the events channel is bounded by a declared interval rather than derived from its own scan cost, so a project with eight sibling projects is no less responsive than one with a single project.",
+      "AC6: The first paint fetches only what it draws. Runbook bodies and the reports of projects other than the active one are fetched when they are first needed, and the page renders a placeholder in the meantime rather than an empty region.",
+      "AC7: An operator can write and edit a free-text note on any report, and a name on any chain, from the page; both survive a live refresh, a page reload and a server restart.",
+      "AC8: Annotations are stored outside the reports, in one flat JSON file readable with `cat`, keyed so that a note follows its report and a chain name follows the sha256 of the source file rather than its path.",
+      "AC9: Every behaviour above is covered where it can be proved: the grouping and annotation rules without a DOM in viewer/src, the rendered result in the browser smoke, and the server routes in the Python checks."
+    ]
+  },
+  "product": {
+    "title": "A viewer that keeps up with the work",
+    "overview": "The viewer is where an operator reads what the operations did. It holds up while a project is small and starts working against its user as the project grows: folding leaves orphans on screen, a background refresh undoes a deliberate choice, the live channel slows down in proportion to how much there is to watch, and the first paint pays for everything before anything is clicked. None of it is a rendering problem; all of it is state the page handles too bluntly. This brief covers making that state behave, and adding the one thing the page cannot currently hold at all -- what a human knows about a report that its numbers do not say.",
+    "goals": [
+      "Folding follows the structure an operator sees: a chain and everything under it.",
+      "Nothing the operator chose is undone by something happening in the background.",
+      "Responsiveness does not degrade as the number of projects and reports grows.",
+      "The first paint costs what the first paint draws.",
+      "A report can carry what a person knows about it, without that ending up inside the engine's own record."
+    ],
+    "non_goals": [
+      "Editing reports, or writing anything a viewer could be mistaken for having measured.",
+      "A general commenting or review system with threads, authors or notifications.",
+      "Changing what an operation records, or the report schema.",
+      "Rewriting the page's rendering model or introducing a UI framework."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Fold a chain and everything under it, from one visible control",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Viewer usability and live state",
+      "request_acs": ["AC1", "AC2", "AC3", "AC9"],
+      "problem": [
+        "Fold was implemented per group, and a chain's branches are separate groups, so folding a chain leaves its branches visible with nothing above them.",
+        "Every group header is a button, including branch headers, which offers a control for something an operator has no reason to fold on its own.",
+        "The chevron uses the same dim as the per-row triangles, so a control reads as decoration."
+      ],
+      "scope_in": [
+        "Folding keyed on the chain rather than the group, so a chain's branches fold with it.",
+        "Branch headers rendered as plain headings again, with no fold control and no button semantics.",
+        "A fold control that is legible against its own row, with aria-expanded agreeing with the glyph.",
+        "Checks: the fold rule in viewer/src where it can be proved without a DOM, and the rendered result in scripts/viewer_smoke.py."
+      ],
+      "scope_out": [
+        "Persisting fold state across reloads.",
+        "Folding individual reports or any other level of the tree.",
+        "Reordering or restyling the outliner beyond the fold control itself."
+      ],
+      "acceptance_criteria": [
+        "AC1: Folding a chain header hides that chain's rows and the rows of every branch that descends from it; the branch headers themselves are hidden with it.",
+        "AC2: Unfolding restores exactly the rows that were hidden, and the row count returns to what it was.",
+        "AC3: Only chain headers carry a fold control; a branch header is not a button and has no chevron.",
+        "AC4: The control's colour and size distinguish it from the per-row triangles, and aria-expanded matches the glyph in both states.",
+        "AC5: The browser smoke fails if folding a chain leaves any row of one of its branches visible."
+      ]
+    },
+    {
+      "title": "Keep the operator's choices across a live refresh",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Viewer usability and live state",
+      "request_acs": ["AC4", "AC5", "AC9"],
+      "problem": [
+        "fetchData() assigns a new DATA wholesale, so the active project carried in the response replaces the one the operator selected.",
+        "The events route sleeps for twenty times the cost of its own scan, so the interval grows with the project count and the viewer gets slower the more there is to watch.",
+        "A refresh repaints everything whatever changed, so a background event is visible as a flicker over work in progress."
+      ],
+      "scope_in": [
+        "Preserving the selected project, the selected report and the fold state across a refresh, by merging the new payload into the page's state rather than replacing it.",
+        "A declared, bounded interval for the events channel that does not derive from its own scan cost.",
+        "Repainting only what the change touched, where the change can be identified.",
+        "Checks: the merge rule in viewer/src without a DOM, the preserved selection in the browser smoke, and the events cadence in the Python checks."
+      ],
+      "scope_out": [
+        "Replacing the events transport, or adding a websocket.",
+        "Incremental payloads over the wire -- this item is about what the page does with a payload, not its size.",
+        "Undo, or any history of operator choices."
+      ],
+      "acceptance_criteria": [
+        "AC1: Selecting a project, then triggering a change on disk, leaves the selected project active.",
+        "AC2: The selected report and the fold state survive the same sequence.",
+        "AC3: The events channel's interval is a declared value, and adding sibling projects does not change it.",
+        "AC4: A refresh that changes nothing leaves the DOM of the outliner and the canvas untouched.",
+        "AC5: A Python check fails if the events cadence is derived from the scan's own duration."
+      ]
+    },
+    {
+      "title": "Fetch what the first paint draws, and the rest when it is needed",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Viewer payload and first paint",
+      "request_acs": ["AC6", "AC9"],
+      "problem": [
+        "The measured payload is 623 KB before anything is clicked: 217 KB of reports for every sibling project, with the active one duplicated, and 124 KB of runbook bodies nobody has opened.",
+        "The cost is structural rather than large today, and it grows with every project and every runbook added.",
+        "Renders are already lazy; the JSON is not."
+      ],
+      "scope_in": [
+        "A first payload carrying the active project's reports, the project list without their reports, and runbook metadata without their bodies.",
+        "Fetching a project's reports when it is selected, and a runbook's body when it is opened.",
+        "A placeholder in the region being filled, so a fetch reads as pending rather than empty.",
+        "Keeping the file:// snapshot whole: a page with no server still has everything it needs.",
+        "Checks: the payload's shape in the Python checks, and the placeholder and the fetch in the browser smoke."
+      ],
+      "scope_out": [
+        "Pagination or virtualisation of long lists.",
+        "Caching across sessions, or a service worker.",
+        "Changing what a report contains."
+      ],
+      "acceptance_criteria": [
+        "AC1: The first payload contains no report belonging to a project other than the active one, and no runbook body.",
+        "AC2: Selecting another project fetches its reports and draws them, with a placeholder shown while the fetch is in flight.",
+        "AC3: Opening a runbook fetches its body the first time and not again afterwards.",
+        "AC4: The file:// snapshot still carries everything, and every screen works with no server.",
+        "AC5: A Python check fails if a runbook body or a non-active project's reports reappear in the first payload."
+      ]
+    },
+    {
+      "title": "Let a human say what the numbers do not, without touching the reports",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Annotations over machine records",
+      "request_acs": ["AC7", "AC8", "AC9"],
+      "problem": [
+        "A report says what an operation did and nothing about why it was worth doing, which parameter was a guess, or what the next attempt should change.",
+        "An operator returning to a chain, and an agent picking one up later, both read the same numbers with none of the reasoning.",
+        "A chain is named after its source file, so two chains from similar files are told apart by reading paths and neither can be given the name the work actually has.",
+        "Writing any of this into the reports would put human prose inside the record whose whole value is that every number in it came out of an engine."
+      ],
+      "scope_in": [
+        "A note per report and a name per chain, written and edited from the page.",
+        "One flat JSON file outside the reports, readable with `cat` because an agent returning to a chain is a first-class reader of it.",
+        "Notes keyed by report identity; chain names keyed by the sha256 of the source file, so a name survives the file being moved and does not follow a regenerated file.",
+        "A visual treatment that cannot be mistaken for something the tool measured.",
+        "Refusing writes on a file:// page, which has no server to write through.",
+        "Checks: the key rules in viewer/src without a DOM, the write path in the Python checks, and the round trip in the browser smoke."
+      ],
+      "scope_out": [
+        "Threads, replies, authorship or timestamps beyond what a single note needs.",
+        "Notes on anything other than a report or a chain.",
+        "Rendering Markdown inside a note.",
+        "Versioning the annotation file, or reconciling concurrent edits from two pages."
+      ],
+      "acceptance_criteria": [
+        "AC1: A note can be written, edited and cleared on any report from the page, and survives a live refresh, a reload and a server restart.",
+        "AC2: A chain can be given a name that is shown wherever the chain is named, and the source file name remains visible.",
+        "AC3: Annotations live in one flat JSON file outside work/ops, and no report file is modified by writing one.",
+        "AC4: A chain name is keyed by the source file's sha256: moving the file keeps the name, regenerating the file does not inherit it.",
+        "AC5: A file:// page shows existing annotations and refuses to write, saying why.",
+        "AC6: A Python check fails if writing an annotation modifies any file under work/ops."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Deliver the viewer's fold, refresh, payload and annotation work",
+    "plan": [
+      "Read viewer/src/app.js, chains.js and live.js together before changing any of them: the fold, the refresh and the payload all read the same DATA object, and two of the three defects come from how bluntly it is replaced.",
+      "Fold first. It is the smallest, it is a defect in shipped behaviour, and its check belongs in the browser smoke where the orphaned branches are visible.",
+      "Then the refresh. Fix the selection being replaced before touching the cadence: the two are independent, and only the first is a bug.",
+      "Then the annotations, because their storage decision constrains nothing else and unblocks the operator work that motivated the request.",
+      "The payload last: it is the only item whose cost is measured rather than felt, and it touches the file:// snapshot, which every other screen depends on.",
+      "Prove each behaviour where it can be proved: pure rules in viewer/src checked without a DOM, rendered results in scripts/viewer_smoke.py, server routes in scripts/selfcheck.py. Verify each new check fails when its behaviour is reverted, as the existing ones were.",
+      "Run make check and make viewer-smoke after each item rather than at the end, and re-run the demonstration chains if anything in the payload or the routes changes."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/viewer-fold-refresh-and-annotations.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
