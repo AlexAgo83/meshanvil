@@ -274,6 +274,7 @@
   "fold_chain": "Fold this chain",
   "unfold_chain": "Unfold this chain",
   "chain_name": "Chain name",
+  "chain_name_placeholder": "What this run is really called",
   "chain_named": "Chain — {name}",
   "applied_more": "+{count}",
   "branch_named": "Branch — {name}",

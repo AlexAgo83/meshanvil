@@ -703,10 +703,10 @@
       ${summaryOf(report.operation) ? `<p class="note">${esc(summaryOf(report.operation))}</p>` : ""}
     </div>`;
     html += driftNotice(report);
-    html += noteBlock("reports", report.id, t("ui.note_on_report"));
+    html += noteBlock("reports", report.id, t("ui.note_on_report"), t("ui.note_placeholder"));
     const chainRoot = BY_ID.get((rootOf(BY_ID, report.id) || "").split("/").pop() || "") || DATA.reports.find((r) => !(r.links && r.links.parent) && String((r.input || {}).path || "") === rootOf(BY_ID, report.id));
     if (chainRoot && (chainRoot.input || {}).sha256) {
-      html += noteBlock("chains", chainRoot.input.sha256, t("ui.chain_name"));
+      html += noteBlock("chains", chainRoot.input.sha256, t("ui.chain_name"), t("ui.chain_name_placeholder"));
     }
     html += block(t("ui.input"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
@@ -952,14 +952,14 @@
     }
     area.remove();
   }
-  function noteBlock(kind, key, title) {
+  function noteBlock(kind, key, title, placeholder) {
     const stored = (
       /** @type {any} */
       (DATA.notes || {})[kind] || {}
     );
     const text = stored[key] || "";
     const body = SERVED ? `<textarea class="note-edit" data-note-kind="${esc(kind)}" data-note-key="${esc(key)}"
-         rows="3" placeholder="${esc(t("ui.note_placeholder"))}">${esc(text)}</textarea>
+         rows="3" placeholder="${esc(placeholder)}">${esc(text)}</textarea>
        <div class="note-state" data-note-state="${esc(kind)}:${esc(key)}"></div>` : text ? `<div class="note-read">${esc(text)}</div>` : `<div class="note">${esc(t("ui.note_read_only"))}</div>`;
     return block(title, `<div class="noteblock">${body}</div>`, "note");
   }
