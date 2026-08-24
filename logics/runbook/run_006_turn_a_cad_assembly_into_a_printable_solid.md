@@ -6,7 +6,7 @@
 > Related backlog: (none yet)
 > Related task: (none yet)
 > Reminder: Update status, category, verification, and linked refs when you edit this doc.
-> Indicators reviewed: 2026-08-21 23:13:16
+> Indicators reviewed: 2026-08-24 02:20:45
 
 # Trigger
 - A printable model is wanted from a CAD assembly: scale model, mock-up, physical prop.
@@ -16,6 +16,14 @@
 - The envelope part list, from run_005, and the parts it rejected already deleted (`drop_unseen`) rather than merely listed.
 - **The assembly, not an STL of it.** An STL welds every part into one object, which makes the envelope selection above impossible and leaves the interior permanently inside the result. See run_013.
 - The target scale decided first: it sets every other parameter.
+
+# What this produces, and what it replaces
+Nothing. The printable solid is a *derivative*: one closed mesh whose value is that it is
+closed, bought by discarding every part boundary the assembly had. Keep the source as the
+editable artefact and treat this chain as a branch off it -- meshanvil never edits an input
+in place, so the only way to lose the master is to write a chain that reads as though the
+last step were the destination. If someone asked for a model to edit rather than to print,
+this whole runbook is the wrong answer. Voir run_012, step 9.
 
 # Why a CAD assembly is not printable as-is
 Three gaps, none of which a slicer will fix:
