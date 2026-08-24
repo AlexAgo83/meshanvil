@@ -104,6 +104,24 @@ SERVED_SMOKE = r"""
       await new Promise((done) => setTimeout(done, 50));
     }
 
+    // What the first paint left out arrives when it is asked for. On the served page the
+    // payload is thin by design, so selecting another project has to fetch its reports.
+    assert(DATA.lazy === true, "the served payload is not the thin one");
+    const servedProject = DATA.active;
+    const other = (DATA.projects || []).find((p) => p.name !== DATA.active);
+    if (other) {
+      assert(other.reports.length === 0, "a project nobody selected still ships its reports");
+      await selectProject(other.name);
+      assert(DATA.reports.length > 0,
+        `selecting ${other.name} fetched no reports`);
+      assert(document.querySelectorAll("#outliner .row").length > 0,
+        "the outliner stayed empty after the reports arrived");
+      // Back to the served project: a refresh keeps whatever is selected now, so the live
+      // assertions further down would otherwise watch the wrong one.
+      await selectProject(servedProject);
+      assert(DATA.active === servedProject, "could not return to the served project");
+    }
+
     const controls = document.querySelector(".filectrls");
     assert(controls, "file controls missing on served page");
     assert(!controls.querySelector(".filelabel").textContent.includes("/"), "served file label shows a full path");
@@ -429,6 +447,7 @@ SMOKE = r"""
     await settled();
 
     // A page with no server shows what is there and offers nothing to type into.
+    assert(DATA.lazy !== true, "the filesystem snapshot is the thin payload and has nothing to fetch");
     assert(!document.querySelector("[data-note-kind]"),
       "a page opened from the filesystem offers a note field it cannot save");
     assert(document.querySelector(".noteblock"), "the note block is missing entirely");

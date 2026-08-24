@@ -709,6 +709,44 @@ def check_viewer_origin_and_listing(tmp: Path):
         thread.join(timeout=2)
 
 
+def check_first_paint_carries_what_it_draws(tmp: Path):
+    """The served first paint leaves out what nothing has asked for yet; the snapshot does not.
+
+    623 KB before a click, of which the reports of projects nobody had selected and the bodies
+    of runbooks nobody had opened. Both are fetchable afterwards, which a page opened from the
+    filesystem cannot do -- so its snapshot stays whole.
+    """
+    from meshanvil import viewer_payload
+
+    root = tmp / "first-paint"
+    (root / "work" / "ops").mkdir(parents=True)
+    (root / "work" / "viewer").mkdir(parents=True)
+    (root / "work" / "ops" / "001_op.json").write_text(json.dumps(
+        {"id": "001", "operation": "op", "kind": "inspection", "status": "ok",
+         "created_at": "2026-01-01T00:00:00Z", "schema_version": 1,
+         "input": {"path": str(root / "work" / "out" / "a.blend"), "sha256": "a" * 64},
+         "links": {"parent": None, "parent_source": None, "docs": []}}), encoding="utf-8")
+
+    full = viewer_payload.payload(root, root / "work" / "viewer")
+    lite = viewer_payload.payload(root, root / "work" / "viewer", full=False)
+
+    assert full["lazy"] is False and lite["lazy"] is True, (full["lazy"], lite["lazy"])
+    assert lite["docs"] == {}, "the first paint still ships document bodies"
+    assert full["reports"] == lite["reports"], "the active project lost its reports"
+    # Both shapes come from one builder, so a field cannot appear in one and be forgotten in
+    # the other. Only the two that are deliberately thinner may differ.
+    assert set(full) == set(lite), set(full) ^ set(lite)
+    differing = {key for key in full if json.dumps(full[key], sort_keys=True)
+                 != json.dumps(lite[key], sort_keys=True)}
+    assert differing <= {"docs", "projects", "lazy", "generated_at"}, differing
+    # files is the map the file controls resolve an id through: a project's reports can arrive
+    # later, its files cannot.
+    assert full["files"] == lite["files"], "the first paint dropped file references"
+    for entry in lite["projects"]:
+        if entry["name"] != lite["active"]:
+            assert entry["reports"] == [], f"{entry['name']} still ships its reports"
+
+
 def check_annotations_stay_out_of_the_reports(tmp: Path):
     """The one route that writes, and the boundary it must not cross. Voir adr_009.
 

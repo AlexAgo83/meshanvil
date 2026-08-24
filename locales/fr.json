@@ -179,6 +179,7 @@
   "note_saved": "enregistrée",
   "note_failed": "non enregistrée",
   "note_read_only": "Aucune note. Une page ouverte depuis le disque ne peut pas en écrire.",
+  "loading_project": "Chargement de {name}…",
   "not_applied": "Pas encore appliqué par une opération.",
   "compare_before": "avant l'opération",
   "compare_after": "après l'opération",

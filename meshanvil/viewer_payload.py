@@ -56,7 +56,16 @@ def collect_doctor(root: Path) -> dict | None:
     return value if isinstance(value, dict) else None
 
 
-def payload(root: Path, target: Path, run_token: str | None = None) -> dict:
+def payload(root: Path, target: Path, run_token: str | None = None, full: bool = True) -> dict:
+    """The page's data. `full` carries everything; the served first paint does not.
+
+    A first paint that ships every sibling project's reports and every runbook's body pays for
+    all of it before anything is clicked -- measured at 623 KB, of which 217 KB was projects
+    nobody had selected and 124 KB documents nobody had opened. The snapshot written for a page
+    opened from the filesystem stays full, because it has no server to ask afterwards.
+
+    `files` is always complete: it is the map the file controls resolve an id through, and a
+    project's reports can arrive later while their files cannot."""
     strings = {**catalogue(SOURCE), **catalogue(language())}
     catalogs = {code.stem: catalogue(code.stem) for code in sorted(paths.asset_root("locales").glob("*.json"))}
     known = [{"name": paths.name(project), "path": str(project),
@@ -68,10 +77,15 @@ def payload(root: Path, target: Path, run_token: str | None = None) -> dict:
     refs = {ref for entry in known for report in entry["reports"]
             for ref in report.get("links", {}).get("docs", [])}
     refs |= {doc["ref"] for doc in runbooks}
+    projects = known if full else [
+        {**entry, "reports": entry["reports"] if entry["name"] == active["name"] else []}
+        for entry in known]
     return {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "root": str(root), "lang": language(), "strings": strings, "catalogs": catalogs,
-            "version": VERSION, "run_token": run_token, "projects": known, "active": active["name"],
-            "reports": active["reports"], "docs": logics_bridge.documents(refs, root),
+            "version": VERSION, "run_token": run_token, "projects": projects, "active": active["name"],
+            "lazy": not full,
+            "reports": active["reports"],
+            "docs": logics_bridge.documents(refs, root) if full else {},
             "runbooks": runbooks, "doctor": collect_doctor(root), "files": file_references(known),
             "ops_exists": active["ops_exists"],
             # Baked in rather than fetched, so a page opened from the filesystem shows what a

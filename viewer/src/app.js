@@ -84,9 +84,36 @@ function projectEntries() {
   return /** @type {any[]} */ (/** @type {any} */ (DATA).projects || []);
 }
 
-function selectProject(name) {
+/** True while something the first paint left out is on its way. */
+let pending = "";
+
+/** Fetch what the first paint did not carry. Returns false on a page with no server, which is
+    every file:// page: its snapshot is whole and has nothing to ask for. */
+async function fetchMissing(path, query) {
+  if (!SERVED || !/** @type {any} */ (DATA).lazy) return null;
+  try {
+    const response = await fetch(`${location.origin}${path}?${query}`, { cache: "no-store" });
+    return response.ok ? await response.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+async function selectProject(name) {
   const entry = projectEntries().find((p) => p.name === name);
   if (!entry) return;
+  // A project other than the active one arrives without its reports; the region says it is
+  // being filled rather than sitting empty while the fetch is in flight.
+  if (!entry.reports.length && /** @type {any} */ (DATA).lazy && SERVED) {
+    pending = name;
+    outliner(); nodes();
+    const fetched = await fetchMissing("/api/project", `name=${encodeURIComponent(name)}`);
+    pending = "";
+    if (fetched && fetched.reports) {
+      entry.reports = fetched.reports;
+      entry.ops_exists = fetched.ops_exists;
+    }
+  }
   /** @type {any} */ (DATA).active = entry.name;
   DATA.reports = entry.reports;
   DATA.ops_exists = entry.ops_exists;
@@ -207,6 +234,11 @@ function outliner() {
       || `<div class="blank"><span>${esc(t("ui.not_applied"))}</span></div>`);
     return;
   }
+  if (pending) {
+    document.getElementById("outliner").innerHTML =
+      `<div class="blank"><span>${esc(t("ui.loading_project", { name: pending }))}</span></div>`;
+    return;
+  }
   const chains = groups();
   let html = "";
   for (const [fork, reports] of chains) {
@@ -281,6 +313,15 @@ function chainName(reports) {
   const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
   const path = String((root.input || {}).path || "");
   return path.split("/").pop().replace(/\.blend$/, "") || root.chain || root.id;
+}
+
+/** A runbook's body, the first time it is opened and not again: the first paint carries the
+    list and none of the prose, which was 124 KB of it. */
+async function fetchDoc(ref) {
+  const fetched = await fetchMissing("/api/doc", `ref=${encodeURIComponent(ref)}`);
+  if (!fetched || !fetched.doc) return;
+  /** @type {any} */ (DATA).docs = { ...(DATA.docs || {}), [ref]: fetched.doc };
+  if (currentDoc === ref) props();
 }
 
 function docFromRef(ref) {
@@ -371,6 +412,12 @@ function nodes() {
     graphHead("▤", t("ui.runbooks"), "logics/runbook");
     document.getElementById("nodes").innerHTML = `<div class="rbbody">${runbookRows()}</div>`;
     const canvas = document.getElementById("canvas"); canvas.style.width = "100%"; canvas.style.height = "100%";
+    document.getElementById("noodles").innerHTML = "";
+    return;
+  }
+  if (pending) {
+    document.getElementById("nodes").innerHTML =
+      `<div class="blank"><span>${esc(t("ui.loading_project", { name: pending }))}</span></div>`;
     document.getElementById("noodles").innerHTML = "";
     return;
   }
@@ -538,6 +585,7 @@ function props() {
   const target = document.getElementById("props");
   if (currentDoc) {
     const doc = docFromRef(currentDoc);
+  if (!doc.content && /** @type {any} */ (DATA).lazy && SERVED) fetchDoc(currentDoc);
     const applied = DATA.reports.filter((report) => (report.links.docs || []).includes(currentDoc));
     target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
       ${doc.content ? block(t("ui.runbook_content"), `<div class="doccontent">${mdToHtml(doc.content)}</div>`, "input") : ""}

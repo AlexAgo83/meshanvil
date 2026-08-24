@@ -179,6 +179,7 @@
   "note_saved": "saved",
   "note_failed": "not saved",
   "note_read_only": "No note. A page opened from the filesystem cannot write one.",
+  "loading_project": "Loading {name}…",
   "not_applied": "Not yet applied by an operation.",
   "compare_before": "before operation",
   "compare_after": "after operation",

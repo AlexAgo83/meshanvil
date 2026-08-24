@@ -203,9 +203,32 @@
       DATA.projects || []
     );
   }
-  function selectProject(name) {
+  var pending = "";
+  async function fetchMissing(path, query) {
+    if (!SERVED || !/** @type {any} */
+    DATA.lazy) return null;
+    try {
+      const response = await fetch(`${location.origin}${path}?${query}`, { cache: "no-store" });
+      return response.ok ? await response.json() : null;
+    } catch {
+      return null;
+    }
+  }
+  async function selectProject(name) {
     const entry = projectEntries().find((p) => p.name === name);
     if (!entry) return;
+    if (!entry.reports.length && /** @type {any} */
+    DATA.lazy && SERVED) {
+      pending = name;
+      outliner();
+      nodes();
+      const fetched = await fetchMissing("/api/project", `name=${encodeURIComponent(name)}`);
+      pending = "";
+      if (fetched && fetched.reports) {
+        entry.reports = fetched.reports;
+        entry.ops_exists = fetched.ops_exists;
+      }
+    }
     DATA.active = entry.name;
     DATA.reports = entry.reports;
     DATA.ops_exists = entry.ops_exists;
@@ -324,6 +347,10 @@
         <span class="label">${esc(doc.title)}</span><span class="dot ${doc.status === "Done" ? "ok" : "pruned"}"></span></button>`).join("") || `<div class="blank"><span>${esc(t("ui.not_applied"))}</span></div>`);
       return;
     }
+    if (pending) {
+      document.getElementById("outliner").innerHTML = `<div class="blank"><span>${esc(t("ui.loading_project", { name: pending }))}</span></div>`;
+      return;
+    }
     const chains = groups();
     let html = "";
     for (const [fork, reports] of chains) {
@@ -388,6 +415,12 @@
     const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
     const path = String((root.input || {}).path || "");
     return path.split("/").pop().replace(/\.blend$/, "") || root.chain || root.id;
+  }
+  async function fetchDoc(ref) {
+    const fetched = await fetchMissing("/api/doc", `ref=${encodeURIComponent(ref)}`);
+    if (!fetched || !fetched.doc) return;
+    DATA.docs = { ...DATA.docs || {}, [ref]: fetched.doc };
+    if (currentDoc === ref) props();
   }
   function docFromRef(ref) {
     const meta = (DATA.runbooks || []).find((item) => item.ref === ref);
@@ -454,6 +487,11 @@
       const canvas2 = document.getElementById("canvas");
       canvas2.style.width = "100%";
       canvas2.style.height = "100%";
+      document.getElementById("noodles").innerHTML = "";
+      return;
+    }
+    if (pending) {
+      document.getElementById("nodes").innerHTML = `<div class="blank"><span>${esc(t("ui.loading_project", { name: pending }))}</span></div>`;
       document.getElementById("noodles").innerHTML = "";
       return;
     }
@@ -624,6 +662,8 @@
     const target = document.getElementById("props");
     if (currentDoc) {
       const doc = docFromRef(currentDoc);
+      if (!doc.content && /** @type {any} */
+      DATA.lazy && SERVED) fetchDoc(currentDoc);
       const applied = DATA.reports.filter((report2) => (report2.links.docs || []).includes(currentDoc));
       target.innerHTML = `<div class="title-row"><h2>${esc(doc.title || currentDoc)}</h2><div class="badges"><span class="badge">${esc(doc.kind)}</span><span class="badge">${esc(doc.status)}</span></div></div>
       ${doc.content ? block(t("ui.runbook_content"), `<div class="doccontent">${mdToHtml(doc.content)}</div>`, "input") : ""}
