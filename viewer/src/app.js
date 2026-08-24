@@ -193,17 +193,25 @@ function outliner() {
   }
   const chains = groups();
   let html = "";
-  let first = true;
   for (const [fork, reports] of chains) {
     const parent = BY_ID.get(fork);
     const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
-    const label = root ? t("ui.chain_named", { name: chainName(reports) })
-                       : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+    // A branch belongs to the chain its reports descend from, and folds with it.
+    const chain = reports[0] ? rootOf(BY_ID, reports[0].id) : fork;
+    const shut = folded.has(chain);
+    if (root) {
+      const label = t("ui.chain_named", { name: chainName(reports) });
+      // Written out, not folded into one t(): the i18n check only sees literal keys.
+      const hint = shut ? t("ui.unfold_chain") : t("ui.fold_chain");
+      html += `<button type="button" class="outgroup fold" data-fold="${esc(chain)}"
+        aria-expanded="${!shut}" title="${esc(hint)}">
+        <span>${esc(label)}</span><span class="ogtri">${shut ? "▸" : "▾"}</span></button>`;
+    } else {
+      if (shut) continue;      // a branch of a folded chain goes with it, header included
+      const label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+      html += `<div class="outgroup">${esc(label)}</div>`;
+    }
     const indent = root ? "" : " child";
-    first = false;
-    const shut = folded.has(fork);
-    html += `<button type="button" class="outgroup" data-fold="${esc(fork)}" aria-expanded="${!shut}">
-      <span>${esc(label)}</span><span class="ogtri">${shut ? "▸" : "▾"}</span></button>`;
     if (shut) continue;
     for (const report of reports) {
       if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
@@ -279,8 +287,11 @@ function fileControls(path, label) {
   </span>`;
 }
 
-/** Groups the operator folded away. Keyed by group, so it survives a re-render and a live
-    refresh; a group that disappears simply stops being consulted. */
+/** Chains the operator folded away, keyed by chain rather than by group.
+ *
+ *  Keyed by group first, which meant folding a chain left its branches on screen with nothing
+ *  above them -- worse than not folding at all. A branch is not something anyone thinks of as
+ *  foldable on its own, so it no longer offers the control either. */
 const folded = new Set();
 
 /** A runbook applied by a dozen operations turned one table row into a column of pills and

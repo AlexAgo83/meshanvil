@@ -264,6 +264,8 @@
   "rb_col_doc": "document",
   "rb_col_settles": "what it settles",
   "rb_col_applied": "applied by",
+  "fold_chain": "Fold this chain",
+  "unfold_chain": "Unfold this chain",
   "chain_named": "Chain — {name}",
   "applied_more": "+{count}",
   "branch_named": "Branch — {name}",

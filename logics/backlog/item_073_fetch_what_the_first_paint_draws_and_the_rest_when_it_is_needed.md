@@ -1,14 +1,14 @@
 ## item_073_fetch_what_the_first_paint_draws_and_the_rest_when_it_is_needed - Fetch what the first paint draws, and the rest when it is needed
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Medium
 > Theme: Viewer payload and first paint
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:18:11
+> Indicators reviewed: 2026-08-25 00:23:17
 
 # AI Context
 - Summary: Measured at 623 KB before any click: 217 KB of reports for every sibling project with the active one duplicated, and 124 KB of runbook bodies nobody has opened. Renders are already lazy; the JSON is not. The cost is structural rather than large today, and it grows with every project and runbook added.

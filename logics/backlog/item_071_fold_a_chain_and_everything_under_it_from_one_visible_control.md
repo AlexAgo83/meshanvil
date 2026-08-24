@@ -1,14 +1,14 @@
 ## item_071_fold_a_chain_and_everything_under_it_from_one_visible_control - Fold a chain and everything under it, from one visible control
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 10%
 > Complexity: Low
 > Theme: Viewer usability and live state
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:57
+> Indicators reviewed: 2026-08-25 00:23:17
 
 # AI Context
 - Summary: Fold was keyed on the group rather than the chain, and a chain's branches are separate groups: folding a chain leaves its branches on screen with nothing above them. Every group header is also a button, so a branch offers a control for something nobody thinks of as foldable, and the chevron reuses the per-row dim so a control reads as decoration.

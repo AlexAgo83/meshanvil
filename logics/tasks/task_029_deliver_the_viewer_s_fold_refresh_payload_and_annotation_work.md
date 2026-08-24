@@ -1,14 +1,15 @@
 ## task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work - Deliver the viewer's fold, refresh, payload and annotation work
 > From version: 0.1.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
 > Progress: 0%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:18:12
+> Indicators reviewed: 2026-08-25 00:23:17
+> Owner: claude
 
 # AI Context
 - Summary: Four viewer items whose order matters: the fold is a shipped defect and the cheapest, the refresh hides a bug that must be separated from its tuning, the annotations constrain nothing else, and the payload touches the file:// snapshot every other screen depends on. The fold, the refresh and the payload all read the same DATA object, which is why two of the three defects come from replacing it too bluntly.

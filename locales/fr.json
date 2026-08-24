@@ -264,6 +264,8 @@
   "rb_col_doc": "document",
   "rb_col_settles": "ce qu'il tranche",
   "rb_col_applied": "appliqué par",
+  "fold_chain": "Replier cette chaîne",
+  "unfold_chain": "Déplier cette chaîne",
   "chain_named": "Chaîne — {name}",
   "applied_more": "+{count}",
   "branch_named": "Branche — {name}",

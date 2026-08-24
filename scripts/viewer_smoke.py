@@ -133,23 +133,33 @@ SMOKE = r"""
     assert(!cards.some((c) => c.tagName === "BUTTON"),
       "a source card is clickable: nothing about it can be selected");
 
-    // Folding a group hides its rows and nothing else: the header stays, and the chevron
-    // and aria-expanded agree with what is actually rendered.
-    const firstHead = document.querySelector("#outliner .outgroup");
-    const rowsBefore = document.querySelectorAll("#outliner .row").length;
-    const headsBefore = document.querySelectorAll("#outliner .outgroup").length;
-    firstHead.click();
-    const folded = document.querySelector("#outliner .outgroup");
-    assert(folded.getAttribute("aria-expanded") === "false", "a folded group still reads as expanded");
-    assert(document.querySelectorAll("#outliner .outgroup").length === headsBefore,
-      "folding a group removed a group header");
-    const rowsFolded = document.querySelectorAll("#outliner .row").length;
-    assert(rowsFolded < rowsBefore, "folding a group hid none of its rows");
-    folded.click();
-    assert(document.querySelectorAll("#outliner .row").length === rowsBefore,
-      "unfolding a group did not bring its rows back");
-    assert(document.querySelector("#outliner .outgroup").getAttribute("aria-expanded") === "true",
-      "an unfolded group still reads as collapsed");
+    // Folding belongs to the chain: it takes the chain's branches with it, headers included,
+    // and only a chain header offers the control. Keyed by group first, which left a folded
+    // chain's branches on screen with nothing above them.
+    const heads = () => [...document.querySelectorAll("#outliner .outgroup")];
+    const rowCount = () => document.querySelectorAll("#outliner .row").length;
+    assert(heads().every((h) => h.tagName === "BUTTON" || !h.querySelector(".ogtri")),
+      "a header that is not a button still shows a fold control");
+    assert(heads().some((h) => h.tagName !== "BUTTON"),
+      "the fixture has no branch header, so this cannot prove branches lost their control");
+    for (const head of heads()) {
+      if (head.tagName !== "BUTTON") continue;
+      assert(!/^Branch/.test(head.textContent.trim()), "a branch header is a fold button");
+    }
+
+    const chainHead = heads().find((h) => h.tagName === "BUTTON");
+    const rowsBefore = rowCount();
+    const headsBefore = heads().length;
+    chainHead.click();
+    const afterFold = heads();
+    assert(afterFold[0].getAttribute("aria-expanded") === "false", "a folded chain reads as expanded");
+    assert(afterFold.length < headsBefore,
+      "folding a chain kept every header: its branch headers stayed behind");
+    assert(rowCount() < rowsBefore, "folding a chain hid none of its rows");
+    afterFold[0].click();
+    assert(rowCount() === rowsBefore, "unfolding did not bring the rows back");
+    assert(heads().length === headsBefore, "unfolding did not bring the branch headers back");
+    assert(heads()[0].getAttribute("aria-expanded") === "true", "an unfolded chain reads as collapsed");
 
     const startRows = [...document.querySelectorAll("#outliner .outgroup")]
       .filter((group) => /^Chain/.test(group.textContent.trim()));

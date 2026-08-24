@@ -306,16 +306,23 @@
     }
     const chains = groups();
     let html = "";
-    let first = true;
     for (const [fork, reports] of chains) {
       const parent = BY_ID.get(fork);
       const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
-      const label = root ? t("ui.chain_named", { name: chainName(reports) }) : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+      const chain = reports[0] ? rootOf(BY_ID, reports[0].id) : fork;
+      const shut = folded.has(chain);
+      if (root) {
+        const label = t("ui.chain_named", { name: chainName(reports) });
+        const hint = shut ? t("ui.unfold_chain") : t("ui.fold_chain");
+        html += `<button type="button" class="outgroup fold" data-fold="${esc(chain)}"
+        aria-expanded="${!shut}" title="${esc(hint)}">
+        <span>${esc(label)}</span><span class="ogtri">${shut ? "\u25B8" : "\u25BE"}</span></button>`;
+      } else {
+        if (shut) continue;
+        const label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
+        html += `<div class="outgroup">${esc(label)}</div>`;
+      }
       const indent = root ? "" : " child";
-      first = false;
-      const shut = folded.has(fork);
-      html += `<button type="button" class="outgroup" data-fold="${esc(fork)}" aria-expanded="${!shut}">
-      <span>${esc(label)}</span><span class="ogtri">${shut ? "\u25B8" : "\u25BE"}</span></button>`;
       if (shut) continue;
       for (const report of reports) {
         if (!`${report.id} ${report.operation}`.toLowerCase().includes(filterText)) continue;
