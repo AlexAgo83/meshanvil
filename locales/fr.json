@@ -288,6 +288,9 @@
   "render_subject": {
    "summary": "Rend le sujet depuis les vues standard et les enregistre, sans rien modifier."
   },
+  "make_character": {
+   "summary": "Ajoute une etape de modelisation du personnage en T-pose a ce qu'a laisse la precedente."
+  },
   "make_vise": {
    "summary": "Ajoute une etape de modelisation de l'etau a ce qu'a laisse la precedente."
   },

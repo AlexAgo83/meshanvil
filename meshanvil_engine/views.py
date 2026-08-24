@@ -12,8 +12,12 @@ from __future__ import annotations
 import bpy
 from mathutils import Vector
 
+# Rear earns its place on anything with a front: a vehicle's tail and a figure's back are
+# both surfaces no other canonical view shows, and asking for them was how the character
+# brief found this list two short.
 DIRECTIONS = (("3q", Vector((-1.1, -1.0, 0.55))), ("front", Vector((-1, 0, 0.1))),
-              ("side", Vector((0, -1, 0.1))), ("top", Vector((0, 0, 1))))
+              ("rear", Vector((1, 0, 0.1))), ("side", Vector((0, -1, 0.1))),
+              ("top", Vector((0, 0, 1))))
 # Looking straight down leaves track-to free to choose any up vector, and it chose one that
 # put the plan on a 45 degree diagonal -- unreadable for judging a footprint, and it wasted
 # most of the frame. Straight down is the one direction that needs its roll stated.

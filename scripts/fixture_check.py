@@ -83,7 +83,10 @@ def check() -> int:
     assert coarse["after"]["vertices"] < coarse["before"]["vertices"] / 10, coarse["after"]
     assert coarse["links"]["parent"] == "002", coarse["links"]
     assert coarse["links"]["parent_source"] == "fingerprint", coarse["links"]
-    assert len(coarse["comparisons"]) == 4, coarse.get("comparisons")
+    # One comparison per rendered view, which is the actual invariant. Pinned to a literal 4
+    # it broke the day "rear" joined the canonical views, with nothing about the fixture
+    # changed -- and a literal could never have said what the number meant.
+    assert len(coarse["comparisons"]) == len(coarse["renders"]) >= 4, coarse.get("comparisons")
     assert all(pair["camera"].endswith("-subject") for pair in coarse["comparisons"])
     assert all(Path(pair["before"]).is_file() and Path(pair["after"]).is_file()
                for pair in coarse["comparisons"])

@@ -1,0 +1,11 @@
+{
+  "operation": "make_character",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/make_character.py",
+  "summary_key": "operation.make_character.summary",
+  "params": [
+    {"name": "stage", "type": "int", "default": 1},
+    {"name": "render", "type": "bool", "default": true}
+  ]
+}
