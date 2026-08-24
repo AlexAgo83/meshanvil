@@ -13,7 +13,11 @@ import bpy
 from mathutils import Vector
 
 DIRECTIONS = (("3q", Vector((-1.1, -1.0, 0.55))), ("front", Vector((-1, 0, 0.1))),
-              ("side", Vector((0, -1, 0.1))), ("top", Vector((0.01, 0.01, 1))))
+              ("side", Vector((0, -1, 0.1))), ("top", Vector((0, 0, 1))))
+# Looking straight down leaves track-to free to choose any up vector, and it chose one that
+# put the plan on a 45 degree diagonal -- unreadable for judging a footprint, and it wasted
+# most of the frame. Straight down is the one direction that needs its roll stated.
+ROLL = {"top": (0.0, 0.0, 0.0)}
 WIDTH, HEIGHT = 1200, 760
 TILE = "3q"
 
@@ -106,7 +110,7 @@ def shoot(report, job, root, stem, subjects=None, before=None):
             report.progress("rendering", 0.9 + 0.09 * index / len(DIRECTIONS))
         unit = direction.normalized()
         camera.location = centre + unit * radius * 4
-        camera.rotation_euler = (-unit).to_track_quat('-Z', 'Y').to_euler()
+        camera.rotation_euler = ROLL.get(name) or (-unit).to_track_quat('-Z', 'Y').to_euler()
 
         after_path = folder / f"{identity}_{stem}_{name}.png"
         expose(subjects, before or [], after_path)

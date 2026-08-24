@@ -288,6 +288,9 @@
   "render_subject": {
    "summary": "Render the subject from the standard views and record them, changing nothing."
   },
+  "make_vise": {
+   "summary": "Add one modelling stage of the bench vise to whatever the previous stage left."
+  },
   "ray_visibility": {
    "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere."
   },

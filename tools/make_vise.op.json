@@ -1,0 +1,11 @@
+{
+  "operation": "make_vise",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/make_vise.py",
+  "summary_key": "operation.make_vise.summary",
+  "params": [
+    {"name": "stage", "type": "int", "default": 1},
+    {"name": "render", "type": "bool", "default": true}
+  ]
+}

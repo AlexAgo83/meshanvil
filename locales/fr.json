@@ -288,6 +288,9 @@
   "render_subject": {
    "summary": "Rend le sujet depuis les vues standard et les enregistre, sans rien modifier."
   },
+  "make_vise": {
+   "summary": "Ajoute une etape de modelisation de l'etau a ce qu'a laisse la precedente."
+  },
   "ray_visibility": {
    "summary": "Classe les objets par visibilité extérieure en tirant des rayons parallèles depuis une sphère."
   },
