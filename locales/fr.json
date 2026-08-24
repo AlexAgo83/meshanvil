@@ -286,6 +286,9 @@
   "list_shells": {
    "summary": "Énumère les coques d'un objet avec leur taille et leur boîte englobante."
   },
+  "render_subject": {
+   "summary": "Rend le sujet depuis les vues standard et les enregistre, sans rien modifier."
+  },
   "ray_visibility": {
    "summary": "Classe les objets par visibilité extérieure en tirant des rayons parallèles depuis une sphère."
   },

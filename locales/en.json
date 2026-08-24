@@ -286,6 +286,9 @@
   "list_shells": {
    "summary": "Enumerate the shells of an object with their size and bounding box."
   },
+  "render_subject": {
+   "summary": "Render the subject from the standard views and record them, changing nothing."
+  },
   "ray_visibility": {
    "summary": "Sort objects by visibility from outside, by firing parallel rays from a sphere."
   },

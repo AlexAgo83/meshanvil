@@ -1,0 +1,10 @@
+{
+  "operation": "render_subject",
+  "engine": "blender",
+  "kind": "inspection",
+  "script": "tools/render_subject.py",
+  "summary_key": "operation.render_subject.summary",
+  "params": [
+    {"name": "materials", "type": "bool", "default": true}
+  ]
+}
