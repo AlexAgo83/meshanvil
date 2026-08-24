@@ -18,6 +18,11 @@ def _stamp(paths: list[Path]) -> tuple:
     return tuple(out)
 
 
+# How often the server looks for a change, in seconds. One number, so the page's liveness is
+# a property of this route rather than of the project's size.
+INTERVAL = 1.0
+
+
 def signatures(root: Path) -> dict[str, tuple]:
     reports = sorted((root / viewer_payload.OPS).glob("*.json"))
     runbooks = [root / doc["path"] for doc in logics_bridge.runbooks(root) if doc.get("path")]
@@ -51,8 +56,15 @@ def handle_get(handler, route: str, parsed: urlparse) -> bool:
             else:
                 handler.wfile.write(b": poll\n\n")
             handler.wfile.flush()
-            # ponytail: mtime polling; switch to platform watchers only if idle polling shows up in profiles.
-            time.sleep(max(1.0, (time.perf_counter() - started) * 20))
+            # ponytail: mtime polling; switch to platform watchers only if idle polling shows up
+            # in profiles.
+            #
+            # A declared interval, not a multiple of the scan's own cost. Sleeping for twenty
+            # times the scan made the cadence a function of how much there was to watch: with
+            # eight sibling projects the scan is dear and the viewer answered slowest exactly
+            # when it had most to say. The scan's duration is subtracted so the period holds
+            # whatever it costs, and a scan dearer than the period simply runs back to back.
+            time.sleep(max(0.0, INTERVAL - (time.perf_counter() - started)))
     except (BrokenPipeError, ConnectionError, OSError):
         return True
     return True

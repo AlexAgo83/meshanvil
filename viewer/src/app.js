@@ -104,12 +104,28 @@ async function fetchData() {
   if (!SERVED) return false;
   const response = await fetch(`${location.origin}/api/data`, { cache: "no-store" });
   if (!response.ok) return false;
-  DATA = await response.json();
+  const fresh = await response.json();
+  // What the operator chose survives what the server sends. Assigning the response wholesale
+  // put its own active project back over a deliberate switch, so a background refresh silently
+  // undid a choice -- read as the page being slow, and it was the page overruling its user.
+  const chosen = /** @type {any} */ (DATA).active;
+  const projects = /** @type {any[]} */ ((/** @type {any} */ (fresh).projects) || []);
+  const keptProject = chosen && projects.some((p) => p.name === chosen) ? chosen : null;
+  DATA = fresh;
   /** @type {any} */ (window).DATA = DATA;
+  if (keptProject && keptProject !== /** @type {any} */ (DATA).active) {
+    const entry = projects.find((p) => p.name === keptProject);
+    if (entry) {
+      /** @type {any} */ (DATA).active = entry.name;
+      DATA.reports = entry.reports;
+      DATA.ops_exists = entry.ops_exists;
+    }
+  }
   SERVED = location.protocol !== "file:" && !!DATA.run_token;
   lang = DATA.lang || lang || "en";
   strings = mergedCatalog(lang);
   BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+  // The selected report survives too, when the refresh still has it.
   if (!current || !BY_ID.has(current)) current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
   start = !DATA.reports.length;
   paintTotals();
@@ -1034,5 +1050,7 @@ async function init() {
   startLiveRefresh(SERVED, refreshLive);
 }
 
-Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects });
+// refreshLive is reachable so the served smoke can prove a refresh keeps what the
+// operator chose; nothing else in the page calls it by name.
+Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects, refreshLive });
 init();

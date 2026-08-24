@@ -225,8 +225,28 @@
     if (!SERVED) return false;
     const response = await fetch(`${location.origin}/api/data`, { cache: "no-store" });
     if (!response.ok) return false;
-    DATA = await response.json();
+    const fresh = await response.json();
+    const chosen = (
+      /** @type {any} */
+      DATA.active
+    );
+    const projects = (
+      /** @type {any[]} */
+      /** @type {any} */
+      fresh.projects || []
+    );
+    const keptProject = chosen && projects.some((p) => p.name === chosen) ? chosen : null;
+    DATA = fresh;
     window.DATA = DATA;
+    if (keptProject && keptProject !== /** @type {any} */
+    DATA.active) {
+      const entry = projects.find((p) => p.name === keptProject);
+      if (entry) {
+        DATA.active = entry.name;
+        DATA.reports = entry.reports;
+        DATA.ops_exists = entry.ops_exists;
+      }
+    }
     SERVED = location.protocol !== "file:" && !!DATA.run_token;
     lang = DATA.lang || lang || "en";
     strings = mergedCatalog(lang);
@@ -1224,7 +1244,7 @@
   Object.assign(
     /** @type {any} */
     window,
-    { select, selectProject, paintProjects }
+    { select, selectProject, paintProjects, refreshLive }
   );
   init();
 })();

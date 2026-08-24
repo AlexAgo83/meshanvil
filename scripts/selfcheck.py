@@ -709,6 +709,61 @@ def check_viewer_origin_and_listing(tmp: Path):
         thread.join(timeout=2)
 
 
+def check_events_cadence_is_declared(tmp: Path):
+    """The period between two looks is a declared number, not a multiple of the scan's cost.
+
+    Sleeping for twenty times the scan made the viewer's liveness a function of how much there
+    was to watch: with eight sibling projects the scan is dear and the page answered slowest
+    exactly when it had most to say. A scan made ten times dearer here must not change the
+    period, only eat into it.
+    """
+    original_signatures, original_sleep, original_counter = (
+        viewer_events.signatures, viewer_events.time.sleep, viewer_events.time.perf_counter)
+    slept, clock = [], [0.0]
+
+    class Gone:
+        def write(self, data):
+            if len(slept) > 2:
+                raise BrokenPipeError()
+        def flush(self):
+            pass
+
+    class Handler:
+        meshanvil_root = tmp
+        wfile = Gone()
+        def send_response(self, code): pass
+        def send_header(self, key, value): pass
+        def end_headers(self): pass
+
+    def run(scan_cost: float) -> list:
+        slept.clear()
+        clock[0] = 0.0
+
+        def counter():
+            clock[0] += scan_cost
+            return clock[0]
+
+        viewer_events.time.perf_counter = counter
+        viewer_events.signatures = lambda root: {"reports": ()}
+        viewer_events.time.sleep = lambda seconds: slept.append(seconds)
+        viewer_events.handle_get(Handler(), "/api/events", None)
+        return list(slept)
+
+    try:
+        cheap = run(0.001)
+        dear = run(0.010)
+        assert cheap and dear, (cheap, dear)
+        for naps, cost in ((cheap, 0.001), (dear, 0.010)):
+            for nap in naps:
+                assert abs(nap - (viewer_events.INTERVAL - cost)) < 1e-6, (nap, cost)
+        # A scan dearer than the period does not push the period out; it runs back to back.
+        assert all(nap == 0.0 for nap in run(viewer_events.INTERVAL * 2)), run(viewer_events.INTERVAL * 2)
+    finally:
+        viewer_events.signatures = original_signatures
+        viewer_events.time.sleep = original_sleep
+        viewer_events.time.perf_counter = original_counter
+
+
 def check_events_releases_gone_peer(tmp: Path):
     original_signatures, original_sleep = viewer_events.signatures, viewer_events.time.sleep
     writes = []

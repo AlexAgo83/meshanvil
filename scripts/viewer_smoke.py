@@ -33,6 +33,24 @@ SERVED_SMOKE = r"""
     });
     assert(shown.naturalWidth > 0, `a render 404'd on the served page: ${shown.src}`);
 
+    // A refresh must not overrule the operator. Assigning the response wholesale put the
+    // server's own active project back over a deliberate switch, which read as the page being
+    // slow and was the page undoing a choice. Only a served page can prove it: on file:// the
+    // fetch returns immediately and the assertion would pass having tested nothing.
+    const others = (DATA.projects || []).filter((p) => p.name !== DATA.active);
+    if (others.length) {
+      const chosen = others[0].name;
+      selectProject(chosen);
+      const heads = () => [...document.querySelectorAll("#outliner .outgroup[aria-expanded]")]
+        .map((h) => h.getAttribute("aria-expanded")).join(",");
+      const foldBefore = heads();
+      await refreshLive();
+      assert(DATA.active === chosen,
+        `a refresh replaced the selected project with ${DATA.active}`);
+      assert(heads() === foldBefore, "a refresh changed the fold state");
+      selectProject(others.length ? DATA.projects[0].name : DATA.active);
+    }
+
     const controls = document.querySelector(".filectrls");
     assert(controls, "file controls missing on served page");
     assert(!controls.querySelector(".filelabel").textContent.includes("/"), "served file label shows a full path");
