@@ -118,14 +118,24 @@ def make_server(directory: Path, root: Path, token: str, port: int = 0) -> http.
             if not self.guard_origin():
                 return
             parsed = urlparse(self.path)
-            # The server is rooted above work/ so renders resolve, which leaves "/" pointing at
-            # a directory it refuses to list -- a 404 on the address anyone types first. The
-            # page lives one level down; say so rather than making it be typed.
+            # The bare address serves the page, rather than 404ing on a directory this server
+            # refuses to list or bouncing to a longer URL that then sits in the address bar.
+            # The server is rooted above work/ so renders resolve, so the page's own assets are
+            # relative to /viewer/ -- a <base> says that without touching the file, which the
+            # file:// snapshot shares and where an absolute base would break every link.
             if parsed.path in ("", "/"):
-                self.send_response(302)
-                self.send_header("Location", "/viewer/index.html")
-                self.send_header("Content-Length", "0")
+                page = self.meshanvil_page / "index.html"
+                if not page.is_file():
+                    self.send_error(404, "no viewer built yet")
+                    return
+                html = page.read_text(encoding="utf-8")
+                html = html.replace("<head>", '<head>\n<base href="/viewer/">', 1)
+                body = html.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
+                self.wfile.write(body)
                 return
             if parsed.path == "/api/ping":
                 body = json.dumps({"root": str(root)}).encode("utf-8")

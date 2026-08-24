@@ -643,7 +643,10 @@ def check_viewer_origin_and_listing(tmp: Path):
     served = root / "work"
     (served / "viewer").mkdir(parents=True)
     (served / "in").mkdir()
-    (served / "viewer" / "index.html").write_text("ok", encoding="utf-8")
+    # A minimal page rather than a bare word: the root route injects a <base> into its head,
+    # and a fixture with no head would pass by having nothing to find.
+    (served / "viewer" / "index.html").write_text(
+        "<html><head></head><body>ok</body></html>", encoding="utf-8")
     (served / "viewer" / "data.js").write_text("token", encoding="utf-8")
     server = viewer_server.make_server(served, root, "token")
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -687,15 +690,15 @@ def check_viewer_origin_and_listing(tmp: Path):
             assert request("POST", path, {**bad_host, "X-Meshanvil-Token": "token"}, body) == 403, path
         assert request("GET", "/api/data", bad_origin) == 403
         # "/" is the address anyone types, and it points at a directory this server refuses to
-        # list. It redirects to the page rather than 404ing; the destination is asserted too,
-        # because a redirect to the wrong place passes a status check.
-        assert request("GET", "/", good) == 302
+        # list. It serves the page instead -- with a <base>, since the page's assets are
+        # relative to /viewer/ and would otherwise be looked for at the root.
+        assert request("GET", "/", good) == 200
         conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
         conn.request("GET", "/", headers=good)
         response = conn.getresponse()
-        location = response.getheader("Location")
-        response.read(); conn.close()
-        assert location == "/viewer/index.html", location
+        page = response.read().decode("utf-8")
+        conn.close()
+        assert '<base href="/viewer/">' in page, page[:200]
         # Every other directory still refuses: the redirect is a convenience on one path, not
         # a hole in the listing boundary.
         assert request("GET", "/in/", good) == 404
