@@ -262,7 +262,6 @@
   "rb_col_settles": "what it settles",
   "rb_col_applied": "applied by",
   "chain_named": "Chain — {name}",
-  "orphan_named": "Orphan — {name}",
   "applied_more": "+{count}",
   "branch_named": "Branch — {name}",
   "no_renders": "This operation produced no render.",

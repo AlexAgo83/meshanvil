@@ -9,7 +9,7 @@
 
 import { startLiveRefresh } from "./live.js";
 import { esc, mdToHtml } from "./markdown.js";
-import { rootOf, isOrphan, groupKey } from "./chains.js";
+import { rootOf, groupKey } from "./chains.js";
 
 /** The report contract, as adr_001 defines it. Named OperationReport rather than Report:
  * the DOM already has a Report interface, and the collision silently made every property
@@ -188,10 +188,8 @@ function outliner() {
   for (const [fork, reports] of chains) {
     const parent = BY_ID.get(fork);
     const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
-    // Written out rather than folding the key into one t(): the i18n check reads literals.
-    let label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
-    if (root && isOrphan(root)) label = t("ui.orphan_named", { name: chainName(reports) });
-    else if (root) label = t("ui.chain_named", { name: chainName(reports) });
+    const label = root ? t("ui.chain_named", { name: chainName(reports) })
+                       : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
     const indent = root ? "" : " child";
     first = false;
     const shut = folded.has(fork);

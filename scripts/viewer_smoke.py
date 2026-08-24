@@ -133,7 +133,7 @@ SMOKE = r"""
       "an unfolded group still reads as collapsed");
 
     const startRows = [...document.querySelectorAll("#outliner .outgroup")]
-      .filter((group) => /^(Chain|Orphan)/.test(group.textContent.trim()));
+      .filter((group) => /^Chain/.test(group.textContent.trim()));
     assert(startRows.length >= 2, "the smoke fixture must carry two starts to exercise the canvas");
     for (const id of ["001", "900"]) {
       const row = [...document.querySelectorAll("#outliner .row")].find((r) => r.dataset.id === id);
@@ -258,7 +258,7 @@ SMOKE = r"""
     // Every start opens a group of its own too, so those are discounted rather than assumed
     // to be exactly one: the count broke the day a second chain appeared in the same project.
     const allGroups = [...document.querySelectorAll("#outliner .outgroup")];
-    const starts = allGroups.filter((group) => /^(Chain|Orphan)/.test(group.textContent.trim()));
+    const starts = allGroups.filter((group) => /^Chain/.test(group.textContent.trim()));
     const branchGroups = allGroups.length - starts.length;
     const branchCount = Number((document.querySelector("#status-branches").textContent.match(/\d+/) || [0])[0]);
     assert(branchGroups === branchCount,

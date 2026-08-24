@@ -115,6 +115,9 @@
   }
 
   // viewer/src/chains.js
+  function sourceOf(report) {
+    return String((report.input || {}).path || "") || report.id;
+  }
   function rootOf(byId, id) {
     const seen = /* @__PURE__ */ new Set();
     let report = byId.get(id);
@@ -123,16 +126,12 @@
       seen.add(report.id);
       report = byId.get(report.links.parent);
     }
-    return report ? report.id : null;
-  }
-  function isOrphan(report) {
-    if (report.links && report.links.parent) return false;
-    return /\.blend$/i.test(String((report.input || {}).path || ""));
+    return report ? sourceOf(report) : null;
   }
   function groupKey(report, children, groupOf) {
     const parent = report.links && report.links.parent;
-    if (!parent) return report.id;
-    return (children.get(parent) || 0) > 1 ? parent : groupOf.get(parent) ?? report.id;
+    if (!parent) return sourceOf(report);
+    return (children.get(parent) || 0) > 1 ? parent : groupOf.get(parent) ?? sourceOf(report);
   }
 
   // viewer/src/app.js
@@ -286,9 +285,7 @@
     for (const [fork, reports] of chains) {
       const parent = BY_ID.get(fork);
       const root = reports[0] && !reports[0].links.parent ? reports[0] : null;
-      let label = t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
-      if (root && isOrphan(root)) label = t("ui.orphan_named", { name: chainName(reports) });
-      else if (root) label = t("ui.chain_named", { name: chainName(reports) });
+      const label = root ? t("ui.chain_named", { name: chainName(reports) }) : t("ui.branch_named", { name: parent ? `${parent.id} ${parent.operation}` : fork });
       const indent = root ? "" : " child";
       first = false;
       const shut = folded.has(fork);

@@ -1,11 +1,21 @@
-/** Chain identity: which start a report descends from, and whether that start is legitimate.
+/** Chain identity: which start a report descends from, so the outliner and the canvas agree.
  *
- *  Kept out of app.js so it can be checked without a DOM: these three rules decide what the
- *  outliner groups and what the canvas draws, and getting them wrong merges unrelated runs
- *  under one name. Voir adr_007.
+ *  Kept out of app.js so it can be checked without a DOM: these rules decide what is grouped
+ *  and what is drawn, and getting them wrong merges unrelated runs under one name -- or splits
+ *  one run into several. Voir adr_007.
  */
 
-/** The root a report descends from, walking parents until one has none.
+/** The source a parentless report starts from. Several operations commonly read the project's
+ *  subject directly -- an inspection sweep before anything is transformed -- and none of them
+ *  has a parent, so keying each on its own id filed one chain as five. They start from the
+ *  same file, which is the thing they actually share.
+ *  @param {any} report
+ *  @returns {string} */
+export function sourceOf(report) {
+  return String((report.input || {}).path || "") || report.id;
+}
+
+/** The start a report descends from, walking parents until one has none.
  *  @param {Map<string, any>} byId
  *  @param {string} id
  *  @returns {string|null} */
@@ -17,19 +27,10 @@ export function rootOf(byId, id) {
     seen.add(report.id);
     report = byId.get(report.links.parent);
   }
-  return report ? report.id : null;
+  return report ? sourceOf(report) : null;
 }
 
-/** A start reads a source file. One that reads a .blend is an artefact nothing claims to have
- *  produced -- an orphan, and naming it a chain would hide how it got there.
- *  @param {any} report
- *  @returns {boolean} */
-export function isOrphan(report) {
-  if (report.links && report.links.parent) return false;
-  return /\.blend$/i.test(String((report.input || {}).path || ""));
-}
-
-/** The group a report belongs to: its own id when it starts a chain, the fork above it when
+/** The group a report belongs to: its source when it starts a chain, the fork above it when
  *  the parent has more than one child, otherwise whatever group the parent opened.
  *  @param {any} report
  *  @param {Map<string, number>} children
@@ -37,6 +38,6 @@ export function isOrphan(report) {
  *  @returns {string} */
 export function groupKey(report, children, groupOf) {
   const parent = report.links && report.links.parent;
-  if (!parent) return report.id;
-  return (children.get(parent) || 0) > 1 ? parent : (groupOf.get(parent) ?? report.id);
+  if (!parent) return sourceOf(report);
+  return (children.get(parent) || 0) > 1 ? parent : (groupOf.get(parent) ?? sourceOf(report));
 }
