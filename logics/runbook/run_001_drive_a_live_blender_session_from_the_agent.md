@@ -1,12 +1,12 @@
 ## run_001_drive_a_live_blender_session_from_the_agent - Drive a live Blender session from the agent
 > Status: Active
 > Category: other
-> Verified: 2026-08-21 (real session, Blender 5.2 LTS on macOS, ~700-object CAD assembly)
+> Verified: 2026-08-21 (real session, Blender 5.2 LTS on macOS, ~700-object CAD assembly); 2026-08-24 a second session hit all three ways of losing the bridge, and designed a part through it
 > Related request: (none yet)
 > Related backlog: (none yet)
 > Related task: (none yet)
 > Reminder: Update status, category, verification, and linked refs when you edit this doc.
-> Indicators reviewed: 2026-08-21 19:47:37
+> Indicators reviewed: 2026-08-24 18:18:18
 
 # Trigger
 - The operator has a Blender scene open on screen and wants the agent to inspect or modify it live.
@@ -42,6 +42,30 @@ recover the feature's extent. One round trip instead of three. Reading their **s
 too, but check `object.mode` first and read through `bmesh.from_edit_mesh` in Edit Mode -- and be
 aware a stale selection from an earlier operation looks exactly like a deliberate one, so compare
 what is selected against what they said they selected.
+
+# Losing the bridge, and the three ways it happens
+The bridge is an `app.timers` callback living in the session's memory, and nothing about it
+survives what follows. None of these announce themselves: the agent writes a command, reads
+the previous answer, and carries on believing it.
+
+1. **Reloading or opening a file destroys every registered timer.** `bpy.ops.wm.revert_mainfile()`
+   inside a command kills the bridge in the middle of that same command's own script -- the
+   script finishes, the output is written, and nothing runs afterwards. The tell is an output
+   file that stops changing while the command file keeps being rewritten. To recover a pristine
+   state without reloading, `bpy.ops.wm.append` the objects from a **copy** of the file: appending
+   from the file that is currently open is refused outright ("cannot use current file as library").
+2. **Re-arming replays the pending command.** A freshly registered bridge compares against a zero
+   mtime, so it executes whatever `bl_cmd.py` holds the moment it starts. Twice in one session
+   that ran a command written before the bridge died -- useful once, confusing the other time.
+   Write a harmless probe before asking the operator to re-arm.
+3. **Two armed instances share one command file and one output file.** Both execute every command
+   and both write the answer, so what comes back is one instance's reply overwritten -- or torn --
+   by the other's. It reads as a single coherent block: in practice a filepath from one session
+   and an object count from the other, with nothing to say the two lines disagree. There is no way
+   to disarm a bridge from the outside, because the timer's function object lives in the exec'd
+   namespace and cannot be handed to `unregister`. The only clean exit is to close the instance.
+   Check the file path *and* something scene-specific in the same answer, and treat a mismatch as
+   two bridges rather than as a surprising scene.
 
 # Verification
 - First round trip: `print("hello", len(bpy.data.objects))` must come back in `bl_out.txt` within two seconds.

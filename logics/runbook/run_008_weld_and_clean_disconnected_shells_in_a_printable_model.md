@@ -6,6 +6,7 @@
 > Related backlog: (none yet)
 > Related task: (none yet)
 > Reminder: Update status, category, verification, and linked refs when you edit this doc.
+> Indicators reviewed: 2026-08-24 18:18:19
 
 # Trigger
 - A printable model comes out in several disconnected pieces that should print as one: a round part sitting in a recess, a part on a thin stalk, anything separated by a real-world clearance gap.
@@ -25,6 +26,25 @@ A voxel remesh cannot bridge a gap wider than its voxel. Real clearances survive
 
 # Procedure: cleaning debris
 Every boolean DIFFERENCE detaches fragments that were only attached through the removed region. Enumerate shells and delete every one below a size threshold, then re-check. Observed: 5 fragments after cutting a floor hatch, 2 more after removing a 20 mm rod. Run the cleanup as a standing step after any cut, not as a reaction to seeing something float.
+
+# A union that reports success and welds nothing
+An EXACT boolean union between two solids that do not actually share volume returns without
+error and without a warning. What it produces is a concatenation, and the tell is arithmetic:
+**the result's vertex count equals the sum of the inputs exactly.** 8109 = 4061 + 1808 + 2 x 1120
+meant no vertex had been created, so nothing had been cut, so nothing had been welded -- while
+the shell count and a render both looked plausible. A union that really cut always changes the
+count by something other than the plain sum.
+
+The cause, when it happens on CAD, is almost never the solver. A 30 x 30 tube threaded between
+two sheet-metal parts passed through their cut-outs without touching metal, where a fatter round
+tube in the same place had welded. Bounding boxes overlapped throughout; material did not.
+
+**Probe where the material is before placing a joint.** Collect the vertices of each part inside
+the band the joint will occupy, sort them along the axis in question, and split them into runs
+wherever the gap exceeds a couple of millimetres. That prints the part's material as intervals:
+one bracket read `-16.0..-9.9` and `9.9..16.0`, the sheet it joined `-17.3..-10.4` and
+`10.6..16.3`. The common centre is +/-13, not the +/-11 that had been picked by eye, and moving
+the tubes there made both unions cut. One round trip instead of guessing.
 
 # Verification
 - Shell count is 1 (or the intended number).
