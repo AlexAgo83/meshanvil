@@ -709,6 +709,120 @@ def check_viewer_origin_and_listing(tmp: Path):
         thread.join(timeout=2)
 
 
+def check_annotations_stay_out_of_the_reports(tmp: Path):
+    """The one route that writes, and the boundary it must not cross. Voir adr_009.
+
+    An annotation is the first content a person authors inside the page. It lands beside the
+    reports and never in them, the route is guarded like the two that already write nothing,
+    and an interrupted write leaves the previous file rather than a truncated one -- a
+    truncated annotation file would take every note with it.
+    """
+    from meshanvil import notes
+    from meshanvil.viewer_routes import note as note_route
+
+    root = tmp / "annotated"
+    ops = root / "work" / "ops"
+    ops.mkdir(parents=True)
+    report = ops / "001_scan_defects.json"
+    report.write_text(json.dumps({"id": "001", "links": {"parent": None}}), encoding="utf-8")
+    fingerprint = report.read_bytes()
+
+    assert notes.read(root) == {"reports": {}, "chains": {}}, notes.read(root)
+    notes.put(root, "reports", "001", "the arch was picked by eye and it showed")
+    notes.put(root, "chains", "a" * 64, "Support moteur, second attempt")
+    stored = notes.read(root)
+    assert stored["reports"]["001"].startswith("the arch"), stored
+    assert stored["chains"]["a" * 64].startswith("Support"), stored
+    # The report is untouched: that is the whole point of storing this elsewhere.
+    assert report.read_bytes() == fingerprint, "writing an annotation modified a report"
+    assert notes.path(root).parent == root / "work", notes.path(root)
+
+    # An empty note removes the entry rather than storing an empty string.
+    notes.put(root, "reports", "001", "   ")
+    assert "001" not in notes.read(root)["reports"], notes.read(root)
+
+    # Only two kinds are writable, and a key is required: the request never names a path.
+    for kind, key in (("outputs", "001"), ("reports", "")):
+        try:
+            notes.put(root, kind, key, "x")
+            raise AssertionError(f"an annotation was accepted for {kind!r}/{key!r}")
+        except KeyError:
+            pass
+
+    # A write that fails partway leaves the previous file intact, never a truncated one.
+    notes.put(root, "chains", "b" * 64, "kept")
+    before = notes.path(root).read_bytes()
+    original_replace = notes.os.replace
+    try:
+        notes.os.replace = lambda *args: (_ for _ in ()).throw(OSError("disk full"))
+        try:
+            notes.put(root, "chains", "c" * 64, "lost")
+        except OSError:
+            pass
+    finally:
+        notes.os.replace = original_replace
+    assert notes.path(root).read_bytes() == before, "an interrupted write damaged the file"
+    leftovers = list((root / "work").glob(".notes-*"))
+    assert not leftovers, f"a temporary file was left behind: {leftovers}"
+
+    # The route: guarded like the two that already exist, and refusing anything else.
+    class Reply:
+        def __init__(self):
+            self.status, self.error, self.body = None, None, b""
+        def write(self, data):
+            self.body += data
+        def flush(self):
+            pass
+
+    class Handler:
+        meshanvil_root = root
+        meshanvil_token = "token"
+        def __init__(self, headers, payload):
+            self.headers = headers
+            self.rfile = io.BytesIO(json.dumps(payload).encode("utf-8"))
+            self.headers.setdefault("Content-Length", str(len(self.rfile.getvalue())))
+            self.wfile = Reply()
+            self.status = None
+            self.error = None
+        def send_error(self, code, message=None):
+            self.error = code
+        def send_response(self, code):
+            self.status = code
+        def send_header(self, key, value):
+            pass
+        def end_headers(self):
+            pass
+
+    good = {"X-Meshanvil-Token": "token"}
+    handler = Handler(dict(good), {"kind": "reports", "key": "001", "text": "through the route"})
+    assert note_route.handle_post(handler, "/note", None) is True
+    assert handler.status == 200 and handler.error is None, (handler.status, handler.error)
+    assert notes.read(root)["reports"]["001"] == "through the route", notes.read(root)
+    assert report.read_bytes() == fingerprint, "the route modified a report"
+
+    for headers, payload, why in (
+            ({}, {"kind": "reports", "key": "001", "text": "x"}, "no token"),
+            ({"X-Meshanvil-Token": "wrong"}, {"kind": "reports", "key": "001", "text": "x"}, "wrong token"),
+            (dict(good), {"kind": "outputs", "key": "001", "text": "x"}, "unknown kind"),
+            (dict(good), {"kind": "reports", "key": "", "text": "x"}, "empty key"),
+            (dict(good), {"kind": "reports", "key": "001"}, "no text"),
+            (dict(good), {"kind": "reports", "key": "001", "text": 3}, "text is not a string")):
+        rejected = Handler(headers, payload)
+        assert note_route.handle_post(rejected, "/note", None) is True, why
+        assert rejected.error in (400, 401), (why, rejected.error, rejected.status)
+    assert note_route.handle_post(Handler(dict(good), {}), "/other", None) is False
+
+    # Retention tidies an annotation whose report was removed by hand, and keeps chain names,
+    # which key on a source file rather than on any particular run over it.
+    notes.put(root, "reports", "404", "a report that is not there")
+    report.unlink()
+    other = ops / "002_list_shells.json"
+    other.write_text(json.dumps({"id": "002", "links": {"parent": None}}), encoding="utf-8")
+    dropped = notes.forget_missing_reports(root, {"002"})
+    assert dropped == ["001", "404"], dropped
+    assert notes.read(root)["chains"]["b" * 64] == "kept", notes.read(root)
+
+
 def check_events_cadence_is_declared(tmp: Path):
     """The period between two looks is a declared number, not a multiple of the scan's cost.
 

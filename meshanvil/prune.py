@@ -3,6 +3,8 @@ from __future__ import annotations
 import json, time
 from pathlib import Path
 
+from . import notes
+
 OPS = "work/ops"
 
 
@@ -39,4 +41,12 @@ def run(root: Path, keep: int, dry_run: bool) -> tuple[list[tuple[Path, int]], i
         report["output"]["state"] = "pruned"
         report["output"]["state_changed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         report_path.write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
+    # Retention is the housekeeping moment, so it is where annotations are tidied too. In
+    # practice this finds nothing: pruning removes an artefact and marks its report pruned, it
+    # never removes the report, so a note keeps describing something that still exists. What it
+    # does catch is a report file removed by hand, which would otherwise leave a note behind
+    # with nothing to attach to. Voir adr_009.
+    existing = {path.name.split("_", 1)[0] for path in sorted((root / OPS).glob("*.json"))}
+    if existing:
+        notes.forget_missing_reports(root, existing)
     return result, sum(size for _, size in result)

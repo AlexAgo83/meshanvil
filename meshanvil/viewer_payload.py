@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib, json, os, shutil, time
 from pathlib import Path, PureWindowsPath
 
-from . import VERSION, logics_bridge, paths
+from . import VERSION, logics_bridge, notes, paths
 from .i18n import SOURCE, catalogue, language
 
 OPS = "work/ops"
@@ -73,7 +73,10 @@ def payload(root: Path, target: Path, run_token: str | None = None) -> dict:
             "version": VERSION, "run_token": run_token, "projects": known, "active": active["name"],
             "reports": active["reports"], "docs": logics_bridge.documents(refs, root),
             "runbooks": runbooks, "doctor": collect_doctor(root), "files": file_references(known),
-            "ops_exists": active["ops_exists"]}
+            "ops_exists": active["ops_exists"],
+            # Baked in rather than fetched, so a page opened from the filesystem shows what a
+            # person wrote even though it has no server to ask. Voir adr_009.
+            "notes": notes.read(root)}
 
 
 def file_id(path: str) -> str:

@@ -20,6 +20,10 @@ def test_viewer_origin_and_listing(tmp_path: Path):
     selfcheck.check_viewer_origin_and_listing(tmp_path)
 
 
+def test_annotations_stay_out_of_the_reports(tmp_path: Path):
+    selfcheck.check_annotations_stay_out_of_the_reports(tmp_path)
+
+
 def test_events_cadence_is_declared(tmp_path: Path):
     selfcheck.check_events_cadence_is_declared(tmp_path)
 

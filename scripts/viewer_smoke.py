@@ -51,6 +51,34 @@ SERVED_SMOKE = r"""
       selectProject(others.length ? DATA.projects[0].name : DATA.active);
     }
 
+    // The round trip only a served page can make: type a note, let it save, and find it in
+    // the payload the next refresh brings back.
+    const field = document.querySelector("[data-note-kind]");
+    assert(field, "no note field on a served report");
+    assert(field.dataset.noteKind === "reports", "the note field is not bound to a report");
+    field.value = "written by the smoke";
+    field.dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && !(DATA.notes && DATA.notes.reports[field.dataset.noteKey]); i++) {
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    assert(DATA.notes.reports[field.dataset.noteKey] === "written by the smoke",
+      "a note was typed and never came back from the server");
+    const noteKey = field.dataset.noteKey;
+    await refreshLive();
+    assert(DATA.notes.reports[noteKey] === "written by the smoke",
+      "a note did not survive a refresh");
+    // The refresh repainted the panel, so the field above is detached and its events no longer
+    // reach the document. Ask for the current one.
+    const again = document.querySelector("[data-note-kind]");
+    assert(again && again !== field, "the refresh did not repaint the note field");
+    assert(again.value === "written by the smoke", "the repainted field lost the note");
+    again.value = "";
+    again.dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && DATA.notes.reports[noteKey]; i++) {
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    assert(!DATA.notes.reports[noteKey], "clearing a note left it behind");
+
     const controls = document.querySelector(".filectrls");
     assert(controls, "file controls missing on served page");
     assert(!controls.querySelector(".filelabel").textContent.includes("/"), "served file label shows a full path");
@@ -374,6 +402,11 @@ SMOKE = r"""
     assert(DATA.active === only.name && document.querySelector("#status-counts").textContent === counted,
       "switching back did not restore the page");
     await settled();
+
+    // A page with no server shows what is there and offers nothing to type into.
+    assert(!document.querySelector("[data-note-kind]"),
+      "a page opened from the filesystem offers a note field it cannot save");
+    assert(document.querySelector(".noteblock"), "the note block is missing entirely");
 
     document.querySelector('[data-section-goto="measurements"]').click();
     assert(document.querySelector('[data-section-goto="measurements"]').getAttribute("aria-selected") === "true", "report rail did not select measurements");

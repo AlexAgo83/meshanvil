@@ -102,6 +102,19 @@ button.outgroup:hover .ogtri{color:var(--txt);border-color:var(--widget-hi)}
 .node.source .nidx{color:var(--dimmer);text-transform:uppercase;letter-spacing:.5px}
 .node.source .nfoot{color:var(--dimmer);font-size:10px}
 
+/* A note is the one thing on this page a person wrote. It reads as written-in rather than
+   measured -- warm rule, softer ground -- so it can never be mistaken for a value the tool
+   produced. Voir adr_009. */
+.noteblock{display:flex;flex-direction:column;gap:5px}
+.note-edit{width:100%;resize:vertical;min-height:52px;padding:7px 8px;font:inherit;font-size:11.5px;
+  color:var(--txt);background:#2b2926;border:1px solid #4a4238;border-left:2px solid var(--active);
+  border-radius:var(--r)}
+.note-edit:focus{outline:none;border-color:var(--active)}
+.note-edit::placeholder{color:var(--dimmer)}
+.note-read{padding:7px 8px;font-size:11.5px;color:var(--txt);background:#2b2926;
+  border-left:2px solid var(--active);border-radius:var(--r);white-space:pre-wrap}
+.note-state{min-height:12px;font-size:10px;color:var(--dimmer)}
+
 /* ---------- node editor ---------- */
 .nodewrap{position:relative;flex:1;min-height:0;overflow:auto;background:
   radial-gradient(circle at 1px 1px, #232323 1px, transparent 0) 0 0/22px 22px, var(--node-bg)}

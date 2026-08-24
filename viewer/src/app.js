@@ -566,6 +566,7 @@ function props() {
     </div>`;
 
   html += driftNotice(report);
+  html += noteBlock("reports", report.id, t("ui.note_on_report"));
   html += block(t("ui.input"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
@@ -805,6 +806,42 @@ function legacyCopy(text, done) {
 
 /** adr_007: only reachable when SERVED is true, on one of the three rows the server itself
     also allow-lists (RUNNABLE in meshanvil/viewer.py). The name travels, nothing else does. */
+/** A person's note, kept visibly apart from anything the tool measured.
+ *
+ *  A page opened from the filesystem shows what is there and refuses to write: it has no
+ *  server to write through, which is adr_003's refusal still standing where adr_009 does not
+ *  reach. */
+function noteBlock(kind, key, title) {
+  const stored = (/** @type {any} */ (DATA).notes || {})[kind] || {};
+  const text = stored[key] || "";
+  const body = SERVED
+    ? `<textarea class="note-edit" data-note-kind="${esc(kind)}" data-note-key="${esc(key)}"
+         rows="3" placeholder="${esc(t("ui.note_placeholder"))}">${esc(text)}</textarea>
+       <div class="note-state" data-note-state="${esc(kind)}:${esc(key)}"></div>`
+    : (text ? `<div class="note-read">${esc(text)}</div>`
+            : `<div class="note">${esc(t("ui.note_read_only"))}</div>`);
+  return block(title, `<div class="noteblock">${body}</div>`, "note");
+}
+
+async function saveNote(field) {
+  const kind = field.dataset.noteKind, key = field.dataset.noteKey;
+  const state = document.querySelector(`[data-note-state="${CSS.escape(kind + ":" + key)}"]`);
+  if (state) state.textContent = t("ui.note_saving");
+  try {
+    const response = await fetch(`${location.origin}/note`, {
+      method: "POST",
+      headers: { "X-Meshanvil-Token": /** @type {string} */ (DATA.run_token),
+                 "Content-Type": "application/json" },
+      body: JSON.stringify({ kind, key, text: field.value }),
+    });
+    if (!response.ok) throw new Error(String(response.status));
+    /** @type {any} */ (DATA).notes = (await response.json()).notes;
+    if (state) state.textContent = t("ui.note_saved");
+  } catch {
+    if (state) state.textContent = t("ui.note_failed");
+  }
+}
+
 async function runCommand(button) {
   const name = button.dataset.run;
   const code = button.querySelector("code");
@@ -986,6 +1023,10 @@ document.addEventListener("click", (event) => {
   for (const menu of document.querySelectorAll("details.menu[open]")) {
     if (!menu.contains(target)) /** @type {HTMLDetailsElement} */ (menu).open = false;
   }
+});
+document.addEventListener("change", (event) => {
+  const field = /** @type {HTMLTextAreaElement} */ (event.target);
+  if (field && field.matches && field.matches("[data-note-kind]")) saveNote(field);
 });
 document.addEventListener("input", (event) => {
   const input = /** @type {HTMLInputElement} */ (event.target);
