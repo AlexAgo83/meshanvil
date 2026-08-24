@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Viewer usability and live state
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:57
+> Indicators reviewed: 2026-08-25 00:18:11
 
 # AI Context
 - Summary: Two independent problems behind one symptom. The bug: fetchData() assigns a whole new DATA, so the active project in the response replaces the one the operator selected. The design point: the events route sleeps for twenty times its own scan cost, so the viewer gets slower the more projects there are to watch.
@@ -34,7 +34,7 @@
 
 # Acceptance criteria
 - AC1: Selecting a project, then triggering a change on disk, leaves the selected project active.
-- AC2: The selected report and the fold state survive the same sequence.
+- AC2: The selected report and the fold state survive the same sequence. The fold state is keyed by chain, which item_071 changes: this AC is verified against that keying, not the group keying it replaces.
 - AC3: The events channel's interval is a declared value, and adding sibling projects does not change it.
 - AC4: A refresh that changes nothing leaves the DOM of the outliner and the canvas untouched.
 - AC5: A Python check fails if the events cadence is derived from the scan's own duration.

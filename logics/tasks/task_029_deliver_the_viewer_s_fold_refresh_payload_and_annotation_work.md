@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:58
+> Indicators reviewed: 2026-08-25 00:18:12
 
 # AI Context
 - Summary: Four viewer items whose order matters: the fold is a shipped defect and the cheapest, the refresh hides a bug that must be separated from its tuning, the annotations constrain nothing else, and the payload touches the file:// snapshot every other screen depends on. The fold, the refresh and the payload all read the same DATA object, which is why two of the three defects come from replacing it too bluntly.

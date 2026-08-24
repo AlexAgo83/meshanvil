@@ -12,6 +12,7 @@
 | [adr_006_bridges_between_meshanvil_and_logics](architecture/adr_006_bridges_between_meshanvil_and_logics.md) | Bridges between meshanvil and Logics | Accepted |  |  | architecture/adr_006_bridges_between_meshanvil_and_logics.md |
 | [adr_007_let_the_served_viewer_execute_a_closed_command_set](architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md) | Let the served viewer execute a closed command set | Accepted |  |  | architecture/adr_007_let_the_served_viewer_execute_a_closed_command_set.md |
 | [adr_008_python_package_distribution_and_runtime_assets](architecture/adr_008_python_package_distribution_and_runtime_assets.md) | Python package distribution and runtime assets | Accepted |  |  | architecture/adr_008_python_package_distribution_and_runtime_assets.md |
+| [adr_009_let_the_served_viewer_write_annotations_and_nothing_else](architecture/adr_009_let_the_served_viewer_write_annotations_and_nothing_else.md) | Let the served viewer write annotations, and nothing else | Proposed |  |  | architecture/adr_009_let_the_served_viewer_write_annotations_and_nothing_else.md |
 
 ## Product briefs
 

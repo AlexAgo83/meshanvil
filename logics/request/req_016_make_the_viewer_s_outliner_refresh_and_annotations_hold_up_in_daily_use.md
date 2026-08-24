@@ -7,7 +7,7 @@
 > Complexity: High
 > Theme: Viewer usability and live state
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:57
+> Indicators reviewed: 2026-08-25 00:18:11
 
 # AI Context
 - Summary: Four defects that only appear once a project has several chains and several sibling projects: folding a chain orphans its branches, a background refresh silently undoes the operator's project choice, the live channel's cadence is derived from its own scan cost so it slows as the project grows, and the first paint ships every project's reports and every runbook's body. Plus the one thing the page cannot hold at all -- what a person knows about a report that its numbers do not say.
@@ -40,6 +40,7 @@
 - AC6: The first paint fetches only what it draws. Runbook bodies and the reports of projects other than the active one are fetched when they are first needed, and the page renders a placeholder in the meantime rather than an empty region.
 - AC7: An operator can write and edit a free-text note on any report, and a name on any chain, from the page; both survive a live refresh, a page reload and a server restart.
 - AC8: Annotations are stored outside the reports, in one flat JSON file readable with `cat`, keyed so that a note follows its report and a chain name follows the sha256 of the source file rather than its path.
+- AC10: The page's ability to write is recorded as a decision before it is built, and the route it uses is guarded like the ones that already exist -- token, origin and host -- and takes no path from the request.
 - AC9: Every behaviour above is covered where it can be proved: the grouping and annotation rules without a DOM in viewer/src, the rendered result in the browser smoke, and the server routes in the Python checks.
 
 # Definition of Ready (DoR)

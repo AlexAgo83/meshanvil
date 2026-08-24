@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Annotations over machine records
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:58
+> Indicators reviewed: 2026-08-25 00:19:01
 
 # AI Context
 - Summary: A report says what an operation did and nothing about why it mattered, which parameter was a guess, or what the next attempt should change. The storage decision is the substance: annotations stay outside the reports, because the reports' value is that every number in them came out of an engine. An agent returning to a chain is a first-class reader, so the file has to be readable with cat.
@@ -29,9 +29,13 @@
   - Notes keyed by report identity; chain names keyed by the sha256 of the source file, so a name survives the file being moved and does not follow a regenerated file.
   - A visual treatment that cannot be mistaken for something the tool measured.
   - Refusing writes on a file:// page, which has no server to write through.
+- One guarded POST route on the served server, under the decision recorded in `adr_009`: the same per-launch token as the run and file routes, the same origin and host refusals, serialised writes, and no path ever taken from the request.
+- Writing the file atomically -- temporary file in the same directory, then rename -- so a crash or a second writer leaves a stale file and never a truncated one.
+- Deciding and implementing what happens to a note whose report `prune` has deleted, since `prune` knows nothing about annotations today.
   - Checks: the key rules in viewer/src without a DOM, the write path in the Python checks, and the round trip in the browser smoke.
 - Out:
   - Threads, replies, authorship or timestamps beyond what a single note needs.
+- Reconciling two pages editing the same project at once: last writer wins, as `adr_009` records.
   - Notes on anything other than a report or a chain.
   - Rendering Markdown inside a note.
   - Versioning the annotation file, or reconciling concurrent edits from two pages.
@@ -43,15 +47,19 @@
 - AC4: A chain name is keyed by the source file's sha256: moving the file keeps the name, regenerating the file does not inherit it.
 - AC5: A file:// page shows existing annotations and refuses to write, saying why.
 - AC6: A Python check fails if writing an annotation modifies any file under work/ops.
+- AC7: The write route requires the per-launch token and is refused without it, on a foreign Host and on a foreign Origin, like the two POST routes that already exist.
+- AC8: A write interrupted partway leaves the previous annotation file intact and readable, never a truncated one.
+- AC9: After `prune` removes a report, its note is handled by a stated rule rather than left to rot silently, and a check covers whichever rule is chosen.
 
 # AC Traceability
 - request-AC7 -> This backlog slice. Proof: AC1: A note can be written, edited and cleared on any report from the page, and survives a live refresh, a reload and a server restart.
 - request-AC8 -> This backlog slice. Proof: AC2: A chain can be given a name that is shown wherever the chain is named, and the source file name remains visible.
 - request-AC9 -> This backlog slice. Proof: AC3: Annotations live in one flat JSON file outside work/ops, and no report file is modified by writing one.
+- request-AC10 -> This backlog slice. Proof: AC7: The write route requires the per-launch token and is refused without it, on a foreign Host and on a foreign Origin, like the two POST routes that already exist. The decision itself is recorded in `adr_009_let_the_served_viewer_write_annotations_and_nothing_else`.
 
 # Decision framing
 - Product framing: Not needed
-- Architecture framing: Not needed
+- Architecture framing: `adr_009_let_the_served_viewer_write_annotations_and_nothing_else`
 
 # Links
 - Product brief(s): `prod_015_a_viewer_that_keeps_up_with_the_work`

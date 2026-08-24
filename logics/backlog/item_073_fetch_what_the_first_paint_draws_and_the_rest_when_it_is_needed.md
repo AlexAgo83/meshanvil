@@ -8,7 +8,7 @@
 > Complexity: Medium
 > Theme: Viewer payload and first paint
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
-> Indicators reviewed: 2026-08-25 00:04:58
+> Indicators reviewed: 2026-08-25 00:18:11
 
 # AI Context
 - Summary: Measured at 623 KB before any click: 217 KB of reports for every sibling project with the active one duplicated, and 124 KB of runbook bodies nobody has opened. Renders are already lazy; the JSON is not. The cost is structural rather than large today, and it grows with every project and runbook added.
@@ -24,7 +24,8 @@
 # Scope
 - In:
   - A first payload carrying the active project's reports, the project list without their reports, and runbook metadata without their bodies.
-  - Fetching a project's reports when it is selected, and a runbook's body when it is opened.
+  - Fetching a project's reports when it is selected, and a runbook's body when it is opened. Neither is reachable today: `/api/data` returns everything and there is no route that returns one project or one document, so the routes are part of this item rather than assumed.
+- Accepting that the served payload and the file:// payload become two shapes, and keeping both built from one place so they cannot drift apart unnoticed.
   - A placeholder in the region being filled, so a fetch reads as pending rather than empty.
   - Keeping the file:// snapshot whole: a page with no server still has everything it needs.
   - Checks: the payload's shape in the Python checks, and the placeholder and the fetch in the browser smoke.
@@ -39,6 +40,8 @@
 - AC3: Opening a runbook fetches its body the first time and not again afterwards.
 - AC4: The file:// snapshot still carries everything, and every screen works with no server.
 - AC5: A Python check fails if a runbook body or a non-active project's reports reappear in the first payload.
+- AC6: The routes that serve one project's reports and one document's body are guarded like every other route on that server, and refuse a foreign Host and a foreign Origin.
+- AC7: Both payload shapes are produced by the same builder, and a check fails if one gains a field the other does not account for.
 
 # AC Traceability
 - request-AC6 -> This backlog slice. Proof: AC1: The first payload contains no report belonging to a project other than the active one, and no runbook body.
