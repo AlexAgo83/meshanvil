@@ -12,8 +12,36 @@ editable master. Voir run_012, step 9.
 
     blender -b -P tools/make_hammer.py -- <destination.blend>
 """
-import bpy, bmesh, os, sys, math
+import bpy, bmesh, os, sys, math, json, re
+from pathlib import Path
 from mathutils import Vector
+
+
+def _reporter():
+    if "--job" not in sys.argv:
+        return None, {}
+    args = sys.argv[sys.argv.index("--") + 1:]
+    job = json.loads(Path(args[args.index("--job") + 1]).read_text(encoding="utf-8"))
+    sys.path.insert(0, job.get("install") or job["root"])
+    from meshanvil_engine import report as reporting
+    return reporting.open_report(), job
+
+
+REPORT, JOB = _reporter()
+
+
+def _views():
+    sys.path.insert(0, (JOB or {}).get("install") or (JOB or {}).get("root")
+                    or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
+PARAMS = (JOB or {}).get("params", {})
+STAGE = int(PARAMS.get("stage", 0))
+RENDER = bool(PARAMS.get("render", True))
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 MM = 0.001
 
@@ -136,67 +164,121 @@ def loft(rings, name, slots, segment_slot=None):
     return ob
 
 
-clear()
+def stage_1_head():
+    """Swept forged head with copper material slots on the struck faces."""
+    clear()
+    head_rings = []
+    for x, ha, hb in HEAD:
+        wobble = forged(x, 100)
+        head_rings.append([(x * MM, a * MM, (HEAD_Z + b + wobble) * MM)
+                           for a, b in octagon(ha, hb + wobble)])
+    loft(head_rings, "head", ["head", "face"], {0: "face", len(HEAD) - 2: "face"})
 
-# --- head: swept along X, the striking axis, and lifted to sit on the handle's top.
-head_rings = []
-for x, ha, hb in HEAD:
-    wobble = forged(x, 100)
-    head_rings.append([(x * MM, a * MM, (HEAD_Z + b + wobble) * MM)
-                       for a, b in octagon(ha, hb + wobble)])
-# The first and last segments are the struck faces, and they are the copper.
-loft(head_rings, "head", ["head", "face"], {0: "face", len(HEAD) - 2: "face"})
 
-# --- handle: swept along Z, oval section, curving back from the head's axis toward the butt.
-handle_rings = []
-for z, ha, hb in HANDLE:
-    t = 1 - z / HANDLE[-1][0]
-    lean = -HANDLE_CURVE * t * t
-    handle_rings.append([((lean + a) * MM, b * MM, z * MM)
-                         for a, b in octagon(ha, hb)])
-loft(handle_rings, "handle", ["handle"])
+def stage_2_handle():
+    """Oval handle, swept upward with the small curve that stops it reading as a dowel."""
+    handle_rings = []
+    for z, ha, hb in HANDLE:
+        t = 1 - z / HANDLE[-1][0]
+        lean = -HANDLE_CURVE * t * t
+        handle_rings.append([((lean + a) * MM, b * MM, z * MM)
+                             for a, b in octagon(ha, hb)])
+    loft(handle_rings, "handle", ["handle"])
 
-# --- the wedge driven into the handle's top to lock it in the eye. Small, and the one place a
-# hammer shows a second metal, which is where the icon's copper belongs on this object.
-# Flat and wide rather than tall: proud of the eye by a few millimetres it reads as the wedge
-# capping the handle, and standing up it read as a cork stopper.
-wedge_rings = [[(a * MM, b * MM, z * MM) for a, b in octagon(ha, hb, 0.42)]
-               for z, ha, hb in ((344, 21.0, 16.0), (356, 25.5, 19.5), (362, 23.5, 18.0))]
-loft(wedge_rings, "wedge", ["wedge"])
 
-# --- centre the whole object on the world origin, keeping real millimetres.
-objs = [o for o in bpy.data.objects if o.type == 'MESH']
-pts = [o.matrix_world @ Vector(c) for o in objs for c in o.bound_box]
-centre = Vector([(min(p[i] for p in pts) + max(p[i] for p in pts)) / 2 for i in range(3)])
-for o in objs:
-    o.location -= centre
-# matrix_world is cached: measuring before this update reports where the object used to be.
-bpy.context.view_layer.update()
+def stage_3_wedge():
+    """The wedge driven into the handle's top to lock it in the eye."""
+    wedge_rings = [[(a * MM, b * MM, z * MM) for a, b in octagon(ha, hb, 0.42)]
+                   for z, ha, hb in ((344, 21.0, 16.0), (356, 25.5, 19.5), (362, 23.5, 18.0))]
+    loft(wedge_rings, "wedge", ["wedge"])
 
-pts = [o.matrix_world @ Vector(c) for o in objs for c in o.bound_box]
-lo = [min(p[i] for p in pts) / MM for i in range(3)]
-hi = [max(p[i] for p in pts) / MM for i in range(3)]
-# Two counts, as on the sports car: the head and its faces are each open along the seam they
-# share, which is the split and not a defect. Welded, the whole object must still close.
-open_edges = 0
-for o in objs:
-    bm = bmesh.new(); bm.from_mesh(o.data)
-    open_edges += sum(1 for e in bm.edges if len(e.link_faces) != 2)
+
+def stage_4_center():
+    """Centre the whole object on the world origin, keeping real millimetres."""
+    objs = [o for o in bpy.data.objects if o.type == 'MESH']
+    pts = [o.matrix_world @ Vector(c) for o in objs for c in o.bound_box]
+    centre = Vector([(min(p[i] for p in pts) + max(p[i] for p in pts)) / 2 for i in range(3)])
+    for o in objs:
+        o.location -= centre
+    bpy.context.view_layer.update()
+
+
+STAGE_NAMES = {1: "Forged head", 2: "Handle", 3: "Wedge", 4: "Centred master"}
+STAGES = {1: stage_1_head, 2: stage_2_handle, 3: stage_3_wedge, 4: stage_4_center}
+
+
+def measures():
+    objs = [o for o in bpy.data.objects if o.type == 'MESH']
+    pts = [o.matrix_world @ Vector(c) for o in objs for c in o.bound_box]
+    lo = [min(p[i] for p in pts) / MM for i in range(3)]
+    hi = [max(p[i] for p in pts) / MM for i in range(3)]
+    open_edges = 0
+    for o in objs:
+        bm = bmesh.new(); bm.from_mesh(o.data)
+        open_edges += sum(1 for e in bm.edges if len(e.link_faces) != 2)
+        bm.free()
+    bm = bmesh.new()
+    for o in objs:
+        bm.from_mesh(o.data)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-6)
+    welded = sum(1 for e in bm.edges if len(e.link_faces) != 2)
     bm.free()
-bm = bmesh.new()
-for o in objs:
-    bm.from_mesh(o.data)
-bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-6)
-welded = sum(1 for e in bm.edges if len(e.link_faces) != 2)
-bm.free()
-print("hammer: %d objects  %d verts  open edges %d per-object / %d welded  "
-      "bbox mm X %.0f Y %.0f Z %.0f  centred %.1f %.1f %.1f"
-      % (len(objs), sum(len(o.data.vertices) for o in objs), open_edges, welded,
-         hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2],
-         (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2))
+    return objs, lo, hi, open_edges, welded
 
-path = next((a for a in (sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
-             if not a.startswith("--")), None) or os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "hammer.blend")
-os.makedirs(os.path.dirname(path), exist_ok=True)
-bpy.ops.wm.save_as_mainfile(filepath=path, compress=True)
+
+def print_report():
+    objs, lo, hi, open_edges, welded = measures()
+    print("hammer: %d objects  %d verts  open edges %d per-object / %d welded  "
+          "bbox mm X %.0f Y %.0f Z %.0f  centred %.1f %.1f %.1f"
+          % (len(objs), sum(len(o.data.vertices) for o in objs), open_edges, welded,
+             hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2],
+             (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2))
+
+
+def save_stage(stage):
+    source = Path(bpy.data.filepath or (JOB or {}).get("target", "hammer.blend"))
+    stem = re.sub(r'(_s[0-9]+)+$', '', source.stem or "hammer")
+    out = source.with_name(f"{stem}_s{stage}.blend")
+    if RENDER:
+        views.shoot(REPORT, JOB, ROOT, out.stem)
+    bpy.ops.wm.save_as_mainfile(filepath=str(out), compress=True)
+    return out
+
+
+def run_stage(stage):
+    if stage not in STAGES:
+        message = f"no stage {stage}: this hammer has {len(STAGES)}"
+        if REPORT:
+            REPORT.failed(message)
+            REPORT.write()
+        sys.exit(message)
+    if REPORT:
+        from meshanvil_engine import report as reporting
+        REPORT.before(reporting.measure_scene())
+    STAGES[stage]()
+    out = save_stage(stage)
+    objs, _, _, open_edges, welded = measures()
+    if REPORT:
+        REPORT.after(reporting.measure_scene())
+        REPORT.report["params"]["stage_name"] = "%02d %s" % (stage, STAGE_NAMES[stage])
+        REPORT.report["params"]["objects"] = len(objs)
+        REPORT.finding("stage", number=stage, name=STAGE_NAMES[stage], objects=len(objs),
+                       open_edges=open_edges, welded_open_edges=welded)
+        if open_edges or welded:
+            REPORT.warn("stage_left_open_edges")
+        REPORT.cites("run_012_build_a_recognizable_low_poly_subject_from_primitives")
+        REPORT.output(str(out))
+        REPORT.write()
+
+
+args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+if REPORT:
+    run_stage(STAGE)
+else:
+    path = next((a for a in args if not a.startswith("--")), None) or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "hammer.blend")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    for stage in STAGES:
+        STAGES[stage]()
+    print_report()
+    bpy.ops.wm.save_as_mainfile(filepath=path, compress=True)

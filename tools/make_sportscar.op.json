@@ -1,0 +1,11 @@
+{
+  "operation": "make_sportscar",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/make_sportscar.py",
+  "summary_key": "operation.make_sportscar.summary",
+  "params": [
+    {"name": "stage", "type": "int", "default": 1},
+    {"name": "render", "type": "bool", "default": true}
+  ]
+}

@@ -291,6 +291,12 @@
   "make_character": {
    "summary": "Ajoute une etape de modelisation du personnage en T-pose a ce qu'a laisse la precedente."
   },
+  "make_hammer": {
+   "summary": "Ajoute une etape de modelisation du marteau meshanvil a ce qu'a laisse la precedente."
+  },
+  "make_sportscar": {
+   "summary": "Ajoute une etape de modelisation de la voiture de sport a ce qu'a laisse la precedente."
+  },
   "make_vise": {
    "summary": "Ajoute une etape de modelisation de l'etau a ce qu'a laisse la precedente."
   },

@@ -291,6 +291,12 @@
   "make_character": {
    "summary": "Add one modelling stage of the T-pose character to whatever the previous stage left."
   },
+  "make_hammer": {
+   "summary": "Add one modelling stage of the meshanvil hammer to whatever the previous stage left."
+  },
+  "make_sportscar": {
+   "summary": "Add one modelling stage of the sports car to whatever the previous stage left."
+  },
   "make_vise": {
    "summary": "Add one modelling stage of the bench vise to whatever the previous stage left."
   },

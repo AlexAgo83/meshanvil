@@ -10,8 +10,36 @@ Authored in millimetres at true scale: 4450 x 1900 x 1250, wheelbase 2650, wheel
 
     blender -b -P tools/make_sportscar.py -- <destination.blend> [--preview]
 """
-import bpy, bmesh, os, sys, math
+import bpy, bmesh, os, sys, math, json, re
+from pathlib import Path
 from mathutils import Vector
+
+
+def _reporter():
+    if "--job" not in sys.argv:
+        return None, {}
+    args = sys.argv[sys.argv.index("--") + 1:]
+    job = json.loads(Path(args[args.index("--job") + 1]).read_text(encoding="utf-8"))
+    sys.path.insert(0, job.get("install") or job["root"])
+    from meshanvil_engine import report as reporting
+    return reporting.open_report(), job
+
+
+REPORT, JOB = _reporter()
+
+
+def _views():
+    sys.path.insert(0, (JOB or {}).get("install") or (JOB or {}).get("root")
+                    or str(Path(__file__).resolve().parent.parent))
+    from meshanvil_engine import views
+    return views
+
+
+views = _views()
+PARAMS = (JOB or {}).get("params", {})
+STAGE = int(PARAMS.get("stage", 0))
+RENDER = bool(PARAMS.get("render", True))
+ROOT = Path((JOB or {}).get("root", Path(__file__).resolve().parent.parent))
 
 MM = 0.001
 LENGTH, WIDTH, HEIGHT = 4450 * MM, 1900 * MM, 1250 * MM
@@ -248,42 +276,64 @@ def disc(name, radius, width, centre, segments=28):
     return tube(name, radius, radius * 0.001, width, centre, segments)
 
 
-clear()
-body, glass = loft([ring(*s) for s in stations()], "body_paint", DLO_BANDS, "glass")
+def stage_1_body():
+    """The closed body shell and glasshouse cutout: the silhouette is decided here."""
+    clear()
+    loft([ring(*s) for s in stations()], "body_paint", DLO_BANDS, "glass")
 
-# Bolt-ons. Each straddles the surface it sits in rather than floating on it or being buried:
-# the nose cap is a flat face at x = 2225, so a lamp spanning 2200 to 2232 reads as recessed
-# into the fascia with a few millimetres proud, which is what a lamp does.
-for side, sign in (("left", -1), ("right", 1)):
-    box(f"headlight_{side}", (2196, 2236), (sign * 214, sign * 716), (588, 694))
-    # Mirror on a short stalk off the door skin: the housing clears the flank, the stalk
-    # bridges the gap, so nothing floats and nothing is buried.
-    box(f"trim_mirror_{side}", (612, 776), (sign * 944, sign * 1074), (932, 1024))
-    box(f"trim_mirror_stalk_{side}", (660, 730), (sign * 888, sign * 952), (918, 968))
-    # Air intake ahead of the rear arch, the one styling cue that says where the engine is.
-    box(f"trim_intake_{side}", (-1010, -880), (sign * 902, sign * 952), (404, 536))
 
-# The fascia between the lamps and the splitter was a dead plane in the front view. A lower
-# intake under the grille is what a real one does with that height, and it costs one box.
-box("trim_grille", (2194, 2230), (-436, 436), (438, 570))
-box("trim_intake_lower", (2160, 2236), (-628, 628), (330, 404))
-box("trim_vent_left", (2150, 2238), (-812, -672), (356, 528))
-box("trim_vent_right", (2150, 2238), (672, 812), (356, 528))
-box("trim_splitter", (2110, 2246), (-700, 700), (300, 344))
-# One bar across the whole width rather than a lamp per side: two boxes stopping short of the
-# centreline read as two lamps with a gap, which is the opposite of what a light bar is.
-box("taillight_bar", (-2236, -2200), (-742, 742), (740, 814))
-box("trim_plate", (-2232, -2206), (-268, 268), (516, 646))
-box("trim_diffuser", (-2246, -2090), (-660, 660), (378, 452))
+def stage_2_side_details():
+    """Lamps, mirrors and intakes that prove the body is a car, not just a wedge."""
+    # Bolt-ons. Each straddles the surface it sits in rather than floating on it or being buried:
+    # the nose cap is a flat face at x = 2225, so a lamp spanning 2200 to 2232 reads as recessed
+    # into the fascia with a few millimetres proud, which is what a lamp does.
+    for side, sign in (("left", -1), ("right", 1)):
+        box(f"headlight_{side}", (2196, 2236), (sign * 214, sign * 716), (588, 694))
+        # Mirror on a short stalk off the door skin: the housing clears the flank, the stalk
+        # bridges the gap, so nothing floats and nothing is buried.
+        box(f"trim_mirror_{side}", (612, 776), (sign * 944, sign * 1074), (932, 1024))
+        box(f"trim_mirror_stalk_{side}", (660, 730), (sign * 888, sign * 952), (918, 968))
+        # Air intake ahead of the rear arch, the one styling cue that says where the engine is.
+        box(f"trim_intake_{side}", (-1010, -880), (sign * 902, sign * 952), (404, 536))
 
-# Wheels: built on both sides explicitly rather than mirrored. A mirror modifier left
-# unapplied is the trap make_demo_vehicle exists to demonstrate; this subject is meant to
-# leave the generator ready to use.
-for end, x in AXLES:
-    for side, y in (("left", -WHEEL_Y), ("right", WHEEL_Y)):
-        tube(f"tyre_{end}_{side}", WHEEL_R, RIM_R, TYRE_W, (x, y, WHEEL_R))
-        disc(f"wheel_{end}_{side}", RIM_R, RIM_W, (x, y, WHEEL_R))
-        disc(f"brake_{end}_{side}", DISC_R, DISC_W, (x, y * 0.88, WHEEL_R))
+
+def stage_3_fascias():
+    """Front and rear openings: the flat ends become fascia, splitter and diffuser."""
+    # The fascia between the lamps and the splitter was a dead plane in the front view. A lower
+    # intake under the grille is what a real one does with that height, and it costs one box.
+    box("trim_grille", (2194, 2230), (-436, 436), (438, 570))
+    box("trim_intake_lower", (2160, 2236), (-628, 628), (330, 404))
+    box("trim_vent_left", (2150, 2238), (-812, -672), (356, 528))
+    box("trim_vent_right", (2150, 2238), (672, 812), (356, 528))
+    box("trim_splitter", (2110, 2246), (-700, 700), (300, 344))
+    # One bar across the whole width rather than a lamp per side: two boxes stopping short of the
+    # centreline read as two lamps with a gap, which is the opposite of what a light bar is.
+    box("taillight_bar", (-2236, -2200), (-742, 742), (740, 814))
+    box("trim_plate", (-2232, -2206), (-268, 268), (516, 646))
+    box("trim_diffuser", (-2246, -2090), (-660, 660), (378, 452))
+
+
+def stage_4_wheels():
+    """Tyres, rims and brake discs, built explicitly on all four corners."""
+    # Wheels: built on both sides explicitly rather than mirrored. A mirror modifier left
+    # unapplied is the trap make_demo_vehicle exists to demonstrate; this subject is meant to
+    # leave the generator ready to use.
+    for end, x in AXLES:
+        for side, y in (("left", -WHEEL_Y), ("right", WHEEL_Y)):
+            tube(f"tyre_{end}_{side}", WHEEL_R, RIM_R, TYRE_W, (x, y, WHEEL_R))
+            disc(f"wheel_{end}_{side}", RIM_R, RIM_W, (x, y, WHEEL_R))
+            disc(f"brake_{end}_{side}", DISC_R, DISC_W, (x, y * 0.88, WHEEL_R))
+
+
+def stage_5_materials():
+    """Colour by functional group so the viewer can read body, glass, trim and wheels."""
+    paint()
+
+
+STAGE_NAMES = {1: "Body and glasshouse", 2: "Side details", 3: "Fascias",
+               4: "Wheels and brakes", 5: "Materials"}
+STAGES = {1: stage_1_body, 2: stage_2_side_details, 3: stage_3_fascias,
+          4: stage_4_wheels, 5: stage_5_materials}
 
 
 def report():
@@ -344,12 +394,63 @@ def preview(path):
         bpy.ops.render.render(write_still=True)
 
 
-paint()
+def open_edges():
+    total = 0
+    for ob in (o for o in bpy.data.objects if o.type == 'MESH'):
+        bm = bmesh.new(); bm.from_mesh(ob.data)
+        total += sum(1 for e in bm.edges if len(e.link_faces) != 2)
+        bm.free()
+    return total
+
+
+def save_stage(stage):
+    source = Path(bpy.data.filepath or (JOB or {}).get("target", "sportscar.blend"))
+    stem = re.sub(r'(_s[0-9]+)+$', '', source.stem or "sportscar")
+    out = source.with_name(f"{stem}_s{stage}.blend")
+    if RENDER:
+        views.shoot(REPORT, JOB, ROOT, out.stem)
+    bpy.ops.wm.save_as_mainfile(filepath=str(out), compress=True)
+    return out
+
+
+def run_stage(stage):
+    if stage not in STAGES:
+        message = f"no stage {stage}: this sportscar has {len(STAGES)}"
+        if REPORT:
+            REPORT.failed(message)
+            REPORT.write()
+        sys.exit(message)
+    if REPORT:
+        from meshanvil_engine import report as reporting
+        REPORT.before(reporting.measure_scene())
+    STAGES[stage]()
+    meshes = [o for o in bpy.data.objects if o.type == 'MESH']
+    out = save_stage(stage)
+    print("[make_sportscar] stage %d %s: %d objects, %d open edges"
+          % (stage, STAGE_NAMES[stage], len(meshes), open_edges()))
+    if REPORT:
+        REPORT.after(reporting.measure_scene())
+        REPORT.report["params"]["stage_name"] = "%02d %s" % (stage, STAGE_NAMES[stage])
+        REPORT.report["params"]["objects"] = len(meshes)
+        REPORT.finding("stage", number=stage, name=STAGE_NAMES[stage], objects=len(meshes),
+                       open_edges=open_edges())
+        if open_edges():
+            REPORT.warn("stage_left_open_edges")
+        REPORT.cites("run_012_build_a_recognizable_low_poly_subject_from_primitives")
+        REPORT.output(str(out))
+        REPORT.write()
+
+
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-path = next((a for a in args if not a.startswith("--")), None) or os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "sportscar.blend")
-os.makedirs(os.path.dirname(path), exist_ok=True)
-report()
-bpy.ops.wm.save_as_mainfile(filepath=path, compress=True)
-if "--preview" in args:
-    preview(path)
+if REPORT:
+    run_stage(STAGE)
+else:
+    path = next((a for a in args if not a.startswith("--")), None) or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "sportscar.blend")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    for stage in STAGES:
+        STAGES[stage]()
+    report()
+    bpy.ops.wm.save_as_mainfile(filepath=path, compress=True)
+    if "--preview" in args:
+        preview(path)

@@ -1,0 +1,11 @@
+{
+  "operation": "make_hammer",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/make_hammer.py",
+  "summary_key": "operation.make_hammer.summary",
+  "params": [
+    {"name": "stage", "type": "int", "default": 1},
+    {"name": "render", "type": "bool", "default": true}
+  ]
+}
