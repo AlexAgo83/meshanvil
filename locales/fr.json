@@ -272,6 +272,7 @@
   "rb_col_applied": "appliqué par",
   "fold_chain": "Replier cette chaîne",
   "unfold_chain": "Déplier cette chaîne",
+  "chain_name": "Nom de la chaîne",
   "chain_named": "Chaîne — {name}",
   "applied_more": "+{count}",
   "branch_named": "Branche — {name}",

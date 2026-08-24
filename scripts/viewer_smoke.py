@@ -79,6 +79,31 @@ SERVED_SMOKE = r"""
     }
     assert(!DATA.notes.reports[noteKey], "clearing a note left it behind");
 
+    // A chain can be named, and the name shows where the chain is named -- with the file it
+    // starts from still visible beside it, because a name annotates an identity rather than
+    // replacing it.
+    const chainField = document.querySelector('[data-note-kind="chains"]');
+    assert(chainField, "no chain-name field on a served report");
+    const fileBefore = document.querySelector("#outliner .outgroup").textContent;
+    chainField.value = "Named by the smoke";
+    chainField.dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && !(DATA.notes.chains[chainField.dataset.noteKey]); i++) {
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    assert(DATA.notes.chains[chainField.dataset.noteKey] === "Named by the smoke",
+      "a chain name was typed and never came back");
+    outliner(); nodes();
+    const headText = document.querySelector("#outliner .outgroup").textContent;
+    assert(headText.includes("Named by the smoke"), `the chain header ignores its name: ${headText}`);
+    const file = fileBefore.replace(/^\s*Chain\s+[-\u2014]\s*/, "").trim();
+    assert(file && headText.includes(file),
+      `naming a chain hid the file it starts from: ${headText}`);
+    document.querySelector('[data-note-kind="chains"]').value = "";
+    document.querySelector('[data-note-kind="chains"]').dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && DATA.notes.chains[chainField.dataset.noteKey]; i++) {
+      await new Promise((done) => setTimeout(done, 50));
+    }
+
     const controls = document.querySelector(".filectrls");
     assert(controls, "file controls missing on served page");
     assert(!controls.querySelector(".filelabel").textContent.includes("/"), "served file label shows a full path");

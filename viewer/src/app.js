@@ -216,7 +216,7 @@ function outliner() {
     const chain = reports[0] ? rootOf(BY_ID, reports[0].id) : fork;
     const shut = folded.has(chain);
     if (root) {
-      const label = t("ui.chain_named", { name: chainName(reports) });
+      const label = t("ui.chain_named", { name: chainTitle(reports) });
       // Written out, not folded into one t(): the i18n check only sees literal keys.
       const hint = shut ? t("ui.unfold_chain") : t("ui.fold_chain");
       html += `<button type="button" class="outgroup fold" data-fold="${esc(chain)}"
@@ -266,6 +266,17 @@ function groups() {
 }
 
 /** A chain is named after the file it started from; the identity is already in the row. */
+/** What a chain is called: the name a person gave it, then the file it starts from.
+ *
+ *  The file stays visible on purpose. A name is an annotation over an identity, not a
+ *  replacement for it, and two chains from similar files are still told apart by the file. */
+function chainTitle(reports) {
+  const file = chainName(reports);
+  const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
+  const given = ((/** @type {any} */ (DATA).notes || {}).chains || {})[(root.input || {}).sha256 || ""];
+  return given ? `${given} · ${file}` : file;
+}
+
 function chainName(reports) {
   const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
   const path = String((root.input || {}).path || "");
@@ -365,7 +376,7 @@ function nodes() {
   }
   const { shown, sources } = place();
   graphHead("⬡", t("ui.node_editor"),
-    shown.length ? `chain / ${chainName(shown)}` : "links.parent");
+    shown.length ? `chain / ${chainTitle(shown)}` : "links.parent");
   let html = "";
   for (const report of shown) {
     const kind = report.status === "failed" ? "failed" : report.kind;
@@ -389,7 +400,8 @@ function nodes() {
   // The source card carries no status and cannot be selected: it is a file, not an
   // operation, and every other affordance in this panel means "a report happened".
   html += sources.map((source) => `<div class="node source" style="left:${source._x}px;top:${source._y}px">
-      <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(source.name)}</div>
+      <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(
+        ((/** @type {any} */ (DATA).notes || {}).chains || {})[source.sha256] || source.name)}</div>
       <div class="nbody">
         <div class="nline"><span>${esc(t("ui.source_reads"))}</span><b>${source.roots.length}</b></div>
         ${source.sha256 ? `<div class="nline"><span>sha-256</span><b>${esc(source.sha256.slice(0, 10))}…</b></div>` : ""}
@@ -567,6 +579,12 @@ function props() {
 
   html += driftNotice(report);
   html += noteBlock("reports", report.id, t("ui.note_on_report"));
+  const chainRoot = BY_ID.get((rootOf(BY_ID, report.id) || "").split("/").pop() || "")
+    || DATA.reports.find((r) => !(r.links && r.links.parent)
+                                && String((r.input || {}).path || "") === rootOf(BY_ID, report.id));
+  if (chainRoot && (chainRoot.input || {}).sha256) {
+    html += noteBlock("chains", chainRoot.input.sha256, t("ui.chain_name"));
+  }
   html += block(t("ui.input"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
@@ -1093,5 +1111,6 @@ async function init() {
 
 // refreshLive is reachable so the served smoke can prove a refresh keeps what the
 // operator chose; nothing else in the page calls it by name.
-Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects, refreshLive });
+Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects, refreshLive,
+  outliner, nodes });
 init();
