@@ -288,7 +288,10 @@
   "project_reports": "{count} reports",
   "splash_project": "Active project",
   "splash_project_note": "{name} at {path}, resolved by {rule}. Every report, render and artefact of a run lands here.",
-  "splash_nothing": "Nothing to continue to"
+  "splash_nothing": "Nothing to continue to",
+  "sources": "Sources",
+  "sources_foot": "read as one group; the input above is the list that names them",
+  "source_role": "read as"
  },
  "operation": {
   "clean_shells": {
@@ -344,6 +347,9 @@
   },
   "make_table_step": {
    "summary": "Rebuild the reference coffee table as B-rep solids and write it as STEP; the target is not read."
+  },
+  "read_references": {
+   "summary": "Read a group of reference images as one source and write the plan they were read into."
   }
  },
  "reports": {

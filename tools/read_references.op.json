@@ -1,0 +1,18 @@
+{
+  "operation": "read_references",
+  "engine": "blender",
+  "kind": "inspection",
+  "script": "tools/read_references.py",
+  "summary_key": "operation.read_references.summary",
+  "opens_target": false,
+  "accepts": [
+    ".txt"
+  ],
+  "params": [
+    {
+      "name": "subject",
+      "type": "str",
+      "default": ""
+    }
+  ]
+}
