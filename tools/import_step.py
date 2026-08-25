@@ -18,7 +18,12 @@ def beat(step, fraction):
 beat("reading STEP", .1)
 document = App.newDocument("meshanvil_step")
 Import.insert(str(source), document.Name)
-objects = [obj for obj in document.Objects if hasattr(obj, "Shape") and not obj.Shape.isNull()]
+# Part:: only. A STEP assembly imports as its solids *plus* an App::Part that contains them
+# and an origin of three datum lines and three datum planes. Kept, the container hands the
+# tessellator every solid twice, and the datums -- which are infinite -- turned the reported
+# bounding box into 1e100 on every real assembly. The fixture, a lone box, never showed it.
+objects = [obj for obj in document.Objects
+           if obj.TypeId.startswith("Part::") and hasattr(obj, "Shape") and not obj.Shape.isNull()]
 beat("tessellating", .6)
 linear, angular = float(params["linear_deflection_mm"]), math.radians(float(params["angular_deflection_deg"]))
 out.parent.mkdir(parents=True, exist_ok=True)
@@ -33,7 +38,8 @@ report = {"schema_version": job["schema_version"], "id": job["id"], "chain": job
           "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "kind": job["kind"],
           "operation": job["operation"], "script": job["script"], "engine": "freecad", "status": "ok",
           "params": params, "tool": job["tool"], "input": {"path": str(source), "sha256": job["input_sha256"], "mode": "read_only"},
-          "findings": [{"code": "step_solids", "count": len(objects)}],
+          "findings": [{"code": "step_solids", "count": sum(len(obj.Shape.Solids) for obj in objects),
+                        "bodies": len(objects)}],
           "measured": {"objects": len(objects), "vertices": None, "faces": None, "shells": len(objects),
                        "non_manifold_edges": None, "volume_cm3": None, "bbox_mm": {"min": low, "max": high}},
           "output": {"path": str(out), "sha256": None, "state": "present", "state_changed_at": None},
