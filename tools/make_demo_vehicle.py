@@ -17,7 +17,7 @@ asset carries, on purpose, so the demonstration chain has the same lesson to tel
     blender -b -P tools/make_demo_vehicle.py -- <destination.blend>
 """
 import bpy, bmesh, os, sys, math
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 OVERSIZE = 1.6                        # a real 4.0 x 1.9 x 1.2 m car, authored oversize
 HL = 2.0 * OVERSIZE                   # half-length
@@ -125,6 +125,13 @@ dup_src = bpy.data.objects["engine_block"]
 dup = dup_src.copy(); dup.data = dup_src.data.copy()
 dup.name = "Copy (1) of engine_block"
 bpy.context.collection.objects.link(dup)
+
+# Face -X, where views.py puts the `front` camera. Applied to the object transforms rather
+# than to the mesh data: several objects here carry unapplied modifiers, and a Mirror across
+# x = 0 survives a rotation about Z untouched.
+turn = Matrix.Rotation(math.pi, 4, 'Z')
+for ob in (o for o in bpy.data.objects if o.type == 'MESH' and o.parent is None):
+    ob.matrix_world = turn @ ob.matrix_world
 
 path = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else \
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "demo_vehicle.blend")

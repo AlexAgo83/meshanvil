@@ -12,7 +12,7 @@ Authored in millimetres at true scale: 4450 x 1900 x 1250, wheelbase 2650, wheel
 """
 import bpy, bmesh, os, sys, math, json, re
 from pathlib import Path
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 
 def _reporter():
@@ -383,8 +383,10 @@ def preview(path):
     scene.display.shading.light = 'STUDIO'
     scene.display.shading.show_shadows = True
     scene.render.resolution_x, scene.render.resolution_y = 1200, 800
+    # Same convention as views.py, and it has to be: this preview and the operation renders
+    # are read side by side, and a `front` that means +X here and -X there is a trap.
     for view, direction in (("3q", Vector((-1.1, -1.0, 0.5))), ("side", Vector((0, -1, 0))),
-                            ("front", Vector((1, 0, 0))), ("rear", Vector((-1, 0, 0))),
+                            ("front", Vector((-1, 0, 0))), ("rear", Vector((1, 0, 0))),
                             ("top", Vector((0, 0, 1)))):
         direction = direction.normalized()
         cam.location = centre + direction * radius * 4
@@ -416,6 +418,19 @@ def save_stage(stage):
     return out
 
 
+def face_forward(before):
+    """Turn what this stage just built to face -X, where views.py puts the `front` camera.
+
+    Only the new objects: the stages are cumulative, and turning everything at each of them
+    would spin stage 1's body through four half-turns by the end. Applied to the object
+    transform, which is what keeps a stage that adds to an earlier one aligned with it.
+    """
+    turn = Matrix.Rotation(math.pi, 4, 'Z')
+    for ob in bpy.data.objects:
+        if ob.type == 'MESH' and ob.name not in before:
+            ob.matrix_world = turn @ ob.matrix_world
+
+
 def run_stage(stage):
     if stage not in STAGES:
         message = f"no stage {stage}: this sportscar has {len(STAGES)}"
@@ -426,7 +441,9 @@ def run_stage(stage):
     if REPORT:
         from meshanvil_engine import report as reporting
         REPORT.before(reporting.measure_scene())
+    before = {o.name for o in bpy.data.objects if o.type == 'MESH'}
     STAGES[stage]()
+    face_forward(before)
     meshes = [o for o in bpy.data.objects if o.type == 'MESH']
     out = save_stage(stage)
     print("[make_sportscar] stage %d %s: %d objects, %d open edges"
@@ -452,7 +469,9 @@ else:
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work", "out", "sportscar.blend")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     for stage in STAGES:
+        before = {o.name for o in bpy.data.objects if o.type == 'MESH'}
         STAGES[stage]()
+        face_forward(before)
     report()
     bpy.ops.wm.save_as_mainfile(filepath=path, compress=True)
     if "--preview" in args:
