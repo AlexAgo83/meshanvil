@@ -205,6 +205,35 @@ chooser in the top bar when there is more than one. It selects rather than combi
 unrelated chains in one graph would merge their outliner groups and sum totals across subjects
 that share nothing.
 
+## From a reference image
+
+A subject can start as a photograph. Not by reconstruction -- there is no photogrammetry here,
+and a single image carries no depth for anyone to recover. It works the other way round: an
+agent reads the image, writes a generator from primitives, renders it, looks at the render
+against the photograph, and corrects. The renders are the feedback, which is the same loop
+every other operation in this project uses, pointed at a different question.
+
+```bash
+tools/build_table_chain.sh [photograph.png]
+```
+
+The reference table is the worked example: `tools/make_table.py` models it as a mesh,
+`tools/make_table_step.py` rebuilds the same design as B-rep solids and writes STEP, and both
+read their numbers from `tools/table_dimensions.py` -- two copies of those numbers would drift
+apart on the first change, invisibly, because both files would still produce a table.
+
+What the image decides and what it does not is the honest part, and the reports say so rather
+than implying otherwise. The photograph is the declared input of both operations, and neither
+engine reads it: `target_not_read` and `not_compared_to_reference_image` are in the warnings of
+every run. It gives the shape -- rounded slabs, round tapering legs, the outward splay that is
+the whole character of the piece. It gives no dimension at all: 1100 x 600 x 400 mm is a
+parameter, meaning *a* coffee table and not *that* coffee table. Someone who has the real one
+measures it and passes the numbers.
+
+The chain also shows what only the numbers catch. The first table stood 3 mm into the floor --
+a leaning leg ends in a tilted disc, whose lower rim reaches below the point the leg was aimed
+at. Five renders showed nothing; `bbox_mm.min.z` showed -2.892.
+
 ## Demonstration data
 
 An installed user can generate a subject from primitives and write a first report without
@@ -224,6 +253,7 @@ in a checkout and create sibling projects under `work/demo/`, so the viewer can 
 ```bash
 tools/build_demo_chain.sh [asset.blend]        # a render-scale subject
 tools/build_figurine_chain.sh [asset.blend]    # a small, sound subject
+tools/build_table_chain.sh [photograph.png]    # a subject modelled from an image, mesh and STEP
 ```
 
 Those shell chains are not installed in the wheel. Given no argument in a checkout, each

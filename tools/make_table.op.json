@@ -1,0 +1,38 @@
+{
+  "operation": "make_table",
+  "engine": "blender",
+  "kind": "transform",
+  "script": "tools/make_table.py",
+  "summary_key": "operation.make_table.summary",
+  "params": [
+    {
+      "name": "length_mm",
+      "type": "float",
+      "default": 1100,
+      "unit": "mm"
+    },
+    {
+      "name": "width_mm",
+      "type": "float",
+      "default": 600,
+      "unit": "mm"
+    },
+    {
+      "name": "height_mm",
+      "type": "float",
+      "default": 400,
+      "unit": "mm"
+    },
+    {
+      "name": "shelf_fraction",
+      "type": "float",
+      "default": 0.55
+    }
+  ],
+  "accepts": [
+    ".png",
+    ".jpg",
+    ".jpeg"
+  ],
+  "opens_target": false
+}
