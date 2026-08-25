@@ -216,9 +216,14 @@ function paintProjects() {
   // One project needs no chooser, and an empty one would only be furniture.
   pick.classList.toggle("hidden", entries.length < 2);
   if (entries.length < 2) return;
-  select.innerHTML = entries.map((entry) =>
-    `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)} · ${
-      esc(t("ui.project_reports", { count: entry.reports.length }))}</option>`).join("");
+  // An empty project is named and nothing else: "0 reports" is the absence of a count, not a
+  // count, and it is the longest thing on the line where there is least to say.
+  select.innerHTML = entries.map((entry) => {
+    const count = entry.reports.length
+      ? ` · ${t("ui.project_reports", { count: entry.reports.length })}` : "";
+    return `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${
+      esc(entry.name)}${esc(count)}</option>`;
+  }).join("");
 }
 
 /* ---------- roots: a report with no parent starts its own chain ---------- */
@@ -342,16 +347,16 @@ function groups() {
   return result;
 }
 
-/** A chain is named after the file it started from; the identity is already in the row. */
-/** What a chain is called: the name a person gave it, then the file it starts from.
+/** What a chain is called: the name a person gave it, or the file it starts from.
  *
- *  The file stays visible on purpose. A name is an annotation over an identity, not a
- *  replacement for it, and two chains from similar files are still told apart by the file. */
+ *  The name replaces the filename rather than sitting in front of it. Showing both put the
+ *  thing being overridden next to the override, on every line, for the whole column -- and
+ *  naming a chain is precisely the act of saying the filename is not what you want to read.
+ *  The file is still one click away, in the report's own input. */
 function chainTitle(reports) {
-  const file = chainName(reports);
   const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
   const given = ((/** @type {any} */ (DATA).notes || {}).chains || {})[(root.input || {}).sha256 || ""];
-  return given ? `${given} · ${file}` : file;
+  return given || chainName(reports);
 }
 
 function chainName(reports) {

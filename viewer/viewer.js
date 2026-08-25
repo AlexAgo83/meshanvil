@@ -365,7 +365,10 @@
     document.getElementById("project-name").textContent = active || "\u2014";
     pick.classList.toggle("hidden", entries.length < 2);
     if (entries.length < 2) return;
-    select2.innerHTML = entries.map((entry) => `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)} \xB7 ${esc(t("ui.project_reports", { count: entry.reports.length }))}</option>`).join("");
+    select2.innerHTML = entries.map((entry) => {
+      const count = entry.reports.length ? ` \xB7 ${t("ui.project_reports", { count: entry.reports.length })}` : "";
+      return `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)}${esc(count)}</option>`;
+    }).join("");
   }
   function onCanvas() {
     const root = current ? rootOf(BY_ID, current) : null;
@@ -465,13 +468,12 @@
     return result;
   }
   function chainTitle(reports) {
-    const file = chainName(reports);
     const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];
     const given = (
       /** @type {any} */
       ((DATA.notes || {}).chains || {})[(root.input || {}).sha256 || ""]
     );
-    return given ? `${given} \xB7 ${file}` : file;
+    return given || chainName(reports);
   }
   function chainName(reports) {
     const root = reports.find((r) => !(r.links && r.links.parent)) || reports[0];

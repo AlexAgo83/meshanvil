@@ -79,12 +79,21 @@ SERVED_SMOKE = r"""
     }
     assert(!DATA.notes.reports[noteKey], "clearing a note left it behind");
 
-    // A chain can be named, and the name shows where the chain is named -- with the file it
-    // starts from still visible beside it, because a name annotates an identity rather than
-    // replacing it.
+    // A chain can be named, and the name replaces the filename in the header rather than
+    // sitting beside it: naming a chain is the act of saying the filename is not what you
+    // want to read there.
     const chainField = document.querySelector('[data-note-kind="chains"]');
     assert(chainField, "no chain-name field on a served report");
-    const fileBefore = document.querySelector("#outliner .outgroup").textContent;
+    // Start from no name, whatever a previous run left behind: the assertion below is about
+    // what a name replaces, and it cannot read that off a header that is already named.
+    chainField.value = "";
+    chainField.dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && DATA.notes.chains[chainField.dataset.noteKey]; i++) {
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    outliner();
+    // The label span, not the whole header: the header also carries the fold triangle.
+    const fileBefore = document.querySelector("#outliner .outgroup span").textContent.trim();
     chainField.value = "Named by the smoke";
     chainField.dispatchEvent(new Event("change", { bubbles: true }));
     for (let i = 0; i < 40 && !(DATA.notes.chains[chainField.dataset.noteKey]); i++) {
@@ -95,9 +104,9 @@ SERVED_SMOKE = r"""
     outliner(); nodes();
     const headText = document.querySelector("#outliner .outgroup").textContent;
     assert(headText.includes("Named by the smoke"), `the chain header ignores its name: ${headText}`);
-    const file = fileBefore.replace(/^\s*Chain\s+[-\u2014]\s*/, "").trim();
-    assert(file && headText.includes(file),
-      `naming a chain hid the file it starts from: ${headText}`);
+    assert(fileBefore, "the chain header had no label to begin with");
+    assert(!headText.includes(fileBefore),
+      `a named chain still shows the file it starts from: ${fileBefore} in ${headText}`);
     document.querySelector('[data-note-kind="chains"]').value = "";
     document.querySelector('[data-note-kind="chains"]').dispatchEvent(new Event("change", { bubbles: true }));
     for (let i = 0; i < 40 && DATA.notes.chains[chainField.dataset.noteKey]; i++) {
