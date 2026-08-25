@@ -89,7 +89,8 @@
   "no_heartbeat": "aucun battement depuis {seconds}s ; le moteur tourne toujours",
   "unreadable_format": "{operation} ne sait pas lire {suffix} ; formats acceptés : {accepts}",
   "operation_failed": "l'operation s'est executee sans succes ; lisez le rapport",
-  "no_report_json": "le moteur n'a ecrit aucun rapport ; le fichier de job est conserve pour diagnostic"
+  "no_report_json": "le moteur n'a ecrit aucun rapport ; le fichier de job est conserve pour diagnostic",
+  "engine_log": "le moteur ecrit dans {path} ; sa derniere ligne : {line}"
  },
  "engine": {
   "not_found": "{engine} introuvable. Définissez {variable} avec son chemin, ou installez-le -- voir CONTRIBUTING.md.",
@@ -337,6 +338,12 @@
   },
   "import_mesh": {
    "summary": "Lit une source OBJ, STL ou PLY dans la chaîne, en enregistrant ce qui est entré."
+  },
+  "make_table": {
+   "summary": "Construit la table basse de reference -- deux plateaux arrondis sur quatre pieds fuseles evases -- aux dimensions donnees."
+  },
+  "make_table_step": {
+   "summary": "Reconstruit la table basse de reference en solides B-rep et l'ecrit en STEP ; la cible n'est pas lue."
   }
  },
  "reports": {

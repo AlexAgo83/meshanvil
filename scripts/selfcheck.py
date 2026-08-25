@@ -476,7 +476,7 @@ def check_run_creates_work(tmp: Path):
         runner.engines.version = lambda binary: ("5.2.0", "")
         runner.engines.check_floor = lambda name, number: None
         runner.subprocess.Popen = lambda *args, **kwargs: Done()
-        def write_report(process, progress):
+        def write_report(process, progress, *_):
             report = progress.parents[1] / "001_op.json"
             report.write_text(json.dumps({"id": "001", "status": "ok", "output": {}}, indent=1),
                               encoding="utf-8")
@@ -1030,7 +1030,7 @@ def check_runner_interrupt_stops_engine(tmp: Path):
         runner.engines.version = lambda binary: ("5.2.0", "")
         runner.engines.check_floor = lambda name, number: None
         runner.subprocess.Popen = lambda *args, **kwargs: FakeProcess()
-        runner.watch = lambda process, progress: (_ for _ in ()).throw(KeyboardInterrupt())
+        runner.watch = lambda process, progress, *_: (_ for _ in ()).throw(KeyboardInterrupt())
         try:
             runner.run("op", str(source), {})
             raise AssertionError("interrupt was swallowed")

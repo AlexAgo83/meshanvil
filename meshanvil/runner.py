@@ -132,22 +132,32 @@ def stop(process: subprocess.Popen) -> None:
         pass
 
 
-def watch(process: subprocess.Popen, progress: Path, poll: float = 5.0) -> None:
+def watch(process: subprocess.Popen, progress: Path, log: Path | None = None,
+          poll: float = 5.0) -> None:
     """A long operation proves it is alive by touching its progress file.
 
     There is no default timeout -- a legitimate pass can take an hour -- but a heartbeat that
     stops moving is worth saying out loud, because silence is what makes a caller kill a run
     that was still working. See adr_005.
+
+    Saying it is not enough on its own: an operation that never wrote a first beat, or one
+    whose engine is stuck before the script runs at all, was indistinguishable from a slow
+    one. So the quiet report names the log the engine is writing to and its last line, which
+    is what tells the difference between working and hung without killing anything.
     """
     said = False
     while process.poll() is None:
         time.sleep(poll)
         beat = progress.stat().st_mtime if progress.exists() else None
-        quiet = time.time() - (beat or 0)
-        if beat and quiet > STALE_AFTER and not said:
+        # No beat yet is its own kind of quiet, and the one that used to be invisible.
+        quiet = time.time() - (beat or (log and log.stat().st_mtime if log and log.exists() else 0))
+        if quiet > STALE_AFTER and not said:
             print(t("run.no_heartbeat", seconds=f"{quiet:.0f}"), file=sys.stderr)
+            if log:
+                tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()
+                print(t("run.engine_log", path=log, line=tail[-1] if tail else ""), file=sys.stderr)
             said = True
-        elif beat and quiet <= STALE_AFTER:
+        elif quiet <= STALE_AFTER:
             said = False
 
 
@@ -230,8 +240,18 @@ def run(operation: str, target: str, params: dict[str, str], parent: str | None 
         started = time.time()
         process = None
         try:
-            process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            watch(process, root / RUNS / f"{identity}.progress")
+            # No stdin: FreeCAD's -c drops into an interactive console when the script
+            # ends, and with a terminal still attached it waits there for a Ctrl-D that
+            # never comes -- the report was written, the run never returned.
+            #
+            # The engine's own output goes to a log beside the progress file, not to the void.
+            # Discarded, a run that stalls or dies says nothing at all: the operator sees a
+            # command that does not return and has no way to find out what it is doing.
+            log_path = root / RUNS / f"{identity}.log"
+            with log_path.open("wb") as log:
+                process = subprocess.Popen(command, stdin=subprocess.DEVNULL,
+                                           stdout=log, stderr=subprocess.STDOUT)
+                watch(process, root / RUNS / f"{identity}.progress", log_path)
         except BaseException:
             if process is not None:
                 stop(process)                     # before the unlink: a live engine would rewrite it

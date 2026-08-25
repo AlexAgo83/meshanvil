@@ -89,7 +89,8 @@
   "no_heartbeat": "no heartbeat for {seconds}s; the engine is still running",
   "unreadable_format": "{operation} cannot read {suffix}; it accepts {accepts}",
   "operation_failed": "the operation ran and did not succeed; read the report",
-  "no_report_json": "the engine wrote no report; the job file is kept for diagnosis"
+  "no_report_json": "the engine wrote no report; the job file is kept for diagnosis",
+  "engine_log": "the engine is writing to {path}; its last line: {line}"
  },
  "engine": {
   "not_found": "{engine} not found. Set {variable} to its path, or install it -- see CONTRIBUTING.md.",
@@ -337,6 +338,12 @@
   },
   "import_mesh": {
    "summary": "Read an OBJ, STL or PLY source into the chain, recording what came in."
+  },
+  "make_table": {
+   "summary": "Build the reference coffee table -- two rounded slabs on four splayed tapered legs -- at the dimensions given."
+  },
+  "make_table_step": {
+   "summary": "Rebuild the reference coffee table as B-rep solids and write it as STEP; the target is not read."
   }
  },
  "reports": {
