@@ -163,8 +163,11 @@ def check_viewer_assets_refresh():
         assert "viewer.js" in moved and "index.html" in moved, moved
         installed = (paths.asset_root("viewer") / "viewer.js").read_text(encoding="utf-8")
         assert (root / viewer_payload.OUT / "viewer.js").read_text(encoding="utf-8") == installed
-        # The page is rewritten, not copied: without the stamp a browser keeps the bundle it has.
-        assert "viewer.js?v=" in (root / viewer_payload.OUT / "index.html").read_text(encoding="utf-8")
+        # The page is rewritten, not copied: without the stamp a browser keeps what it has.
+        # Both files, not just the script -- a fresh bundle behind a cached stylesheet is new
+        # behaviour wearing the old layout, which is harder to recognise than either.
+        page = (root / viewer_payload.OUT / "index.html").read_text(encoding="utf-8")
+        assert "viewer.js?v=" in page and "viewer.css?v=" in page, page[:200]
         assert viewer_payload.refresh_assets(root) == [], "a fresh copy was copied again"
 
 

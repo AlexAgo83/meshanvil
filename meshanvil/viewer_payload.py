@@ -126,6 +126,19 @@ def resolve_file(root: Path, file_id_value: str) -> Path | None:
 ASSETS = ("viewer.css", "viewer.js", "icon.png", "index.html")
 
 
+def stamped(index: str) -> str:
+    """The page, with a cache-buster on everything a browser would otherwise keep.
+
+    The script carried one and the stylesheet did not, so a rebuilt viewer arrived as new
+    behaviour wearing the old layout: the project screen rendered its rows in a row, because
+    the rules that stack them were in a stylesheet the browser had already cached. One stamp,
+    both files -- they are rebuilt together and there is no case where one is fresh alone.
+    """
+    stamp = str(int(time.time()))
+    return (index.replace('src="viewer.js"', f'src="viewer.js?v={stamp}"')
+                 .replace('href="viewer.css"', f'href="viewer.css?v={stamp}"'))
+
+
 def refresh_assets(root: Path) -> list[str]:
     """Copy the installed page over a project's stale copy, and say what moved.
 
@@ -151,10 +164,7 @@ def refresh_assets(root: Path) -> list[str]:
             # index.html is rewritten rather than copied: it carries the cache-buster that
             # makes a browser fetch the new bundle instead of the one it already holds.
             if name == "index.html":
-                stamp = str(int(time.time()))
-                copy.write_text(source.read_text(encoding="utf-8")
-                                .replace('src="viewer.js"', f'src="viewer.js?v={stamp}"'),
-                                encoding="utf-8")
+                copy.write_text(stamped(source.read_text(encoding="utf-8")), encoding="utf-8")
             else:
                 shutil.copyfile(source, copy)
             moved.append(name)
@@ -168,10 +178,9 @@ def build(root: Path, run_token: str | None = None) -> tuple[Path, dict]:
     target.mkdir(parents=True, exist_ok=True)
     for name in ("viewer.css", "viewer.js", "icon.png"):
         shutil.copyfile(paths.asset_root("viewer") / name, target / name)
-    stamp = str(int(time.time()))
-    index = (paths.asset_root("viewer") / "index.html").read_text(encoding="utf-8")
-    (target / "index.html").write_text(index.replace('src="viewer.js"', f'src="viewer.js?v={stamp}"'),
-                                       encoding="utf-8")
+    (target / "index.html").write_text(
+        stamped((paths.asset_root("viewer") / "index.html").read_text(encoding="utf-8")),
+        encoding="utf-8")
     data = payload(root, target, run_token)
     (target / "data.js").write_text(
         "window.MESHANVIL = " + json.dumps(data, indent=1) + ";\n", encoding="utf-8")
