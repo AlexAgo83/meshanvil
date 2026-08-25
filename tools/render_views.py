@@ -9,6 +9,9 @@ hi = Vector([max(p[i] for p in vs) for i in range(3)])
 ctr = (lo + hi) / 2
 R = (hi - lo).length / 2
 cam_d = bpy.data.cameras.new("c"); cam_d.type = 'ORTHO'; cam_d.ortho_scale = R * 2.3
+# La camera recule de 4 rayons : son clipping se dimensionne sur le sujet, sinon la limite
+# de 1000 unites de Blender avale une piece a l'echelle du millimetre et le rendu sort vide.
+cam_d.clip_start, cam_d.clip_end = R * 1e-3, R * 10
 cam = bpy.data.objects.new("c", cam_d)
 sc.collection.objects.link(cam); sc.camera = cam
 lt = bpy.data.lights.new("l", 'SUN'); lo2 = bpy.data.objects.new("l", lt)

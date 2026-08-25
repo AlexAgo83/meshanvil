@@ -371,6 +371,9 @@ def preview(path):
     hi = Vector([max(p[i] for p in pts) for i in range(3)])
     centre, radius = (lo + hi) / 2, (hi - lo).length / 2
     data = bpy.data.cameras.new("preview"); data.type = 'ORTHO'; data.ortho_scale = radius * 2.2
+    # The camera stands back at four radii, so its clipping is sized on the subject too:
+    # Blender's 1000 unit default renders an empty frame on anything authored in millimetres.
+    data.clip_start, data.clip_end = radius * 1e-3, radius * 10
     cam = bpy.data.objects.new("preview", data)
     scene.collection.objects.link(cam); scene.camera = cam
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", 'SUN'))

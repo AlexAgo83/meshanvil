@@ -64,6 +64,11 @@ def _stage(points):
     data = bpy.data.cameras.new("meshanvil_cam")
     data.type = 'ORTHO'
     data.ortho_scale = _fit(points, centre)
+    # The camera stands back at four radii, so its clipping has to be sized on the subject
+    # too: Blender's 1000 unit default swallowed a CAD assembly whole and rendered the empty
+    # background, with every number in the report still correct. A render that shows nothing
+    # is the one failure the measurements cannot catch.
+    data.clip_start, data.clip_end = radius * 1e-3, radius * 10
     camera = bpy.data.objects.new("meshanvil_cam", data)
     scene.collection.objects.link(camera)
     scene.camera = camera
