@@ -100,3 +100,7 @@ def test_run_list_and_doctor_are_structured(tmp_path: Path, monkeypatch):
         "stdout": "", "stderr": "", "exit_code": 0, "data": {"operations": {"op": {"operation": "op"}}}}
     assert run.run_command(tmp_path, "doctor") == {
         "stdout": "", "stderr": "", "exit_code": 0, "data": {"ok": True, "requirements": []}}
+
+
+def test_viewer_assets_refresh():
+    selfcheck.check_viewer_assets_refresh()

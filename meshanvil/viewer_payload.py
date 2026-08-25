@@ -123,6 +123,46 @@ def resolve_file(root: Path, file_id_value: str) -> Path | None:
     return None
 
 
+ASSETS = ("viewer.css", "viewer.js", "icon.png", "index.html")
+
+
+def refresh_assets(root: Path) -> list[str]:
+    """Copy the installed page over a project's stale copy, and say what moved.
+
+    The served page is a copy under the project, so a rebuilt viewer reached nobody until the
+    next `meshanvil view` -- the running server went on serving the bundle it was started
+    with, and the operator had no reason to suspect a command was needed. The live route
+    calls this, which is what lets a rebuilt page arrive on its own.
+    """
+    target = root / OUT
+    if not target.is_dir():
+        return []
+    moved = []
+    for name in ASSETS:
+        source = paths.asset_root("viewer") / name
+        copy = target / name
+        try:
+            # Only what a build already put there: refreshing is not building, and a page
+            # half-populated by a background loop is a worse state than one not built yet.
+            if not source.is_file() or not copy.is_file():
+                continue
+            if copy.stat().st_mtime_ns >= source.stat().st_mtime_ns:
+                continue
+            # index.html is rewritten rather than copied: it carries the cache-buster that
+            # makes a browser fetch the new bundle instead of the one it already holds.
+            if name == "index.html":
+                stamp = str(int(time.time()))
+                copy.write_text(source.read_text(encoding="utf-8")
+                                .replace('src="viewer.js"', f'src="viewer.js?v={stamp}"'),
+                                encoding="utf-8")
+            else:
+                shutil.copyfile(source, copy)
+            moved.append(name)
+        except OSError:
+            continue
+    return moved
+
+
 def build(root: Path, run_token: str | None = None) -> tuple[Path, dict]:
     target = root / OUT
     target.mkdir(parents=True, exist_ok=True)

@@ -54,6 +54,9 @@ def handle_get(handler, route: str, parsed: urlparse) -> bool:
     try:
         while True:
             started = time.perf_counter()
+            # A rebuilt viewer is copied over the project's stale one here, so the change the
+            # page is about to be told about is a change that has actually landed.
+            viewer_payload.refresh_assets(handler.meshanvil_root)
             current = signatures(handler.meshanvil_root)
             changed = [name for name, value in current.items() if value != last.get(name)]
             if changed:

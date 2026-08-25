@@ -142,6 +142,32 @@ def check_report_optional_blocks():
     assert "renders" not in full.report
 
 
+def check_viewer_assets_refresh():
+    """A stale served page is replaced by the installed one, once, and not again.
+
+    The served page is a copy under the project. Left alone it went on serving whatever
+    bundle it was built with, so a viewer change reached nobody until someone happened to run
+    `meshanvil view` again -- and nothing said so.
+    """
+    import os, tempfile
+    from meshanvil import paths, viewer_payload
+    with tempfile.TemporaryDirectory() as where:
+        root = Path(where)
+        (root / viewer_payload.OUT).mkdir(parents=True)
+        assert viewer_payload.refresh_assets(root) == []          # nothing copied yet: nothing to refresh
+        for name in ("viewer.js", "viewer.css", "index.html"):
+            copy = root / viewer_payload.OUT / name
+            copy.write_text("stale", encoding="utf-8")
+            os.utime(copy, (0, 0))
+        moved = viewer_payload.refresh_assets(root)
+        assert "viewer.js" in moved and "index.html" in moved, moved
+        installed = (paths.asset_root("viewer") / "viewer.js").read_text(encoding="utf-8")
+        assert (root / viewer_payload.OUT / "viewer.js").read_text(encoding="utf-8") == installed
+        # The page is rewritten, not copied: without the stamp a browser keeps the bundle it has.
+        assert "viewer.js?v=" in (root / viewer_payload.OUT / "index.html").read_text(encoding="utf-8")
+        assert viewer_payload.refresh_assets(root) == [], "a fresh copy was copied again"
+
+
 def check_refusals():
     for arguments in (["run", "nope", "README.md"],
                       ["run", "scan_defects", "does-not-exist.blend"]):
