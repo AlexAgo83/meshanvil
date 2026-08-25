@@ -6,7 +6,7 @@
 > Related backlog: (none yet)
 > Related task: (none yet)
 > Reminder: Update status, category, verification, and linked refs when you edit this doc.
-> Indicators reviewed: 2026-08-24 18:18:19
+> Indicators reviewed: 2026-08-25 23:05:55
 
 # Trigger
 - A CAD model arrives in more than one form -- a `.blend`, a STEP, and an STL somebody already exported -- and the fastest-looking one is about to be imported.
@@ -43,6 +43,10 @@ Converting a mesh to STEP through FreeCAD's *Shape from mesh* does produce a `.s
 cylinder in it is gone: a 52 mm boss becomes 32 planar facets with no diameter to dimension and
 no hole a CAM package can recognise.
 
+The converse is the same rule read forwards: a subject modelled as a mesh does not become CAD
+by being exported. Rebuild it from the numbers it was built from, and keep those numbers in
+one module both builders read. Voir run_014.
+
 **If the part was built from numbers, rebuild it from those numbers.** A bracket composed of
 lofts, cylinders and booleans replays in FreeCAD's `Part` module in a few dozen lines and exports
 a genuine B-rep: 58 faces of which 10 are `CYLINDRICAL_SURFACE`, 106 KB, volume within 0.15% of
@@ -56,6 +60,34 @@ its interactive prompt**, which reads as a hang; the headless binary is
 timeout. And `removeSplitter()` after the fusions is not cosmetic: without it every boolean
 leaves its seam edges behind and the exported file carries several times the faces, which is
 what makes a STEP tedious to dimension.
+
+# A STEP import brings more than the solids
+An assembly does not arrive as its parts. It arrives as its parts **plus a container that
+already holds them** -- an `App::Part` whose own `Shape` is the compound of all of them -- and
+**plus an origin**: three `App::Line` datums and three `App::Plane` datums. A six-solid file
+imports as thirteen objects, and every one of them answers to `hasattr(obj, "Shape")` with a
+shape that is not null.
+
+Keeping them costs two things, both silent:
+
+- **The tessellator is handed every solid twice**, once through the body and once through the
+  container. On a small table that was an STL of 1648 kB where 824 kB was the whole file; the
+  vertex count after import was identical, because the duplicate surfaces are exactly
+  coincident and merge on the way in. Nothing in the report looked wrong.
+- **The datums are infinite**, so any bounding box computed over the set comes back as 1e100
+  on every axis. That is not a wrong number so much as a meaningless one, sitting in the field
+  the rest of the chain reads to decide whether a subject moved.
+
+Filter on `TypeId.startswith("Part::")`, which drops the container and the datums in one
+predicate and keeps a surface body that has no solids. Then count what was asked for -- solids
+-- rather than however many objects the importer happened to create.
+
+A single-part file shows none of this: it has no container and no origin. The fixture box was
+right throughout, and both real assemblies were wrong.
+
+**And `Shape.BoundBox` is not the bounding box.** It is OCC's cheap box, inflated on anything
+filleted: a 1100 mm slab measured 1114.8. `optimalBoundingBox()` is the one that agrees with
+the geometry, and the difference is worth the call wherever the number reaches a report.
 
 # What meshanvil does not do
 `import_step` exists, `export_step` does not: the tool takes CAD in and only lets mesh out.
