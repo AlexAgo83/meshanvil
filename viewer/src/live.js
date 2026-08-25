@@ -8,7 +8,15 @@ export function startLiveRefresh(served, refreshLive) {
   if (!served) return;
   if ("EventSource" in window) {
     const stream = new EventSource(`${location.origin}/api/events`);
-    stream.addEventListener("changed", () => { refreshLive(); });
+    stream.addEventListener("changed", (event) => {
+      // The page cannot swap its own code: a changed bundle is the one update it answers by
+      // reloading. Everything else is data, and data is what refreshLive is for.
+      let components = [];
+      try { components = JSON.parse(/** @type {any} */ (event).data || "{}").components || []; }
+      catch { components = []; }
+      if (components.includes("viewer")) { location.reload(); return; }
+      refreshLive();
+    });
     /** @type {any} */ (window).__meshanvilStopLive = () => stream.close();
     window.addEventListener("beforeunload", () => stream.close(), { once: true });
     return;

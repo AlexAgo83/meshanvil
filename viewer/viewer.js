@@ -5,7 +5,20 @@
     if (!served) return;
     if ("EventSource" in window) {
       const stream = new EventSource(`${location.origin}/api/events`);
-      stream.addEventListener("changed", () => {
+      stream.addEventListener("changed", (event) => {
+        let components = [];
+        try {
+          components = JSON.parse(
+            /** @type {any} */
+            event.data || "{}"
+          ).components || [];
+        } catch {
+          components = [];
+        }
+        if (components.includes("viewer")) {
+          location.reload();
+          return;
+        }
         refreshLive2();
       });
       window.__meshanvilStopLive = () => stream.close();
@@ -130,20 +143,38 @@
   }
   function sourcesOf(reports) {
     const found = /* @__PURE__ */ new Map();
+    const add = (key, card, id) => {
+      if (!found.has(key)) found.set(key, { key, roots: [], ...card });
+      if (card.role && !found.get(key).role) found.get(key).role = card.role;
+      found.get(key).roots.push(id);
+    };
     for (const report of reports) {
-      if (report.links && report.links.parent) continue;
-      const key = sourceOf(report);
-      if (!found.has(key)) {
+      if (!(report.links && report.links.parent)) {
         const input = report.input || {};
-        found.set(key, {
+        const key = sourceOf(report);
+        add(
           key,
-          name: String(input.path || key).split("/").pop() || key,
-          path: String(input.path || ""),
-          sha256: String(input.sha256 || ""),
-          roots: []
-        });
+          {
+            name: String(input.path || key).split("/").pop() || key,
+            path: String(input.path || ""),
+            sha256: String(input.sha256 || ""),
+            role: ""
+          },
+          report.id
+        );
       }
-      found.get(key).roots.push(report.id);
+      for (const source of report.sources || []) {
+        add(
+          String(source.path || ""),
+          {
+            name: String(source.path || "").split("/").pop() || "",
+            path: String(source.path || ""),
+            sha256: String(source.sha256 || ""),
+            role: String(source.role || "")
+          },
+          report.id
+        );
+      }
     }
     return [...found.values()];
   }
@@ -214,9 +245,24 @@
       return null;
     }
   }
+  var CHOICE = "meshanvil.project";
+  function rememberProject(name) {
+    try {
+      localStorage.setItem(CHOICE, name);
+    } catch {
+    }
+  }
+  function rememberedProject() {
+    try {
+      return localStorage.getItem(CHOICE) || "";
+    } catch {
+      return "";
+    }
+  }
   async function selectProject(name) {
     const entry = projectEntries().find((p) => p.name === name);
     if (!entry) return;
+    rememberProject(name);
     if (!entry.reports.length && /** @type {any} */
     DATA.lazy && SERVED) {
       pending = name;
@@ -331,6 +377,10 @@
       const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
       source._x = 20;
       source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
+    }
+    sources.sort((a, b) => a._y - b._y);
+    for (let i = 1; i < sources.length; i++) {
+      sources[i]._y = Math.max(sources[i]._y, sources[i - 1]._y + 124);
     }
     return { shown: shown2, sources };
   }
@@ -529,6 +579,7 @@
       ((DATA.notes || {}).chains || {})[source.sha256] || source.name
     )}</div>
       <div class="nbody">
+        ${source.role ? `<div class="nline"><span>${esc(t("ui.source_role"))}</span><b>${esc(source.role)}</b></div>` : ""}
         <div class="nline"><span>${esc(t("ui.source_reads"))}</span><b>${source.roots.length}</b></div>
         ${source.sha256 ? `<div class="nline"><span>sha-256</span><b>${esc(source.sha256.slice(0, 10))}\u2026</b></div>` : ""}
       </div>
@@ -712,6 +763,12 @@
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}\u2026</dd>
       <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`, "input");
+    const sources = report.sources || [];
+    if (sources.length) {
+      html += block(t("ui.sources"), `<dl class="kv">${sources.map((s) => `<dt>${esc(s.role || "")}</dt><dd>${fileControls(s.path, esc(short(s.path)))}
+           <span class="provenance">${esc((s.sha256 || "").slice(0, 16))}\u2026</span></dd>`).join("")}
+      </dl><div class="note">${esc(t("ui.sources_foot"))}</div>`, "input");
+    }
     if (report.output) {
       html += block(t("ui.output"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.output.path, esc(short(report.output.path)))}</dd>
@@ -1321,6 +1378,11 @@
       ));
     }
     renderSplash();
+    const remembered = rememberedProject();
+    if (remembered && remembered !== /** @type {any} */
+    DATA.active && projectEntries().some((p) => p.name === remembered)) {
+      await selectProject(remembered);
+    }
     paintProjects();
     updateRunbookCommand();
     document.getElementById("project-select").addEventListener("change", (event) => {

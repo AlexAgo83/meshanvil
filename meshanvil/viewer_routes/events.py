@@ -26,10 +26,17 @@ INTERVAL = 1.0
 def signatures(root: Path) -> dict[str, tuple]:
     reports = sorted((root / viewer_payload.OPS).glob("*.json"))
     runbooks = [root / doc["path"] for doc in logics_bridge.runbooks(root) if doc.get("path")]
+    # The page's own code, not only the data it draws. A page holds the bundle it loaded at
+    # open, so a viewer change was invisible until someone thought to reload -- while report
+    # changes had been arriving live all along, which is exactly what makes it not occur to
+    # anyone. This is the one component the page answers by reloading itself.
+    page = root / "work" / "viewer"
+    assets = [page / name for name in ("viewer.js", "viewer.css", "index.html")]
     return {
         "reports": _stamp(reports),
         "doctor": _stamp([root / "work" / "doctor.json"]),
         "runbooks": _stamp(runbooks),
+        "viewer": _stamp(assets),
     }
 
 

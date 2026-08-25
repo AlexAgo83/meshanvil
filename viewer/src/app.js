@@ -16,7 +16,8 @@ import { rootOf, groupKey, sourcesOf } from "./chains.js";
  * resolve against it.
  * @typedef {{id:string, chain:string, kind:string, status:string, operation:string,
  *   schema_version:number, error?:string,
- *   params:Object, tool:Object, input:Object, output?:Object, before?:Object, after?:Object,
+ *   params:Object, tool:Object, input:Object, sources?:{path:string,sha256:string,role:string}[],
+ *   output?:Object, before?:Object, after?:Object,
  *   measured?:Object, bbox_delta_mm?:Object, warnings:string[], findings?:Object[],
  *   renders?:Object[], comparisons?:{view:string,before_url:string,after_url:string,camera:string}[], links:{parent:string|null, parent_source:string|null, docs:string[]},
  *   duration_s:number, created_at:string,
@@ -99,9 +100,31 @@ async function fetchMissing(path, query) {
   }
 }
 
+/** The project the operator last chose, across a reload.
+ *
+ *  A background refresh already kept the choice; a reload threw it away and put the server's
+ *  active project back, which reads as the page forgetting rather than as a fresh start. Kept
+ *  in the browser because it is this viewer's preference and no one else's: the project on
+ *  disk is not "selected", a person selected it here.
+ *
+ *  Storage can throw outright -- a private window, a browser set to block site data -- and a
+ *  remembered project may have been pruned away since. Both end the same way: the server's
+ *  active project, which is what the page did before this existed.
+ */
+const CHOICE = "meshanvil.project";
+
+function rememberProject(name) {
+  try { localStorage.setItem(CHOICE, name); } catch { /* no storage: the choice lasts the session */ }
+}
+
+function rememberedProject() {
+  try { return localStorage.getItem(CHOICE) || ""; } catch { return ""; }
+}
+
 async function selectProject(name) {
   const entry = projectEntries().find((p) => p.name === name);
   if (!entry) return;
+  rememberProject(name);
   // A project other than the active one arrives without its reports; the region says it is
   // being filled rather than sitting empty while the fetch is in flight.
   if (!entry.reports.length && /** @type {any} */ (DATA).lazy && SERVED) {
@@ -214,6 +237,13 @@ function place() {
     const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
     source._x = 20;
     source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
+  }
+  // Cards feeding the same operation are level with it, and so with each other: two images
+  // read as one group drew exactly on top of one another. Stacked in the order they were
+  // read, which is the order the group file names them in.
+  sources.sort((a, b) => a._y - b._y);
+  for (let i = 1; i < sources.length; i++) {
+    sources[i]._y = Math.max(sources[i]._y, sources[i - 1]._y + 124);
   }
   return { shown, sources };
 }
@@ -450,6 +480,7 @@ function nodes() {
       <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(
         ((/** @type {any} */ (DATA).notes || {}).chains || {})[source.sha256] || source.name)}</div>
       <div class="nbody">
+        ${source.role ? `<div class="nline"><span>${esc(t("ui.source_role"))}</span><b>${esc(source.role)}</b></div>` : ""}
         <div class="nline"><span>${esc(t("ui.source_reads"))}</span><b>${source.roots.length}</b></div>
         ${source.sha256 ? `<div class="nline"><span>sha-256</span><b>${esc(source.sha256.slice(0, 10))}…</b></div>` : ""}
       </div>
@@ -637,6 +668,15 @@ function props() {
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
       <dt>mode</dt><dd>${esc(report.input.mode)}</dd></dl>`, "input");
+  // A subject read off several files: input names the one the chain hangs from, sources name
+  // the group. Without this the other files appeared nowhere anyone looks for a source.
+  const sources = report.sources || [];
+  if (sources.length) {
+    html += block(t("ui.sources"), `<dl class="kv">${sources.map((s) =>
+        `<dt>${esc(s.role || "")}</dt><dd>${fileControls(s.path, esc(short(s.path)))}
+           <span class="provenance">${esc((s.sha256 || "").slice(0, 16))}…</span></dd>`).join("")}
+      </dl><div class="note">${esc(t("ui.sources_foot"))}</div>`, "input");
+  }
   if (report.output) {
     html += block(t("ui.output"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.output.path, esc(short(report.output.path)))}</dd>
@@ -1147,6 +1187,13 @@ async function init() {
     button.setAttribute("aria-selected", String(/** @type {HTMLElement} */ (button).dataset.lang === lang));
   }
   renderSplash();
+  // Before the first paint chooses, so the page opens on the project it was left on rather
+  // than opening on one and jumping to another.
+  const remembered = rememberedProject();
+  if (remembered && remembered !== /** @type {any} */ (DATA).active
+      && projectEntries().some((p) => p.name === remembered)) {
+    await selectProject(remembered);
+  }
   paintProjects();
   updateRunbookCommand();
   document.getElementById("project-select").addEventListener("change", (event) => {
