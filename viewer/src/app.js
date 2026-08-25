@@ -275,32 +275,38 @@ function onCanvas() {
    selection now, and a chain that was never placed draws every node at left:undefined. */
 function place() {
   const shown = onCanvas();
-  const depth = new Map(), row = new Map();
+  const depth = new Map(), row = new Map(), columns = new Map();
   for (const report of shown) {
     const parent = report.links && report.links.parent;
     const level = parent && depth.has(parent) ? depth.get(parent) + 1 : 0;
     depth.set(report.id, level);
     const used = row.get(level) || 0;
     row.set(level, used + 1);
-    // Column zero belongs to the source cards, so the reports start one column in.
-    report._x = 20 + (level + 1) * 232;
+    columns.set(report.id, level);
     report._y = 20 + used * 196;
   }
   // A source sits level with the middle of the roots it feeds, so its links fan rather
   // than cross.
   const sources = sourcesOf(shown);
+  // Column zero belongs to the source cards, and to a second one when any of them are read as
+  // a group: the files go in the first, the file that names the group in the second, and the
+  // reports start after it. In one column the group card sat among the files it holds, and
+  // every link into it ran backwards.
+  const grouped = sources.some((s) => s.group);
+  const shift = grouped ? 2 : 1;
+  for (const report of shown) report._x = 20 + ((columns.get(report.id) || 0) + shift) * 232;
   for (const source of sources) {
     const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
-    source._x = 20;
+    source._x = 20 + (grouped && !source.group ? 232 : 0);
     source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
   }
   // Cards feeding the same operation are level with it, and so with each other: two images
   // read as one group drew exactly on top of one another. Stacked in the order they were
-  // read, which is the order the group file names them in.
-  sources.sort((a, b) => a._y - b._y);
-  for (let i = 1; i < sources.length; i++) {
-    sources[i]._y = Math.max(sources[i]._y, sources[i - 1]._y + 124);
-  }
+  // read, which is the order the group file names them in. The spacing is applied after they
+  // are drawn, from what they actually measure -- see spaceSources.
+  // Stacked per column: a group card and its members are in different ones, and pushing them
+  // apart as if they shared a column left the group floating below the files it holds.
+  sources.sort((a, b) => (a._x - b._x) || (a._y - b._y));
   return { shown, sources };
 }
 
@@ -555,7 +561,8 @@ function nodes() {
   }
   // The source card carries no status and cannot be selected: it is a file, not an
   // operation, and every other affordance in this panel means "a report happened".
-  html += sources.map((source) => `<div class="node source" style="left:${source._x}px;top:${source._y}px">
+  html += sources.map((source) => `<div class="node source" data-source="${esc(source.key)}"
+      style="left:${source._x}px;top:${source._y}px">
       <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(
         ((/** @type {any} */ (DATA).notes || {}).chains || {})[source.sha256] || source.name)}</div>
       <div class="nbody">
@@ -566,11 +573,39 @@ function nodes() {
       <div class="nfoot">${esc(t("ui.source_foot"))}</div>
     </div>`).join("");
   document.getElementById("nodes").innerHTML = html;
+  const bottom = spaceSources(sources);
   const canvas = document.getElementById("canvas");
   canvas.style.width = Math.max(860, ...shown.map((r) => r._x + 240)) + "px";
-  canvas.style.height = Math.max(420, ...shown.map((r) => r._y + 200),
-                                 ...sources.map((s) => s._y + 200)) + "px";
+  canvas.style.height = Math.max(420, bottom + 40, ...shown.map((r) => r._y + 200)) + "px";
   noodles(shown, sources);
+}
+
+/** Keep the source cards from overlapping, using what they measure rather than a guess.
+ *
+ *  A fixed step was right until a card grew: the role a file was read as wraps to two lines on
+ *  some, and a constant gap does not know that. The browser does -- each card is asked for its
+ *  own height, and the next one starts below it. Returns the lowest edge, for the canvas.
+ */
+function spaceSources(sources) {
+  const gap = 18;
+  // In document order, which is the order they were drawn in: a source key is a file path,
+  // and a path put into an attribute selector is a selector that throws rather than one that
+  // finds nothing -- which took the whole page down with it.
+  const cards = /** @type {HTMLElement[]} */ ([...document.querySelectorAll("#nodes .node.source")]);
+  let lowest = 0;
+  let previous = -Infinity;
+  let column = null;
+  cards.forEach((card, index) => {
+    const source = sources[index];
+    if (!source) return;
+    if (source._x !== column) { column = source._x; previous = -Infinity; }
+    const top = Math.max(source._y, previous);
+    source._y = top;
+    card.style.top = `${top}px`;
+    previous = top + card.offsetHeight + gap;
+    lowest = Math.max(lowest, top + card.offsetHeight);
+  });
+  return lowest;
 }
 
 function headline(report) {
@@ -584,11 +619,17 @@ function headline(report) {
 
 function noodles(shown, sources) {
   let path = "";
+  const byKey = new Map((sources || []).map((s) => [s.key, s]));
   for (const source of sources || []) {
-    for (const id of source.roots) {
-      const report = BY_ID.get(id);
+    // A source that belongs to a group hangs off the group's card, which is the one link that
+    // says what actually happened: these files were read together, and the group was read by
+    // the operation.
+    const group = source.group && byKey.get(source.group);
+    const targets = group ? [group] : source.roots.map((id) => BY_ID.get(id));
+    for (const report of targets) {
       if (!report) continue;
-      const x1 = source._x + 186, y1 = source._y + 56, x2 = report._x, y2 = report._y + 34;
+      const x1 = source._x + 186, y1 = source._y + 56;
+      const x2 = group ? group._x : report._x, y2 = (group ? group._y : report._y) + 34;
       const bend = Math.max(40, (x2 - x1) / 2);
       path += `<path d="M${x1} ${y1} C${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2} ${y2}"
           fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="2 5"/>

@@ -170,7 +170,8 @@
             name: String(source.path || "").split("/").pop() || "",
             path: String(source.path || ""),
             sha256: String(source.sha256 || ""),
-            role: String(source.role || "")
+            role: String(source.role || ""),
+            group: sourceOf(report)
           },
           report.id
         );
@@ -410,26 +411,26 @@
   }
   function place() {
     const shown2 = onCanvas();
-    const depth = /* @__PURE__ */ new Map(), row = /* @__PURE__ */ new Map();
+    const depth = /* @__PURE__ */ new Map(), row = /* @__PURE__ */ new Map(), columns = /* @__PURE__ */ new Map();
     for (const report of shown2) {
       const parent = report.links && report.links.parent;
       const level = parent && depth.has(parent) ? depth.get(parent) + 1 : 0;
       depth.set(report.id, level);
       const used = row.get(level) || 0;
       row.set(level, used + 1);
-      report._x = 20 + (level + 1) * 232;
+      columns.set(report.id, level);
       report._y = 20 + used * 196;
     }
     const sources = sourcesOf(shown2);
+    const grouped = sources.some((s) => s.group);
+    const shift = grouped ? 2 : 1;
+    for (const report of shown2) report._x = 20 + ((columns.get(report.id) || 0) + shift) * 232;
     for (const source of sources) {
       const ys = source.roots.map((id) => BY_ID.get(id)).filter(Boolean).map((r) => r._y);
-      source._x = 20;
+      source._x = 20 + (grouped && !source.group ? 232 : 0);
       source._y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 20;
     }
-    sources.sort((a, b) => a._y - b._y);
-    for (let i = 1; i < sources.length; i++) {
-      sources[i]._y = Math.max(sources[i]._y, sources[i - 1]._y + 124);
-    }
+    sources.sort((a, b) => a._x - b._x || a._y - b._y);
     return { shown: shown2, sources };
   }
   function outliner() {
@@ -649,7 +650,8 @@
       <div class="nfoot"><span class="dot ${esc(state)}"></span>${esc(foot)}</div>
     </button>`;
     }
-    html += sources.map((source) => `<div class="node source" style="left:${source._x}px;top:${source._y}px">
+    html += sources.map((source) => `<div class="node source" data-source="${esc(source.key)}"
+      style="left:${source._x}px;top:${source._y}px">
       <div class="nhead"><span class="nidx">${esc(t("ui.source"))}</span>${esc(
       /** @type {any} */
       ((DATA.notes || {}).chains || {})[source.sha256] || source.name
@@ -662,14 +664,35 @@
       <div class="nfoot">${esc(t("ui.source_foot"))}</div>
     </div>`).join("");
     document.getElementById("nodes").innerHTML = html;
+    const bottom = spaceSources(sources);
     const canvas = document.getElementById("canvas");
     canvas.style.width = Math.max(860, ...shown2.map((r) => r._x + 240)) + "px";
-    canvas.style.height = Math.max(
-      420,
-      ...shown2.map((r) => r._y + 200),
-      ...sources.map((s) => s._y + 200)
-    ) + "px";
+    canvas.style.height = Math.max(420, bottom + 40, ...shown2.map((r) => r._y + 200)) + "px";
     noodles(shown2, sources);
+  }
+  function spaceSources(sources) {
+    const gap = 18;
+    const cards = (
+      /** @type {HTMLElement[]} */
+      [...document.querySelectorAll("#nodes .node.source")]
+    );
+    let lowest = 0;
+    let previous = -Infinity;
+    let column = null;
+    cards.forEach((card, index) => {
+      const source = sources[index];
+      if (!source) return;
+      if (source._x !== column) {
+        column = source._x;
+        previous = -Infinity;
+      }
+      const top = Math.max(source._y, previous);
+      source._y = top;
+      card.style.top = `${top}px`;
+      previous = top + card.offsetHeight + gap;
+      lowest = Math.max(lowest, top + card.offsetHeight);
+    });
+    return lowest;
   }
   function headline(report) {
     if (report.kind === "transform" && report.after) {
@@ -683,11 +706,14 @@
   }
   function noodles(shown2, sources) {
     let path = "";
+    const byKey = new Map((sources || []).map((s) => [s.key, s]));
     for (const source of sources || []) {
-      for (const id of source.roots) {
-        const report = BY_ID.get(id);
+      const group = source.group && byKey.get(source.group);
+      const targets = group ? [group] : source.roots.map((id) => BY_ID.get(id));
+      for (const report of targets) {
         if (!report) continue;
-        const x1 = source._x + 186, y1 = source._y + 56, x2 = report._x, y2 = report._y + 34;
+        const x1 = source._x + 186, y1 = source._y + 56;
+        const x2 = group ? group._x : report._x, y2 = (group ? group._y : report._y) + 34;
         const bend = Math.max(40, (x2 - x1) / 2);
         path += `<path d="M${x1} ${y1} C${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2} ${y2}"
           fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="2 5"/>

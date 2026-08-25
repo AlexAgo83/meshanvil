@@ -265,6 +265,18 @@ SMOKE = r"""
 
     // A chain header is the one that folds; matching on the word "Chain" tied this to a
     // label, and it broke the day the label stopped repeating the word in front of a name.
+    // Source cards must not sit on top of one another. They are spaced from what they
+    // measure, because a fixed step was right until one of them grew a second line.
+    const sourceCards = [...document.querySelectorAll("#nodes .node.source")];
+    if (sourceCards.length > 1) {
+      const boxes = sourceCards.map((card) => ({ top: card.offsetTop, bottom: card.offsetTop + card.offsetHeight }))
+        .sort((a, b) => a.top - b.top);
+      for (let i = 1; i < boxes.length; i++) {
+        assert(boxes[i].top >= boxes[i - 1].bottom,
+          `source cards overlap: one ends at ${boxes[i - 1].bottom}, the next starts at ${boxes[i].top}`);
+      }
+    }
+
     const startRows = [...document.querySelectorAll("#outliner .outgroup.fold")];
     assert(startRows.length >= 2, "the smoke fixture must carry two starts to exercise the canvas");
     for (const id of ["001", "900"]) {
