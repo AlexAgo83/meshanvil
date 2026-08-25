@@ -37,6 +37,10 @@ def used_keys() -> set[str]:
             found |= set(re.findall(r"""\bt\(\s*["']([a-z0-9_.]+)["']""", text))
             found |= set(re.findall(r"""\bdata-i18n(?:-aria-label)?=["']([a-z0-9_.]+)["']""", text))
     for path in (ROOT / "tools").glob("*.op.json"):
+        # local_* is an operation that lives in one checkout and ships nothing, catalogues
+        # included. Scanned, it reports every local operation as a missing string.
+        if path.name.startswith("local_"):
+            continue
         found.add(json.loads(path.read_text(encoding="utf-8"))["summary_key"])
     return found
 
