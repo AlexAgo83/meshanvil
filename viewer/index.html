@@ -46,8 +46,9 @@
       </div></details>
     </div>
     <span class="spacer"></span>
-    <label class="projects hidden" id="project-pick"><span data-i18n="ui.project">Project</span>
-      <select id="project-select" aria-label="Project" data-i18n-aria-label="ui.project"></select></label>
+    <button type="button" class="projects hidden" id="project-pick" data-projects="open"
+      aria-haspopup="dialog"><span data-i18n="ui.project">Project</span>
+      <b id="project-current"></b><span class="ogtri">▾</span></button>
     <div class="scene"><b id="project-name">—</b><b id="chain-name">—</b><span id="op-count"></span></div>
   </div>
 
@@ -116,6 +117,23 @@
       <button type="button" class="ghost" data-workspace="runbooks" data-splash="close" data-i18n="ui.workspace_runbooks">Runbooks</button>
       <span class="push"></span>
       <button type="button" class="ghost primary" id="splash-continue" data-splash="close" data-i18n="ui.splash_continue">Continue</button>
+    </div>
+  </div>
+</div>
+<div class="scrim hidden" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-title">
+  <div class="splash result">
+    <div class="splashtop">
+      <div><h1 id="project-title" data-i18n="ui.project_open">Open a project</h1>
+        <span class="ver" data-i18n="ui.project_open_note">Siblings of the active project</span></div>
+      <span class="push"></span>
+      <button type="button" class="ghost" data-projects="close" data-i18n="ui.close">Close</button>
+    </div>
+    <div class="projectpick">
+      <input id="project-search" type="search" autocomplete="off" spellcheck="false"
+        aria-controls="project-list" data-i18n-placeholder="ui.project_search"
+        aria-label="Filter projects" data-i18n-aria-label="ui.project_search"
+        placeholder="Filter projects…">
+      <div id="project-list" role="listbox" aria-label="Projects" data-i18n-aria-label="ui.project"></div>
     </div>
   </div>
 </div>

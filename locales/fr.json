@@ -291,7 +291,11 @@
   "splash_nothing": "Rien vers quoi continuer",
   "sources": "Sources",
   "sources_foot": "lues comme un seul groupe ; l'entree ci-dessus est la liste qui les nomme",
-  "source_role": "lue comme"
+  "source_role": "lue comme",
+  "project_open": "Ouvrir un projet",
+  "project_open_note": "Les voisins du projet actif",
+  "project_search": "Filtrer les projets…",
+  "project_none": "aucun projet ne correspond à « {text} »"
  },
  "operation": {
   "clean_shells": {

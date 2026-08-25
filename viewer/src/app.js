@@ -210,20 +210,56 @@ async function refreshLive() {
 function paintProjects() {
   const entries = projectEntries();
   const pick = document.getElementById("project-pick");
-  const select = /** @type {HTMLSelectElement} */ (document.getElementById("project-select"));
   const active = /** @type {any} */ (DATA).active;
   document.getElementById("project-name").textContent = active || "—";
+  document.getElementById("project-current").textContent = active || "—";
   // One project needs no chooser, and an empty one would only be furniture.
   pick.classList.toggle("hidden", entries.length < 2);
-  if (entries.length < 2) return;
+  if (entries.length >= 2) paintProjectList();
+}
+
+/** The rows of the project screen, narrowed by whatever is typed.
+ *
+ *  A select was fine at three projects and unusable at a dozen: it opens a list nobody can
+ *  search, gives no room for what distinguishes one project from another, and hides the
+ *  active one inside itself. This is the same screen the viewer already uses to start on.
+ */
+function paintProjectList() {
+  const list = document.getElementById("project-list");
+  if (!list) return;
+  const search = /** @type {HTMLInputElement} */ (document.getElementById("project-search"));
+  const needle = (search ? search.value : "").trim().toLowerCase();
+  const active = /** @type {any} */ (DATA).active;
+  const rows = projectEntries().filter((entry) => entry.name.toLowerCase().includes(needle));
+  if (!rows.length) {
+    list.innerHTML = `<div class="blank"><span>${esc(t("ui.project_none", { text: needle }))}</span></div>`;
+    return;
+  }
   // An empty project is named and nothing else: "0 reports" is the absence of a count, not a
   // count, and it is the longest thing on the line where there is least to say.
-  select.innerHTML = entries.map((entry) => {
+  list.innerHTML = rows.map((entry, index) => {
     const count = entry.reports.length
-      ? ` · ${t("ui.project_reports", { count: entry.reports.length })}` : "";
-    return `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${
-      esc(entry.name)}${esc(count)}</option>`;
+      ? t("ui.project_reports", { count: entry.reports.length }) : "";
+    return `<button type="button" class="prow" role="option" data-project="${esc(entry.name)}"
+      aria-selected="${entry.name === active}" data-first="${index === 0}">
+      <span class="label">${esc(entry.name)}</span><span class="provenance">${esc(count)}</span>
+      </button>`;
   }).join("");
+}
+
+function showProjects(show) {
+  const modal = document.getElementById("project-modal");
+  if (!modal) return;
+  const search = /** @type {HTMLInputElement} */ (document.getElementById("project-search"));
+  if (show && search) search.value = "";
+  paintProjectList();
+  modal.classList.toggle("hidden", !show);
+  if (show) {
+    closeMenus();
+    // The screen exists to be typed into; opening it with the caret anywhere else wastes the
+    // one action it was opened for.
+    if (search) search.focus();
+  }
 }
 
 /* ---------- roots: a report with no parent starts its own chain ---------- */
@@ -700,13 +736,16 @@ function props() {
     </div>`;
 
   html += driftNotice(report);
-  html += noteBlock("reports", report.id, t("ui.note_on_report"), t("ui.note_placeholder"));
+  // The chain first, then the note. The chain name is what the whole outliner column is
+  // labelled with, and it is set once; the note is about this one report and is written
+  // last. Reading order follows the widest thing down to the narrowest.
   const chainRoot = BY_ID.get((rootOf(BY_ID, report.id) || "").split("/").pop() || "")
     || DATA.reports.find((r) => !(r.links && r.links.parent)
                                 && String((r.input || {}).path || "") === rootOf(BY_ID, report.id));
   if (chainRoot && (chainRoot.input || {}).sha256) {
     html += noteBlock("chains", chainRoot.input.sha256, t("ui.chain_name"), t("ui.chain_name_placeholder"));
   }
+  html += noteBlock("reports", report.id, t("ui.note_on_report"), t("ui.note_placeholder"));
   html += block(t("ui.input"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}…</dd>
@@ -1139,6 +1178,17 @@ document.addEventListener("click", (event) => {
     showSplash(/** @type {HTMLElement} */ (splash).dataset.splash !== "close");
     if (!/** @type {HTMLElement} */ (splash).dataset.workspace) return;
   }
+  const projects = target.closest("[data-projects]");
+  if (projects) {
+    showProjects(/** @type {HTMLElement} */ (projects).dataset.projects !== "close");
+    return;
+  }
+  const project = target.closest("[data-project]");
+  if (project) {
+    showProjects(false);
+    selectProject(/** @type {HTMLElement} */ (project).dataset.project || "");
+    return;
+  }
   const section = target.closest("[data-section-goto]");
   if (section) { jumpReportSection(/** @type {HTMLElement} */ (section).dataset.sectionGoto || "input"); return; }
   const workspaceTab = target.closest('button[data-workspace], [role="tab"][data-workspace]');
@@ -1241,9 +1291,22 @@ async function init() {
   }
   paintProjects();
   updateRunbookCommand();
-  document.getElementById("project-select").addEventListener("change", (event) => {
-    selectProject(/** @type {HTMLSelectElement} */ (event.target).value);
-  });
+  const search = /** @type {HTMLInputElement} */ (document.getElementById("project-search"));
+  if (search) {
+    search.addEventListener("input", paintProjectList);
+    search.addEventListener("keydown", (event) => {
+      const key = /** @type {KeyboardEvent} */ (event).key;
+      if (key === "Escape") { showProjects(false); return; }
+      if (key !== "Enter") return;
+      // Enter takes the first row, which is what an autocomplete promises: type enough to
+      // leave one match and press it, without reaching for the mouse to confirm.
+      const first = /** @type {HTMLElement} */ (document.querySelector("#project-list .prow"));
+      if (first && first.dataset.project) {
+        showProjects(false);
+        selectProject(first.dataset.project);
+      }
+    });
+  }
   if (current) select(current);
   else { outliner(); nodes(); props(); preview(); showSplash(true); }
   startLiveRefresh(SERVED, refreshLive);
@@ -1252,5 +1315,5 @@ async function init() {
 // refreshLive is reachable so the served smoke can prove a refresh keeps what the
 // operator chose; nothing else in the page calls it by name.
 Object.assign(/** @type {any} */ (window), { select, selectProject, paintProjects, refreshLive,
-  outliner, nodes });
+  outliner, nodes, props });
 init();

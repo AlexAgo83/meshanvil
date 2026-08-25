@@ -291,7 +291,11 @@
   "splash_nothing": "Nothing to continue to",
   "sources": "Sources",
   "sources_foot": "read as one group; the input above is the list that names them",
-  "source_role": "read as"
+  "source_role": "read as",
+  "project_open": "Open a project",
+  "project_open_note": "Siblings of the active project",
+  "project_search": "Filter projects…",
+  "project_none": "no project matches “{text}”"
  },
  "operation": {
   "clean_shells": {

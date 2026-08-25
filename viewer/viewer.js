@@ -354,21 +354,54 @@
   function paintProjects() {
     const entries = projectEntries();
     const pick = document.getElementById("project-pick");
-    const select2 = (
-      /** @type {HTMLSelectElement} */
-      document.getElementById("project-select")
-    );
     const active = (
       /** @type {any} */
       DATA.active
     );
     document.getElementById("project-name").textContent = active || "\u2014";
+    document.getElementById("project-current").textContent = active || "\u2014";
     pick.classList.toggle("hidden", entries.length < 2);
-    if (entries.length < 2) return;
-    select2.innerHTML = entries.map((entry) => {
-      const count = entry.reports.length ? ` \xB7 ${t("ui.project_reports", { count: entry.reports.length })}` : "";
-      return `<option value="${esc(entry.name)}"${entry.name === active ? " selected" : ""}>${esc(entry.name)}${esc(count)}</option>`;
+    if (entries.length >= 2) paintProjectList();
+  }
+  function paintProjectList() {
+    const list = document.getElementById("project-list");
+    if (!list) return;
+    const search = (
+      /** @type {HTMLInputElement} */
+      document.getElementById("project-search")
+    );
+    const needle = (search ? search.value : "").trim().toLowerCase();
+    const active = (
+      /** @type {any} */
+      DATA.active
+    );
+    const rows = projectEntries().filter((entry) => entry.name.toLowerCase().includes(needle));
+    if (!rows.length) {
+      list.innerHTML = `<div class="blank"><span>${esc(t("ui.project_none", { text: needle }))}</span></div>`;
+      return;
+    }
+    list.innerHTML = rows.map((entry, index) => {
+      const count = entry.reports.length ? t("ui.project_reports", { count: entry.reports.length }) : "";
+      return `<button type="button" class="prow" role="option" data-project="${esc(entry.name)}"
+      aria-selected="${entry.name === active}" data-first="${index === 0}">
+      <span class="label">${esc(entry.name)}</span><span class="provenance">${esc(count)}</span>
+      </button>`;
     }).join("");
+  }
+  function showProjects(show) {
+    const modal = document.getElementById("project-modal");
+    if (!modal) return;
+    const search = (
+      /** @type {HTMLInputElement} */
+      document.getElementById("project-search")
+    );
+    if (show && search) search.value = "";
+    paintProjectList();
+    modal.classList.toggle("hidden", !show);
+    if (show) {
+      closeMenus();
+      if (search) search.focus();
+    }
   }
   function onCanvas() {
     const root = current ? rootOf(BY_ID, current) : null;
@@ -797,11 +830,11 @@
       ${summaryOf(report.operation) ? `<p class="note">${esc(summaryOf(report.operation))}</p>` : ""}
     </div>`;
     html += driftNotice(report);
-    html += noteBlock("reports", report.id, t("ui.note_on_report"), t("ui.note_placeholder"));
     const chainRoot = BY_ID.get((rootOf(BY_ID, report.id) || "").split("/").pop() || "") || DATA.reports.find((r) => !(r.links && r.links.parent) && String((r.input || {}).path || "") === rootOf(BY_ID, report.id));
     if (chainRoot && (chainRoot.input || {}).sha256) {
       html += noteBlock("chains", chainRoot.input.sha256, t("ui.chain_name"), t("ui.chain_name_placeholder"));
     }
+    html += noteBlock("reports", report.id, t("ui.note_on_report"), t("ui.note_placeholder"));
     html += block(t("ui.input"), `<dl class="kv">
       <dt>${esc(t("ui.file"))}</dt><dd>${fileControls(report.input.path, esc(short(report.input.path)))}</dd>
       <dt>sha-256</dt><dd>${esc((report.input.sha256 || "").slice(0, 16))}\u2026</dd>
@@ -1245,6 +1278,23 @@
       if (!/** @type {HTMLElement} */
       splash.dataset.workspace) return;
     }
+    const projects = target.closest("[data-projects]");
+    if (projects) {
+      showProjects(
+        /** @type {HTMLElement} */
+        projects.dataset.projects !== "close"
+      );
+      return;
+    }
+    const project = target.closest("[data-project]");
+    if (project) {
+      showProjects(false);
+      selectProject(
+        /** @type {HTMLElement} */
+        project.dataset.project || ""
+      );
+      return;
+    }
     const section = target.closest("[data-section-goto]");
     if (section) {
       jumpReportSection(
@@ -1430,12 +1480,32 @@
     }
     paintProjects();
     updateRunbookCommand();
-    document.getElementById("project-select").addEventListener("change", (event) => {
-      selectProject(
-        /** @type {HTMLSelectElement} */
-        event.target.value
-      );
-    });
+    const search = (
+      /** @type {HTMLInputElement} */
+      document.getElementById("project-search")
+    );
+    if (search) {
+      search.addEventListener("input", paintProjectList);
+      search.addEventListener("keydown", (event) => {
+        const key = (
+          /** @type {KeyboardEvent} */
+          event.key
+        );
+        if (key === "Escape") {
+          showProjects(false);
+          return;
+        }
+        if (key !== "Enter") return;
+        const first = (
+          /** @type {HTMLElement} */
+          document.querySelector("#project-list .prow")
+        );
+        if (first && first.dataset.project) {
+          showProjects(false);
+          selectProject(first.dataset.project);
+        }
+      });
+    }
     if (current) select(current);
     else {
       outliner();
@@ -1455,7 +1525,8 @@
       paintProjects,
       refreshLive,
       outliner,
-      nodes
+      nodes,
+      props
     }
   );
   init();

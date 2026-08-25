@@ -35,7 +35,10 @@ def used_keys() -> set[str]:
                 continue
             text = path.read_text(encoding="utf-8")
             found |= set(re.findall(r"""\bt\(\s*["']([a-z0-9_.]+)["']""", text))
-            found |= set(re.findall(r"""\bdata-i18n(?:-aria-label)?=["']([a-z0-9_.]+)["']""", text))
+            # -placeholder counts as a use: a string that only ever fills a placeholder was
+            # reported as read by nothing, which is the opposite of true.
+            found |= set(re.findall(
+                r"""\bdata-i18n(?:-aria-label|-placeholder)?=["']([a-z0-9_.]+)["']""", text))
     for path in (ROOT / "tools").glob("*.op.json"):
         # local_* is an operation that lives in one checkout and ships nothing, catalogues
         # included. Scanned, it reports every local operation as a missing string.

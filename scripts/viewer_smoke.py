@@ -53,9 +53,10 @@ SERVED_SMOKE = r"""
 
     // The round trip only a served page can make: type a note, let it save, and find it in
     // the payload the next refresh brings back.
-    const field = document.querySelector("[data-note-kind]");
-    assert(field, "no note field on a served report");
-    assert(field.dataset.noteKind === "reports", "the note field is not bound to a report");
+    // By kind, not by position: the chain name and the report note are both note fields, and
+    // which one comes first is a layout decision that has already changed once.
+    const field = document.querySelector('[data-note-kind="reports"]');
+    assert(field, "no report-note field on a served report");
     field.value = "written by the smoke";
     field.dispatchEvent(new Event("change", { bubbles: true }));
     for (let i = 0; i < 40 && !(DATA.notes && DATA.notes.reports[field.dataset.noteKey]); i++) {
@@ -69,7 +70,7 @@ SERVED_SMOKE = r"""
       "a note did not survive a refresh");
     // The refresh repainted the panel, so the field above is detached and its events no longer
     // reach the document. Ask for the current one.
-    const again = document.querySelector("[data-note-kind]");
+    const again = document.querySelector('[data-note-kind="reports"]');
     assert(again && again !== field, "the refresh did not repaint the note field");
     assert(again.value === "written by the smoke", "the repainted field lost the note");
     again.value = "";
@@ -82,16 +83,19 @@ SERVED_SMOKE = r"""
     // A chain can be named, and the name replaces the filename in the header rather than
     // sitting beside it: naming a chain is the act of saying the filename is not what you
     // want to read there.
-    const chainField = document.querySelector('[data-note-kind="chains"]');
-    assert(chainField, "no chain-name field on a served report");
     // Start from no name, whatever a previous run left behind: the assertion below is about
-    // what a name replaces, and it cannot read that off a header that is already named.
-    chainField.value = "";
-    chainField.dispatchEvent(new Event("change", { bubbles: true }));
-    for (let i = 0; i < 40 && DATA.notes.chains[chainField.dataset.noteKey]; i++) {
+    // what a name replaces, and it cannot read that off a header that is already named. The
+    // field is asked for again afterwards, because saving repaints the panel it lives in.
+    const clearing = document.querySelector('[data-note-kind="chains"]');
+    assert(clearing, "no chain-name field on a served report");
+    clearing.value = "";
+    clearing.dispatchEvent(new Event("change", { bubbles: true }));
+    for (let i = 0; i < 40 && DATA.notes.chains[clearing.dataset.noteKey]; i++) {
       await new Promise((done) => setTimeout(done, 50));
     }
-    outliner();
+    outliner(); props();
+    const chainField = document.querySelector('[data-note-kind="chains"]');
+    assert(chainField, "the chain-name field did not come back after clearing");
     // The label span, not the whole header: the header also carries the fold triangle.
     const fileBefore = document.querySelector("#outliner .outgroup span").textContent.trim();
     chainField.value = "Named by the smoke";
@@ -424,7 +428,7 @@ SMOKE = r"""
     box.dispatchEvent(new Event("input", { bubbles: true }));
 
     const pick = document.getElementById("project-pick");
-    const chooser = document.getElementById("project-select");
+    const chooser = document.getElementById("project-list");
     assert(pick && chooser, "project switcher missing from the page");
     assert(DATA.projects && DATA.projects.length >= 1, "no project in the viewer data");
     assert(document.getElementById("project-name").textContent.trim() === DATA.active,
@@ -440,7 +444,21 @@ SMOKE = r"""
                          reports: [only.reports[0]] });
     paintProjects();
     assert(!pick.classList.contains("hidden"), "two projects did not reveal the chooser");
-    assert(chooser.options.length === DATA.projects.length, "the chooser lists the wrong count");
+    assert(chooser.querySelectorAll(".prow").length === DATA.projects.length,
+      "the chooser lists the wrong count");
+
+    // The screen is a filter, and typing has to narrow it -- a list of a dozen projects with
+    // a box that does nothing is worse than the select it replaced.
+    const search = document.querySelector("#project-search");
+    search.value = "__smoke__";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    const narrowed = [...chooser.querySelectorAll(".prow")];
+    assert(narrowed.length === 1 && narrowed[0].dataset.project === "__smoke__",
+      `filtering the project screen kept ${narrowed.length} rows`);
+    search.value = "";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    assert(chooser.querySelectorAll(".prow").length === DATA.projects.length,
+      "clearing the filter did not bring the projects back");
 
     selectProject("__smoke__");
     assert(DATA.active === "__smoke__", "selecting a project did not activate it");
