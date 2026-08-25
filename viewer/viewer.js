@@ -278,6 +278,7 @@
     DATA.active = entry.name;
     DATA.reports = entry.reports;
     DATA.ops_exists = entry.ops_exists;
+    restoreFolds();
     BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
     current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
     currentDoc = null;
@@ -319,12 +320,23 @@
     SERVED = location.protocol !== "file:" && !!DATA.run_token;
     lang = DATA.lang || lang || "en";
     strings = mergedCatalog(lang);
+    const before = new Set(BY_ID.keys());
     BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+    const arrived = DATA.reports.filter((r) => before.size && !before.has(r.id));
+    if (arrived.length) {
+      current = arrived[arrived.length - 1].id;
+      currentDoc = null;
+      start = false;
+      view = 0;
+      folded.delete(rootOf(BY_ID, current) || "");
+      rememberFolds();
+    }
     if (!current || !BY_ID.has(current)) current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
     start = !DATA.reports.length;
     paintTotals();
     applyStaticStrings();
     paintProjects();
+    updateRunbookCommand();
     outliner();
     nodes();
     props();
@@ -497,6 +509,35 @@
   </span>`;
   }
   var folded = /* @__PURE__ */ new Set();
+  var FOLDS = "meshanvil.folds";
+  function foldStore() {
+    try {
+      return JSON.parse(localStorage.getItem(FOLDS) || "{}") || {};
+    } catch {
+      return {};
+    }
+  }
+  function rememberFolds() {
+    const active = (
+      /** @type {any} */
+      DATA.active || ""
+    );
+    try {
+      const all = foldStore();
+      if (folded.size) all[active] = [...folded];
+      else delete all[active];
+      localStorage.setItem(FOLDS, JSON.stringify(all));
+    } catch {
+    }
+  }
+  function restoreFolds() {
+    const active = (
+      /** @type {any} */
+      DATA.active || ""
+    );
+    folded.clear();
+    for (const key of foldStore()[active] || []) folded.add(key);
+  }
   var APPLIED_SHOWN = 2;
   var shown = (applied) => applied.slice(0, APPLIED_SHOWN);
   function runbookRows() {
@@ -1289,6 +1330,7 @@
         fold.dataset.fold || ""
       );
       if (!folded.delete(key)) folded.add(key);
+      rememberFolds();
       outliner();
       return;
     }
@@ -1378,6 +1420,7 @@
       ));
     }
     renderSplash();
+    restoreFolds();
     const remembered = rememberedProject();
     if (remembered && remembered !== /** @type {any} */
     DATA.active && projectEntries().some((p) => p.name === remembered)) {

@@ -250,8 +250,9 @@ SMOKE = r"""
     assert(heads().length === headsBefore, "unfolding did not bring the branch headers back");
     assert(heads()[0].getAttribute("aria-expanded") === "true", "an unfolded chain reads as collapsed");
 
-    const startRows = [...document.querySelectorAll("#outliner .outgroup")]
-      .filter((group) => /^Chain/.test(group.textContent.trim()));
+    // A chain header is the one that folds; matching on the word "Chain" tied this to a
+    // label, and it broke the day the label stopped repeating the word in front of a name.
+    const startRows = [...document.querySelectorAll("#outliner .outgroup.fold")];
     assert(startRows.length >= 2, "the smoke fixture must carry two starts to exercise the canvas");
     for (const id of ["001", "900"]) {
       const row = [...document.querySelectorAll("#outliner .row")].find((r) => r.dataset.id === id);
@@ -376,7 +377,7 @@ SMOKE = r"""
     // Every start opens a group of its own too, so those are discounted rather than assumed
     // to be exactly one: the count broke the day a second chain appeared in the same project.
     const allGroups = [...document.querySelectorAll("#outliner .outgroup")];
-    const starts = allGroups.filter((group) => /^Chain/.test(group.textContent.trim()));
+    const starts = allGroups.filter((group) => group.classList.contains("fold"));
     const branchGroups = allGroups.length - starts.length;
     const branchCount = Number((document.querySelector("#status-branches").textContent.match(/\d+/) || [0])[0]);
     assert(branchGroups === branchCount,

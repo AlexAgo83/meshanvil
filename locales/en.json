@@ -276,7 +276,7 @@
   "unfold_chain": "Unfold this chain",
   "chain_name": "Chain name",
   "chain_name_placeholder": "Name this run",
-  "chain_named": "Chain — {name}",
+  "chain_named": "{name}",
   "applied_more": "+{count}",
   "branch_named": "Branch — {name}",
   "no_renders": "This operation produced no render.",

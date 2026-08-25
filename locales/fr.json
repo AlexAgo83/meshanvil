@@ -276,7 +276,7 @@
   "unfold_chain": "Déplier cette chaîne",
   "chain_name": "Nom de la chaîne",
   "chain_name_placeholder": "Nommer ce travail",
-  "chain_named": "Chaîne — {name}",
+  "chain_named": "{name}",
   "applied_more": "+{count}",
   "branch_named": "Branche — {name}",
   "no_renders": "Cette opération n'a produit aucun rendu.",

@@ -140,6 +140,7 @@ async function selectProject(name) {
   /** @type {any} */ (DATA).active = entry.name;
   DATA.reports = entry.reports;
   DATA.ops_exists = entry.ops_exists;
+  restoreFolds();
   BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
   current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
   currentDoc = null;
@@ -174,13 +175,27 @@ async function fetchData() {
   SERVED = location.protocol !== "file:" && !!DATA.run_token;
   lang = DATA.lang || lang || "en";
   strings = mergedCatalog(lang);
+  const before = new Set(BY_ID.keys());
   BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
+  // A refresh that brought reports moves the selection onto the newest of them. A run
+  // finishing while the page sits on an older report is the whole reason to watch live, and
+  // leaving the selection behind means reading the result is a manual step every time.
+  const arrived = DATA.reports.filter((r) => before.size && !before.has(r.id));
+  if (arrived.length) {
+    current = arrived[arrived.length - 1].id;
+    currentDoc = null;
+    start = false;
+    view = 0;
+    folded.delete(rootOf(BY_ID, current) || "");   // it cannot be read inside a folded chain
+    rememberFolds();
+  }
   // The selected report survives too, when the refresh still has it.
   if (!current || !BY_ID.has(current)) current = DATA.reports.length ? DATA.reports[DATA.reports.length - 1].id : null;
   start = !DATA.reports.length;
   paintTotals();
   applyStaticStrings();
   paintProjects();
+  updateRunbookCommand();
   outliner(); nodes(); props(); preview();
   return true;
 }
@@ -391,6 +406,29 @@ function fileControls(path, label) {
  *  above them -- worse than not folding at all. A branch is not something anyone thinks of as
  *  foldable on its own, so it no longer offers the control either. */
 const folded = new Set();
+const FOLDS = "meshanvil.folds";
+
+/** Folds are per project: the same chain name means nothing in a different one, and a set
+ *  carried across a switch folds chains the operator never touched. */
+function foldStore() {
+  try { return JSON.parse(localStorage.getItem(FOLDS) || "{}") || {}; } catch { return {}; }
+}
+
+function rememberFolds() {
+  const active = /** @type {any} */ (DATA).active || "";
+  try {
+    const all = foldStore();
+    if (folded.size) all[active] = [...folded];
+    else delete all[active];
+    localStorage.setItem(FOLDS, JSON.stringify(all));
+  } catch { /* no storage: the folds last as long as the page does */ }
+}
+
+function restoreFolds() {
+  const active = /** @type {any} */ (DATA).active || "";
+  folded.clear();
+  for (const key of foldStore()[active] || []) folded.add(key);
+}
 
 /** A runbook applied by a dozen operations turned one table row into a column of pills and
     pushed the rest of the table off screen. Two name the runbook's use; the count carries
@@ -1119,6 +1157,7 @@ document.addEventListener("click", (event) => {
   if (fold) {
     const key = /** @type {HTMLElement} */ (fold).dataset.fold || "";
     if (!folded.delete(key)) folded.add(key);
+    rememberFolds();
     outliner();
     return;
   }
@@ -1189,6 +1228,7 @@ async function init() {
   renderSplash();
   // Before the first paint chooses, so the page opens on the project it was left on rather
   // than opening on one and jumping to another.
+  restoreFolds();
   const remembered = rememberedProject();
   if (remembered && remembered !== /** @type {any} */ (DATA).active
       && projectEntries().some((p) => p.name === remembered)) {
