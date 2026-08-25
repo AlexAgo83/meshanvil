@@ -30,7 +30,8 @@ def all_schemas() -> dict:
     return {
         "report": {
             "required": ["schema_version", "id", "operation", "status", "input", "output", "tool"],
-            "optional": ["params", "measurements", "findings", "warnings", "renders", "links"],
+            "optional": ["params", "measurements", "findings", "warnings", "renders", "links",
+                         "sources"],
             "status": ["ok", "failed"],
             "input": {"path": "string", "sha256": "string"},
             "output": {"path": "string", "state": "present|pruned|missing", "sha256": "string"},

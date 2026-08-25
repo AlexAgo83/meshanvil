@@ -37,20 +37,36 @@ export function rootOf(byId, id) {
  *  subject drew as four disconnected tiles, which is not what they are. The identity is already
  *  in the reports: they all carry input.path and input.sha256.
  *  @param {any[]} reports  the reports drawn on the canvas
- *  @returns {{key:string, name:string, path:string, sha256:string, roots:string[],
+ *  @returns {{key:string, name:string, path:string, sha256:string, role:string, roots:string[],
  *             _x?:number, _y?:number}[]}  _x/_y are filled in by the layout, as on a report. */
 export function sourcesOf(reports) {
   const found = new Map();
+  const add = (key, card, id) => {
+    if (!found.has(key)) found.set(key, { key, roots: [], ...card });
+    // The same file can be one report's plain input and another's declared source. Whichever
+    // came first, the card keeps the role: a file that some operation said it read as the
+    // front three-quarter is that, and an earlier card built from a bare input knows nothing.
+    if (card.role && !found.get(key).role) found.get(key).role = card.role;
+    found.get(key).roots.push(id);
+  };
   for (const report of reports) {
-    if (report.links && report.links.parent) continue;
-    const key = sourceOf(report);
-    if (!found.has(key)) {
+    if (!(report.links && report.links.parent)) {
       const input = report.input || {};
-      found.set(key, { key, name: String(input.path || key).split("/").pop() || key,
-                       path: String(input.path || ""), sha256: String(input.sha256 || ""),
-                       roots: [] });
+      const key = sourceOf(report);
+      add(key, { name: String(input.path || key).split("/").pop() || key,
+                 path: String(input.path || ""), sha256: String(input.sha256 || ""), role: "" },
+          report.id);
     }
-    found.get(key).roots.push(report.id);
+    // A subject read off several files gets a card each, on any report and not only on a
+    // parentless one: an operation whose whole job is to read a group had that group nowhere
+    // on the canvas, so two images feeding one reading drew as no link at all.
+    for (const source of report.sources || []) {
+      add(String(source.path || ""),
+          { name: String(source.path || "").split("/").pop() || "",
+            path: String(source.path || ""), sha256: String(source.sha256 || ""),
+            role: String(source.role || "") },
+          report.id);
+    }
   }
   return [...found.values()];
 }

@@ -122,6 +122,26 @@ def check_bbox_delta():
     assert bbox_delta({}, after) is None
 
 
+def check_report_optional_blocks():
+    """A report drops the blocks it has nothing to put in, and survives the ones never set.
+
+    `sources` is only set by an operation that reads a group of files. Written as if every
+    report had one, it took down every operation that does not -- which is all but one.
+    """
+    from meshanvil_engine.report import Reporter
+    bare = Reporter(None)
+    bare.write()                                    # no job: prints, and must not raise
+    for key in ("findings", "renders", "comparisons", "sources"):
+        assert key not in bare.report, key
+    full = Reporter(None)
+    full.finding("built", objects=2)
+    full.sources([{"path": "/p/a.png", "sha256": "aa", "role": "front"}])
+    full.write()
+    assert full.report["sources"][0]["role"] == "front"
+    assert full.report["findings"][0]["code"] == "built"
+    assert "renders" not in full.report
+
+
 def check_refusals():
     for arguments in (["run", "nope", "README.md"],
                       ["run", "scan_defects", "does-not-exist.blend"]):

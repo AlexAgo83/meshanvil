@@ -66,3 +66,37 @@ test("a report with a parent never gets a source card of its own", () => {
     assert.ok(!claimed.includes(id), `${id} descends from another report and needs no card`);
   }
 });
+
+test("a group of sources draws one card each, all feeding the same report", () => {
+  // The reading operation declares the images it was read from. Its own input -- the file
+  // that names the group -- is a card too: it is what the chain hangs from.
+  const reading = { id: "011", links: { parent: null },
+                    input: { path: "/p/work/in/group.txt", sha256: "aa" },
+                    sources: [{ path: "/p/work/in/front.png", sha256: "bb", role: "front three-quarter" },
+                              { path: "/p/work/in/rear.png", sha256: "cc", role: "rear three-quarter" }] };
+  const built = { id: "013", links: { parent: "011" }, input: { path: "/p/work/out/plan.json" } };
+  const cards = sourcesOf([reading, built]);
+  assert.deepEqual(cards.map((c) => c.name), ["group.txt", "front.png", "rear.png"]);
+  assert.deepEqual(cards.map((c) => c.roots), [["011"], ["011"], ["011"]]);
+  assert.equal(cards[1].role, "front three-quarter");
+  // The child reads the plan, not the images: it must not pick up a card of its own here.
+  assert.equal(cards.length, 3);
+});
+
+test("the same file read by two operations is one card feeding both", () => {
+  const a = { id: "001", links: { parent: null }, input: { path: "/p/g.txt", sha256: "aa" },
+              sources: [{ path: "/p/front.png", sha256: "bb", role: "front" }] };
+  const b = { id: "002", links: { parent: null }, input: { path: "/p/g.txt", sha256: "aa" },
+              sources: [{ path: "/p/front.png", sha256: "bb", role: "front" }] };
+  const cards = sourcesOf([a, b]);
+  assert.equal(cards.length, 2);
+  assert.deepEqual(cards[1].roots, ["001", "002"]);
+});
+
+test("a file that is one report's input and another's declared source keeps the role", () => {
+  const plain = { id: "001", links: { parent: null }, input: { path: "/p/front.png", sha256: "bb" } };
+  const reading = { id: "015", links: { parent: null }, input: { path: "/p/g.txt", sha256: "aa" },
+                    sources: [{ path: "/p/front.png", sha256: "bb", role: "front three-quarter" }] };
+  assert.equal(sourcesOf([plain, reading])[0].role, "front three-quarter");
+  assert.equal(sourcesOf([reading, plain])[1].role, "front three-quarter");
+});

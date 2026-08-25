@@ -209,6 +209,16 @@ class Reporter:
     def cites(self, *docs: str) -> None:
         self.report["links"]["docs"].extend(docs)
 
+    def sources(self, entries: list[dict]) -> None:
+        """Every file this operation read, when it read more than one.
+
+        `input` stays what it is -- the single target the run was chained on, and the only
+        thing a fingerprint can hang a parent from. A subject read off several files had them
+        nowhere in the report but its own findings, which is not where anyone looks for a
+        source. Each entry is {path, sha256, role}.
+        """
+        self.report["sources"] = entries
+
     def output(self, path: str, sha256: str | None = None) -> None:
         self.report["output"] = {"path": path, "sha256": sha256,
                                  "state": "present", "state_changed_at": None}
@@ -229,9 +239,11 @@ class Reporter:
     # --- closing -------------------------------------------------------------------------
     def write(self) -> None:
         self.report["duration_s"] = round(time.time() - self.started, 2)
-        for key in ("findings", "renders", "comparisons"):
-            if not self.report[key]:
-                self.report.pop(key)
+        # Absent, not merely empty: `sources` is only ever set by an operation that has a
+        # group to declare, and indexing it here took down every operation that does not.
+        for key in ("findings", "renders", "comparisons", "sources"):
+            if not self.report.get(key):
+                self.report.pop(key, None)
         if not self.job:
             print(json.dumps(self.report, indent=1))
             return
