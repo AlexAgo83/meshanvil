@@ -6,7 +6,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_every_op_has_a_summary_in_every_locale():
-    manifests = sorted(ROOT.joinpath("tools").glob("*.op.json"))
+    # local_* is the convention for an operation that lives in one checkout and is not part
+    # of the tool: it ships no manifest, no strings and no fixture, and this rule is about
+    # what the tool ships. `list` falls back to the key for those, which is what they get.
+    manifests = [p for p in sorted(ROOT.joinpath("tools").glob("*.op.json"))
+                 if not p.name.startswith("local_")]
     assert manifests, "no operation manifests found"
     for locale in ("en", "fr"):
         catalogue = json.loads(ROOT.joinpath("locales", f"{locale}.json").read_text(encoding="utf-8"))

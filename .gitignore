@@ -9,3 +9,8 @@ node_modules/
 *.egg-info/
 build/
 dist/
+
+# Local operations and their subjects: personal work that lives in a checkout and is not
+# part of the tool. tools/local_*.py, its .op.json beside it, and fixtures/local_* are yours.
+tools/local_*
+fixtures/local_*
