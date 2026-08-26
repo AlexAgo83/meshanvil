@@ -151,7 +151,7 @@ async function selectProject(name) {
   outliner(); nodes(); props(); preview();
 }
 
-async function fetchData() {
+async function fetchData(unfoldArrivals = true) {
   if (!SERVED) return false;
   const response = await fetch(`${location.origin}/api/data`, { cache: "no-store" });
   if (!response.ok) return false;
@@ -180,7 +180,10 @@ async function fetchData() {
   // A refresh that brought reports moves the selection onto the newest of them. A run
   // finishing while the page sits on an older report is the whole reason to watch live, and
   // leaving the selection behind means reading the result is a manual step every time.
-  const arrived = DATA.reports.filter((r) => before.size && !before.has(r.id));
+  // Static data.js can lag behind the served API on a reload. That first hydration must not
+  // look like live work finishing and erase a fold the operator deliberately persisted.
+  const arrived = unfoldArrivals
+    ? DATA.reports.filter((r) => before.size && !before.has(r.id)) : [];
   if (arrived.length) {
     current = arrived[arrived.length - 1].id;
     currentDoc = null;
@@ -1314,7 +1317,7 @@ function paintTotals() {
 }
 
 async function init() {
-  await fetchData();
+  await fetchData(false);
   paintTotals();
   applyStaticStrings();
   document.getElementById("app-version").textContent = DATA.version ? `v${DATA.version}` : "";

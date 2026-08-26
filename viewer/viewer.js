@@ -292,7 +292,7 @@
     props();
     preview();
   }
-  async function fetchData() {
+  async function fetchData(unfoldArrivals = true) {
     if (!SERVED) return false;
     const response = await fetch(`${location.origin}/api/data`, { cache: "no-store" });
     if (!response.ok) return false;
@@ -323,7 +323,7 @@
     strings = mergedCatalog(lang);
     const before = new Set(BY_ID.keys());
     BY_ID = new Map(DATA.reports.map((r) => [r.id, r]));
-    const arrived = DATA.reports.filter((r) => before.size && !before.has(r.id));
+    const arrived = unfoldArrivals ? DATA.reports.filter((r) => before.size && !before.has(r.id)) : [];
     if (arrived.length) {
       current = arrived[arrived.length - 1].id;
       currentDoc = null;
@@ -1487,7 +1487,7 @@
     }) : "";
   }
   async function init() {
-    await fetchData();
+    await fetchData(false);
     paintTotals();
     applyStaticStrings();
     document.getElementById("app-version").textContent = DATA.version ? `v${DATA.version}` : "";

@@ -104,3 +104,10 @@ def test_run_list_and_doctor_are_structured(tmp_path: Path, monkeypatch):
 
 def test_viewer_assets_refresh():
     selfcheck.check_viewer_assets_refresh()
+
+
+def test_initial_viewer_hydration_keeps_persisted_folds():
+    source = (Path(__file__).parents[1] / "viewer" / "src" / "app.js").read_text(encoding="utf-8")
+    assert "async function fetchData(unfoldArrivals = true)" in source
+    assert "const arrived = unfoldArrivals" in source
+    assert "await fetchData(false);" in source
