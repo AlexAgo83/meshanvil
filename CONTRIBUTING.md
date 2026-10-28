@@ -79,6 +79,13 @@ make fixture       # needs Blender: regenerates the demo scene and asserts its d
 make viewer-smoke  # needs Blender and Chrome: exercises the generated viewer, file:// and --serve
 ```
 
+If `meshanvil` is not on `PATH`, use `./bin/meshanvil` or `python -m meshanvil.cli`.
+
+The viewer source is `viewer/src/app.js`; the page loads the bundled `viewer/viewer.js`. After
+editing the source run `npm run build:viewer`, refresh a project's served copy with
+`meshanvil view --no-open`, then `make check` and `make viewer-smoke`: a source-only edit changes
+nothing on screen.
+
 `make check` compiles every script and runs the publication-hygiene gate. It deliberately
 does not run Blender: the checks that matter here need a real 3D source, and those are
 never in the repository. Run the relevant script on your own file and report the numbers
