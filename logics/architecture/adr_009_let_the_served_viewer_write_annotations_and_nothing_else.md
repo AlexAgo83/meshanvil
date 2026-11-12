@@ -1,6 +1,6 @@
 ## adr_009_let_the_served_viewer_write_annotations_and_nothing_else - Let the served viewer write annotations, and nothing else
 > Date: 2026-08-25
-> Status: Proposed
+> Status: Accepted
 > Related request: `req_016_make_the_viewer_s_outliner_refresh_and_annotations_hold_up_in_daily_use`
 > Related backlog: `item_074_let_a_human_say_what_the_numbers_do_not_without_touching_the_reports`
 > Related task: `task_029_deliver_the_viewer_s_fold_refresh_payload_and_annotation_work`
@@ -34,6 +34,7 @@ narrows rather than reopens.
 - Two POST endpoints already exist on the served server -- the run route and the file route, in `meshanvil/viewer_routes` -- both requiring a per-launch token and both refused on a cross-origin request.
 
 # Decision
+- Accepted during operator cleanup on 2026-11-12: commits `b44e1e4` and `f3c2a68` delivered this decision. The current code implements atomic storage in `meshanvil/notes.py`, guarded writes in `meshanvil/viewer_routes/note.py` and `meshanvil/viewer_server.py`, and served-only editing in `viewer/src/app.js`. `tests/test_viewer.py` covers report isolation and interrupted writes.
 - One POST endpoint accepts an annotation write: a note keyed by report identity, or a name keyed by the sha256 of a chain's source file. Nothing else is writable.
 - It requires the same per-launch token as those two routes, and is refused on the same origin and host checks. A page that cannot present the token cannot write.
 - The endpoint writes the whole annotation file atomically -- a temporary file in the same directory, then a rename -- so a crash or a second writer can leave a stale file but never a truncated one. Writes are serialised on the server the way the run route already serialises its subprocess.
